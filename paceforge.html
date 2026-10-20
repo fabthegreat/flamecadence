@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaceForge</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230f6e6e'/%3E%3Ccircle cx='20' cy='20' r='12' fill='none' stroke='white' stroke-opacity='.5' stroke-width='3'/%3E%3Cpath d='M22 8 14 22h6l-2 10 9-15h-6z' fill='white'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b78;--line:#cfd7de;--acc:#0f6e6e;--err:#b3261e;--ok:#1d7a3a;--on:#fff}
+@media (prefers-color-scheme:dark){:root{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:20px 16px 24px}
+h1{font-size:1.4rem;margin:0}
+p.sub{color:var(--mute);margin:6px 0 20px}
+section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+h2{font-size:1rem;margin:0 0 12px}
+h3.blk{font-size:1rem;margin:20px 0 0}
+label{display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:90px;resize:vertical}
+#desc{font-family:"IBM Plex Mono",monospace;font-size:.85rem;min-height:240px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+button,a.alt{display:inline-block;margin-top:14px;padding:11px 16px;border:0;border-radius:6px;background:var(--acc);color:var(--on);font-family:inherit;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}
+button:disabled{opacity:.5;cursor:default}
+.alt{background:transparent!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
+.small{margin:0!important;padding:8px 12px!important;font-size:.9rem!important;white-space:nowrap}
+.icon{padding:6px 8px!important;line-height:0!important}
+.icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.icon svg.fill{fill:currentColor;stroke:none}
+.danger{color:var(--err)!important;border-color:var(--err)!important}
+.soon{opacity:.45}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+[hidden]{display:none!important}
+#msg{margin:-4px 0 16px;padding:0 4px;font-size:.9rem}#msg:empty{display:none}
+.err{color:var(--err)}.ok{color:var(--ok)}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;flex:none}
+.logo rect{fill:var(--acc)}.logo circle{fill:none;stroke:var(--on);stroke-width:3;opacity:.5}.logo path{fill:var(--on)}
+.tools{display:flex;gap:8px;align-items:center}
+.lang{display:flex;border:1px solid var(--acc);border-radius:6px;overflow:hidden}
+.lang button{margin:0;padding:6px 10px;border-radius:0;background:transparent;color:var(--acc);font-size:.85rem}
+.lang button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
+.layout{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
+.phead{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.phead h2{margin:0 auto 0 0}
+.phead select{width:auto}
+.tgl{font-size:1rem!important;line-height:1!important;min-width:32px}
+.off>:not(.phead){display:none!important}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.actions button{margin:0}
+.pw{display:flex;gap:8px}.pw{align-items:center}.pw>select,.pw>input{flex:1 1 0;width:0;min-width:0}.pw button{flex:none;margin:0;padding:8px 12px;font-size:.9rem;white-space:nowrap}
+.lbl{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px}.lbl label{margin:10px 0 4px}
+.badge{font-size:.8rem}
+.hint{font-size:.8rem;color:var(--mute);margin-top:6px}
+.hint a,.help{color:var(--acc);font-size:.8rem}
+.help{display:block;margin-top:4px}
+dialog{width:min(92vw,520px);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:18px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog h2{margin-bottom:4px}
+.chart{position:relative;margin-bottom:6px}
+.chart svg{display:block;width:100%;height:64px;border-radius:6px;background:var(--bg)}
+.chart path{stroke:var(--bg);stroke-width:1;vector-effect:non-scaling-stroke;cursor:pointer}
+.chart path:hover{opacity:.8}
+.chart path.sel{stroke:var(--ink);stroke-width:2}
+.chart .cap{font-size:.8rem;color:var(--mute);margin-top:4px}
+.z1{fill:#3a9d8f}.z2{fill:#5cb85c}.z3{fill:#e3cf3f}.z4{fill:#f2a33a}.z5{fill:#ee6c4d}.z6{fill:#d6336c}.z7{fill:#8e44ad}
+.tip{position:absolute;z-index:5;pointer-events:none;background:var(--ink);color:var(--card);padding:6px 8px;border-radius:6px;font-size:.8rem;line-height:1.35;width:max-content;max-width:260px;white-space:pre-line;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.tip .act{margin-top:6px}
+#toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px;align-items:flex-start;max-width:min(92vw,560px);padding:12px 14px;border-radius:8px;background:var(--card);color:var(--ink);border:1px solid var(--err);border-left:6px solid var(--err);box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:.9rem}
+#toast button{margin:0;padding:0 6px;line-height:1.2;font-size:1.2rem;background:transparent;color:var(--mute)}
+#prog{margin:-4px 0 16px}.pt{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
+.explain{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:.9rem}.explain p{margin:4px 0 6px}
+#fsvg{display:block;width:100%;height:150px;border-radius:6px;background:var(--bg);touch-action:none}
+#fsvg .fc{fill:#3b82c4;fill-opacity:.35;stroke:#3b82c4;stroke-width:1.2;vector-effect:non-scaling-stroke}
+#fsvg .fa{fill:none;stroke:#d6336c;stroke-width:1.2;vector-effect:non-scaling-stroke}
+#fsvg .ft{fill:#e3cf3f;fill-opacity:.5;stroke:#c9b52b;stroke-width:1;vector-effect:non-scaling-stroke}
+#fsvg .fz{stroke:var(--line);stroke-width:1;vector-effect:non-scaling-stroke}
+#fsvg .fcur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:0}
+.leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--mute);margin-top:6px}.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.st{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;align-items:center;padding:8px;margin-bottom:6px;border-left:5px solid var(--line);border-radius:6px;background:var(--bg)}
+.st.warm{border-color:#5cb85c}.st.work{border-color:#ee6c4d}.st.rec{border-color:#3a9d8f}.st.cool{border-color:#4a90d9}
+.st select,.st input,.gh input{padding:7px;background:var(--card)}
+.ctl{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}.ctl button{margin:0!important}
+.fld{position:relative}.fld input{padding-right:58px}.fld span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--mute);pointer-events:none}
+.grp{border:1px dashed var(--acc);border-radius:8px;padding:8px;margin-bottom:8px}.gh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}.gh .fld{width:90px}.gh .ctl{grid-column:auto;margin-left:auto}.grp>.actions{margin-top:6px}
+#loadbox,#lastbox{position:relative}
+.days{display:flex;gap:3px;align-items:flex-end;height:96px}
+.d{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.65rem;color:var(--mute);cursor:default}
+.d:hover{background:var(--bg)}
+.d .bar{width:100%;border-radius:3px 3px 0 0;background:var(--line)}
+.d .bar.h1{background:#5cb85c}.d .bar.h2{background:#f2a33a}.d .bar.h3{background:#d6336c}
+.d.now span{color:var(--ink);font-weight:600}
+.tbl table{width:100%;border-collapse:collapse;font-size:.9rem}
+.tbl th,.tbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:right}
+.tbl th:first-child,.tbl td:first-child{text-align:left}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 12px;font-size:.8rem;color:var(--mute);margin-top:8px}.kv b{display:block;font-size:1rem;color:var(--ink)}
+.lt{font-weight:600}
+#lsvg{display:block;width:100%;height:110px;border-radius:6px;background:var(--bg);margin-top:8px;touch-action:none}
+#lsvg .lp{fill:var(--acc);fill-opacity:.3;stroke:var(--acc);stroke-width:1.2;vector-effect:non-scaling-stroke}
+#lsvg .lh{fill:none;stroke:#d6336c;stroke-width:1.2;vector-effect:non-scaling-stroke}
+footer{display:flex;justify-content:center;padding:8px 0 24px}
+a.coffee{margin:0;display:inline-flex;gap:8px;align-items:center;background:#ffc439;color:#111!important;border-radius:999px;padding:10px 20px;font-weight:600;text-decoration:none}
+a.coffee.soon{opacity:.6}
+h2.ic{display:flex;align-items:center;gap:8px}
+.hic{width:22px;height:22px;flex:none;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mode{display:flex;gap:4px;padding:4px;margin-bottom:16px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.mode button{flex:1;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:7px;background:transparent;color:var(--ink);font-size:.95rem}
+.mode button svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
+.stp{display:inline-flex;align-items:center;gap:4px}
+.stp input{width:64px;padding:7px 4px;text-align:center;-moz-appearance:textfield;appearance:textfield}
+.stp input::-webkit-outer-spin-button,.stp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.stp button{margin:0!important;min-width:36px;padding:7px 0!important;font-size:1.1rem!important;line-height:1}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="brand"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10"/><circle cx="20" cy="20" r="12"/><path d="M22 8 14 22h6l-2 10 9-15h-6z"/></svg><h1 data-i="title"></h1></div>
+<div class="tools">
+<div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
+<a class="alt small icon" id="mail" data-ia="title:contact;aria-label:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg></a>
+<a class="alt small icon" id="gh" data-ia="title:github;aria-label:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+<a class="alt small icon" id="coffeeTop" data-ia="title:coffee;aria-label:coffee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M7 3v3M11 3v3"/></svg></a>
+<button class="alt small" id="open" type="button" data-i="settings"></button>
+</div>
+</header>
+<div id="toast" role="alert" hidden><span id="toastt"></span><button type="button" id="toastx" data-ia="aria-label:close">×</button></div>
+<p class="sub" data-i="subtitle"></p>
+
+<dialog id="cfg" aria-labelledby="cfgt">
+<h2 id="cfgt" data-i="settingsTitle"></h2>
+<label for="prov" data-i="provider"></label>
+<select id="prov"><option value="gemini">Gemini</option><option value="hf">Hugging Face</option><option value="oa" data-i="provOA"></option></select>
+<div id="pg">
+<div class="lbl"><label for="gkey" data-i="gKey"></label><span id="bg" class="badge"></span></div>
+<div class="pw"><input id="gkey" type="password" autocomplete="off"><button class="alt tog" data-for="gkey" type="button" data-i="show"></button></div>
+<a class="help" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" data-i="gHelp"></a>
+<label for="model" data-i="gModel"></label>
+<div class="pw"><select id="model"></select><button class="alt" id="refm" type="button" data-i="loadList"></button></div>
+<div id="mnote" class="badge" role="status"></div>
+<label for="think" data-i="think"></label>
+<select id="think"><option value="low" data-i="thLow"></option><option value="minimal" data-i="thMin"></option><option value="medium" data-i="thMed"></option><option value="high" data-i="thHigh"></option><option value="default" data-i="thDef"></option></select>
+</div>
+<div id="ph" hidden>
+<div class="lbl"><label for="hfkey" data-i="hfKey"></label><span id="bh" class="badge"></span></div>
+<div class="pw"><input id="hfkey" type="password" autocomplete="off"><button class="alt tog" data-for="hfkey" type="button" data-i="show"></button></div>
+<a class="help" href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener" data-i="hfHelp"></a>
+<label for="hfmodel" data-i="hfModel"></label>
+<div class="pw"><input id="hfmodel" list="hfl" autocomplete="off"><datalist id="hfl"></datalist><button class="alt" id="refh" type="button" data-i="loadList"></button></div>
+<div id="hnote" class="badge" role="status"></div>
+<div class="hint" data-i="hfHint"></div>
+</div>
+<div id="po" hidden>
+<label for="oaurl" data-i="oaUrl"></label>
+<input id="oaurl" list="oau" autocomplete="off" placeholder="https://api.groq.com/openai/v1"><datalist id="oau"><option value="https://api.groq.com/openai/v1"><option value="https://openrouter.ai/api/v1"><option value="https://api.mistral.ai/v1"><option value="https://api.cerebras.ai/v1"></datalist>
+<div class="lbl"><label for="oakey" data-i="oaKey"></label><span id="bo" class="badge"></span></div>
+<div class="pw"><input id="oakey" type="password" autocomplete="off"><button class="alt tog" data-for="oakey" type="button" data-i="show"></button></div>
+<div class="hint"><span data-i="oaHelp"></span> <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq</a> · <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a> · <a href="https://console.mistral.ai/api-keys" target="_blank" rel="noopener">Mistral</a></div>
+<label for="oamodel" data-i="oaModel"></label>
+<div class="pw"><input id="oamodel" list="oal" autocomplete="off"><datalist id="oal"></datalist><button class="alt" id="refo" type="button" data-i="loadList"></button></div>
+<div id="onote" class="badge" role="status"></div>
+<div class="hint" data-i="oaHint"></div>
+</div>
+<div class="lbl"><label for="ikey" data-i="iKey"></label><span id="bi" class="badge"></span></div>
+<div class="pw"><input id="ikey" type="password" autocomplete="off"><button class="alt tog" data-for="ikey" type="button" data-i="show"></button></div>
+<a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
+<label for="aid" data-i="aid"></label>
+<input id="aid">
+<h3 class="blk" data-i="icuData"></h3>
+<div class="lbl"><div id="prof" class="hint"></div><button class="alt small" id="rprof" type="button" data-i="refresh"></button></div>
+<div class="actions">
+<button id="save" type="button" data-i="save"></button>
+<button class="alt" id="close" type="button" data-i="close"></button>
+<button class="alt danger" id="clear" type="button" data-i="clearKeys"></button>
+</div>
+</dialog>
+
+<dialog id="cfm"><p id="cfmt"></p><div class="actions"><button id="cfmy" type="button" data-i="yes"></button><button class="alt" id="cfmn" type="button" data-i="no"></button></div></dialog>
+
+<div class="layout">
+<div class="col">
+
+<div class="mode" role="tablist" data-ia="aria-label:modeLbl">
+<button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
+<button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
+</div>
+
+<section data-block="req">
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="req"></span></h2></div>
+<div class="row">
+<div><label for="ftpsel" data-i="ftpLbl"></label><select id="ftpsel"><option value="in"></option><option value="out"></option></select></div>
+<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option><option value="Run" data-i="sRun"></option><option value="Swim" data-i="sSwim"></option></select></div>
+</div>
+<div class="row">
+<div><label for="dur" data-i="durLbl"></label><select id="dur"><option value="" data-i="durAuto"></option><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option><option value="150">2h30</option><option value="180">3h</option></select></div>
+<div><label for="unit" data-i="unitLbl"></label><select id="unit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<label for="prompt" data-i="wanted"></label>
+<textarea id="prompt" data-ia="placeholder:ph"></textarea>
+<div class="actions">
+<button id="gen" type="button" data-i="gen"></button>
+<button class="alt" id="rand" type="button" data-i="rand"></button>
+</div>
+<label for="hist" data-i="history"></label>
+<div class="pw"><select id="hist"></select>
+<button class="alt small icon danger" id="hdel" type="button" data-ia="title:del;aria-label:del"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button></div>
+</section>
+
+<section data-block="edit">
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="edT"></span></h2></div>
+<div class="row">
+<div><label for="edname" data-i="name"></label><input id="edname"></div>
+<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option><option value="Run" data-i="sRun"></option><option value="Swim" data-i="sSwim"></option></select></div>
+</div>
+<div class="row">
+<div><label for="edftp" data-i="ftpLbl"></label><select id="edftp"><option value="in"></option><option value="out"></option></select></div>
+<div><label for="edunit" data-i="unitLbl"></label><select id="edunit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<div class="hint" id="edhint"></div>
+<div id="edbox" style="margin-top:10px"></div>
+<div class="actions">
+<button class="alt small" type="button" data-add="warm" data-i="addWarm"></button>
+<button class="alt small" type="button" data-add="work" data-i="addWork"></button>
+<button class="alt small" type="button" data-add="rec" data-i="addRec"></button>
+<button class="alt small" type="button" data-add="cool" data-i="addCool"></button>
+<button class="alt small" type="button" data-add="grp" data-i="addGrp"></button>
+</div>
+<div class="hint" id="edsum"></div>
+<button id="edgo" type="button" data-i="edGo"></button>
+</section>
+
+<div id="prog" hidden><div class="pt"><span id="progk"></span><span id="progs"></span></div><div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="progf"></i></div></div>
+<div id="msg" role="status"></div>
+
+<section id="prev" data-block="prev" hidden>
+<div class="phead">
+<h2 data-i="preview"></h2>
+<button class="alt small icon danger" id="trash" type="button" data-ia="title:delPrev;aria-label:delPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button>
+</div>
+<div id="chart" class="chart"></div>
+<div id="explain" class="explain" hidden></div>
+<div class="row">
+<div><label for="name" data-i="name"></label><input id="name"></div>
+<div><label for="date" data-i="date"></label><input id="date" type="date"></div>
+</div>
+<label for="desc" data-i="descLbl"></label>
+<textarea id="desc"></textarea>
+<button id="send" type="button" data-i="send"></button>
+</section>
+
+
+</div>
+<aside class="col">
+
+<section data-block="fit">
+<div class="phead"><h2 data-i="fitT"></h2>
+<select id="fper" data-ia="aria-label:fitPer"><option value="30" data-i="p1m"></option><option value="60" data-i="p2m" selected></option><option value="90" data-i="p3m"></option><option value="180" data-i="p6m"></option><option value="365" data-i="p1y"></option></select></div>
+<div id="fitbox"></div>
+</section>
+
+<section data-block="last">
+<div class="phead"><h2 data-i="lastW"></h2></div>
+<div id="lastbox"></div>
+</section>
+
+<section data-block="load">
+<div class="phead"><h2 data-i="load2"></h2><button class="alt small" id="rload" type="button" data-ia="title:refresh;aria-label:refresh">↻</button></div>
+<div id="loadbox"></div>
+<div id="loadcap" class="hint"></div>
+</section>
+
+<section data-block="best">
+<div class="phead"><h2 data-i="best"></h2>
+<select id="bkind"><option value="VirtualRide" data-i="indoor"></option><option value="Ride" data-i="outdoor"></option></select>
+<select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select></div>
+<div id="bestbox" class="tbl"></div>
+</section>
+
+</aside>
+</div>
+<footer><a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a></footer>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
+// À renseigner : lien PayPal / « Buy me a coffee » et dépôt GitHub (laisser vide tant que non créé)
+const LINKS = {coffee: "", github: "", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
+let lang = store.get("si_lang") === "fr" ? "fr" : "en";
+
+// ---------- Traductions : T[clé] = [anglais, français] ----------
+const T = {
+docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
+title:["PaceForge","PaceForge"],
+subtitle:["Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.","Forge ta prochaine séance : décris-la, laisse l'IA la construire, puis envoie-la directement dans intervals.icu."],
+settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
+contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
+provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
+gKey:["Gemini API key","Clé API Gemini"], gModel:["Gemini model","Modèle Gemini"],
+think:["Thinking level (Gemini 3 models): lower = faster","Niveau de réflexion (modèles Gemini 3) : plus bas = plus rapide"],
+thLow:["Low (fast)","Bas (rapide)"], thMin:["Minimal","Minimal"], thMed:["Medium","Moyen"], thHigh:["High (slow)","Élevé (lent)"], thDef:["Model default","Défaut du modèle"],
+hfKey:["Hugging Face token","Jeton Hugging Face"], hfModel:["Hugging Face model","Modèle Hugging Face"], hfHint:["Free within your monthly Hugging Face quota.","Gratuit dans la limite du quota mensuel Hugging Face."],
+oaUrl:["API base URL","URL de base de l'API"], oaKey:["API key","Clé API"], oaModel:["Model","Modèle"],
+oaHint:["Any OpenAI-compatible service (Groq, OpenRouter, Mistral, Cerebras…). The URL usually ends with /v1.","Tout service compatible OpenAI (Groq, OpenRouter, Mistral, Cerebras…). L'URL se termine en général par /v1."],
+gHelp:["How to get a Gemini API key (Google AI Studio)","Comment obtenir une clé API Gemini (Google AI Studio)"],
+hfHelp:["How to create a Hugging Face token (needs the Inference Providers permission)","Comment créer un jeton Hugging Face (permission Inference Providers requise)"],
+oaHelp:["Get a key:","Obtenir une clé :"],
+iHelp:["How to find your intervals.icu API key: Settings → Developer Settings","Comment trouver ta clé API intervals.icu : Settings → Developer Settings"],
+iKey:["intervals.icu API key","Clé API intervals.icu"], aid:["intervals.icu athlete ID (0 = the key's athlete)","ID athlète intervals.icu (0 = athlète de la clé)"],
+icuData:["intervals.icu data","Données intervals.icu"], refresh:["Refresh","Actualiser"], show:["Show","Afficher"], hide:["Hide","Masquer"],
+loadList:["Load list","Charger la liste"], save:["Save","Enregistrer"], close:["Close","Fermer"], clearKeys:["Clear keys","Effacer les clés"],
+saved:["Saved","Enregistrée"], missing:["Missing","Manquante"], yes:["Confirm","Confirmer"], no:["Cancel","Annuler"],
+cfmClear:["Clear all saved API keys?","Effacer toutes les clés API enregistrées ?"],
+cfmDel:["Delete this workout from the history and from the intervals.icu calendar?","Supprimer cette séance de l'historique et du calendrier intervals.icu ?"],
+req:["Generate workout with AI","Générer une séance avec l'IA"], ftpLbl:["intervals.icu FTP","FTP intervals.icu"], indoor:["Indoor","Home trainer"], outdoor:["Outdoor","Extérieur"],
+sportLbl:["Sport","Sport"], sRide:["Bike","Vélo"], sVirt:["Indoor bike (virtual)","Vélo indoor (virtuel)"], sRun:["Run","Course à pied"], sSwim:["Swim","Natation"],
+durLbl:["Duration","Durée"], durAuto:["Free (from my request)","Libre (selon ma demande)"],
+unitLbl:["Power units","Unités de puissance"], uPct:["% of FTP","% de la FTP"], uW:["Watts (from FTP)","Watts (calculés depuis la FTP)"],
+wanted:["Desired workout","Séance souhaitée"],
+ph:["E.g. 1h15 endurance with 3 x 10 min threshold blocks, day before a long ride","Ex. : 1h15 d'endurance avec 3 blocs de 10 min au seuil, veille de sortie longue"],
+gen:["Generate workout","Générer la séance"], rand:["Random workout of the day","Séance du jour aléatoire"],
+history:["History","Historique"], histPick:["Choose a workout…","Choisir une séance…"], del:["Delete","Supprimer"],
+preview:["Preview (editable)","Aperçu (modifiable)"], delPrev:["Delete the preview","Supprimer l'aperçu"], name:["Name","Nom"], date:["Date","Date"],
+descLbl:["Description (intervals.icu format)","Description (format intervals.icu)"], send:["Add to calendar","Ajouter au calendrier"],
+lastW:["Last workout","Dernière séance"], load2:["Last two weeks","Deux dernières semaines"], best:["Best efforts","Meilleurs efforts"],
+per6:["6 weeks","6 semaines"], per12:["12 weeks","12 semaines"], per1y:["1 year","1 an"], collapse:["Collapse or expand the block","Réduire ou afficher le bloc"],
+lDur:["Duration","Durée"], lDist:["Distance","Distance"], lElev:["Elevation","Dénivelé"], lLoad:["Load","Charge"], lIF:["IF","IF"], lNP:["NP","NP"],
+lAvgP:["Avg power","Puissance moy."], lHR:["Avg HR","FC moy."], lMaxHR:["Max HR","FC max"], lCad:["Cadence","Cadence"], lEF:["EF","EF"],
+noWorkout:["No workout found in the last two weeks.","Aucune séance trouvée sur les deux dernières semaines."],
+noStreams:["Detailed data unavailable for this workout.","Données détaillées indisponibles pour cette séance."],
+genning:["Forging your workout…","Forge de ta séance…"], thoughts:[" ({0} thinking tokens)"," ({0} jetons de réflexion)"],
+genDone:["Workout generated in {0} s{1}. Review it, then add it.","Séance générée en {0} s{1}. Relis-la puis ajoute-la."],
+sentOk:["Workout added to the calendar on {0}.","Séance ajoutée au calendrier le {0}."], sending:["Sending to intervals.icu…","Envoi vers intervals.icu…"],
+settingsSaved:["Settings saved in this browser.","Réglages enregistrés dans ce navigateur."], previewDeleted:["Preview deleted.","Aperçu supprimé."], workoutDeleted:["Workout deleted.","Séance supprimée."],
+loading:["Loading…","Chargement…"], nModels:["{0} models available","{0} modèles disponibles"], noModels:["No flash model ≥ 3.6 found","Aucun modèle flash ≥ 3.6 trouvé"],
+err:["Error: {0}","Erreur : {0}"], errG:["Gemini error: {0}","Erreur Gemini : {0}"], errH:["Hugging Face error: {0}","Erreur Hugging Face : {0}"], errA:["API error: {0}","Erreur API : {0}"], errI:["intervals.icu error: {0}","Erreur intervals.icu : {0}"],
+needG:["Enter your Gemini API key.","Renseigne la clé API Gemini."], needH:["Enter your Hugging Face token.","Renseigne le jeton Hugging Face."], needA:["Enter your API key.","Renseigne la clé API."],
+needUrl:["Enter the API URL.","Renseigne l'URL de l'API."], needM:["Enter a model.","Renseigne un modèle."], needI:["Enter your intervals.icu API key.","Renseigne la clé API intervals.icu."], needAsk:["Describe the workout you want.","Décris la séance voulue."],
+timeout:["120 s timeout exceeded, try a lower thinking level or a faster model.","Délai de 120 s dépassé, essaie un niveau de réflexion plus bas ou un modèle plus rapide."],
+cors:["request blocked by the browser (CORS) or network unavailable","requête bloquée par le navigateur (CORS) ou réseau indisponible"],
+badResp:["incomplete model response","réponse du modèle incomplète"], keyMissing:["intervals.icu key missing","clé intervals.icu manquante"],
+analyzing:["Analyzing your recent workouts…","Analyse de tes dernières séances…"], randFallback:["{0} — falling back to a classic draw.","{0} — tirage classique."],
+randPrompt:["Workout of the day adapted to my current load, my recent workouts and yesterday's session","Séance du jour adaptée à ma charge actuelle, à mes dernières séances et à celle d'hier"],
+nodata:["No data for this activity type.","Aucune donnée pour ce type d'activité."], rest:["Rest","Repos"], planned:["Planned: {0}","Prévu : {0}"],
+colDur:["Duration","Durée"], capAvg:[" · avg "," · moy. "], pctPace:[" % pace"," % allure"], pctFtp:[" % FTP"," % FTP"], tipZ:["Zone {0} · start {1}","Zone {0} · début {1}"],
+dLoad:["Load {0}","Charge {0}"], dAvg:["avg {0} W","moy. {0} W"], dHR:["HR {0}","FC {0}"],
+loadCap:["{0} workouts · {1} · load {2}","{0} séances · {1} · charge {2}"], loadCap2:[" · CTL {0} · ATL {1} · form {2}"," · CTL {0} · ATL {1} · forme {2}"],
+age:["{0} y/o","{0} ans"],
+fitT:["Fitness","Fitness"], fFit:["Fitness (CTL)","Fitness (CTL)"], fFat:["Fatigue (ATL)","Fatigue (ATL)"], fForm:["Form (TSB)","Forme (TSB)"],
+langLbl:["Language","Langue"], dElev:["Elev. {0} m","D+ {0} m"], lPace:["Pace","Allure"], lSpeed:["Avg speed","Vitesse moy."], lPow:["Power","Puissance"], lHRs:["Heart rate","Fréquence cardiaque"], pace:["pace","allure"],
+exTitle:["About this workout","À propos de cette séance"],
+exE:["Mostly low-intensity work: builds your aerobic base, improves fat oxidation and endurance, and promotes recovery without adding much fatigue.","Surtout du travail à faible intensité : développe la base aérobie, améliore l'oxydation des graisses et l'endurance, et favorise la récupération sans ajouter beaucoup de fatigue."],
+exT:["Tempo / sweet-spot work: raises the power you can sustain and your muscular endurance, with a great return on training time and moderate fatigue.","Travail tempo / sweet spot : augmente la puissance soutenable et l'endurance musculaire, avec un excellent rapport gain/temps et une fatigue modérée."],
+exH:["Threshold work: pushes up your FTP and your ability to hold hard efforts for a long time. Plan an easier day afterwards.","Travail au seuil : fait progresser la FTP et la capacité à tenir des efforts soutenus longtemps. Prévois une journée plus facile ensuite."],
+exV:["High-intensity intervals: boost VO2max and your ability to repeat hard efforts. Do it fresh and follow with an easy day.","Intervalles de haute intensité : améliorent la VO2max et la capacité à répéter des efforts intenses. À faire frais, puis enchaîner avec une journée facile."],
+exMix:["Time in zones: easy {0} % · tempo {1} % · hard {2} %","Temps par zone : facile {0} % · tempo {1} % · intense {2} %"],
+edT:["Manual workout editor","Éditeur de séance manuel"],
+edNone:["Add steps with the buttons below: warm-up, an interval block with a recovery after each effort, then cool-down.","Ajoute des étapes avec les boutons ci-dessous : échauffement, bloc d'intervalles avec une récup après chaque effort, retour au calme."],
+tt_warm:["Warm-up","Échauffement"], tt_work:["Interval","Intervalle"], tt_rec:["Recovery","Récupération"], tt_cool:["Cool-down","Retour au calme"], tMain:["Main set","Série"],
+edTime:["Time","Durée"], edDist:["Distance","Distance"], edInt:["Intensity","Intensité"], edNote:["Note (optional)","Note (facultatif)"], repLbl:["Repeat","Répéter"],
+mvUp:["Move up","Monter"], mvDown:["Move down","Descendre"], dup:["Duplicate","Dupliquer"], addRecAfter:["+ Recovery after","+ Récup après"],
+addWarm:["+ Warm-up","+ Échauffement"], addWork:["+ Interval","+ Intervalle"], addRec:["+ Recovery","+ Récupération"], addCool:["+ Cool-down","+ Retour au calme"], addGrp:["+ Repeat block","+ Bloc de répétitions"],
+edHintW:["Intensity in watts (follows the “Power units” setting above).","Intensité en watts (selon le réglage « Unités de puissance » ci-dessus)."], edHintP:["Intensity in % of FTP.","Intensité en % de la FTP."], edHintPace:["Intensity in % of threshold pace.","Intensité en % de l'allure seuil."],
+edTot:["Estimated duration: {0}","Durée estimée : {0}"], edGo:["Build preview","Générer l'aperçu"], edBuilt:["Workout built: check the preview, then add it to your calendar.","Séance construite : vérifie l'aperçu, puis ajoute-la au calendrier."], edDefName:["My workout","Ma séance"],
+tabAi:["AI generator","Générateur IA"], tabEd:["Manual editor","Éditeur manuel"], modeLbl:["Workout creation mode","Mode de création de la séance"],
+fitPer:["Fitness time range","Période du graphique fitness"], p1m:["1 month","1 mois"], p2m:["2 months","2 mois"], p3m:["3 months","3 mois"], p6m:["6 months","6 mois"], p1y:["1 year","1 an"],
+tryNext:["{0} failed, trying {1}…","{0} a échoué, essai de {1}…"], alsoFailed:[" ({0} other model(s) also failed)"," ({0} autre(s) modèle(s) a/ont aussi échoué)"], usedModel:[" · fallback model: {0}"," · modèle de secours : {0}"],
+repDec:["Fewer repetitions","Moins de répétitions"], repInc:["More repetitions","Plus de répétitions"]
+};
+const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
+const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+let MSG = null, toastT, ptimer, phide;
+function toast(m){ $("toastt").textContent = m; $("toast").hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { $("toast").hidden = true; }, 12000); }
+function say(k, cls, ...a){
+  const txt = k ? t(k, ...a) : "";
+  if(cls === "err"){ MSG = null; $("msg").textContent = ""; if(txt) toast(txt); return; }
+  MSG = k ? {k, cls, a} : null; $("msg").textContent = txt; $("msg").className = cls || "";
+}
+$("toastx").onclick = () => { $("toast").hidden = true; };
+function progStart(k){
+  clearInterval(ptimer); clearTimeout(phide); const t0 = Date.now();
+  $("progk").textContent = t(k); $("prog").hidden = false;
+  const upd = () => { const sec = (Date.now() - t0) / 1000; $("progf").style.width = (92 * (1 - Math.exp(-sec / 20))).toFixed(1) + "%"; $("progs").textContent = Math.round(sec) + " s"; $("prog").querySelector(".pb").setAttribute("aria-valuenow", parseInt($("progf").style.width)); };
+  upd(); ptimer = setInterval(upd, 250);
+}
+function progEnd(){
+  clearInterval(ptimer); if($("prog").hidden) return; $("progf").style.width = "100%";
+  phide = setTimeout(() => { $("prog").hidden = true; $("progf").style.width = "0"; }, 500);
+}
+const ACT = {Ride: ["Ride", "Vélo"], VirtualRide: ["Virtual ride", "Vélo virtuel"], Run: ["Run", "Course à pied"], VirtualRun: ["Virtual run", "Course virtuelle"], TrailRun: ["Trail run", "Trail"], Swim: ["Swim", "Natation"], WeightTraining: ["Strength", "Renforcement"], Walk: ["Walk", "Marche"], Hike: ["Hike", "Randonnée"], Workout: ["Workout", "Séance"], Rowing: ["Rowing", "Aviron"], NordicSki: ["Nordic ski", "Ski nordique"], Yoga: ["Yoga", "Yoga"]};
+const actT = ty => (ACT[ty] || [ty, ty])[lang === "fr" ? 1 : 0] || "";
+const errText = e => e.name === "AbortError" ? t("timeout") : e.name === "TypeError" ? t("cors") : e.message;
+
+function ask(k){
+  return new Promise(res => {
+    const d = $("cfm"); $("cfmt").textContent = t(k);
+    const done = v => { if(d.open) d.close(); res(v); };
+    $("cfmy").onclick = () => done(true); $("cfmn").onclick = () => done(false);
+    d.addEventListener("cancel", () => res(false), {once: true});
+    d.showModal();
+  });
+}
+
+// ---------- Réglages ----------
+const FIELDS = ["gkey","model","ikey","aid","think","prov","hfkey","hfmodel","oaurl","oakey","oamodel"];
+const DEF = {model: "gemini-3.7-flash", aid: "0", think: "low", prov: "gemini", hfmodel: "meta-llama/Llama-3.1-8B-Instruct", oaurl: "https://api.groq.com/openai/v1", oamodel: ""};
+const SECRET = ["gkey","ikey","hfkey","oakey"];
+let modelList = [], hfList = [], oaList = [];
+function provUI(){ const v = $("prov").value; $("pg").hidden = v !== "gemini"; $("ph").hidden = v !== "hf"; $("po").hidden = v !== "oa"; }
+function badges(){
+  [["gkey","bg"],["ikey","bi"],["hfkey","bh"],["oakey","bo"]].forEach(([k, b]) => {
+    const ok = !!store.get("si_" + k); $(b).textContent = t(ok ? "saved" : "missing"); $(b).className = "badge " + (ok ? "ok" : "err");
+  });
+}
+function fillModels(list, sel){
+  const ids = [...new Set([sel, ...list].filter(Boolean))];
+  $("model").innerHTML = ""; ids.forEach(id => { const o = document.createElement("option"); o.value = o.textContent = id; $("model").appendChild(o); });
+  $("model").value = sel;
+}
+function loadSettings(){
+  FIELDS.forEach(k => { if(k !== "model") $(k).value = store.get("si_" + k) || DEF[k] || ""; });
+  fillModels(modelList, store.get("si_model") || DEF.model);
+  SECRET.forEach(k => $(k).type = "password");
+  document.querySelectorAll(".tog").forEach(b => { b.dataset.i = "show"; b.textContent = t("show"); });
+  provUI(); badges();
+}
+document.querySelectorAll(".tog").forEach(b => b.onclick = () => {
+  const i = $(b.dataset.for), show = i.type === "password";
+  i.type = show ? "text" : "password"; b.dataset.i = show ? "hide" : "show"; b.textContent = t(b.dataset.i);
+});
+$("prov").onchange = provUI;
+$("open").onclick = () => {
+  loadSettings(); $("cfg").showModal();
+  const pv = store.get("si_prov");
+  if(pv === "hf"){ if(!hfList.length) $("refh").click(); }
+  else if(pv === "oa"){ if(store.get("si_oakey") && !oaList.length) $("refo").click(); }
+  else if(store.get("si_gkey") && !modelList.length) $("refm").click();
+};
+$("close").onclick = () => $("cfg").close();
+$("cfg").addEventListener("close", loadSettings);
+$("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
+$("clear").onclick = async () => { if(!(await ask("cfmClear"))) return; SECRET.forEach(k => store.set("si_" + k, "")); loadSettings(); };
+
+async function fetchList(url, key){
+  const r = await fetch(url, key ? {headers: {Authorization: "Bearer " + key}} : {});
+  const j = await r.json();
+  if(!r.ok) throw new Error((j.error && (j.error.message || (typeof j.error === "string" ? j.error : ""))) || ("HTTP " + r.status));
+  return j;
+}
+function listBtn(btn, noteId, run){
+  $(btn).onclick = async () => {
+    const note = (k, c, ...a) => { $(noteId).textContent = t(k, ...a); $(noteId).className = "badge " + (c || ""); };
+    $(btn).disabled = true; note("loading");
+    try{ await run(note); }catch(e){ note("err", "err", errText(e)); }
+    $(btn).disabled = false;
+  };
+}
+async function geminiModels(key){
+  const r = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000", {headers: {"x-goog-api-key": key}});
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error?.message || ("HTTP " + r.status));
+  const ver = n => parseFloat((n.match(/^gemini-(\d+(?:\.\d+)?)-/) || [])[1]);
+  return (j.models || []).filter(m => (m.supportedGenerationMethods || []).includes("generateContent")).map(m => m.name.replace("models/", ""))
+    .filter(n => /flash/.test(n) && !/image|tts|live|audio|embed|robotics|computer|native/.test(n) && ver(n) >= 3.6)
+    .sort((x, y) => ver(y) - ver(x) || x.localeCompare(y));
+}
+listBtn("refm", "mnote", async note => {
+  const key = $("gkey").value.trim();
+  if(!key) return note("needG", "err");
+  modelList = await geminiModels(key);
+  const cur = $("model").value;
+  fillModels(modelList, modelList.includes(cur) ? cur : (modelList[0] || cur));
+  modelList.length ? note("nModels", "ok", modelList.length) : note("noModels", "err");
+});
+listBtn("refh", "hnote", async note => {
+  const j = await fetchList("https://router.huggingface.co/v1/models", $("hfkey").value.trim());
+  hfList = (j.data || []).map(m => m.id).sort((x, y) => x.localeCompare(y));
+  $("hfl").innerHTML = hfList.map(id => `<option value="${esc(id)}"></option>`).join("");
+  note("nModels", "ok", hfList.length);
+});
+listBtn("refo", "onote", async note => {
+  const base = $("oaurl").value.trim().replace(/\/+$/, "");
+  if(!base) return note("needUrl", "err");
+  const j = await fetchList(base + "/models", $("oakey").value.trim());
+  oaList = (Array.isArray(j) ? j : (j.data || [])).map(m => m.id || m.name).filter(Boolean).sort((x, y) => x.localeCompare(y));
+  $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join("");
+  note("nModels", "ok", oaList.length);
+});
+$("oaurl").onchange = () => { oaList = []; };
+
+// ---------- intervals.icu ----------
+const KEY = () => store.get("si_ikey"), AID = () => store.get("si_aid") || "0";
+const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null}, LAST = {};
+const icuAuth = () => ({Authorization: "Basic " + btoa("API_KEY:" + KEY())});
+const icuUrl = path => `https://intervals.icu/api/v1/athlete/${encodeURIComponent(AID())}${path}`;
+async function icuFetch(url, opt){
+  if(!KEY()) throw new Error(t("keyMissing"));
+  const r = await fetch(url, {headers: icuAuth(), ...(opt || {})});
+  if(!r.ok) throw new Error("HTTP " + r.status);
+  return opt && opt.method === "DELETE" ? null : r.json();
+}
+const icu = path => icuFetch(icuUrl(path));
+const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const daysAgo = n => { const d = new Date(); d.setDate(d.getDate() - n); return iso(d); };
+const pad = n => String(n).padStart(2, "0");
+const hm = sec => { const m = Math.round(sec / 60); return m >= 60 ? Math.floor(m / 60) + "h" + pad(m % 60) : m + " min"; };
+const mmss = sec => Math.floor(sec / 60) + ":" + pad(Math.round(sec) % 60);
+const loc = () => lang === "fr" ? "fr-FR" : "en-GB";
+const isBike = s => /Ride/.test(s);
+function curFtp(){ return ($("ftpsel").value === "in" ? ICU.ftpIn : ICU.ftpOut) || 0; }
+function fillFtp(){
+  const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
+  [$("ftpsel"), $("edftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
+}
+function profText(){
+  if(LAST.profErr){ $("prof").textContent = t("errI", LAST.profErr); return; }
+  $("prof").textContent = [ICU.weight ? ICU.weight + " kg" : "", ICU.age ? t("age", ICU.age) : "", "FTP " + t("indoor") + " " + (ICU.ftpIn || "–") + " W", t("outdoor") + " " + (ICU.ftpOut || "–") + " W"].filter(Boolean).join(" · ");
+}
+async function loadProfile(){
+  const a = await icu("");
+  const rideSet = x => (x.types || []).includes("Ride");
+  let ss = (a.sportSettings || []).find(rideSet);
+  if(!ss){ try{ ss = (await icu("/sport-settings")).find(rideSet); }catch(e){} }
+  ICU.ftpOut = (ss && ss.ftp) || 0; ICU.ftpIn = (ss && (ss.indoor_ftp || ss.ftp)) || 0;
+  ICU.weight = a.icu_weight || a.weight || 0;
+  const dob = a.icu_date_of_birth || a.date_of_birth || a.birthdate;
+  ICU.age = dob ? Math.floor((Date.now() - new Date(dob)) / 31557600000) : null;
+  LAST.profErr = ""; fillFtp(); profText();
+}
+
+// --- deux dernières semaines ---
+const grp = l => l.reduce((m, a) => { const k = (a.start_date_local || "").slice(0, 10); (m[k] = m[k] || []).push(a); return m; }, {});
+function dayHtml(k, L, w, P){
+  const f = v => Math.round(v), n1 = v => String(Math.round(v * 10) / 10);
+  let h = `<b>${esc(new Date(k + "T12:00:00").toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long"}))}</b>`;
+  if(w && w.ctl != null) h += `<div>CTL ${f(w.ctl)} · ATL ${f(w.atl)} · ${lang === "fr" ? "forme" : "form"} ${f(w.ctl - w.atl)}</div>`;
+  if(!L.length) h += `<div>${t("rest")}</div>`;
+  for(const a of L){
+    const parts = [hm(a.moving_time || 0)];
+    if(a.distance) parts.push(n1(a.distance / 1000) + " km");
+    if(a.total_elevation_gain) parts.push(t("dElev", f(a.total_elevation_gain)));
+    const q = [t("dLoad", f(a.icu_training_load || 0))];
+    if(a.icu_intensity) q.push("IF " + (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2));
+    if(a.icu_weighted_avg_watts) q.push("NP " + f(a.icu_weighted_avg_watts) + " W");
+    if(a.icu_average_watts) q.push(t("dAvg", f(a.icu_average_watts)));
+    if(a.average_heartrate) q.push(t("dHR", f(a.average_heartrate)));
+    h += `<div class="act"><b>${esc(a.name || a.type || "")}</b> ${esc(actT(a.type))} ${esc((a.start_date_local || "").slice(11, 16))}<br>${esc(parts.join(" · "))}<br>${esc(q.join(" · "))}</div>`;
+  }
+  for(const e of P) h += `<div class="act">${esc(t("planned", (e.name || "") + (e.moving_time ? " (" + hm(e.moving_time) + ")" : "")))}</div>`;
+  return h;
+}
+function renderLoad(){
+  if(!LAST.acts) return;
+  const by = grp(LAST.acts), pl = grp(LAST.plan || []), wl = {};
+  (LAST.well || []).forEach(w => { wl[w.id] = w; });
+  const cols = []; let max = 1, tl = 0, tt = 0;
+  for(let i = 13; i >= 0; i--){
+    const k = daysAgo(i), L = by[k] || [], load = L.reduce((s, a) => s + (a.icu_training_load || 0), 0);
+    max = Math.max(max, load); tl += load; tt += L.reduce((s, a) => s + (a.moving_time || 0), 0);
+    cols.push({k, load, html: dayHtml(k, L, wl[k], pl[k] || [])});
+  }
+  LAST.days = cols.map(c => c.html);
+  $("loadbox").innerHTML = `<div class="days">` + cols.map((c, n) => `<div class="d${c.k === daysAgo(0) ? " now" : ""}" data-n="${n}"><div class="bar${c.load > 120 ? " h3" : c.load > 60 ? " h2" : c.load > 0 ? " h1" : ""}" style="height:${c.load ? Math.max(4, c.load / max * 72) : 2}px"></div><span>${c.k.slice(8)}</span></div>`).join("") + `</div><div class="tip" hidden></div>`;
+  const w = (LAST.well || [])[(LAST.well || []).length - 1];
+  $("loadcap").textContent = t("loadCap", LAST.acts.length, hm(tt), Math.round(tl)) + (w && w.ctl != null ? t("loadCap2", Math.round(w.ctl), Math.round(w.atl), Math.round(w.ctl - w.atl)) : "");
+}
+function hoverTip(box, htmlOf){
+  const move = e => {
+    const tip = box.querySelector(".tip"); if(!tip) return;
+    const d = e.target.closest ? e.target.closest("[data-n]") : null;
+    if(!d || !box.contains(d)){ tip.hidden = true; return; }
+    if(tip.dataset.n !== d.dataset.n){ tip.dataset.n = d.dataset.n; tip.innerHTML = htmlOf(+d.dataset.n); }
+    tip.hidden = false;
+    const r = box.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(e.clientX - r.left - tip.offsetWidth / 2, r.width - tip.offsetWidth)) + "px";
+    tip.style.top = (e.clientY - r.top + 16) + "px";
+  };
+  ["pointermove", "pointerdown"].forEach(ev => box.addEventListener(ev, move));
+  box.addEventListener("pointerleave", () => { const tip = box.querySelector(".tip"); if(tip) tip.hidden = true; });
+}
+hoverTip($("loadbox"), i => LAST.days[i]);
+
+// --- dernière séance ---
+function ds(arr, n){
+  if(!arr || !arr.length) return [];
+  const w = Math.max(1, Math.floor(arr.length / n)), out = [];
+  for(let i = 0; i < arr.length; i += w){
+    let s = 0, c = 0;
+    for(let j = i; j < Math.min(i + w, arr.length); j++){ const v = arr[j]; if(typeof v === "number" && !isNaN(v)){ s += v; c++; } }
+    out.push(c ? s / c : 0);
+  }
+  return out;
+}
+function streamsSvg(){
+  const w = ds(LAST.sw, 240), h = ds(LAST.sh, 240), n = Math.max(w.length, h.length);
+  if(!n) return `<div class="hint">${esc(t("noStreams"))}</div>`;
+  const X = i => (i / Math.max(1, n - 1) * 300).toFixed(1);
+  let svg = `<svg id="lsvg" viewBox="0 0 300 90" preserveAspectRatio="none">`;
+  if(w.length){ const m = Math.max(...w, 1); svg += `<path class="lp" d="M0 90${w.map((v, i) => `L${X(i)} ${(88 - v / m * 84).toFixed(1)}`).join("")}L300 90Z"/>`; }
+  const hv = h.filter(v => v > 0);
+  if(hv.length){ const lo = Math.min(...hv), hi = Math.max(...hv); svg += `<polyline class="lh" points="${h.map((v, i) => X(i) + "," + (88 - (Math.max(v, lo) - lo) / Math.max(1, hi - lo) * 80).toFixed(1)).join(" ")}"/>`; }
+  const lg = [w.length ? `<span><i style="background:var(--acc)"></i>${esc(t("lPow"))} · max ${Math.round(Math.max(...w))} W</span>` : "", hv.length ? `<span><i style="background:#d6336c"></i>${esc(t("lHRs"))} · max ${Math.round(Math.max(...hv))} bpm</span>` : ""].join("");
+  return svg + `</svg><div class="hint" id="linfo">&nbsp;</div><div class="leg">${lg}</div>`;
+}
+function renderLast(){
+  const box = $("lastbox"), a = LAST.last;
+  if(!LAST.acts){ box.textContent = ""; return; }
+  if(!a){ box.textContent = t("noWorkout"); return; }
+  const f = v => Math.round(v), kv = [[t("lDur"), hm(a.moving_time || 0)]];
+  if(a.distance) kv.push([t("lDist"), (Math.round(a.distance / 100) / 10) + " km"]);
+  if(a.total_elevation_gain) kv.push([t("lElev"), f(a.total_elevation_gain) + " m"]);
+  kv.push([t("lLoad"), f(a.icu_training_load || 0)]);
+  if(a.icu_intensity) kv.push([t("lIF"), (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2)]);
+  if(a.icu_weighted_avg_watts) kv.push([t("lNP"), f(a.icu_weighted_avg_watts) + " W"]);
+  if(a.icu_average_watts) kv.push([t("lAvgP"), f(a.icu_average_watts) + " W"]);
+  if(a.average_heartrate) kv.push([t("lHR"), f(a.average_heartrate) + " bpm"]);
+  if(a.max_heartrate) kv.push([t("lMaxHR"), f(a.max_heartrate) + " bpm"]);
+  if(a.average_cadence) kv.push([t("lCad"), f(a.average_cadence) + " rpm"]);
+  if(a.average_speed && /Run|Swim/.test(a.type || "")){ const sw = /Swim/.test(a.type); kv.push([t("lPace"), mmss((sw ? 100 : 1000) / a.average_speed) + (sw ? " /100 m" : " /km")]); }
+  else if(a.average_speed) kv.push([t("lSpeed"), (a.average_speed * 3.6).toFixed(1) + " km/h"]);
+  if(a.icu_efficiency_factor) kv.push([t("lEF"), (+a.icu_efficiency_factor).toFixed(2)]);
+  const when = new Date(a.start_date_local).toLocaleString(loc(), {weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
+  box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}</div>` + (LAST.sw || LAST.sh ? streamsSvg() : "") +
+    `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>`;
+}
+$("lastbox").addEventListener("pointermove", e => {
+  const svg = e.target.closest ? e.target.closest("#lsvg") : null; if(!svg || !LAST.last) return;
+  const r = svg.getBoundingClientRect(), fr = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+  const at = arr => arr && arr.length ? Math.round(ds(arr, 240)[Math.round(fr * (ds(arr, 240).length - 1))]) : null;
+  const p = at(LAST.sw), h = at(LAST.sh);
+  $("linfo").textContent = [mmss(fr * (LAST.last.moving_time || 0)), p ? p + " W" : "", h ? h + " bpm" : ""].filter(Boolean).join(" · ");
+});
+async function loadLast(){
+  const done = (LAST.acts || []).filter(a => a.moving_time).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
+  LAST.last = done[0]; LAST.sw = LAST.sh = null; renderLast();
+  if(!LAST.last) return;
+  try{
+    const j = await icuFetch(`https://intervals.icu/api/v1/activity/${LAST.last.id}/streams?types=watts,heartrate`);
+    const list = Array.isArray(j) ? j : (j.streams || []), get = ty => (list.find(s => s.type === ty) || {}).data;
+    LAST.sw = get("watts"); LAST.sh = get("heartrate");
+  }catch(e){}
+  renderLast();
+}
+async function loadLoad(){
+  const rng = `oldest=${daysAgo(13)}&newest=${daysAgo(0)}`;
+  const [acts, well, plan] = await Promise.all([icu(`/activities?${rng}`), icu(`/wellness?${rng}`).catch(() => []), icu(`/events?${rng}&category=WORKOUT`).catch(() => [])]);
+  LAST.acts = acts; LAST.well = well; LAST.plan = plan;
+  renderLoad(); loadLast();
+}
+
+// --- meilleurs efforts ---
+const DURS = [[5, "5 s"], [15, "15 s"], [30, "30 s"], [60, "1'"], [120, "2'"], [180, "3'"], [300, "5'"], [600, "10'"], [1200, "20'"], [1800, "30'"], [3600, "60'"]];
+function renderBest(){
+  if(!LAST.curve) return;
+  const c = LAST.curve, secs = c.secs || [], vals = c.watts || c.values || [], kg = ICU.weight;
+  const ftp = $("bkind").value === "VirtualRide" ? ICU.ftpIn : ICU.ftpOut;
+  if(!secs.length){ $("bestbox").textContent = t("nodata"); return; }
+  const rows = DURS.map(([d, l]) => {
+    let i = secs.indexOf(d); if(i < 0) i = secs.findIndex(x => x >= d);
+    const w = i >= 0 && vals[i] ? Math.round(vals[i]) : null;
+    return `<tr><td>${l}</td><td>${w || "–"}</td><td>${w && kg ? (w / kg).toFixed(2) : "–"}</td><td>${w && ftp ? Math.round(w / ftp * 100) + " %" : "–"}</td></tr>`;
+  }).join("");
+  $("bestbox").innerHTML = `<table><thead><tr><th>${esc(t("colDur"))}</th><th>W</th><th>W/kg</th><th>% FTP</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+async function loadBest(){
+  const j = await icu(`/power-curves?type=${$("bkind").value}&curves=${$("bper").value}`);
+  LAST.curve = (j.list || [j])[0] || {}; renderBest();
+}
+async function loadAll(){
+  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); return; }
+  await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
+  loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
+  loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
+  loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
+}
+$("rload").onclick = $("rprof").onclick = loadAll;
+$("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkind").value); loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }); };
+$("ftpsel").onchange = () => { store.set("si_ftpsel", $("ftpsel").value); renderChart(); renderBest(); };
+
+// ---------- Graphe de la séance ----------
+let selLine = null, EXPL = null;
+function parseWorkout(txt, sport, ftp){
+  const steps = []; let group = null;
+  const flush = () => { if(group){ for(let i = 0; i < group.n; i++) steps.push(...group.items); group = null; } };
+  const num = x => parseFloat(String(x).replace(",", "."));
+  const dur = str => {
+    let tt = 0, m; const re = /(\d+(?:[.,]\d+)?)\s*(h|min|m|s)(?![a-z])/gi;
+    while((m = re.exec(str))){ const v = num(m[1]), u = m[2].toLowerCase(); tt += u === "h" ? v * 3600 : u === "s" ? v : v * 60; }
+    return tt;
+  };
+  const dist = str => {
+    const m = str.match(/(\d+(?:[.,]\d+)?)\s*(mtr|km|yrd)/i); if(!m) return 0;
+    const v = num(m[1]), u = m[2].toLowerCase(); return u === "km" ? v * 1000 : u === "yrd" ? v * 0.9144 : v;
+  };
+  const inten = str => {
+    let m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
+    if(m){ const a = num(m[1]), b = m[2] ? num(m[2]) : a; return {a, b, idx: m.index, ramp: /ramp/i.test(str)}; }
+    m = str.match(/(\d+(?:[.,]\d+)?)\s*w\b/i);
+    if(m && ftp > 0){ const v = num(m[1]) / ftp * 100; return {a: v, b: v, idx: m.index, ramp: false}; }
+    m = str.match(/\bz([1-7])\b/i);
+    if(m){ const v = [50, 65, 82, 97, 112, 135, 160][m[1] - 1]; return {a: v, b: v, idx: m.index, ramp: false}; }
+    return null;
+  };
+  const spm = sport === "Swim" ? 1 : sport === "Run" ? 0.24 : 0.36;
+  for(const [li, raw] of txt.split("\n").entries()){
+    const line = raw.trim();
+    if(!line){ flush(); continue; }
+    if(line.startsWith("-")){
+      const it = inten(line); if(!it) continue;
+      const pre = line.slice(0, it.idx), mid = (it.a + it.b) / 2;
+      let d = dur(pre);
+      if(!d){ const m = dist(pre); if(m) d = m * spm / Math.max(mid / 100, 0.3); }
+      if(!d) continue;
+      const step = {d, a: it.ramp ? it.a : mid, b: it.ramp ? it.b : mid, line: li};
+      if(group) group.items.push(step); else steps.push(step);
+    }else{
+      flush();
+      const r = line.match(/(\d+)\s*x\s*$/i);
+      if(r) group = {n: Math.min(parseInt(r[1], 10), 50), items: []};
+    }
+  }
+  flush();
+  return steps;
+}
+const zoneOf = p => p < 56 ? 1 : p < 76 ? 2 : p < 91 ? 3 : p < 106 ? 4 : p < 121 ? 5 : p < 151 ? 6 : 7;
+const toWatts = (desc, ftp) => desc.split("\n").map(l => l.trim().startsWith("-") ? l.replace(/(\d+(?:\.\d+)?)\s*%/, (m, p) => Math.round(p * ftp / 100) + "w") : l).join("\n");
+function renderChart(){
+  const box = $("chart"), sport = $("sport").value, ftp = curFtp();
+  const steps = parseWorkout($("desc").value, sport, ftp);
+  if(!steps.length){ box.innerHTML = ""; box._steps = []; $("explain").hidden = true; return; }
+  const total = steps.reduce((s, x) => s + x.d, 0), peak = Math.max(120, ...steps.map(s => Math.max(s.a, s.b)));
+  const W = 300, H = 100, meta = [];
+  let x = 0, path = "", wsum = 0, t0 = 0;
+  for(const s of steps){
+    const w = s.d / total * W, ya = H - s.a / peak * (H - 4), yb = H - s.b / peak * (H - 4);
+    path += `<path data-n="${meta.length}" class="z${zoneOf((s.a + s.b) / 2)}${s.line === selLine ? " sel" : ""}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
+    meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
+  }
+  const avg = Math.round(wsum / total), pace = sport === "Run" || sport === "Swim", mins = Math.round(total / 60);
+  const dtxt = mins >= 60 ? Math.floor(mins / 60) + "h" + pad(mins % 60) : mins + " min";
+  const cap = dtxt + t("capAvg") + avg + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + Math.round(avg * ftp / 100) + " W)" : "");
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg><div class="cap">${esc(cap)}</div><div class="tip" hidden></div>`;
+  box._steps = meta; renderExplain(steps);
+}
+function tipText(s, ftp, pace){
+  const f = v => Math.round(v), sec = Math.round(s.d);
+  const d = sec < 60 ? sec + " s" : (sec % 60 ? Math.floor(sec / 60) + "'" + pad(sec % 60) : Math.round(sec / 60) + " min");
+  const ramp = Math.abs(s.a - s.b) > 0.5;
+  const pct = ramp ? f(s.a) + " → " + f(s.b) : f(s.a);
+  const watts = !pace && ftp > 0 ? " (" + (ramp ? f(s.a * ftp / 100) + " → " + f(s.b * ftp / 100) : f(s.a * ftp / 100)) + " W)" : "";
+  return d + " · " + pct + (pace ? t("pctPace") : t("pctFtp")) + watts + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
+}
+{
+  const cb = $("chart");
+  const over = e => {
+    const tip = cb.querySelector(".tip"); if(!tip) return;
+    const p = e.target.closest ? e.target.closest("path[data-n]") : null;
+    if(!p){ tip.hidden = true; return; }
+    if(tip.dataset.n !== p.dataset.n){ tip.dataset.n = p.dataset.n; tip.textContent = tipText(cb._steps[+p.dataset.n], curFtp(), /Run|Swim/.test($("sport").value)); }
+    tip.hidden = false;
+    const r = cb.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(e.clientX - r.left - tip.offsetWidth / 2, r.width - tip.offsetWidth)) + "px";
+    tip.style.top = (e.clientY - r.top - tip.offsetHeight - 12) + "px";
+  };
+  ["pointermove", "pointerdown"].forEach(ev => cb.addEventListener(ev, over));
+  cb.addEventListener("pointerleave", () => { const tip = cb.querySelector(".tip"); if(tip) tip.hidden = true; });
+}
+$("desc").addEventListener("input", () => { selLine = null; renderChart(); });
+const syncUnit = () => { $("unit").disabled = !isBike($("sport").value); };
+$("sport").onchange = () => { syncUnit(); renderChart(); };
+$("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; $("prev").hidden = true; renderChart(); say("previewDeleted", "ok"); };
+
+// ---------- Génération ----------
+const SYSTEM = `You are an expert coach. You create ONE structured workout.
+Reply only with JSON containing "name" (short title), "description" (the workout text in intervals.icu workout format), and "explanation_en" and "explanation_fr" (2-3 sentences each, in English and in French: purpose of the session, physiological benefits, and where it fits in a training week).
+Format of "description":
+- One section per block: a title line (e.g. "Warmup", "Main set 3x", "Cooldown") followed by lines starting with "- ". Leave a blank line between sections.
+- Durations: 10m, 30s, 1h. Cycling intensity: % of FTP, a single value per line (e.g. "- 10m 55%").
+- FORBIDDEN: no ramps ("ramp") and no intensity ranges (no "50-75%" and no "90-95%"), because the Tacx trainer does not support them. For a gradual rise or fall (warm-up, cool-down, progression) use several short steps at constant intensity, increasing or decreasing (e.g. "- 3m 50%", "- 3m 60%", "- 4m 70%").
+- Running: intensity in % of threshold pace (e.g. "- 5m 80% Pace") or a zone ("Z2 Pace").
+- Swimming: distances in meters with "mtr" (e.g. "- 100mtr 85% Pace"), intensity in % of threshold pace, rest as "- 20s 40% Pace"; put drill or technique cues as free text after the values.
+- Repetitions: "Main set 4x" then the lines of the block.
+- Free-text cues may follow the values (e.g. "- 10m 95% cadence 90rpm").
+No markdown, no text outside the JSON.`;
+async function generate(ctx){
+  const prov = $("prov").value, chat = prov !== "gemini", sport = $("sport").value;
+  let url = "", key, model;
+  const bad = k => { progEnd(); say(k, "err"); };
+  if(prov === "hf"){ url = "https://router.huggingface.co/v1/chat/completions"; key = $("hfkey").value.trim(); model = $("hfmodel").value.trim(); }
+  else if(prov === "oa"){ url = $("oaurl").value.trim().replace(/\/+$/, "") + "/chat/completions"; key = $("oakey").value.trim(); model = $("oamodel").value.trim(); }
+  else{ key = $("gkey").value.trim(); model = $("model").value.trim() || DEF.model; }
+  const ask1 = $("prompt").value.trim(), bike = isBike(sport), ftp = bike ? curFtp() : 0;
+  if(prov === "oa" && !$("oaurl").value.trim()) return bad("needUrl");
+  if(!key) return bad(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG");
+  if(!model) return bad("needM");
+  if(!ask1) return bad("needAsk");
+  const durTxt = $("dur").value ? `Total duration: about ${$("dur").value} minutes (warm-up and cool-down included).\n` : "";
+  const ftpTxt = ftp > 0 ? `Athlete FTP (${$("ftpsel").value === "in" ? "indoor" : "outdoor"}): ${ftp} W (intensities stay expressed in % of FTP).\n` : "";
+  const userText = `Sport: ${sport}. Date: ${$("date").value}.\n${durTxt}${ftpTxt}${typeof ctx === "string" ? ctx + "\n" : ""}Request: ${ask1}\nReply (name and instructions) in ${lang === "fr" ? "French" : "English"}.` + (chat ? `\nReply only with a JSON object {"name": "...", "description": "...", "explanation_en": "...", "explanation_fr": "..."} and no text around it.` : "");
+  $("gen").disabled = true; $("rand").disabled = true;
+  const t0 = Date.now();
+  say(null); progStart("genning");
+  const timed = async (ms, fn) => { const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), ms); try{ return await fn(ctl.signal); }finally{ clearTimeout(to); } };
+  const parse = txt => {
+    const m = txt.replace(/<think>[\s\S]*?<\/think>/g, "").match(/\{[\s\S]*\}/);
+    const w = JSON.parse((m ? m[0] : txt).replace(/```json|```/g, "").trim());
+    if(!w.name || !w.description) throw new Error(t("badResp"));
+    return w;
+  };
+  const callGemini = (mdl, ms) => timed(ms, async signal => {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(mdl)}:generateContent`, {method: "POST", signal,
+      headers: {"Content-Type": "application/json", "x-goog-api-key": key},
+      body: JSON.stringify({systemInstruction: {parts: [{text: SYSTEM}]}, contents: [{role: "user", parts: [{text: userText}]}],
+        generationConfig: {...(/^gemini-3/.test(mdl) && $("think").value !== "default" ? {thinkingConfig: {thinkingLevel: $("think").value}} : {}),
+          responseMimeType: "application/json", responseSchema: {type: "OBJECT", properties: {name: {type: "STRING"}, description: {type: "STRING"}, explanation_en: {type: "STRING"}, explanation_fr: {type: "STRING"}}, required: ["name", "description"]}}})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok){ const err = new Error(j.error?.message || ("HTTP " + r.status)); err.fatal = r.status === 401 || /api key/i.test(err.message); throw err; }
+    const txt = j.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
+    return {w: parse(txt), usage: j.usageMetadata ? t("thoughts", j.usageMetadata.thoughtsTokenCount || 0) : ""};
+  });
+  try{
+    let w, usage = "";
+    if(chat){
+      const txt = await timed(120000, async signal => {
+        const r = await fetch(url, {method: "POST", signal, headers: {"Content-Type": "application/json", Authorization: "Bearer " + key},
+          body: JSON.stringify({model, max_tokens: 3000, messages: [{role: "system", content: SYSTEM}, {role: "user", content: userText}]})});
+        const j = await r.json().catch(() => ({}));
+        if(!r.ok) throw new Error((j.error && (j.error.message || (typeof j.error === "string" ? j.error : ""))) || ("HTTP " + r.status));
+        return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || "";
+      });
+      w = parse(txt);
+    }else{
+      // modèle sélectionné d'abord ; en cas d'erreur, on essaie les autres modèles flash disponibles
+      const errs = []; let cands = [model];
+      for(let n = 0; n < cands.length; n++){
+        try{
+          const r = await callGemini(cands[n], n ? 60000 : 120000);
+          w = r.w; usage = r.usage; if(n) usage += t("usedModel", cands[n]);
+          break;
+        }catch(e){
+          errs.push(e); if(e.fatal) break;
+          if(n === 0){
+            if(!modelList.length){ try{ modelList = await geminiModels(key); }catch(_){} }
+            cands = [model, ...modelList.filter(x => x !== model)];
+          }
+          if(n + 1 < cands.length) $("progk").textContent = t("tryNext", cands[n], cands[n + 1]);
+        }
+      }
+      if(!w) throw new Error(errText(errs[0]) + (errs.length > 1 ? t("alsoFailed", errs.length - 1) : ""));
+    }
+    $("name").value = w.name;
+    $("desc").value = $("unit").value === "w" && bike && ftp > 0 ? toWatts(w.description, ftp) : w.description;
+    EXPL = {en: w.explanation_en || "", fr: w.explanation_fr || ""}; selLine = null; renderChart();
+    $("prev").hidden = false; say("genDone", "ok", Math.round((Date.now() - t0) / 1000), usage);
+  }catch(e){
+    say(prov === "hf" ? "errH" : prov === "oa" ? "errA" : "errG", "err", errText(e));
+  }
+  progEnd();
+  $("gen").disabled = false; $("rand").disabled = false;
+}
+$("gen").onclick = () => generate();
+
+// ---------- Séance aléatoire ----------
+const IDEAS = {
+  bike: [["steady zone 2 endurance","endurance fondamentale en zone 2, régulière"], ["sweet spot, blocks of 10 to 20 min","sweet spot, blocs de 10 à 20 min"], ["threshold, 2 x 20 min","seuil, 2 blocs de 20 min"],
+    ["VO2max, intervals of 3 to 5 min","VO2max, intervalles de 3 à 5 min"], ["over-unders around threshold","over-under autour du seuil"], ["pyramid of intensities","pyramide d'intensité"],
+    ["low-cadence strength work","force à basse cadence en côte"], ["short sprints with long recoveries","sprints courts avec longue récupération"], ["continuous tempo","tempo continu"], ["very easy active recovery","récupération active très facile"]],
+  Run: [["easy endurance run","footing facile en endurance"], ["free fartlek","fartlek libre"], ["hill repeats","séance de côtes"], ["threshold, 3 x 10 min","seuil, 3 x 10 min"],
+    ["short VMA, 10 x 1 min","VMA courte, 10 x 1 min"], ["progressive run","sortie progressive"], ["continuous tempo","tempo continu"]],
+  Swim: [["easy aerobic swim with technique drills","nage aérobie facile avec éducatifs"], ["threshold sets, 5 x 200 m","séries au seuil, 5 x 200 m"], ["short fast 50s with rest","50 m rapides avec repos"],
+    ["pull buoy endurance set","série d'endurance avec pull-buoy"], ["pyramid 100-200-300-200-100","pyramide 100-200-300-200-100"], ["mixed strokes and technique","nage mixte et technique"]]
+};
+const DURS_RAND = {bike: [45, 60, 75, 90, 120], Run: [30, 45, 60, 75], Swim: [30, 45, 60]};
+const pick = a => a[Math.floor(Math.random() * a.length)];
+function classicRandom(){
+  const s = $("sport").value, k = s === "Run" ? "Run" : s === "Swim" ? "Swim" : "bike", [en, fr] = pick(IDEAS[k]), d = $("dur").value || pick(DURS_RAND[k]);
+  $("date").value = iso(new Date());
+  $("prompt").value = lang === "fr" ? `${fr}, durée totale d'environ ${d} min` : `${en}, total duration about ${d} min`;
+  generate();
+}
+async function smartRandom(){
+  if(!KEY()) return classicRandom();
+  $("rand").disabled = true; progStart("analyzing");
+  try{
+    const rng = `oldest=${daysAgo(27)}&newest=${daysAgo(0)}`;
+    const [acts, well] = await Promise.all([icu(`/activities?${rng}`), icu(`/wellness?oldest=${daysAgo(3)}&newest=${daysAgo(0)}`).catch(() => [])]);
+    acts.sort((x, y) => (x.start_date_local || "") < (y.start_date_local || "") ? -1 : 1);
+    const w = well[well.length - 1], ctl = w && w.ctl != null ? w.ctl : 0, tsb = w && w.ctl != null ? w.ctl - w.atl : 0;
+    const lines = acts.slice(-14).map(a => `- ${(a.start_date_local || "").slice(0, 10)} ${a.type} "${a.name}" ${hm(a.moving_time || 0)}, load ${Math.round(a.icu_training_load || 0)}` + (a.icu_weighted_avg_watts ? `, NP ${Math.round(a.icu_weighted_avg_watts)} W` : "")).join("\n");
+    const fit = w && w.ctl != null ? `Current form: CTL ${Math.round(w.ctl)}, ATL ${Math.round(w.atl)}, TSB ${Math.round(w.ctl - w.atl)}.` : "";
+    const yest = acts.filter(a => (a.start_date_local || "").slice(0, 10) === daysAgo(1));
+    const yLoad = yest.reduce((s, a) => s + (a.icu_training_load || 0), 0);
+    const yIF = Math.max(0, ...yest.map(a => a.icu_intensity ? (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity) : 0));
+    const yTime = yest.reduce((s, a) => s + (a.moving_time || 0), 0), hard = yest.length && (yLoad >= 90 || yIF >= 0.85 || (ctl && yLoad > ctl * 1.2) || yTime >= 7200), mod = yest.length && !hard && (yLoad >= 60 || yTime >= 5400);
+    let rule = "Yesterday: no recorded workout (rest day).";
+    if(yest.length) rule = `Yesterday: ${yest.map(a => `"${a.name}" ${hm(a.moving_time || 0)}`).join(", ")}, total load ${Math.round(yLoad)}, max IF ${yIF.toFixed(2)} => ${hard ? "HARD session" : mod ? "moderately hard session" : "easy session"}.`;
+    if(hard) rule += "\nMANDATORY: yesterday was hard, so today MUST be an easy day: active recovery or very easy endurance only, Z1-Z2 (at most 65% intensity), no intervals, no tempo, at most 60 minutes (this overrides any longer requested duration).";
+    else if(mod) rule += "\nYesterday was fairly demanding: no hard intervals today, prefer endurance or light tempo.";
+    if(!hard && tsb < -25) rule += "\nMANDATORY: accumulated fatigue is high (form " + Math.round(tsb) + "), so today MUST be an easy day: Z1-Z2 only, no intervals.";
+    const ctx = `intervals.icu context (last 28 days):\n${lines || "- no workout"}\n${fit}\n${rule}\nPropose today's workout in the spirit of these recent workouts and adapted to my current load, with some variety.`;
+    $("date").value = iso(new Date());
+    $("prompt").value = t("randPrompt");
+    $("rand").disabled = false;
+    generate(ctx);
+  }catch(e){
+    progEnd(); $("rand").disabled = false; say("randFallback", "err", errText(e)); classicRandom();
+  }
+}
+$("rand").onclick = smartRandom;
+
+// ---------- Historique et envoi ----------
+const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
+function renderHist(){
+  const cur = $("hist").value;
+  $("hist").innerHTML = `<option value="">${esc(t("histPick"))}</option>` + hist().map((h, i) => `<option value="${i}">${esc(h.date)} · ${esc(h.name)}</option>`).join("");
+  $("hist").value = cur;
+}
+function addHist(h){
+  const l = hist();
+  if(l.some(x => x.date === h.date && x.sport === h.sport && x.name === h.name && x.desc === h.desc)) return;
+  l.unshift(h); store.set("si_hist", JSON.stringify(l.slice(0, 60))); renderHist();
+}
+$("hist").onchange = () => {
+  const h = hist()[+$("hist").value]; if(!h) return;
+  $("date").value = h.date; $("sport").value = h.sport; $("name").value = h.name; $("desc").value = h.desc; EXPL = h.ex || null;
+  syncUnit(); selLine = null; $("prev").hidden = false; renderChart();
+};
+$("hdel").onclick = async () => {
+  const l = hist(), i = +$("hist").value, h = l[i];
+  if($("hist").value === "" || !h || !(await ask("cfmDel"))) return;
+  if(h.id){
+    try{ await icuFetch(icuUrl("/events/" + h.id), {method: "DELETE"}); }
+    catch(e){ if(!/404/.test(e.message)) return say("errI", "err", errText(e)); }
+  }
+  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); say("workoutDeleted", "ok");
+};
+$("send").onclick = async () => {
+  if(!KEY()) return say("needI", "err");
+  $("send").disabled = true; say("sending");
+  try{
+    const r = await fetch(icuUrl("/events"), {method: "POST", headers: {"Content-Type": "application/json", ...icuAuth()},
+      body: JSON.stringify({category: "WORKOUT", start_date_local: $("date").value + "T00:00:00", type: $("sport").value, name: $("name").value.trim(), description: $("desc").value})});
+    if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
+    const ev = await r.json().catch(() => ({}));
+    addHist({id: ev.id, date: $("date").value, sport: $("sport").value, name: $("name").value.trim(), desc: $("desc").value, ex: EXPL});
+    say("sentOk", "ok", $("date").value);
+  }catch(e){ say("errI", "err", errText(e)); }
+  $("send").disabled = false;
+};
+
+// ---------- Explication de la séance ----------
+function renderExplain(steps){
+  const el = $("explain"), tot = steps.reduce((x, y) => x + y.d, 0) || 1, z = {e: 0, t: 0, h: 0, v: 0};
+  steps.forEach(p => { const m = (p.a + p.b) / 2; z[m < 76 ? "e" : m < 91 ? "t" : m < 106 ? "h" : "v"] += p.d; });
+  const k = z.v / tot > .08 ? "exV" : z.h / tot > .12 ? "exH" : z.t / tot > .15 ? "exT" : "exE", pc = x => Math.round(x / tot * 100);
+  el.innerHTML = `<b>${esc(t("exTitle"))}</b><p>${esc((EXPL && EXPL[lang]) || t(k))}</p><div class="hint">${esc(t("exMix", pc(z.e), pc(z.t), pc(z.h + z.v)))}</div>`;
+  el.hidden = false;
+}
+
+// ---------- Graphe fitness (CTL / ATL / TSB, période au choix) ----------
+const fitDays = () => +$("fper").value || 60;
+async function loadFit(){ LAST.fit = await icu(`/wellness?oldest=${daysAgo(fitDays() - 1)}&newest=${daysAgo(0)}`); renderFit(); }
+$("fper").onchange = () => { store.set("si_fper", $("fper").value); loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }); };
+function fitInfo(i){
+  const x = (LAST.fw || [])[i]; if(!x) return; const f = Math.round;
+  $("finfo").textContent = new Date(x.id + "T12:00:00").toLocaleDateString(loc(), {day: "numeric", month: "short", ...(fitDays() >= 180 ? {year: "numeric"} : {})}) + " · " + t("fFit") + " " + f(x.ctl) + " · " + t("fFat") + " " + f(x.atl || 0) + " · " + t("fForm") + " " + f(x.ctl - (x.atl || 0));
+}
+function renderFit(){
+  const box = $("fitbox"), w = (LAST.fit || []).filter(x => x.ctl != null).sort((a, b) => a.id < b.id ? -1 : 1);
+  LAST.fw = w;
+  if(!w.length){ box.textContent = LAST.fit ? t("nodata") : ""; return; }
+  const n = w.length, X = i => (i / Math.max(1, n - 1) * 300).toFixed(1), mx = Math.max(10, ...w.map(x => Math.max(x.ctl, x.atl || 0))) * 1.08;
+  const tb = w.map(x => x.ctl - (x.atl || 0)), tm = Math.max(10, ...tb.map(Math.abs)), Y = v => (70 - v / mx * 66).toFixed(1), Z = v => (100 - v / tm * 19).toFixed(1);
+  box.innerHTML = `<svg id="fsvg" viewBox="0 0 300 122" preserveAspectRatio="none" role="img" aria-label="${esc(t("fitT"))}"><path class="fc" d="M0 70${w.map((x, i) => `L${X(i)} ${Y(x.ctl)}`).join("")}L300 70Z"/><polyline class="fa" points="${w.map((x, i) => X(i) + "," + Y(x.atl || 0)).join(" ")}"/><line class="fz" x1="0" x2="300" y1="100" y2="100"/><path class="ft" d="M0 100${tb.map((v, i) => `L${X(i)} ${Z(v)}`).join("")}L300 100Z"/><line id="fcur" class="fcur" x1="0" x2="0" y1="0" y2="122"/></svg><div class="hint" id="finfo"></div><div class="leg"><span><i style="background:#3b82c4"></i>${esc(t("fFit"))}</span><span><i style="background:#d6336c"></i>${esc(t("fFat"))}</span><span><i style="background:#e3cf3f"></i>${esc(t("fForm"))}</span></div>`;
+  fitInfo(n - 1);
+}
+$("fitbox").addEventListener("pointermove", e => {
+  const sv = e.target.closest ? e.target.closest("#fsvg") : null; if(!sv || !(LAST.fw || []).length) return;
+  const r = sv.getBoundingClientRect(), fr = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), i = Math.round(fr * (LAST.fw.length - 1)), x = i / Math.max(1, LAST.fw.length - 1) * 300, c = $("fcur");
+  c.setAttribute("x1", x); c.setAttribute("x2", x); c.style.opacity = 1; fitInfo(i);
+});
+$("fitbox").addEventListener("pointerleave", () => { const c = $("fcur"); if(c) c.style.opacity = 0; fitInfo((LAST.fw || []).length - 1); });
+
+// ---------- Éditeur de séance manuel ----------
+const ED = [];
+const edSp = () => $("edsport").value, edKm = () => isBike(edSp()), edW = () => edKm() && $("unit").value === "w";
+const opts = (a, cur) => a.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${esc(l)}</option>`).join("");
+function edDef(ty){
+  const pc = {warm: 55, work: 95, rec: 50, cool: 50}[ty], f = curFtp();
+  return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: ""};
+}
+const edAt = p => { const a = String(p).split(".").map(Number); return a.length === 1 ? {list: ED, i: a[0]} : {list: ED[a[0]].items, i: a[1]}; };
+const edBtn = (a, txt, ttl, cls) => `<button class="alt small${cls ? " " + cls : ""}" data-a="${a}" type="button"${ttl ? ` title="${esc(ttl)}" aria-label="${esc(ttl)}"` : ""}>${txt}</button>`;
+const edCtl = rec => `<span class="ctl">${edBtn("up", "↑", t("mvUp"))}${edBtn("down", "↓", t("mvDown"))}${edBtn("dup", "⧉", t("dup"))}${rec ? edBtn("rec", esc(t("addRecAfter"))) : ""}${edBtn("del", "✕", t("del"), "danger")}</span>`;
+function edStep(x, p){
+  const u = edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
+  return `<div class="st ${x.ty}" data-p="${p}"><select data-f="ty" aria-label="${esc(t("edT"))}">${opts(["warm", "work", "rec", "cool"].map(y => [y, t("tt_" + y)]), x.ty)}</select>` +
+    `<select data-f="mode">${opts([["t", t("edTime")], ["d", t("edDist")]], x.mode)}</select>` +
+    `<div class="fld"><input data-f="v" value="${esc(x.v)}" aria-label="${esc(t(x.mode === "d" ? "edDist" : "edTime"))}"><span>${x.mode === "d" ? (edKm() ? "km" : "m") : "mm:ss"}</span></div>` +
+    `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}" aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
+    `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec")}</div>`;
+}
+const edGrp = (g, i) => `<div class="grp"><div class="gh" data-p="${i}"><b>${esc(t("repLbl"))}</b><span class="stp">${edBtn("rm", "−", t("repDec"))}<input data-f="r" type="number" min="1" max="50" value="${esc(g.r)}" aria-label="${esc(t("repLbl"))}">${edBtn("rp", "+", t("repInc"))}<span aria-hidden="true">×</span></span>${edCtl(false)}</div>${g.items.map((x, j) => edStep(x, i + "." + j)).join("")}<div class="actions"><button class="alt small" data-a="addin" data-g="${i}" data-ty="work" type="button">${esc(t("addWork"))}</button><button class="alt small" data-a="addin" data-g="${i}" data-ty="rec" type="button">${esc(t("addRec"))}</button></div></div>`;
+function edDur(x){
+  if(x.mode === "d") return (parseFloat(String(x.v).replace(",", ".")) || 0) + (edKm() ? "km" : "mtr");
+  const [m, sc] = String(x.v).split(":"), sec = (parseInt(m, 10) || 0) * 60 + (parseInt(sc, 10) || 0), h = Math.floor(sec / 3600), mm = Math.floor(sec % 3600 / 60), ss = sec % 60;
+  return (h ? h + "h" : "") + (mm ? mm + "m" : "") + (ss ? ss + "s" : "") || "0s";
+}
+function edLine(x){
+  const i = x.i !== "" && x.i != null ? " " + x.i + (edW() ? "w" : "%") + (edKm() ? "" : " Pace") : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
+  return `- ${edDur(x)}${i}${n ? " " + n : ""}`;
+}
+function edText(){
+  const out = [];
+  ED.forEach(x => { if(x.k === "g") out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); else out.push(t("tt_" + x.ty), edLine(x), ""); });
+  return out.join("\n").trim();
+}
+function edSum(){
+  const tot = parseWorkout(edText(), edSp(), curFtp()).reduce((a, b) => a + b.d, 0);
+  $("edsum").textContent = tot ? t("edTot", hm(tot)) : "";
+}
+function edRender(){
+  $("edftp").disabled = $("edunit").disabled = !edKm();
+  $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace");
+  $("edbox").innerHTML = ED.length ? ED.map((x, i) => x.k === "g" ? edGrp(x, i) : edStep(x, String(i))).join("") : `<div class="hint">${esc(t("edNone"))}</div>`;
+  edSum();
+}
+$("edbox").addEventListener("input", e => {
+  const el = e.target, h = el.closest("[data-p]"); if(!h || !el.dataset.f) return;
+  const {list, i} = edAt(h.dataset.p); list[i][el.dataset.f] = el.value;
+  if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else edSum();
+});
+$("edbox").addEventListener("click", e => {
+  const b = e.target.closest("[data-a]"); if(!b) return; const a = b.dataset.a;
+  const gp = (a === "rm" || a === "rp") ? b.closest("[data-p]").dataset.p : null;
+  if(a === "addin") ED[+b.dataset.g].items.push(edDef(b.dataset.ty));
+  else{
+    const {list, i} = edAt(b.closest("[data-p]").dataset.p);
+    if(a === "rm" || a === "rp") list[i].r = Math.min(50, Math.max(1, (parseInt(list[i].r, 10) || 1) + (a === "rp" ? 1 : -1)));
+    else if(a === "del") list.splice(i, 1);
+    else if(a === "dup") list.splice(i + 1, 0, JSON.parse(JSON.stringify(list[i])));
+    else if(a === "rec") list.splice(i + 1, 0, edDef("rec"));
+    else if(a === "up" && i > 0){ const o = list[i - 1]; list[i - 1] = list[i]; list[i] = o; }
+    else if(a === "down" && i < list.length - 1){ const o = list[i + 1]; list[i + 1] = list[i]; list[i] = o; }
+  }
+  edRender();
+  if(gp !== null){ const nb = $("edbox").querySelector(`[data-p="${gp}"] [data-a="${a}"]`); if(nb) nb.focus(); }
+});
+document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const ty = b.dataset.add; ED.push(ty === "grp" ? {k: "g", r: 4, items: [edDef("work"), edDef("rec")]} : edDef(ty)); edRender(); });
+$("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
+$("edgo").onclick = () => {
+  const txt = edText(); if(!txt) return say("edNone", "err");
+  $("sport").value = edSp(); syncUnit(); $("name").value = $("edname").value.trim() || t("edDefName"); $("desc").value = txt;
+  EXPL = null; selLine = null; $("prev").hidden = false; renderChart(); $("prev").scrollIntoView({behavior: "smooth", block: "start"}); say("edBuilt", "ok");
+};
+$("edsport").value = $("sport").value;
+[["ftpsel", "edftp"], ["unit", "edunit"]].forEach(([a, b]) => {
+  $(b).onchange = () => { $(a).value = $(b).value; $(a).dispatchEvent(new Event("change")); };
+  $(a).addEventListener("change", () => { $(b).value = $(a).value; });
+});
+
+// ---------- Bascule IA / éditeur manuel ----------
+let mode = store.get("si_mode") === "edit" ? "edit" : "ai";
+function applyMode(){
+  document.querySelector('[data-block="req"]').hidden = mode !== "ai";
+  document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
+  document.querySelectorAll(".mode button").forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
+}
+document.querySelectorAll(".mode button").forEach(b => {
+  b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); };
+  b.onkeydown = e => { if(e.key === "ArrowLeft" || e.key === "ArrowRight"){ mode = mode === "ai" ? "edit" : "ai"; store.set("si_mode", mode); applyMode(); document.querySelector(`.mode [data-m="${mode}"]`).focus(); } };
+});
+
+// ---------- Blocs repliables, liens, langue, démarrage ----------
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit"); }catch(e){}
+function applyBlocks(){
+  document.querySelectorAll("[data-block]").forEach(sec => {
+    const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
+    const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
+  });
+}
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]) > .phead').forEach(h => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
+  b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
+  h.appendChild(b);
+});
+function setLinks(){
+  $("mail").href = LINKS.mail;
+  [["gh", LINKS.github], ["coffee", LINKS.coffee], ["coffeeTop", LINKS.coffee]].forEach(([id, url]) => {
+    const a = $(id);
+    if(url){ a.href = url; a.target = "_blank"; a.rel = "noopener"; a.classList.remove("soon"); }
+    else{ a.removeAttribute("href"); a.classList.add("soon"); a.title = t("soon"); }
+  });
+}
+function applyLang(){
+  document.documentElement.lang = lang; document.title = t("docTitle");
+  document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
+  document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
+  setLinks(); fillFtp(); profText(); badges(); renderHist(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); edRender();
+  if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
+}
+document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
+$("date").value = iso(new Date());
+applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender();
+$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
+$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value;
+if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
+loadAll();
+</script>
+</body>
+</html>
