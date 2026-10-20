@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PaceForge</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='10' fill='%230f6e6e'/%3E%3Ccircle cx='20' cy='20' r='12' fill='none' stroke='white' stroke-opacity='.5' stroke-width='3'/%3E%3Cpath d='M22 8 14 22h6l-2 10 9-15h-6z' fill='white'/%3E%3C/svg%3E">
+<title>PaceForge — Forge your next workout</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ffb000'/%3E%3Cstop offset='1' stop-color='%23ff3d00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='%23141b24'/%3E%3Cpath d='M34 5C38 18 23 21 29 34c-5-3-8-8-8-13C9 34 13 49 25 56c-1-9 7-12 9-19 8 8 8 14 4 20 13-4 19-17 12-29-1 8-5 10-7 11C45 25 45 16 34 5Z' fill='url(%23g)'/%3E%3Cpath d='M35 24 24 40h9l-3 12 13-19h-9z' fill='%23fff4d6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b78;--line:#cfd7de;--acc:#0f6e6e;--err:#b3261e;--ok:#1d7a3a;--on:#fff}
@@ -12,7 +12,7 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
 main{max-width:1120px;margin:0 auto;padding:20px 16px 24px}
-h1{font-size:1.4rem;margin:0}
+h1{font-size:1.65rem;margin:0;font-weight:600;letter-spacing:-0.02em}
 p.sub{color:var(--mute);margin:6px 0 20px}
 section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
 h2{font-size:1rem;margin:0 0 12px}
@@ -36,9 +36,9 @@ button:disabled{opacity:.5;cursor:default}
 #msg{margin:-4px 0 16px;padding:0 4px;font-size:.9rem}#msg:empty{display:none}
 .err{color:var(--err)}.ok{color:var(--ok)}
 header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
-.brand{display:flex;align-items:center;gap:10px}
-.logo{width:38px;height:38px;flex:none}
-.logo rect{fill:var(--acc)}.logo circle{fill:none;stroke:var(--on);stroke-width:3;opacity:.5}.logo path{fill:var(--on)}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;flex:none}
+.logo rect{fill:var(--acc)}
 .tools{display:flex;gap:8px;align-items:center}
 .lang{display:flex;border:1px solid var(--acc);border-radius:6px;overflow:hidden}
 .lang button{margin:0;padding:6px 10px;border-radius:0;background:transparent;color:var(--acc);font-size:.85rem}
@@ -57,9 +57,9 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:cen
 .hint{font-size:.8rem;color:var(--mute);margin-top:6px}
 .hint a,.help{color:var(--acc);font-size:.8rem}
 .help{display:block;margin-top:4px}
-dialog{width:min(92vw,520px);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:18px}
+dialog{width:min(92vw,560px);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:20px}
 dialog::backdrop{background:rgba(0,0,0,.5)}
-dialog h2{margin-bottom:4px}
+dialog h2{margin-bottom:6px}
 .chart{position:relative;margin-bottom:6px}
 .chart svg{display:block;width:100%;height:64px;border-radius:6px;background:var(--bg)}
 .chart path{stroke:var(--bg);stroke-width:1;vector-effect:non-scaling-stroke;cursor:pointer}
@@ -71,7 +71,7 @@ dialog h2{margin-bottom:4px}
 .tip .act{margin-top:6px}
 #toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px;align-items:flex-start;max-width:min(92vw,560px);padding:12px 14px;border-radius:8px;background:var(--card);color:var(--ink);border:1px solid var(--err);border-left:6px solid var(--err);box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:.9rem}
 #toast button{margin:0;padding:0 6px;line-height:1.2;font-size:1.2rem;background:transparent;color:var(--mute)}
-#prog{margin:-4px 0 16px}.pt{display:flex;justify-content:space-between;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
+#prog{margin:-4px 0 16px}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
 .explain{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:.9rem}.explain p{margin:4px 0 6px}
 #fsvg{display:block;width:100%;height:150px;border-radius:6px;background:var(--bg);touch-action:none}
 #fsvg .fc{fill:#3b82c4;fill-opacity:.35;stroke:#3b82c4;stroke-width:1.2;vector-effect:non-scaling-stroke}
@@ -101,7 +101,9 @@ dialog h2{margin-bottom:4px}
 #lsvg{display:block;width:100%;height:110px;border-radius:6px;background:var(--bg);margin-top:8px;touch-action:none}
 #lsvg .lp{fill:var(--acc);fill-opacity:.3;stroke:var(--acc);stroke-width:1.2;vector-effect:non-scaling-stroke}
 #lsvg .lh{fill:none;stroke:#d6336c;stroke-width:1.2;vector-effect:non-scaling-stroke}
-footer{display:flex;justify-content:center;padding:8px 0 24px}
+footer{display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 0 32px;color:var(--mute);font-size:.9rem}
+footer a{color:var(--acc);text-decoration:none}
+footer a:hover{text-decoration:underline}
 a.coffee{margin:0;display:inline-flex;gap:8px;align-items:center;background:#ffc439;color:#111!important;border-radius:999px;padding:10px 20px;font-weight:600;text-decoration:none}
 a.coffee.soon{opacity:.6}
 h2.ic{display:flex;align-items:center;gap:8px}
@@ -114,12 +116,37 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .stp input{width:64px;padding:7px 4px;text-align:center;-moz-appearance:textfield;appearance:textfield}
 .stp input::-webkit-outer-spin-button,.stp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .stp button{margin:0!important;min-width:36px;padding:7px 0!important;font-size:1.1rem!important;line-height:1}
+.lib-card{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px;background:var(--bg)}
+.lib-card h3{margin:0 0 4px;font-size:1rem}
+.lib-card p{margin:0 0 10px;font-size:.85rem;color:var(--mute)}
+.lib-preview{display:block;width:100%;height:42px;margin:8px 0 10px;border-radius:6px;background:var(--card);overflow:hidden}
+.lib-preview svg{display:block;width:100%;height:100%}
+.lib-theme{border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden;background:var(--card)}
+.lib-theme>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:13px 14px;font-weight:600;background:var(--bg);user-select:none}
+.lib-theme>summary::-webkit-details-marker{display:none}
+.lib-theme>summary:before{content:"＋";display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--acc);color:var(--on);font-size:16px;line-height:1}
+.lib-theme[open]>summary:before{content:"−"}
+.lib-theme .theme-count{margin-left:auto;color:var(--mute);font-size:.8rem;font-weight:400}
+.lib-theme-body{padding:12px}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.lib-grid .lib-card{margin:0;min-width:0}
+.lib-theme .theme-icon{font-size:1.15rem}
 </style>
 </head>
 <body>
 <main>
 <header>
-<div class="brand"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10"/><circle cx="20" cy="20" r="12"/><path d="M22 8 14 22h6l-2 10 9-15h-6z"/></svg><h1 data-i="title"></h1></div>
+<div class="brand">
+  <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+    <defs><linearGradient id="forgeFire" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff06a"/><stop offset=".42" stop-color="#ff9d00"/><stop offset="1" stop-color="#ff2d00"/></linearGradient><linearGradient id="forgeEdge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#354351"/><stop offset="1" stop-color="#10151c"/></linearGradient><filter id="forgeGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4"/></filter></defs>
+    <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#forgeEdge)" stroke="#526170" stroke-width="1.2"/>
+    <path d="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" fill="#ff4b00" opacity=".5" filter="url(#forgeGlow)"/>
+    <path d="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" fill="url(#forgeFire)"/>
+    <path d="M27 14 18 27h7l-3 10 12-17h-8z" fill="#fffbe9" stroke="#fff" stroke-width=".45" stroke-linejoin="round"/>
+    <path d="M7 14h5M36 8l3-2M39 34l3 2" stroke="#ffd166" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  <h1 data-i="title"></h1>
+</div>
 <div class="tools">
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
 <a class="alt small icon" id="mail" data-ia="title:contact;aria-label:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg></a>
@@ -133,6 +160,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <dialog id="cfg" aria-labelledby="cfgt">
 <h2 id="cfgt" data-i="settingsTitle"></h2>
+<button class="alt small" id="openHelp" type="button" style="margin-bottom:12px">❓ <span data-i="helpBtn"></span></button>
 <label for="prov" data-i="provider"></label>
 <select id="prov"><option value="gemini">Gemini</option><option value="hf">Hugging Face</option><option value="oa" data-i="provOA"></option></select>
 <div id="pg">
@@ -179,6 +207,13 @@ h2.ic{display:flex;align-items:center;gap:8px}
 </div>
 </dialog>
 
+<!-- Modal d'Aide -->
+<dialog id="helpDlg" aria-labelledby="helpt">
+<h2 id="helpt" data-i="helpTitle"></h2>
+<div id="helpBody" style="font-size:.9rem; line-height:1.5; margin-top:10px"></div>
+<div class="actions" style="margin-top:20px"><button class="alt" id="closeHelp" type="button" data-i="close">Fermer</button></div>
+</dialog>
+
 <dialog id="cfm"><p id="cfmt"></p><div class="actions"><button id="cfmy" type="button" data-i="yes"></button><button class="alt" id="cfmn" type="button" data-i="no"></button></div></dialog>
 
 <div class="layout">
@@ -187,6 +222,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
 <button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
 <button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
+<button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
 </div>
 
 <section data-block="req">
@@ -210,7 +246,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button class="alt small icon danger" id="hdel" type="button" data-ia="title:del;aria-label:del"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button></div>
 </section>
 
-<section data-block="edit">
+<section data-block="edit" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="edT"></span></h2></div>
 <div class="row">
 <div><label for="edname" data-i="name"></label><input id="edname"></div>
@@ -233,7 +269,17 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button id="edgo" type="button" data-i="edGo"></button>
 </section>
 
-<div id="prog" hidden><div class="pt"><span id="progk"></span><span id="progs"></span></div><div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="progf"></i></div></div>
+<!-- Section Bibliothèque de séances -->
+<section data-block="lib" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2></div>
+<p class="hint" data-i="libDesc"></p>
+<div id="libContainer" style="margin-top:12px"></div>
+</section>
+
+<div id="prog" hidden>
+  <div class="pt"><span id="progk"></span><div style="display:flex;gap:8px;align-items:center"><span id="progs"></span><button class="alt small danger" id="stopGen" type="button" data-i="stopGen" style="padding:2px 8px!important;font-size:.8rem!important">Stop</button></div></div>
+  <div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="progf"></i></div>
+</div>
 <div id="msg" role="status"></div>
 
 <section id="prev" data-block="prev" hidden>
@@ -282,17 +328,19 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 </aside>
 </div>
-<footer><a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a></footer>
+<footer>
+  <a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a>
+  <div>Powered by <a href="https://intervals.icu" target="_blank" rel="noopener">intervals.icu</a> — Open training analytics & calendar</div>
+</footer>
 </main>
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
 const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
-// À renseigner : lien PayPal / « Buy me a coffee » et dépôt GitHub (laisser vide tant que non créé)
-const LINKS = {coffee: "", github: "", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
+const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/paceforge", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
 let lang = store.get("si_lang") === "fr" ? "fr" : "en";
 
-// ---------- Traductions : T[clé] = [anglais, français] ----------
+// ---------- Traductions ----------
 const T = {
 docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
 title:["PaceForge","PaceForge"],
@@ -366,14 +414,25 @@ mvUp:["Move up","Monter"], mvDown:["Move down","Descendre"], dup:["Duplicate","D
 addWarm:["+ Warm-up","+ Échauffement"], addWork:["+ Interval","+ Intervalle"], addRec:["+ Recovery","+ Récupération"], addCool:["+ Cool-down","+ Retour au calme"], addGrp:["+ Repeat block","+ Bloc de répétitions"],
 edHintW:["Intensity in watts (follows the “Power units” setting above).","Intensité en watts (selon le réglage « Unités de puissance » ci-dessus)."], edHintP:["Intensity in % of FTP.","Intensité en % de la FTP."], edHintPace:["Intensity in % of threshold pace.","Intensité en % de l'allure seuil."],
 edTot:["Estimated duration: {0}","Durée estimée : {0}"], edGo:["Build preview","Générer l'aperçu"], edBuilt:["Workout built: check the preview, then add it to your calendar.","Séance construite : vérifie l'aperçu, puis ajoute-la au calendrier."], edDefName:["My workout","Ma séance"],
-tabAi:["AI generator","Générateur IA"], tabEd:["Manual editor","Éditeur manuel"], modeLbl:["Workout creation mode","Mode de création de la séance"],
+tabAi:["AI generator","Générateur IA"], tabEd:["Manual editor","Éditeur manuel"], tabLib:["Library","Bibliothèque"], modeLbl:["Workout creation mode","Mode de création de la séance"],
 fitPer:["Fitness time range","Période du graphique fitness"], p1m:["1 month","1 mois"], p2m:["2 months","2 mois"], p3m:["3 months","3 mois"], p6m:["6 months","6 mois"], p1y:["1 year","1 an"],
 tryNext:["{0} failed, trying {1}…","{0} a échoué, essai de {1}…"], alsoFailed:[" ({0} other model(s) also failed)"," ({0} autre(s) modèle(s) a/ont aussi échoué)"], usedModel:[" · fallback model: {0}"," · modèle de secours : {0}"],
-repDec:["Fewer repetitions","Moins de répétitions"], repInc:["More repetitions","Plus de répétitions"]
+repDec:["Fewer repetitions","Moins de répétitions"], repInc:["More repetitions","Plus de répétitions"],
+helpBtn:["Help & API keys guide","Aide & guide des clés API"],
+helpTitle:["How PaceForge works & getting API keys","Comment fonctionne PaceForge & obtenir ses clés API"],
+helpContent:[
+  `<h3>1. How it works</h3><p>PaceForge allows you to build structured training workouts either by prompting an AI assistant, writing them manually, or picking from a built-in library. Once generated or selected, you can review the workout graph and send it directly to your <b>intervals.icu</b> calendar with one click.</p><h3>2. Getting your intervals.icu API key</h3><p>To send workouts to your calendar and fetch your fitness data/FTP, you need your intervals.icu API key:<br>• Go to <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Scroll down to the <b>Developer Settings</b> section.<br>• Copy your API key and paste it into the PaceForge settings.</p><h3>3. Getting an AI Provider Key</h3><p>• <b>Gemini (Recommended):</b> Free and fast. Get a key from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face:</b> Free tier available. Generate a token in your <a href="https://huggingface.co/settings/tokens" target="_blank">HF Settings</a>.<br>• <b>OpenAI-compatible:</b> Use free tiers from <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a>, or Mistral.</p>`,
+  `<h3>1. Comment ça fonctionne</h3><p>PaceForge vous permet de concevoir des séances structurées soit en décrivant votre envie à une IA, soit via l'éditeur manuel, soit en piochant dans la bibliothèque. Une fois prête, vérifiez le graphique et envoyez la séance directement dans votre calendrier <b>intervals.icu</b>.</p><h3>2. Obtenir sa clé API intervals.icu</h3><p>Indispensable pour envoyer les séances et récupérer votre FTP et vos charges :<br>• Rendez-vous sur <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Descendez jusqu'à la section <b>Developer Settings</b> (Paramètres développeur).<br>• Copiez votre clé API et collez-la dans les réglages de PaceForge.</p><h3>3. Obtenir une clé de Fournisseur d'IA</h3><p>• <b>Gemini (Recommandé) :</b> Gratuit et rapide. Obtenez une clé sur <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face :</b> Offre gratuite disponible. Générez un jeton dans vos <a href="https://huggingface.co/settings/tokens" target="_blank">Paramètres HF</a>.<br>• <b>Compatible OpenAI :</b> Utilisez les clés gratuites de <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> ou Mistral.</p>`
+],
+libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
+lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
+lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
+lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc:["High-intensity intervals to boost maximal aerobic power.","Intervalles de haute intensité pour booster la puissance aérobie maximale."],
+lib4Name:["Endurance Zone 2 (1h30)","Endurance Zone 2 (1h30)"], lib4Desc:["Steady aerobic endurance ride to build mitochondrial density.","Sortie d'endurance fondamentale continue pour développer la base aérobie."]
 };
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-let MSG = null, toastT, ptimer, phide;
+let MSG = null, toastT, ptimer, phide, abortGen = null;
 function toast(m){ $("toastt").textContent = m; $("toast").hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { $("toast").hidden = true; }, 12000); }
 function say(k, cls, ...a){
   const txt = k ? t(k, ...a) : "";
@@ -383,14 +442,17 @@ function say(k, cls, ...a){
 $("toastx").onclick = () => { $("toast").hidden = true; };
 function progStart(k){
   clearInterval(ptimer); clearTimeout(phide); const t0 = Date.now();
+  abortGen = new AbortController();
   $("progk").textContent = t(k); $("prog").hidden = false;
   const upd = () => { const sec = (Date.now() - t0) / 1000; $("progf").style.width = (92 * (1 - Math.exp(-sec / 20))).toFixed(1) + "%"; $("progs").textContent = Math.round(sec) + " s"; $("prog").querySelector(".pb").setAttribute("aria-valuenow", parseInt($("progf").style.width)); };
   upd(); ptimer = setInterval(upd, 250);
 }
 function progEnd(){
-  clearInterval(ptimer); if($("prog").hidden) return; $("progf").style.width = "100%";
+  clearInterval(ptimer); abortGen = null; if($("prog").hidden) return; $("progf").style.width = "100%";
   phide = setTimeout(() => { $("prog").hidden = true; $("progf").style.width = "0"; }, 500);
 }
+$("stopGen").onclick = () => { if(abortGen) abortGen.abort(); };
+
 const ACT = {Ride: ["Ride", "Vélo"], VirtualRide: ["Virtual ride", "Vélo virtuel"], Run: ["Run", "Course à pied"], VirtualRun: ["Virtual run", "Course virtuelle"], TrailRun: ["Trail run", "Trail"], Swim: ["Swim", "Natation"], WeightTraining: ["Strength", "Renforcement"], Walk: ["Walk", "Marche"], Hike: ["Hike", "Randonnée"], Workout: ["Workout", "Séance"], Rowing: ["Rowing", "Aviron"], NordicSki: ["Nordic ski", "Ski nordique"], Yoga: ["Yoga", "Yoga"]};
 const actT = ty => (ACT[ty] || [ty, ty])[lang === "fr" ? 1 : 0] || "";
 const errText = e => e.name === "AbortError" ? t("timeout") : e.name === "TypeError" ? t("cors") : e.message;
@@ -405,7 +467,7 @@ function ask(k){
   });
 }
 
-// ---------- Réglages ----------
+// ---------- Réglages & Aide ----------
 const FIELDS = ["gkey","model","ikey","aid","think","prov","hfkey","hfmodel","oaurl","oakey","oamodel"];
 const DEF = {model: "gemini-3.7-flash", aid: "0", think: "low", prov: "gemini", hfmodel: "meta-llama/Llama-3.1-8B-Instruct", oaurl: "https://api.groq.com/openai/v1", oamodel: ""};
 const SECRET = ["gkey","ikey","hfkey","oakey"];
@@ -444,6 +506,12 @@ $("close").onclick = () => $("cfg").close();
 $("cfg").addEventListener("close", loadSettings);
 $("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
 $("clear").onclick = async () => { if(!(await ask("cfmClear"))) return; SECRET.forEach(k => store.set("si_" + k, "")); loadSettings(); };
+
+$("openHelp").onclick = () => {
+  $("helpBody").innerHTML = t("helpContent");
+  $("helpDlg").showModal();
+};
+$("closeHelp").onclick = () => $("helpDlg").close();
 
 async function fetchList(url, key){
   const r = await fetch(url, key ? {headers: {Authorization: "Bearer " + key}} : {});
@@ -795,8 +863,8 @@ async function generate(ctx){
   else{ key = $("gkey").value.trim(); model = $("model").value.trim() || DEF.model; }
   const ask1 = $("prompt").value.trim(), bike = isBike(sport), ftp = bike ? curFtp() : 0;
   if(prov === "oa" && !$("oaurl").value.trim()) return bad("needUrl");
-  if(!key) return bad(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG");
-  if(!model) return bad("needM");
+  if(!key){ bad(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG"); $("cfg").showModal(); return; }
+  if(!model){ bad("needM"); $("cfg").showModal(); return; }
   if(!ask1) return bad("needAsk");
   const durTxt = $("dur").value ? `Total duration: about ${$("dur").value} minutes (warm-up and cool-down included).\n` : "";
   const ftpTxt = ftp > 0 ? `Athlete FTP (${$("ftpsel").value === "in" ? "indoor" : "outdoor"}): ${ftp} W (intensities stay expressed in % of FTP).\n` : "";
@@ -804,7 +872,11 @@ async function generate(ctx){
   $("gen").disabled = true; $("rand").disabled = true;
   const t0 = Date.now();
   say(null); progStart("genning");
-  const timed = async (ms, fn) => { const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), ms); try{ return await fn(ctl.signal); }finally{ clearTimeout(to); } };
+  const timed = async (ms, fn) => {
+    const signal = abortGen ? abortGen.signal : new AbortController().signal;
+    const to = setTimeout(() => { if(abortGen) abortGen.abort(); }, ms);
+    try{ return await fn(signal); }finally{ clearTimeout(to); }
+  };
   const parse = txt => {
     const m = txt.replace(/<think>[\s\S]*?<\/think>/g, "").match(/\{[\s\S]*\}/);
     const w = JSON.parse((m ? m[0] : txt).replace(/```json|```/g, "").trim());
@@ -834,15 +906,14 @@ async function generate(ctx){
       });
       w = parse(txt);
     }else{
-      // modèle sélectionné d'abord ; en cas d'erreur, on essaie les autres modèles flash disponibles
-      const errs = []; let cands = [model];
+      let cands = [model], errs = [];
       for(let n = 0; n < cands.length; n++){
         try{
           const r = await callGemini(cands[n], n ? 60000 : 120000);
           w = r.w; usage = r.usage; if(n) usage += t("usedModel", cands[n]);
           break;
         }catch(e){
-          errs.push(e); if(e.fatal) break;
+          errs.push(e); if(e.fatal || (abortGen && abortGen.signal.aborted)) break;
           if(n === 0){
             if(!modelList.length){ try{ modelList = await geminiModels(key); }catch(_){} }
             cands = [model, ...modelList.filter(x => x !== model)];
@@ -850,14 +921,17 @@ async function generate(ctx){
           if(n + 1 < cands.length) $("progk").textContent = t("tryNext", cands[n], cands[n + 1]);
         }
       }
-      if(!w) throw new Error(errText(errs[0]) + (errs.length > 1 ? t("alsoFailed", errs.length - 1) : ""));
+      if(!w) throw new Error(errs[0].name === "AbortError" ? t("timeout") : errs[0].message);
     }
     $("name").value = w.name;
     $("desc").value = $("unit").value === "w" && bike && ftp > 0 ? toWatts(w.description, ftp) : w.description;
     EXPL = {en: w.explanation_en || "", fr: w.explanation_fr || ""}; selLine = null; renderChart();
     $("prev").hidden = false; say("genDone", "ok", Math.round((Date.now() - t0) / 1000), usage);
   }catch(e){
-    say(prov === "hf" ? "errH" : prov === "oa" ? "errA" : "errG", "err", errText(e));
+    if(!(e.name === "AbortError")){
+      say(prov === "hf" ? "errH" : prov === "oa" ? "errA" : "errG", "err", errText(e));
+      $("cfg").showModal();
+    }
   }
   progEnd();
   $("gen").disabled = false; $("rand").disabled = false;
@@ -912,6 +986,226 @@ async function smartRandom(){
 }
 $("rand").onclick = smartRandom;
 
+// ---------- Bibliothèque de séances ----------
+const LIBRARY = [
+  {
+    name_en: "Sweet Spot 3 x 10 min", name_fr: "Sweet Spot 3 x 10 min",
+    desc_en: "Warmup\n- 10m 50%\n- 5m 65%\n\nMain set 3x\n- 10m 90%\n- 5m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 10m 50%\n- 5m 65%\n\nSérie 3x\n- 10m 90%\n- 5m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride",
+    expl_en: "Develops aerobic power and muscular endurance efficiently without excessive fatigue.",
+    expl_fr: "Développe efficacement la puissance aérobie et l'endurance musculaire sans fatigue excessive."
+  },
+  {
+    name_en: "Threshold Over-Unders 4 x 8 min", name_fr: "Over-Unders au seuil 4 x 8 min",
+    desc_en: "Warmup\n- 10m 50%\n- 5m 70%\n\nMain set 4x\n- 2m 102%\n- 2m 90%\n- 2m 102%\n- 2m 90%\n- 4m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 10m 50%\n- 5m 70%\n\nSérie 4x\n- 2m 102%\n- 2m 90%\n- 2m 102%\n- 2m 90%\n- 4m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride",
+    expl_en: "Trains your body to clear lactate efficiently under high workloads around FTP.",
+    expl_fr: "Entraîne l'organisme à éliminer efficacement le lactate sous forte charge autour du seuil."
+  },
+  {
+    name_en: "VO2max Intervals 5 x 3 min", name_fr: "Intervalles VO2max 5 x 3 min",
+    desc_en: "Warmup\n- 10m 50%\n- 5m 70%\n- 3x 30s 115%\n- 2m 50%\n\nMain set 5x\n- 3m 112%\n- 3m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 10m 50%\n- 5m 70%\n- 3x 30s 115%\n- 2m 50%\n\nSérie 5x\n- 3m 112%\n- 3m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride",
+    expl_en: "Increases maximal oxygen uptake (VO2max) and high-intensity tolerance.",
+    expl_fr: "Augmente la consommation maximale d'oxygène (VO2max) et la tolérance aux efforts intenses."
+  },
+  {
+    name_en: "Endurance Zone 2 (1h30)", name_fr: "Endurance Zone 2 (1h30)",
+    desc_en: "Warmup\n- 15m 55%\n\nMain set\n- 1h00 68%\n\nCooldown\n- 15m 50%",
+    desc_fr: "Échauffement\n- 15m 55%\n\nSérie\n- 1h00 68%\n\nRetour au calme\n- 15m 50%",
+    sport: "Ride",
+    expl_en: "Builds solid aerobic base and fat oxidation capacity with steady aerobic rhythm.",
+    expl_fr: "Construit une solide base aérobie et stimule l'oxydation des graisses en régime stable."
+  },
+  {
+    name_en: "Ramp to the Redline", name_fr: "Montée progressive au seuil",
+    desc_en: "Warmup\n- 10m 50%\n- 5m 65%\n\nMain set\n- 8m 75%\n- 8m 85%\n- 8m 95%\n- 5m 55%\n\nRepeat 2x\n- 3m 105%\n- 3m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 10m 50%\n- 5m 65%\n\nSérie principale\n- 8m 75%\n- 8m 85%\n- 8m 95%\n- 5m 55%\n\nRépéter 2x\n- 3m 105%\n- 3m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride", expl_en: "A progressive session that builds toward threshold, then adds a controlled high-intensity finish.", expl_fr: "Une séance progressive jusqu'au seuil, suivie d'une fin intense mais maîtrisée."
+  },
+  {
+    name_en: "Punchy 30/30s", name_fr: "Explosivité 30/30",
+    desc_en: "Warmup\n- 12m 50%\n- 4m 65%\n\nMain set 2x\n- 8x 30s 120%\n- 30s 50%\n- 5m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 12m 50%\n- 4m 65%\n\nSérie 2x\n- 8x 30s 120%\n- 30s 50%\n- 5m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride", expl_en: "Repeated short surges train aerobic power and the ability to recover between hard efforts.", expl_fr: "Des accélérations courtes répétées développent la puissance aérobie et la récupération entre efforts."
+  },
+  {
+    name_en: "Tempo Builder 3 x 12 min", name_fr: "Tempo 3 x 12 min",
+    desc_en: "Warmup\n- 12m 50%\n- 5m 65%\n\nMain set 3x\n- 12m 82%\n- 4m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 12m 50%\n- 5m 65%\n\nSérie 3x\n- 12m 82%\n- 4m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride", expl_en: "Improves sustainable tempo power with manageable recovery between blocks.", expl_fr: "Améliore la puissance soutenable au tempo avec une récupération maîtrisée entre les blocs."
+  },
+  {
+    name_en: "Cadence Surge 6 x 2 min", name_fr: "Cadence élevée 6 x 2 min",
+    desc_en: "Warmup\n- 10m 50%\n- 5m 65%\n\nMain set 6x\n- 2m 100%\n- 3m 55%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 10m 50%\n- 5m 65%\n\nSérie 6x\n- 2m 100%\n- 3m 55%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride", expl_en: "Short controlled efforts pair well with a quick, smooth cadence focus.", expl_fr: "Des efforts courts et contrôlés à associer à une cadence rapide et fluide."
+  },
+  {
+    name_en: "Recovery Spin (40 min)", name_fr: "Vélo récupération (40 min)",
+    desc_en: "Warmup\n- 8m 45%\n\nMain set\n- 24m 55%\n\nCooldown\n- 8m 45%",
+    desc_fr: "Échauffement\n- 8m 45%\n\nSérie\n- 24m 55%\n\nRetour au calme\n- 8m 45%",
+    sport: "Ride", expl_en: "A gentle spin to keep the legs moving without adding much training stress.", expl_fr: "Un pédalage facile pour faire tourner les jambes sans ajouter beaucoup de fatigue."
+  },
+  {
+    name_en: "Sprint Sparks 8 x 15 sec", name_fr: "Sprints explosifs 8 x 15 s",
+    desc_en: "Warmup\n- 12m 50%\n- 5m 65%\n\nMain set 8x\n- 15s 150%\n- 2m45 50%\n\nCooldown\n- 10m 50%",
+    desc_fr: "Échauffement\n- 12m 50%\n- 5m 65%\n\nSérie 8x\n- 15s 150%\n- 2m45 50%\n\nRetour au calme\n- 10m 50%",
+    sport: "Ride", expl_en: "Develops explosive acceleration with generous recovery to keep each sprint sharp.", expl_fr: "Développe l'accélération explosive avec une récupération longue pour garder chaque sprint puissant."
+  }
+  ,{
+    name_en:"Aerobic Foundation (75 min)",name_fr:"Fondations aérobie (75 min)",sport:"Ride",
+    desc_en:"Warmup\n- 10m 50%\n\nMain set\n- 55m 68%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 10m 50%\n\nSérie principale\n- 55m 68%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"A steady aerobic ride to build endurance with low fatigue.",expl_fr:"Une sortie aérobie régulière pour développer l'endurance avec peu de fatigue."
+  },{
+    name_en:"Threshold Blocks 3 x 10 min",name_fr:"Blocs au seuil 3 x 10 min",sport:"Ride",
+    desc_en:"Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 10m 98%\n- 5m 55%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 12m 50%\n- 5m 70%\n\nSérie 3x\n- 10m 98%\n- 5m 55%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"Builds the ability to sustain strong, controlled threshold efforts.",expl_fr:"Développe la capacité à maintenir des efforts soutenus au seuil."
+  },{
+    name_en:"VO2max 6 x 2 min",name_fr:"VO2max 6 x 2 min",sport:"Ride",
+    desc_en:"Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 6x\n- 2m 115%\n- 3m 55%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 12m 50%\n- 5m 70%\n\nSérie 6x\n- 2m 115%\n- 3m 55%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"Short high-intensity intervals target aerobic power and repeatability.",expl_fr:"Des intervalles intenses et courts ciblent la puissance aérobie et la répétition des efforts."
+  },{
+    name_en:"Endurance + Fast Finish (90 min)",name_fr:"Endurance avec finish rapide (90 min)",sport:"Ride",
+    desc_en:"Warmup\n- 10m 50%\n\nMain set\n- 60m 68%\n- 10m 82%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 10m 50%\n\nSérie principale\n- 60m 68%\n- 10m 82%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"Adds a controlled tempo finish after a long aerobic block.",expl_fr:"Ajoute une fin au tempo maîtrisée après un long bloc aérobie."
+  },{
+    name_en:"Recovery Reset (30 min)",name_fr:"Récupération douce (30 min)",sport:"Ride",
+    desc_en:"Warmup\n- 5m 45%\n\nMain set\n- 20m 52%\n\nCooldown\n- 5m 45%",desc_fr:"Échauffement\n- 5m 45%\n\nSérie principale\n- 20m 52%\n\nRetour au calme\n- 5m 45%",
+    expl_en:"Very easy movement for recovery days and tired legs.",expl_fr:"Un effort très facile pour les jours de récupération et les jambes fatiguées."
+  },{
+    name_en:"Cadence Ladder",name_fr:"Échelle de cadence",sport:"Ride",
+    desc_en:"Warmup\n- 10m 50%\n\nMain set\n- 3m 65%\n- 3m 70%\n- 3m 75%\n- 3m 80%\n- 3m 75%\n- 3m 70%\n\nCooldown\n- 8m 50%",desc_fr:"Échauffement\n- 10m 50%\n\nSérie principale\n- 3m 65%\n- 3m 70%\n- 3m 75%\n- 3m 80%\n- 3m 75%\n- 3m 70%\n\nRetour au calme\n- 8m 50%",
+    expl_en:"A smooth progression to practice cadence changes without maximal effort.",expl_fr:"Une progression fluide pour travailler les changements de cadence sans effort maximal."
+  },{
+    name_en:"Over-Under Progression 3 x 9 min",name_fr:"Progression over-under 3 x 9 min",sport:"Ride",
+    desc_en:"Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 3m 88%\n- 3m 103%\n- 3m 92%\n- 4m 55%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 12m 50%\n- 5m 70%\n\nSérie 3x\n- 3m 88%\n- 3m 103%\n- 3m 92%\n- 4m 55%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"Alternates just below and above threshold to improve control under fatigue.",expl_fr:"Alterner sous et au-dessus du seuil améliore le contrôle sous fatigue."
+  },{
+    name_en:"Sprint Technique 10 x 10 sec",name_fr:"Technique sprint 10 x 10 s",sport:"Ride",
+    desc_en:"Warmup\n- 15m 50%\n- 5m 65%\n\nMain set 10x\n- 10s 150%\n- 2m 50%\n\nCooldown\n- 10m 50%",desc_fr:"Échauffement\n- 15m 50%\n- 5m 65%\n\nSérie 10x\n- 10s 150%\n- 2m 50%\n\nRetour au calme\n- 10m 50%",
+    expl_en:"Brief accelerations with ample recovery to keep technique and power crisp.",expl_fr:"De brèves accélérations avec beaucoup de récupération pour préserver la technique et la puissance."
+  }
+
+];
+
+// Original PaceForge sessions organized around MyWhoosh's published workout themes.
+function extraWorkout(category, name_en, name_fr, desc_en, expl_en, expl_fr){
+ const desc_fr=desc_en.replace(/Warmup/g,"Échauffement").replace(/Main set/g,"Série principale").replace(/Cooldown/g,"Retour au calme");
+ return {category,name_en,name_fr,sport:"Ride",desc_en,desc_fr,expl_en,expl_fr};
+}
+LIBRARY.push(
+ extraWorkout("beginner", "Beginner — Stepped Intervals", "Débutant — Intervalles progressifs", "Warmup\n- 8m 50%\n\nMain set\n- 4m 60%\n- 4m 65%\n- 4m 70%\n- 4m 65%\n- 4m 60%\n\nCooldown\n- 6m 50%", "Gentle introduction to changing power targets.", "Introduction douce aux variations de puissance."),
+ extraWorkout("beginner", "Beginner — First Tempo Blocks", "Débutant — Premiers blocs tempo", "Warmup\n- 8m 50%\n- 4m 60%\n\nMain set 3x\n- 4m 72%\n- 3m 55%\n\nCooldown\n- 6m 50%", "Manageable tempo intervals with simple recoveries.", "Intervalles tempo accessibles avec récupérations simples."),
+ extraWorkout("beginner", "Beginner — Endurance Builder (45 min)", "Débutant — Endurance (45 min)", "Warmup\n- 7m 50%\n\nMain set\n- 31m 62%\n\nCooldown\n- 7m 50%", "Steady aerobic ride for newer structured-training riders.", "Sortie aérobie régulière pour débuter l’entraînement structuré."),
+ extraWorkout("short", "Under 35 Min — Lunch Break Spin", "Moins de 35 min — Pause déjeuner", "Warmup\n- 5m 50%\n\nMain set\n- 20m 65%\n\nCooldown\n- 5m 50%", "Low-stress ride when time is limited.", "Sortie facile quand le temps est limité."),
+ extraWorkout("short", "Under 35 Min — Quick Tempo", "Moins de 35 min — Tempo rapide", "Warmup\n- 5m 50%\n- 3m 65%\n\nMain set 3x\n- 4m 82%\n- 2m 55%\n\nCooldown\n- 4m 50%", "Compact tempo workout with controlled recoveries.", "Séance tempo compacte avec récupérations maîtrisées."),
+ extraWorkout("short", "Under 35 Min — 40/20 Primer", "Moins de 35 min — Préparation 40/20", "Warmup\n- 7m 50%\n- 3m 65%\n\nMain set 2x\n- 5x 40s 115%\n- 20s 50%\n- 3m 55%\n\nCooldown\n- 5m 50%", "Short on/off efforts in a time-efficient session.", "Des efforts courts alternés dans une séance efficace."),
+ extraWorkout("fast", "Fast Fitness — 30/15 Repeats", "Fitness rapide — Répétitions 30/15", "Warmup\n- 10m 50%\n- 4m 70%\n\nMain set 3x\n- 6x 30s 125%\n- 15s 50%\n- 3m 55%\n\nCooldown\n- 8m 50%", "Demanding HIIT based on repeated short surges.", "HIIT exigeant basé sur de courtes accélérations répétées."),
+ extraWorkout("fast", "Fast Fitness — Power Pop", "Fitness rapide — Explosions de puissance", "Warmup\n- 10m 50%\n- 4m 65%\n\nMain set 2x\n- 1m 120%\n- 2m 55%\n- 2m 105%\n- 3m 55%\n- 3m 95%\n- 4m 55%\n\nCooldown\n- 8m 50%", "Hard efforts train repeatability under fatigue.", "Des efforts difficiles entraînent la répétition malgré la fatigue."),
+ extraWorkout("testing", "Testing — FTP Ramp Prep", "Test — Préparation rampe FTP", "Warmup\n- 10m 50%\n- 5m 65%\n- 3m 75%\n- 2m 85%\n\nMain set\n- 3m 55%\n- 5m 70%\n\nCooldown\n- 8m 50%", "Preparation before a separate FTP test; not a test itself.", "Préparation avant un test FTP séparé ; ce n’est pas un test."),
+ extraWorkout("testing", "Testing — 3-Minute Power Check", "Test — Vérification puissance 3 min", "Warmup\n- 12m 50%\n- 4m 65%\n- 3x 20s 110%\n- 1m40 50%\n\nMain set\n- 3m 120%\n- 8m 50%\n\nCooldown\n- 8m 50%", "Hard three-minute benchmark; do it rested and treat targets as guides.", "Repère intense de trois minutes ; à réaliser reposé, cibles indicatives."),
+ extraWorkout("anaerobic", "Anaerobic — 1-Minute Repeats", "Anaérobie — Répétitions d’une minute", "Warmup\n- 12m 50%\n- 4m 70%\n\nMain set 5x\n- 1m 130%\n- 3m 50%\n\nCooldown\n- 10m 50%", "Repeatable high-power efforts with easy recoveries.", "Efforts puissants répétés avec récupérations faciles."),
+ extraWorkout("anaerobic", "Anaerobic — Surge and Settle", "Anaérobie — Accélérer puis stabiliser", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 45s 140%\n- 2m15 55%\n- 3m 95%\n- 4m 55%\n\nCooldown\n- 8m 50%", "Short surges followed by steady work.", "Courtes accélérations suivies d’un effort régulier."),
+ extraWorkout("endurance", "Endurance — Long Base (2 h)", "Endurance — Base longue (2 h)", "Warmup\n- 15m 55%\n\nMain set\n- 90m 68%\n- 5m 75%\n\nCooldown\n- 10m 50%", "Long aerobic ride; fuel and hydrate appropriately.", "Longue sortie aérobie ; penser à s’alimenter et s’hydrater."),
+ extraWorkout("endurance", "Endurance — Aerobic Waves", "Endurance — Vagues aérobies", "Warmup\n- 12m 50%\n\nMain set 4x\n- 10m 68%\n- 5m 75%\n\nCooldown\n- 10m 50%", "Small load changes add variety to a steady endurance ride.", "De petites variations de charge rythment la sortie d’endurance."),
+ extraWorkout("sprint", "Sprint — 6 x 12 Seconds", "Sprint — 6 x 12 secondes", "Warmup\n- 15m 50%\n- 5m 65%\n- 3x 10s 120%\n- 2m 50%\n\nMain set 6x\n- 12s 160%\n- 2m48 50%\n\nCooldown\n- 10m 50%", "Very short accelerations with generous recovery; keep each crisp.", "Accélérations très courtes et récupération généreuse ; privilégier la qualité."),
+ extraWorkout("sprint", "Sprint — Rolling Starts", "Sprint — Départs lancés", "Warmup\n- 15m 50%\n- 5m 65%\n\nMain set 5x\n- 20s 145%\n- 2m40 50%\n\nCooldown\n- 10m 50%", "Practise launching hard from a rolling pace.", "Travaille les départs puissants en roulant."),
+ extraWorkout("sweetspot", "Sweet Spot — 4 x 8 min", "Sweet Spot — 4 x 8 min", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 8m 90%\n- 3m 55%\n\nCooldown\n- 10m 50%", "Time-efficient sweet spot for aerobic power and muscular endurance.", "Sweet spot efficace pour la puissance aérobie et l’endurance musculaire."),
+ extraWorkout("sweetspot", "Sweet Spot — Long Blocks 2 x 20", "Sweet Spot — Blocs longs 2 x 20", "Warmup\n- 15m 50%\n- 5m 70%\n\nMain set 2x\n- 20m 88%\n- 5m 55%\n\nCooldown\n- 10m 50%", "Long controlled blocks build sustained power below threshold.", "De longs blocs maîtrisés développent la puissance soutenue sous le seuil."),
+ extraWorkout("taper", "Taper — Openers (40 min)", "Affûtage — Réveils musculaires (40 min)", "Warmup\n- 10m 50%\n\nMain set\n- 3m 75%\n- 3x 30s 115%\n- 2m30 50%\n- 3m 85%\n\nCooldown\n- 8m 50%", "Short pre-event opener to keep legs lively without much load.", "Courte activation avant événement sans forte charge."),
+ extraWorkout("taper", "Taper — Race-Eve Spin", "Affûtage — Veille de course", "Warmup\n- 8m 50%\n\nMain set\n- 12m 60%\n- 3x 15s 130%\n- 2m45 50%\n- 5m 60%\n\nCooldown\n- 5m 50%", "Very light spin with a few brief openers.", "Sortie très légère avec quelques accélérations brèves."),
+ extraWorkout("tempo", "Tempo — 2 x 20 min", "Tempo — 2 x 20 min", "Warmup\n- 12m 50%\n- 5m 65%\n\nMain set 2x\n- 20m 82%\n- 5m 55%\n\nCooldown\n- 10m 50%", "Builds durable tempo power and pacing discipline.", "Développe la puissance tempo durable et la régularité."),
+ extraWorkout("tempo", "Tempo — Progressive Finish", "Tempo — Fin progressive", "Warmup\n- 12m 50%\n\nMain set\n- 20m 65%\n- 10m 75%\n- 10m 82%\n- 5m 88%\n\nCooldown\n- 8m 50%", "Practise finishing a longer ride with control.", "Apprend à finir une sortie longue avec maîtrise."),
+ extraWorkout("threshold", "Threshold — 4 x 6 min", "Seuil — 4 x 6 min", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 6m 100%\n- 3m 55%\n\nCooldown\n- 10m 50%", "Sustained power around threshold with manageable intervals.", "Puissance soutenue autour du seuil avec intervalles accessibles."),
+ extraWorkout("threshold", "Threshold — Over-Under Waves", "Seuil — Vagues over-under", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 2m 95%\n- 1m 105%\n- 2m 95%\n- 1m 105%\n- 4m 55%\n\nCooldown\n- 10m 50%", "Alternating below and above threshold trains changes of pace.", "Alterner sous et au-dessus du seuil entraîne les changements de rythme."),
+ extraWorkout("uae", "UAE Team Emirates Style — Climb Simulation", "Style UAE Team Emirates — Simulation de montée", "Warmup\n- 15m 50%\n- 5m 70%\n\nMain set\n- 8m 85%\n- 8m 92%\n- 6m 98%\n- 5m 55%\n- 4m 105%\n\nCooldown\n- 10m 50%", "Original climbing session inspired by the team category, not an official team workout.", "Séance originale axée montée, inspirée de la catégorie, non officielle."),
+ extraWorkout("uae", "UAE Team Emirates Style — Race Surges", "Style UAE Team Emirates — Accélérations de course", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 3m 90%\n- 30s 125%\n- 3m30 55%\n\nCooldown\n- 10m 50%", "Original PaceForge session with race-style surges.", "Séance PaceForge originale avec accélérations de course."),
+ extraWorkout("adq", "UAE Team ADQ Style — Cadence and Tempo", "Style UAE Team ADQ — Cadence et tempo", "Warmup\n- 10m 50%\n- 5m 65%\n\nMain set 3x\n- 6m 82%\n- 2m 95%\n- 4m 55%\n\nCooldown\n- 8m 50%", "Original tempo-and-cadence session, not an official team workout.", "Séance tempo-cadence originale, non officielle."),
+ extraWorkout("adq", "UAE Team ADQ Style — Short Race Prep", "Style UAE Team ADQ — Prépa course courte", "Warmup\n- 12m 50%\n- 4m 70%\n\nMain set 5x\n- 1m 110%\n- 3m 55%\n\nCooldown\n- 8m 50%", "Original compact race-preparation workout with controlled hard efforts.", "Préparation course compacte originale avec efforts intenses maîtrisés."),
+ extraWorkout("vo2max", "VO2 Max — 4 x 4 min", "VO2 Max — 4 x 4 min", "Warmup\n- 12m 50%\n- 5m 70%\n- 3x 30s 115%\n- 2m 50%\n\nMain set 4x\n- 4m 112%\n- 4m 55%\n\nCooldown\n- 10m 50%", "Longer VO2-oriented intervals build aerobic power.", "Des intervalles longs orientés VO2 développent la puissance aérobie."),
+ extraWorkout("vo2max", "VO2 Max — 40/20s", "VO2 Max — 40/20", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 6x 40s 120%\n- 20s 50%\n- 4m 55%\n\nCooldown\n- 10m 50%", "Repeated 40/20s accumulate time at high aerobic demand.", "Les répétitions 40/20 accumulent du temps à forte sollicitation aérobie."),
+ extraWorkout("vo2max", "VO2 Max — Progressive 3-Minute Repeats", "VO2 Max — Répétitions progressives de 3 min", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set\n- 3m 108%\n- 3m 55%\n- 3m 110%\n- 3m 55%\n- 3m 112%\n- 3m 55%\n- 3m 114%\n- 3m 55%\n- 3m 115%\n\nCooldown\n- 10m 50%", "Progressively raises the target across five aerobic-power efforts.", "Augmente progressivement la cible sur cinq efforts de puissance aérobie."),
+);
+
+function workoutPreviewSvg(desc, sport, ftp){
+  const steps = parseWorkout(desc, sport, ftp);
+  if(!steps.length) return "";
+  const total = steps.reduce((sum, step) => sum + step.d, 0);
+  const peak = Math.max(120, ...steps.map(step => Math.max(step.a, step.b)));
+  const W = 300, H = 100;
+  let x = 0, path = "";
+  for(const step of steps){
+    const w = step.d / total * W;
+    const ya = H - step.a / peak * (H - 4), yb = H - step.b / peak * (H - 4);
+    path += `<path class="z${zoneOf((step.a + step.b) / 2)}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x+w).toFixed(2)} ${yb.toFixed(1)}L${(x+w).toFixed(2)} ${H}Z"/>`;
+    x += w;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${path}</svg>`;
+}
+
+function renderLibrary(){
+  const c = $("libContainer");
+  const themes = [
+    {id:"beginner",icon:"🌱",en:"Beginner",fr:"Débutant"},
+    {id:"short",icon:"⏱️",en:"Under 35 Min",fr:"Moins de 35 min"},
+    {id:"fast",icon:"⚡",en:"Fast Fitness",fr:"Fitness rapide"},
+    {id:"testing",icon:"🎯",en:"Testing & Preparation",fr:"Tests & préparation"},
+    {id:"anaerobic",icon:"🔥",en:"Anaerobic",fr:"Anaérobie"},
+    {id:"endurance",icon:"🚴",en:"Endurance",fr:"Endurance"},
+    {id:"sprint",icon:"💥",en:"Sprint",fr:"Sprint"},
+    {id:"sweetspot",icon:"🟠",en:"Sweet Spot",fr:"Sweet spot"},
+    {id:"taper",icon:"🏁",en:"Taper",fr:"Affûtage"},
+    {id:"tempo",icon:"📈",en:"Tempo",fr:"Tempo"},
+    {id:"threshold",icon:"🔥",en:"Threshold",fr:"Seuil"},
+    {id:"uae",icon:"🏔️",en:"UAE Team Emirates Style",fr:"Style UAE Team Emirates"},
+    {id:"adq",icon:"🚴‍♀️",en:"UAE Team ADQ Style",fr:"Style UAE Team ADQ"},
+    {id:"vo2max",icon:"⚡",en:"VO₂ Max",fr:"VO₂ Max"},
+    {id:"recovery",icon:"🌿",en:"Recovery",fr:"Récupération"}
+  ];
+  const groups=themes.map(theme=>({...theme,items:[]}));
+  const categorize=item=>{
+    if(item.category) return item.category;
+    const n=(item.name_en+" "+item.name_fr).toLowerCase();
+    if(/recovery|récupération/.test(n)) return "recovery";
+    if(/vo2|max|punchy|explosif/.test(n)) return "vo2max";
+    if(/sprint/.test(n)) return "sprint";
+    if(/threshold|seuil|over-under|redline/.test(n)) return "threshold";
+    if(/sweet spot/.test(n)) return "sweetspot";
+    if(/tempo|cadence|fast finish/.test(n)) return "tempo";
+    if(/endurance|aerobic|aérobie/.test(n)) return "endurance";
+    if(/uae team em/.test(n)) return "uae";
+    if(/uae team adq/.test(n)) return "adq";
+    if(/beginner|débutant/.test(n)) return "beginner";
+    return "endurance";
+  };
+  LIBRARY.forEach((item,idx)=>{const group=groups.find(g=>g.id===categorize(item))||groups[5];group.items.push({item,idx});});
+  c.innerHTML=groups.filter(g=>g.items.length).map(group=>`<details class="lib-theme">
+    <summary><span class="theme-icon">${group.icon}</span><span>${esc(lang==="fr"?group.fr:group.en)}</span><span class="theme-count">${group.items.length} ${lang==="fr"?"séances":"workouts"}</span></summary>
+    <div class="lib-theme-body"><div class="lib-grid">${group.items.map(({item,idx})=>{
+      const title=lang==="fr"?item.name_fr:item.name_en;
+      const desc=lang==="fr"?item.expl_fr:item.expl_en;
+      const chart=workoutPreviewSvg(item.desc_en,item.sport,curFtp());
+      return `<div class="lib-card"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview">${chart}</div><p>${esc(desc)}</p><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div>`;
+    }).join("")}</div></div>
+  </details>`).join("");
+}
+$("libContainer").onclick = e => {
+  const btn = e.target.closest("[data-lib]"); if(!btn) return;
+  const item = LIBRARY[+btn.dataset.lib];
+  $("sport").value = item.sport; syncUnit();
+  $("name").value = lang === "fr" ? item.name_fr : item.name_en;
+  $("desc").value = lang === "fr" ? item.desc_fr : item.desc_en;
+  EXPL = {en: item.expl_en, fr: item.expl_fr}; selLine = null;
+  // Keep the Library tab active while showing the preview.
+  $("prev").hidden = false; renderChart();
+  $("prev").scrollIntoView({behavior: "smooth", block: "start"});
+  say("edBuilt", "ok");
+};
+
 // ---------- Historique et envoi ----------
 const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
 function renderHist(){
@@ -961,7 +1255,7 @@ function renderExplain(steps){
   el.hidden = false;
 }
 
-// ---------- Graphe fitness (CTL / ATL / TSB, période au choix) ----------
+// ---------- Graphe fitness ----------
 const fitDays = () => +$("fper").value || 60;
 async function loadFit(){ LAST.fit = await icu(`/wellness?oldest=${daysAgo(fitDays() - 1)}&newest=${daysAgo(0)}`); renderFit(); }
 $("fper").onchange = () => { store.set("si_fper", $("fper").value); loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }); };
@@ -1063,27 +1357,34 @@ $("edsport").value = $("sport").value;
   $(a).addEventListener("change", () => { $(b).value = $(a).value; });
 });
 
-// ---------- Bascule IA / éditeur manuel ----------
-let mode = store.get("si_mode") === "edit" ? "edit" : "ai";
+// ---------- Bascule des modes (AI / Edit / Lib) ----------
+let mode = store.get("si_mode") || "ai";
 function applyMode(){
   document.querySelector('[data-block="req"]').hidden = mode !== "ai";
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
+  document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
   document.querySelectorAll(".mode button").forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
 }
 document.querySelectorAll(".mode button").forEach(b => {
   b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); };
-  b.onkeydown = e => { if(e.key === "ArrowLeft" || e.key === "ArrowRight"){ mode = mode === "ai" ? "edit" : "ai"; store.set("si_mode", mode); applyMode(); document.querySelector(`.mode [data-m="${mode}"]`).focus(); } };
+  b.onkeydown = e => {
+    const modes = ["ai", "edit", "lib"]; let idx = modes.indexOf(mode);
+    if(e.key === "ArrowLeft") idx = (idx - 1 + modes.length) % modes.length;
+    else if(e.key === "ArrowRight") idx = (idx + 1) % modes.length;
+    else return;
+    mode = modes[idx]; store.set("si_mode", mode); applyMode(); document.querySelector(`.mode [data-m="${mode}"]`).focus();
+  };
 });
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
-let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit"); }catch(e){}
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
     const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
@@ -1102,12 +1403,12 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  setLinks(); fillFtp(); profText(); badges(); renderHist(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); edRender();
+  setLinks(); fillFtp(); profText(); badges(); renderHist(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); edRender(); renderLibrary();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 $("date").value = iso(new Date());
-applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender();
+applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
