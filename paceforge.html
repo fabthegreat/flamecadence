@@ -275,8 +275,12 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <!-- Section Bibliothèque de séances -->
 <section data-block="lib" hidden>
-<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2>
-<select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2></div>
+<div class="row">
+<div><label for="libftp" data-i="ftpLbl"></label><select id="libftp"><option value="in"></option><option value="out"></option></select></div>
+<div><label for="libunit" data-i="unitLbl"></label><select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px">
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
 </section>
@@ -435,6 +439,7 @@ helpContent:[
   `<h3>1. Comment ça fonctionne</h3><p>PaceForge vous permet de concevoir des séances structurées soit en décrivant votre envie à une IA, soit via l'éditeur manuel, soit en piochant dans la bibliothèque. Une fois prête, vérifiez le graphique et envoyez la séance directement dans votre calendrier <b>intervals.icu</b>.</p><h3>2. Obtenir sa clé API intervals.icu</h3><p>Indispensable pour envoyer les séances et récupérer votre FTP et vos charges :<br>• Rendez-vous sur <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Descendez jusqu'à la section <b>Developer Settings</b> (Paramètres développeur).<br>• Copiez votre clé API et collez-la dans les réglages de PaceForge.</p><h3>3. Obtenir une clé de Fournisseur d'IA</h3><p>• <b>Gemini (Recommandé) :</b> Gratuit et rapide. Obtenez une clé sur <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face :</b> Offre gratuite disponible. Générez un jeton dans vos <a href="https://huggingface.co/settings/tokens" target="_blank">Paramètres HF</a>.<br>• <b>Compatible OpenAI :</b> Utilisez les clés gratuites de <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> ou Mistral.</p>`
 ],
 libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
+libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
 lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
 lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
 lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc:["High-intensity intervals to boost maximal aerobic power.","Intervalles de haute intensité pour booster la puissance aérobie maximale."],
@@ -592,7 +597,7 @@ const isBike = s => /Ride/.test(s);
 function curFtp(){ return ($("ftpsel").value === "in" ? ICU.ftpIn : ICU.ftpOut) || 0; }
 function fillFtp(){
   const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
-  [$("ftpsel"), $("edftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
+  [$("ftpsel"), $("edftp"), $("libftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
 }
 function profText(){
   if(!$("prof")) return;
@@ -1305,6 +1310,12 @@ function workoutPreviewSvg(desc, sport, ftp){
 
 function renderLibrary(){
   const c = $("libContainer");
+  const q = ($("libsearch").value || "").trim().toLowerCase();
+  const matches = item => {
+    if(!q) return true;
+    const hay = [item.name_en, item.name_fr, item.expl_en, item.expl_fr, item.desc_en].join(" ").toLowerCase();
+    return q.split(/\s+/).every(w => hay.includes(w));
+  };
   const themes = [
     {id:"beginner",icon:"🌱",en:"Beginner",fr:"Débutant"},
     {id:"short",icon:"⏱️",en:"Under 35 Min",fr:"Moins de 35 min"},
@@ -1345,8 +1356,10 @@ function renderLibrary(){
     if(/beginner|débutant/.test(n)) return "beginner";
     return "endurance";
   };
-  LIBRARY.forEach((item,idx)=>{const group=groups.find(g=>g.id===categorize(item))||groups[5];group.items.push({item,idx});});
-  c.innerHTML=groups.filter(g=>g.items.length).map(group=>`<details class="lib-theme">
+  LIBRARY.forEach((item,idx)=>{ if(!matches(item)) return; const group=groups.find(g=>g.id===categorize(item))||groups[5]; group.items.push({item,idx}); });
+  const filled = groups.filter(g => g.items.length);
+  if(!filled.length){ c.innerHTML = `<div class="hint">${esc(t("libNo"))}</div>`; return; }
+  c.innerHTML=filled.map(group=>`<details class="lib-theme"${q ? " open" : ""}>
     <summary><span class="theme-icon">${group.icon}</span><span>${esc(lang==="fr"?group.fr:group.en)}</span><span class="theme-count">${group.items.length} ${lang==="fr"?"séances":"workouts"}</span></summary>
     <div class="lib-theme-body"><div class="lib-grid">${group.items.map(({item,idx})=>{
       const title=lang==="fr"?item.name_fr:item.name_en;
@@ -1356,6 +1369,7 @@ function renderLibrary(){
     }).join("")}</div></div>
   </details>`).join("");
 }
+$("libsearch").addEventListener("input", renderLibrary);
 $("libContainer").onclick = e => {
   const btn = e.target.closest("[data-lib]"); if(!btn) return;
   const item = LIBRARY[+btn.dataset.lib];
@@ -1373,6 +1387,9 @@ $("libContainer").onclick = e => {
 $("libunit").onchange = () => { $("unit").value = $("libunit").value; $("unit").dispatchEvent(new Event("change")); };
 $("unit").addEventListener("change", () => { $("libunit").value = $("unit").value; });
 $("libunit").value = $("unit").value;
+$("libftp").onchange = () => { $("ftpsel").value = $("libftp").value; $("ftpsel").dispatchEvent(new Event("change")); renderLibrary(); };
+$("ftpsel").addEventListener("change", () => { $("libftp").value = $("ftpsel").value; });
+$("libftp").value = $("ftpsel").value;
 
 // ---------- Historique et envoi ----------
 const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
@@ -1578,7 +1595,7 @@ document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang 
 $("date").value = iso(new Date());
 applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
-$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value;
+$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 loadAll();
 </script>
