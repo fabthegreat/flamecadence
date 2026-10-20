@@ -198,8 +198,6 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
 <label for="aid" data-i="aid"></label>
 <input id="aid">
-<h3 class="blk" data-i="icuData"></h3>
-<div class="lbl"><div id="prof" class="hint"></div><button class="alt small" id="rprof" type="button" data-i="refresh"></button></div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
 <button class="alt" id="close" type="button" data-i="close"></button>
@@ -216,6 +214,12 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <dialog id="cfm"><p id="cfmt"></p><div class="actions"><button id="cfmy" type="button" data-i="yes"></button><button class="alt" id="cfmn" type="button" data-i="no"></button></div></dialog>
 
+<dialog id="aiDlg" aria-labelledby="aiDlgT">
+<h2 id="aiDlgT" data-i="aiTitle"></h2>
+<div id="aiBody" style="font-size:.9rem;line-height:1.5;margin-top:10px;white-space:pre-wrap"></div>
+<div class="actions" style="margin-top:20px"><button class="alt" id="closeAi" type="button" data-i="close"></button></div>
+</dialog>
+
 <div class="layout">
 <div class="col">
 
@@ -229,7 +233,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="req"></span></h2></div>
 <div class="row">
 <div><label for="ftpsel" data-i="ftpLbl"></label><select id="ftpsel"><option value="in"></option><option value="out"></option></select></div>
-<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option><option value="Run" data-i="sRun"></option><option value="Swim" data-i="sSwim"></option></select></div>
+<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option></select></div>
 </div>
 <div class="row">
 <div><label for="dur" data-i="durLbl"></label><select id="dur"><option value="" data-i="durAuto"></option><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option><option value="150">2h30</option><option value="180">3h</option></select></div>
@@ -250,7 +254,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="edT"></span></h2></div>
 <div class="row">
 <div><label for="edname" data-i="name"></label><input id="edname"></div>
-<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option><option value="Run" data-i="sRun"></option><option value="Swim" data-i="sSwim"></option></select></div>
+<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option></select></div>
 </div>
 <div class="row">
 <div><label for="edftp" data-i="ftpLbl"></label><select id="edftp"><option value="in"></option><option value="out"></option></select></div>
@@ -271,7 +275,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <!-- Section Bibliothèque de séances -->
 <section data-block="lib" hidden>
-<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2></div>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2>
+<select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
 </section>
@@ -309,7 +314,10 @@ h2.ic{display:flex;align-items:center;gap:8px}
 </section>
 
 <section data-block="last">
-<div class="phead"><h2 data-i="lastW"></h2></div>
+<div class="phead"><h2 data-i="lastW"></h2>
+<button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
+<button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
+<button class="alt small" id="lastai" type="button" data-i="lastAi"></button></div>
 <div id="lastbox"></div>
 </section>
 
@@ -374,7 +382,9 @@ gen:["Generate workout","Générer la séance"], rand:["Random workout of the da
 history:["History","Historique"], histPick:["Choose a workout…","Choisir une séance…"], del:["Delete","Supprimer"],
 preview:["Preview (editable)","Aperçu (modifiable)"], delPrev:["Delete the preview","Supprimer l'aperçu"], name:["Name","Nom"], date:["Date","Date"],
 descLbl:["Description (intervals.icu format)","Description (format intervals.icu)"], send:["Add to calendar","Ajouter au calendrier"],
-lastW:["Last workout","Dernière séance"], load2:["Last two weeks","Deux dernières semaines"], best:["Best efforts","Meilleurs efforts"],
+lastW:["Last workout","Dernière séance"],
+lastAi:["AI analysis","Analyse IA"], aiTitle:["Workout analysis","Analyse de la séance"], aiNone:["No workout to analyze.","Aucune séance à analyser."],
+lPrev:["Earlier workout","Séance précédente"], lNext:["Newer workout","Séance suivante"], load2:["Last two weeks","Deux dernières semaines"], best:["Best efforts","Meilleurs efforts"],
 per6:["6 weeks","6 semaines"], per12:["12 weeks","12 semaines"], per1y:["1 year","1 an"], collapse:["Collapse or expand the block","Réduire ou afficher le bloc"],
 lDur:["Duration","Durée"], lDist:["Distance","Distance"], lElev:["Elevation","Dénivelé"], lLoad:["Load","Charge"], lIF:["IF","IF"], lNP:["NP","NP"],
 lAvgP:["Avg power","Puissance moy."], lHR:["Avg HR","FC moy."], lMaxHR:["Max HR","FC max"], lCad:["Cadence","Cadence"], lEF:["EF","EF"],
@@ -585,6 +595,7 @@ function fillFtp(){
   [$("ftpsel"), $("edftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
 }
 function profText(){
+  if(!$("prof")) return;
   if(LAST.profErr){ $("prof").textContent = t("errI", LAST.profErr); return; }
   $("prof").textContent = [ICU.weight ? ICU.weight + " kg" : "", ICU.age ? t("age", ICU.age) : "", "FTP " + t("indoor") + " " + (ICU.ftpIn || "–") + " W", t("outdoor") + " " + (ICU.ftpOut || "–") + " W"].filter(Boolean).join(" · ");
 }
@@ -692,7 +703,10 @@ function renderLast(){
   else if(a.average_speed) kv.push([t("lSpeed"), (a.average_speed * 3.6).toFixed(1) + " km/h"]);
   if(a.icu_efficiency_factor) kv.push([t("lEF"), (+a.icu_efficiency_factor).toFixed(2)]);
   const when = new Date(a.start_date_local).toLocaleString(loc(), {weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
-  box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}</div>` + (LAST.sw || LAST.sh ? streamsSvg() : "") +
+  const pos = (LAST.list || []).length > 1 ? ` · ${LAST.li + 1}/${LAST.list.length}` : "";
+  $("lprev").disabled = !(LAST.list || []).length || (LAST.li || 0) >= LAST.list.length - 1;
+  $("lnext").disabled = !(LAST.list || []).length || (LAST.li || 0) <= 0;
+  box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}${pos}</div>` + (LAST.sw || LAST.sh ? streamsSvg() : "") +
     `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>`;
 }
 $("lastbox").addEventListener("pointermove", e => {
@@ -702,17 +716,83 @@ $("lastbox").addEventListener("pointermove", e => {
   const p = at(LAST.sw), h = at(LAST.sh);
   $("linfo").textContent = [mmss(fr * (LAST.last.moving_time || 0)), p ? p + " W" : "", h ? h + " bpm" : ""].filter(Boolean).join(" · ");
 });
-async function loadLast(){
+async function loadLast(idx){
   const done = (LAST.acts || []).filter(a => a.moving_time).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
-  LAST.last = done[0]; LAST.sw = LAST.sh = null; renderLast();
-  if(!LAST.last) return;
+  LAST.list = done;
+  if(!done.length){ LAST.last = null; LAST.li = 0; LAST.sw = LAST.sh = null; renderLast(); return; }
+  LAST.li = Math.min(Math.max(idx || 0, 0), done.length - 1);
+  LAST.last = done[LAST.li]; LAST.sw = LAST.sh = null; renderLast();
+  const cur = LAST.last;
   try{
-    const j = await icuFetch(`https://intervals.icu/api/v1/activity/${LAST.last.id}/streams?types=watts,heartrate`);
+    const j = await icuFetch(`https://intervals.icu/api/v1/activity/${cur.id}/streams?types=watts,heartrate`);
     const list = Array.isArray(j) ? j : (j.streams || []), get = ty => (list.find(s => s.type === ty) || {}).data;
+    if(LAST.last !== cur) return;
     LAST.sw = get("watts"); LAST.sh = get("heartrate");
   }catch(e){}
-  renderLast();
+  if(LAST.last === cur) renderLast();
 }
+$("lprev").onclick = () => loadLast((LAST.li || 0) + 1).catch(() => {});
+$("lnext").onclick = () => loadLast((LAST.li || 0) - 1).catch(() => {});
+
+// --- analyse IA de la séance ---
+const SYSTEM_ANALYSIS = "You are an expert cycling coach. The user sends the summary and downsampled power/heart-rate data of a completed workout. Analyze it in plain text: what the session actually trained, pacing quality and consistency, intensity balance, signs of fatigue or fitness, and one or two concrete suggestions for the coming days. Use short paragraphs or bullet points.";
+async function aiComplete(system, user){
+  const prov = $("prov").value, chat = prov !== "gemini";
+  let url = "", key, model;
+  if(prov === "hf"){ url = "https://router.huggingface.co/v1/chat/completions"; key = $("hfkey").value.trim(); model = $("hfmodel").value.trim(); }
+  else if(prov === "oa"){ url = $("oaurl").value.trim().replace(/\/+$/, "") + "/chat/completions"; key = $("oakey").value.trim(); model = $("oamodel").value.trim(); }
+  else{ key = $("gkey").value.trim(); model = $("model").value.trim() || DEF.model; }
+  if(!key) throw new Error(t(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG"));
+  if(!model) throw new Error(t("needM"));
+  if(chat){
+    const r = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json", Authorization: "Bearer " + key},
+      body: JSON.stringify({model, max_tokens: 2500, messages: [{role: "system", content: system}, {role: "user", content: user}]})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error((j.error && (j.error.message || (typeof j.error === "string" ? j.error : ""))) || ("HTTP " + r.status));
+    return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || "";
+  }
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {method: "POST",
+    headers: {"Content-Type": "application/json", "x-goog-api-key": key},
+    body: JSON.stringify({systemInstruction: {parts: [{text: system}]}, contents: [{role: "user", parts: [{text: user}]}]})});
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(j.error?.message || ("HTTP " + r.status));
+  return (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
+}
+async function analyzeLast(){
+  const a = LAST.last;
+  if(!a) return say("aiNone", "err");
+  $("lastai").disabled = true; say(null); progStart("analyzing");
+  try{
+    const f = Math.round, kv = [];
+    kv.push(`Workout: "${a.name || a.type}" (${actT(a.type)})`);
+    kv.push(`Date: ${(a.start_date_local || "").slice(0, 10)}`);
+    kv.push(`Duration: ${hm(a.moving_time || 0)}`);
+    if(a.distance) kv.push(`Distance: ${Math.round(a.distance) / 1000} km`);
+    if(a.total_elevation_gain) kv.push(`Elevation: ${f(a.total_elevation_gain)} m`);
+    if(a.icu_training_load) kv.push(`Training load: ${f(a.icu_training_load)}`);
+    if(a.icu_intensity) kv.push(`Intensity factor: ${(a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2)}`);
+    if(a.icu_weighted_avg_watts) kv.push(`Normalized power: ${f(a.icu_weighted_avg_watts)} W`);
+    if(a.icu_average_watts) kv.push(`Average power: ${f(a.icu_average_watts)} W`);
+    if(a.average_heartrate) kv.push(`Average HR: ${f(a.average_heartrate)} bpm`);
+    if(a.max_heartrate) kv.push(`Max HR: ${f(a.max_heartrate)} bpm`);
+    if(a.average_cadence) kv.push(`Average cadence: ${f(a.average_cadence)} rpm`);
+    if(ICU.ftpIn || ICU.ftpOut) kv.push(`Athlete FTP: ${ICU.ftpIn || ICU.ftpOut} W`);
+    const w = ds(LAST.sw || [], 60).map(f).filter(Boolean);
+    if(w.length) kv.push(`Power curve (avg watts, ${w.length} evenly spaced samples): ${w.join(",")}`);
+    const h = ds(LAST.sh || [], 60).map(f).filter(Boolean);
+    if(h.length) kv.push(`Heart-rate curve (bpm, ${h.length} evenly spaced samples): ${h.join(",")}`);
+    const txt = await aiComplete(SYSTEM_ANALYSIS, kv.join("\n") + `\nAnalyze this completed workout. Reply in ${lang === "fr" ? "French" : "English"}, plain text only.`);
+    $("aiBody").textContent = txt || t("badResp");
+    $("aiDlg").showModal();
+  }catch(e){
+    say($("prov").value === "hf" ? "errH" : $("prov").value === "oa" ? "errA" : "errG", "err", errText(e));
+    $("cfg").showModal();
+  }
+  progEnd();
+  $("lastai").disabled = false;
+}
+$("lastai").onclick = analyzeLast;
+$("closeAi").onclick = () => $("aiDlg").close();
 async function loadLoad(){
   const rng = `oldest=${daysAgo(13)}&newest=${daysAgo(0)}`;
   const [acts, well, plan] = await Promise.all([icu(`/activities?${rng}`), icu(`/wellness?${rng}`).catch(() => []), icu(`/events?${rng}&category=WORKOUT`).catch(() => [])]);
@@ -745,7 +825,7 @@ async function loadAll(){
   loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
 }
-$("rload").onclick = $("rprof").onclick = loadAll;
+$("rload").onclick = loadAll;
 $("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkind").value); loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }); };
 $("ftpsel").onchange = () => { store.set("si_ftpsel", $("ftpsel").value); renderChart(); renderBest(); };
 
@@ -849,8 +929,6 @@ Format of "description":
 - One section per block: a title line (e.g. "Warmup", "Main set 3x", "Cooldown") followed by lines starting with "- ". Leave a blank line between sections.
 - Durations: 10m, 30s, 1h. Cycling intensity: % of FTP, a single value per line (e.g. "- 10m 55%").
 - FORBIDDEN: no ramps ("ramp") and no intensity ranges (no "50-75%" and no "90-95%"), because the Tacx trainer does not support them. For a gradual rise or fall (warm-up, cool-down, progression) use several short steps at constant intensity, increasing or decreasing (e.g. "- 3m 50%", "- 3m 60%", "- 4m 70%").
-- Running: intensity in % of threshold pace (e.g. "- 5m 80% Pace") or a zone ("Z2 Pace").
-- Swimming: distances in meters with "mtr" (e.g. "- 100mtr 85% Pace"), intensity in % of threshold pace, rest as "- 20s 40% Pace"; put drill or technique cues as free text after the values.
 - Repetitions: "Main set 4x" then the lines of the block.
 - Free-text cues may follow the values (e.g. "- 10m 95% cadence 90rpm").
 No markdown, no text outside the JSON.`;
@@ -942,16 +1020,12 @@ $("gen").onclick = () => generate();
 const IDEAS = {
   bike: [["steady zone 2 endurance","endurance fondamentale en zone 2, régulière"], ["sweet spot, blocks of 10 to 20 min","sweet spot, blocs de 10 à 20 min"], ["threshold, 2 x 20 min","seuil, 2 blocs de 20 min"],
     ["VO2max, intervals of 3 to 5 min","VO2max, intervalles de 3 à 5 min"], ["over-unders around threshold","over-under autour du seuil"], ["pyramid of intensities","pyramide d'intensité"],
-    ["low-cadence strength work","force à basse cadence en côte"], ["short sprints with long recoveries","sprints courts avec longue récupération"], ["continuous tempo","tempo continu"], ["very easy active recovery","récupération active très facile"]],
-  Run: [["easy endurance run","footing facile en endurance"], ["free fartlek","fartlek libre"], ["hill repeats","séance de côtes"], ["threshold, 3 x 10 min","seuil, 3 x 10 min"],
-    ["short VMA, 10 x 1 min","VMA courte, 10 x 1 min"], ["progressive run","sortie progressive"], ["continuous tempo","tempo continu"]],
-  Swim: [["easy aerobic swim with technique drills","nage aérobie facile avec éducatifs"], ["threshold sets, 5 x 200 m","séries au seuil, 5 x 200 m"], ["short fast 50s with rest","50 m rapides avec repos"],
-    ["pull buoy endurance set","série d'endurance avec pull-buoy"], ["pyramid 100-200-300-200-100","pyramide 100-200-300-200-100"], ["mixed strokes and technique","nage mixte et technique"]]
+    ["low-cadence strength work","force à basse cadence en côte"], ["short sprints with long recoveries","sprints courts avec longue récupération"], ["continuous tempo","tempo continu"], ["very easy active recovery","récupération active très facile"]]
 };
-const DURS_RAND = {bike: [45, 60, 75, 90, 120], Run: [30, 45, 60, 75], Swim: [30, 45, 60]};
+const DURS_RAND = {bike: [45, 60, 75, 90, 120]};
 const pick = a => a[Math.floor(Math.random() * a.length)];
 function classicRandom(){
-  const s = $("sport").value, k = s === "Run" ? "Run" : s === "Swim" ? "Swim" : "bike", [en, fr] = pick(IDEAS[k]), d = $("dur").value || pick(DURS_RAND[k]);
+  const k = "bike", [en, fr] = pick(IDEAS[k]), d = $("dur").value || pick(DURS_RAND[k]);
   $("date").value = iso(new Date());
   $("prompt").value = lang === "fr" ? `${fr}, durée totale d'environ ${d} min` : `${en}, total duration about ${d} min`;
   generate();
@@ -1131,6 +1205,88 @@ LIBRARY.push(
  extraWorkout("vo2max", "VO2 Max — Progressive 3-Minute Repeats", "VO2 Max — Répétitions progressives de 3 min", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set\n- 3m 108%\n- 3m 55%\n- 3m 110%\n- 3m 55%\n- 3m 112%\n- 3m 55%\n- 3m 114%\n- 3m 55%\n- 3m 115%\n\nCooldown\n- 10m 50%", "Progressively raises the target across five aerobic-power efforts.", "Augmente progressivement la cible sur cinq efforts de puissance aérobie."),
 );
 
+// ---------- Catalogue Blocks (blocks.zone) : séances vélo ----------
+function bzWarm(theme){
+  if(theme === "bz_recovery") return "Warmup\n- 5m 45%";
+  if(theme === "bz_endurance") return "Warmup\n- 15m 55%";
+  if(theme === "bz_tempo") return "Warmup\n- 10m 50%\n- 5m 65%";
+  if(theme === "bz_test") return "Warmup\n- 15m 50%\n- 5m 65%";
+  return "Warmup\n- 10m 50%\n- 5m 70%\n- 3x 30s 115%\n- 2m 50%";
+}
+function bz(theme, name, name_fr, main, expl_en, expl_fr, warm, cool){
+  const desc_en = (warm || bzWarm(theme)) + "\n\n" + main + "\n\n" + (cool || "Cooldown\n- 10m 50%");
+  LIBRARY.push(extraWorkout(theme, name, name_fr, desc_en, expl_en, expl_fr));
+}
+// Recovery
+bz("bz_recovery","Blocks — Recovery Spin","Blocks — Vélo de récupération","- 30m 50%","Very easy spin to promote recovery without adding training stress.","Pédalage très facile pour favoriser la récupération sans stress d'entraînement.","Warmup\n- 5m 45%","Cooldown\n- 5m 45%");
+bz("bz_recovery","Blocks — High-Cadence Spin","Blocks — Pédalage à haute cadence","Main set 6x\n- 3m 60% cadence 100rpm\n- 2m 45%","Easy spinning with fast cadence work to loosen the legs.","Pédalage facile avec travail de cadence rapide pour dénouer les jambes.","Warmup\n- 5m 45%","Cooldown\n- 5m 45%");
+// Endurance
+bz("bz_endurance","Blocks — Classic Endurance (2h20)","Blocks — Endurance classique (2h20)","- 120m 68%","The bread-and-butter aerobic ride: two hours of steady zone-2 work.","La sortie aérobie de base : deux heures de travail régulier en zone 2.");
+bz("bz_endurance","Blocks — Long Ride + Upper-Aerobic Blocks","Blocks — Longue sortie + blocs aérobies","Main set\n- 60m 65%\n\nMain set 14x\n- 4m 80%\n- 9m 65%","Long base ride sprinkled with short upper-aerobic blocks to raise the aerobic ceiling.","Longue sortie parsemée de courts blocs au-dessus de l'endurance pour élever le plafond aérobie.");
+bz("bz_endurance","Blocks — Low-Cadence Endurance","Blocks — Endurance à basse cadence","Main set 6x\n- 8m 72% cadence 55rpm\n- 3m 60%","Endurance riding at low cadence builds muscular strength without high intensity.","L'endurance à basse cadence développe la force musculaire sans haute intensité.");
+bz("bz_endurance","Blocks — Long Endurance (3h)","Blocks — Endurance longue (3h)","- 155m 72%","A long steady endurance ride; practise fuelling and position.","Une longue sortie d'endurance régulière ; travaillez l'alimentation et la position.","Warmup\n- 15m 55%","Cooldown\n- 15m 50%");
+bz("bz_endurance","Blocks — Progressive Endurance","Blocks — Endurance progressive","- 45m 62%\n- 45m 68%\n- 45m 74%","Endurance ride with slowly rising intensity to finish controlled but strong.","Sortie d'endurance à intensité lentement croissante pour finir fort mais maîtrisé.");
+// Tempo & Sweet Spot
+bz("bz_tempo","Blocks — Classic Tempo Blocks 3×15'","Blocks — Blocs tempo classiques 3×15'","Main set 3x\n- 15m 84%\n- 5m 55%","Classic tempo blocks build sustainable power with moderate fatigue.","Les blocs tempo classiques développent la puissance soutenable avec une fatigue modérée.");
+bz("bz_tempo","Blocks — Sweet Spot 3×12'","Blocks — Sweet spot 3×12'","Main set 3x\n- 12m 90%\n- 5m 55%","Sweet spot work gives a big aerobic return for a moderate cost.","Le sweet spot offre un gros gain aérobie pour un coût modéré.");
+bz("bz_tempo","Blocks — Long Continuous Tempo (60')","Blocks — Tempo continu long (60')","- 60m 82%","An hour of continuous tempo trains sustained sub-threshold power and concentration.","Une heure de tempo continu développe la puissance sous le seuil et la concentration.");
+bz("bz_tempo","Blocks — Tempo + Low-Cadence Inserts","Blocks — Tempo + inserts basse cadence","Main set 4x\n- 5m 82% cadence 58rpm\n- 5m 82% cadence 90rpm","Tempo work alternating very low and normal cadence to stress the muscles differently.","Tempo en alternant très basse et normale cadence pour solliciter les muscles différemment.");
+bz("bz_tempo","Blocks — Progressive Tempo","Blocks — Tempo progressif","- 20m 76%\n- 20m 82%\n- 20m 88%","Tempo that climbs step by step, ending just below threshold.","Un tempo qui monte palier par palier pour finir juste sous le seuil.");
+bz("bz_tempo","Blocks — Long Tempo (3h)","Blocks — Tempo long (3h)","- 170m 80%","A very large tempo day for experienced riders; fuelling is the key.","Une très grosse journée de tempo pour riders expérimentés ; l'alimentation est la clé.","Warmup\n- 15m 55%","Cooldown\n- 15m 50%");
+bz("bz_tempo","Blocks — Tempo with Threshold Finish","Blocks — Tempo avec fin au seuil","Main set 2x\n- 20m 83%\n- 5m 55%\n\nMain set\n- 3m 100%\n- 5m 50%","Tempo blocks capped by a short threshold hit to mimic race finishes.","Des blocs de tempo terminés par une courte pointe au seuil, comme en course.");
+bz("bz_tempo","Blocks — Micro-Interval Tempo (2'/30\")","Blocks — Tempo micro-intervalles (2'/30\")","Main set 20x\n- 2m 88%\n- 30s 55%","Short tempo repeats with micro-recoveries accumulate a lot of time near threshold.","Des répétitions tempo courtes avec micro-récups accumulent beaucoup de temps près du seuil.");
+bz("bz_tempo","Blocks — Norwegian I-3 (5×15')","Blocks — Norwegian I-3 (5×15')","Main set 5x\n- 15m 88%\n- 2m 50%","The famous Norwegian format: long reps just under threshold with very short recoveries.","Le fameux format norvégien : longues répétitions juste sous le seuil, récups très courtes.");
+// Threshold
+bz("bz_threshold","Blocks — 4×8' (the Workhorse)","Blocks — 4×8' (la valeur sûre)","Main set 4x\n- 8m 102%\n- 3m 55%","The classic threshold session: four short-but-hard reps above FTP.","La séance de seuil classique : quatre répétitions courtes mais dures au-dessus de la FTP.");
+bz("bz_threshold","Blocks — 2×20 Classic","Blocks — 2×20 classique","Main set 2x\n- 20m 96%\n- 5m 55%","Two long threshold blocks: the timeless FTP builder.","Deux longs blocs au seuil : le constructeur de FTP de toujours.");
+bz("bz_threshold","Blocks — 3×12' Over-Under","Blocks — 3×12' over-under","Main set 3x\n- 2m 95%\n- 1m 105%\n- 2m 95%\n- 1m 105%\n- 2m 95%\n- 1m 105%\n- 2m 95%\n- 1m 105%\n- 4m 55%","Alternating just under and just over threshold improves lactate clearance.","Alterner juste sous et juste au-dessus du seuil améliore la clearance de lactate.");
+bz("bz_threshold","Blocks — 40' Sub-Threshold","Blocks — 40' sous le seuil","- 40m 93%","One long sustained effort just below FTP: sweet-spot-threshold hybrid work.","Un long effort soutenu juste sous la FTP : entre sweet spot et seuil.");
+bz("bz_threshold","Blocks — Race-Pace Threshold (low cadence)","Blocks — Seuil type course (basse cadence)","Main set 3x\n- 15m 98% cadence 82rpm\n- 5m 55%","Threshold work at low cadence replicates pushing a big gear in a race.","Le seuil à basse cadence reproduit un gros braquet en course.");
+bz("bz_threshold","Blocks — Threshold with Fast Starts","Blocks — Seuil à départs rapides","Main set 4x\n- 30s 115%\n- 450s 98%\n- 3m 55%","Each rep starts with a short surge before settling at threshold, like an attack.","Chaque répétition démarre par une pointe puis se stabilise au seuil, comme une attaque.");
+bz("bz_threshold","Blocks — Long Ride + Threshold Finish","Blocks — Longue sortie + fin au seuil","Main set\n- 100m 70%\n\nMain set 3x\n- 8m 100%\n- 4m 55%","Endurance ride finished with threshold reps to train riding hard when tired.","Sortie d'endurance terminée par des répétitions au seuil pour apprendre à forcer sur la fatigue.");
+bz("bz_threshold","Blocks — Norwegian 20×3","Blocks — Norwegian 20×3","Main set 7x\n- 3m 95%\n- 30s 50%\n\nMain set 13x\n- 3m 105%\n- 30s 50%","Twenty three-minute reps with micro-recoveries: a huge time-near-FTP session.","Vingt répétitions de 3 minutes avec micro-récups : énorme temps près de la FTP.");
+bz("bz_threshold","Blocks — Norwegian 8×6","Blocks — Norwegian 8×6","Main set 8x\n- 6m 96%\n- 3m 55%","Long reps just under threshold with short recoveries; lactate-guided style.","Longues répétitions juste sous le seuil avec récups courtes, style lactate guidé.");
+bz("bz_threshold","Blocks — Threshold with Surges (5×10')","Blocks — Seuil avec accélérations (5×10')","Main set 5x\n- 90s 97%\n- 30s 125%\n- 90s 97%\n- 30s 125%\n- 90s 97%\n- 30s 125%\n- 90s 97%\n- 30s 125%\n- 1m 97%\n- 4m 55%","Threshold blocks peppered with short super-threshold surges.","Des blocs de seuil pimentés de courtes accélérations au-dessus du seuil.");
+bz("bz_threshold","Blocks — Norwegian 7×3 with Steady Floats","Blocks — Norwegian 7×3 avec floats","Main set 7x\n- 3m 103%\n- 8m 78%","Short hard reps separated by long steady floats: hybrid threshold-endurance.","Courtes répétitions dures séparées par de longs floats réguliers : seuil-endurance hybride.");
+bz("bz_threshold","Blocks — Openers","Blocks — Réveils musculaires","Main set\n- 2m 70%\n- 2m 80%\n- 2m 90%\n\nMain set 3x\n- 20s 120%\n- 40s 50%","Short pre-event or pre-test activation to wake the legs up without adding load.","Activation courte avant événement ou test pour réveiller les jambes sans ajouter de charge.","Warmup\n- 10m 50%","Cooldown\n- 10m 50%");
+bz("bz_threshold","Blocks — Time-Crunched Threshold (45')","Blocks — Seuil express (45')","Main set 3x\n- 8m 98%\n- 3m 55%","A compact threshold session that fits into a busy day.","Une séance de seuil compacte qui tient dans une journée chargée.","Warmup\n- 8m 50%\n- 3m 65%","Cooldown\n- 5m 50%");
+bz("bz_threshold","Blocks — Pacing Execution 4×6'","Blocks — Exécution d'allure 4×6'","Main set 4x\n- 6m 95%\n- 3m 55%","Declare a target, hold it exactly: pure pacing-discipline practice.","Annonce une cible, tiens-la exactement : pur exercice de discipline d'allure.");
+// VO2 Max
+bz("bz_vo2max","Blocks — 5×5' Classic","Blocks — 5×5' classique","Main set 5x\n- 5m 110%\n- 4m 55%","The canonical VO2max session: five minutes on, four off.","La séance VO2max canonique : cinq minutes d'effort, quatre de récup.");
+bz("bz_vo2max","Blocks — 30/15 (max time >90% VO2)","Blocks — 30/15 (temps max >90% VO2)","Main set 39x\n- 30s 119%\n- 15s 50%","Repeated 30/15s maximize the time spent above 90% of VO2max.","Les 30/15 répétés maximisent le temps passé au-dessus de 90% de la VO2max.");
+bz("bz_vo2max","Blocks — Fast-Start 4×5' (Rønnestad)","Blocks — 4×5' à départ rapide (Rønnestad)","Main set 4x\n- 45s 125%\n- 255s 106%\n- 3m 55%","Each rep starts fast then holds just below: Rønnestad-style VO2 work.","Chaque répétition démarre vite puis se maintient : travail VO2 style Rønnestad.");
+bz("bz_vo2max","Blocks — VO2 Ladder","Blocks — Échelle VO2","- 4m 118%\n- 2m 55%\n- 4m 112%\n- 2m 55%\n- 4m 108%\n- 2m 55%\n- 4m 112%\n- 2m 55%\n- 4m 118%\n- 5m 50%","Intensity rises and falls around the VO2 domain; the last rep is the hardest.","L'intensité monte et descend dans le domaine VO2 ; la dernière répétition est la plus dure.");
+bz("bz_vo2max","Blocks — 4×4' Short and Sharp","Blocks — 4×4' court et intense","Main set 4x\n- 4m 113%\n- 4m 55%","Four sharp four-minute reps at the edge of the aerobic ceiling.","Quatre répétitions vives de quatre minutes au bord du plafond aérobie.");
+bz("bz_vo2max","Blocks — 3×9' High-Volume VO2","Blocks — 3×9' VO2 volume","Main set 3x\n- 9m 107%\n- 5m 55%","Long VO2 reps for high total load; experienced riders only.","Longues répétitions VO2 pour une charge totale élevée ; riders expérimentés.");
+bz("bz_vo2max","Blocks — VO2 + Threshold Combo","Blocks — Combo VO2 + seuil","Main set 3x\n- 3m 114%\n- 2m 55%\n\nMain set 2x\n- 10m 95%\n- 5m 55%","Short VO2 reps followed by threshold blocks: race-specific intensity mix.","Répétitions VO2 courtes puis blocs de seuil : mix d'intensité spécifique course.");
+bz("bz_vo2max","Blocks — Long Ride + Repeated VO2","Blocks — Longue sortie + VO2 répétés","Main set\n- 30m 70%\n\nMain set\n- 4m 110%\n- 4m 55%\n\nMain set 8x\n- 40s 115%\n- 20s 55%\n\nMain set 8x\n- 30s 118%\n- 30s 55%\n\nMain set\n- 4m 118%\n- 5m 55%","Endurance ride with a battery of shrinking VO2 efforts; durability training.","Sortie d'endurance avec une batterie d'efforts VO2 décroissants ; travail de durabilité.");
+bz("bz_vo2max","Blocks — Norwegian 6×6 with Surge Starts","Blocks — Norwegian 6×6 à départs explosifs","Main set 6x\n- 30s 125%\n- 330s 104%\n- 3m 55%","Six-minute VO2 reps that each begin with a short surge.","Répétitions VO2 de six minutes commençant chacune par une courte explosion.");
+bz("bz_vo2max","Blocks — VO2 Pyramid 8-7-6-5-4","Blocks — Pyramide VO2 8-7-6-5-4","- 8m 103%\n- 2m 55%\n- 7m 105%\n- 2m 55%\n- 6m 107%\n- 2m 55%\n- 5m 109%\n- 2m 55%\n- 4m 111%\n- 5m 50%","Rep length shrinks while intensity rises: a pyramid through the VO2 domain.","La durée diminue quand l'intensité monte : une pyramide dans le domaine VO2.");
+bz("bz_vo2max","Blocks — CP Field Test (3' + 12')","Blocks — Test CP terrain (3' + 12')","Main set\n- 3m 115% all-out effort\n- 30m 60%\n- 12m 112% all-out effort","Two maximal efforts 30 minutes apart to compute critical power.","Deux efforts maximaux à 30 minutes d'écart pour calculer la puissance critique.");
+bz("bz_vo2max","Blocks — 5-Minute Maximal","Blocks — 5 minutes maximal","Main set\n- 5m 118% best effort","A five-minute best effort to estimate power at VO2max.","Un meilleur effort de cinq minutes pour estimer la puissance à VO2max.");
+bz("bz_vo2max","Blocks — Max Heart Rate Test (3×3')","Blocks — Test FC max (3×3')","Main set 3x\n- 3m 112%\n- 2m 50%","Three progressively harder three-minute reps, the last to exhaustion, to find max HR.","Trois répétitions de trois minutes de plus en plus dures, la dernière jusqu'à l'épuisement, pour trouver la FC max.");
+// Sprint & Anaerobic
+bz("bz_sprint","Blocks — Neuromuscular Sprints","Blocks — Sprints neuromusculaires","Main set 10x\n- 10s 160%\n- 4m 50%","Very short all-out sprints with long rests to train the sprint mechanism itself.","Sprints très courts maximaux avec longs repos pour entraîner le mécanisme de sprint.");
+bz("bz_sprint","Blocks — Standing Starts","Blocks — Départs arrêtés","Main set 6x\n- 15s 170% big gear from a near-stop\n- 5m 50%","Explosive starts from almost stationary in a big gear.","Départs explosifs quasi à l'arrêt dans un gros braquet.");
+bz("bz_sprint","Blocks — Anaerobic 30/30 All-Out","Blocks — 30/30 anaérobie max","Main set 12x\n- 30s 150%\n- 30s 50%","Repeated all-out 30-second efforts stress the anaerobic system.","Des efforts maximaux de 30 secondes répétés sollicitent le système anaérobie.");
+bz("bz_sprint","Blocks — Anaerobic 1-Minute Efforts","Blocks — Efforts anaérobies d'une minute","Main set 6x\n- 1m 135%\n- 4m 50%","One-minute supra-maximal efforts with full recovery.","Efforts supra-maximaux d'une minute avec récupération complète.");
+bz("bz_sprint","Blocks — Lactate Tolerance 90\"","Blocks — Tolérance au lactate 90\"","Main set 5x\n- 90s 122%\n- 4m 50%","Ninety-second efforts that teach the body to tolerate and buffer lactate.","Des efforts de 90 secondes qui apprennent à tolérer et tamponner le lactate.");
+bz("bz_sprint","Blocks — Sprint Endurance (Repeatability)","Blocks — Endurance de sprint (répétition)","Main set 12x\n- 15s 160%\n- 45s 50%","Clusters of short sprints to train the ability to repeat them late in a race.","Des grappes de sprints courts pour répéter les efforts en fin de course.");
+bz("bz_sprint","Blocks — Attack Simulation (Surge + Hold)","Blocks — Simulation d'attaque (explosion + maintien)","Main set 5x\n- 20s 180%\n- 160s 95%\n- 5m 50%","Each block is an attack: a violent surge then a long hold near threshold.","Chaque bloc est une attaque : une explosion violente puis un long maintien près du seuil.");
+bz("bz_sprint","Blocks — Short Steep Climb Repeats","Blocks — Répétitions de côte courte et raide","Main set 8x\n- 30s 150% standing\n- 5m 55%","Thirty-second standing efforts replicating steep ramps.","Efforts de 30 secondes en danseuse reproduisant des rampes raides.");
+bz("bz_sprint","Blocks — Micro-Sprints in Z2","Blocks — Micro-sprints en Z2","Main set 9x\n- 10m 68%\n- 8s 160%","A long zone-2 ride with a tiny sprint every ten minutes.","Une longue sortie en zone 2 avec un mini sprint toutes les dix minutes.");
+bz("bz_sprint","Blocks — Anaerobic 6×2'","Blocks — Anaérobie 6×2'","Main set 6x\n- 2m 125%\n- 5m 50%","Two-minute anaerobic efforts with generous recovery.","Efforts anaérobies de deux minutes avec récupération généreuse.");
+bz("bz_sprint","Blocks — 3-Minute All-Out CP Test","Blocks — Test CP 3 minutes maximal","Main set\n- 3m 118% maximal from the first second","A three-minute maximal test: no pacing, just go.","Un test maximal de trois minutes : pas d'allure, on y va à fond.");
+// Testing
+bz("bz_test","Blocks — FTP Test (20 min)","Blocks — Test FTP (20 min)","- 20m 100% maximal effort","The standard 20-minute maximal effort to set your FTP (multiply by 0.95).","L'effort maximal de 20 minutes standard pour définir la FTP (× 0,95).","Warmup\n- 15m 50%\n- 5m 65%\n- 3x 30s 115%\n- 5m 55%","Cooldown\n- 15m 50%");
+bz("bz_test","Blocks — Ramp Test","Blocks — Test en rampe","Main set\n- 1m 50%\n- 1m 55%\n- 1m 60%\n- 1m 65%\n- 1m 70%\n- 1m 75%\n- 1m 80%\n- 1m 85%\n- 1m 90%\n- 1m 95%\n- 1m 100%\n- 1m 105%\n- 1m 110%\n- 1m 115%\n- 1m 120% ride to exhaustion","One-minute steps, each 5% harder, until you cannot continue; your last full minute sets the FTP estimate.","Des paliers d'une minute, 5% plus durs chacun, jusqu'à l'épuisement ; le dernier palier complet donne l'estimation de FTP.");
+bz("bz_test","Blocks — Lactate Step Test","Blocks — Test paliers lactate","Main set\n- 5m 55%\n- 5m 65%\n- 5m 75%\n- 5m 85%\n- 5m 95%\n- 5m 105%","Five-minute steps of increasing intensity to map the lactate curve without blood samples.","Des paliers de cinq minutes d'intensité croissante pour tracer la courbe de lactate sans prise de sang.");
+bz("bz_test","Blocks — MLSS Check (30 min)","Blocks — Vérification MLSS (30 min)","- 30m 88%","Thirty steady minutes just below threshold to confirm the maximal lactate steady state.","Trente minutes régulières juste sous le seuil pour confirmer l'état stable de lactate maximal.");
+bz("bz_test","Blocks — First Threshold (Talk Test)","Blocks — Premier seuil (test de parole)","Main set\n- 4m 55%\n- 4m 60%\n- 4m 65%\n- 4m 70%\n- 4m 75%","Progressive steps to find the first ventilatory threshold: the point where talking becomes hard.","Des paliers progressifs pour trouver le premier seuil ventilatoire : le point où parler devient difficile.");
+bz("bz_test","Blocks — Threshold Heart Rate (30 min)","Blocks — FC de seuil (30 min)","- 30m 90%","Thirty minutes at threshold power to identify your threshold heart rate.","Trente minutes à la puissance de seuil pour identifier votre fréquence cardiaque de seuil.");
+bz("bz_test","Blocks — Fatigue Check (SFT)","Blocks — Contrôle fatigue (SFT)","Main set\n- 3m 100%\n- 5m 55%\n- 3m 100%","Two short threshold efforts to compare heart rate and power day to day.","Deux courts efforts au seuil pour comparer FC et puissance d'un jour à l'autre.");
+bz("bz_test","Blocks — Durability (Fresh 5 + 20)","Blocks — Durabilité (5 + 20 frais)","Main set\n- 60m 65%\n- 5m 105%\n- 10m 55%\n- 20m 100%","Measures how much threshold power you keep after an hour of endurance: your durability.","Mesure la puissance de seuil conservée après une heure d'endurance : votre durabilité.");
+
 function workoutPreviewSvg(desc, sport, ftp){
   const steps = parseWorkout(desc, sport, ftp);
   if(!steps.length) return "";
@@ -1164,7 +1320,14 @@ function renderLibrary(){
     {id:"uae",icon:"🏔️",en:"UAE Team Emirates Style",fr:"Style UAE Team Emirates"},
     {id:"adq",icon:"🚴‍♀️",en:"UAE Team ADQ Style",fr:"Style UAE Team ADQ"},
     {id:"vo2max",icon:"⚡",en:"VO₂ Max",fr:"VO₂ Max"},
-    {id:"recovery",icon:"🌿",en:"Recovery",fr:"Récupération"}
+    {id:"recovery",icon:"🌿",en:"Recovery",fr:"Récupération"},
+    {id:"bz_recovery",icon:"🌿",en:"Blocks — Recovery",fr:"Blocks — Récupération"},
+    {id:"bz_endurance",icon:"🚴",en:"Blocks — Endurance",fr:"Blocks — Endurance"},
+    {id:"bz_tempo",icon:"📈",en:"Blocks — Tempo & Sweet Spot",fr:"Blocks — Tempo & Sweet spot"},
+    {id:"bz_threshold",icon:"🔥",en:"Blocks — Threshold",fr:"Blocks — Seuil"},
+    {id:"bz_vo2max",icon:"⚡",en:"Blocks — VO₂ Max",fr:"Blocks — VO₂ Max"},
+    {id:"bz_sprint",icon:"💥",en:"Blocks — Sprint & Anaerobic",fr:"Blocks — Sprint & Anaérobie"},
+    {id:"bz_test",icon:"🎯",en:"Blocks — Testing",fr:"Blocks — Tests"}
   ];
   const groups=themes.map(theme=>({...theme,items:[]}));
   const categorize=item=>{
@@ -1198,13 +1361,18 @@ $("libContainer").onclick = e => {
   const item = LIBRARY[+btn.dataset.lib];
   $("sport").value = item.sport; syncUnit();
   $("name").value = lang === "fr" ? item.name_fr : item.name_en;
-  $("desc").value = lang === "fr" ? item.desc_fr : item.desc_en;
+  let d = lang === "fr" ? item.desc_fr : item.desc_en;
+  if($("unit").value === "w" && isBike(item.sport) && curFtp() > 0) d = toWatts(d, curFtp());
+  $("desc").value = d;
   EXPL = {en: item.expl_en, fr: item.expl_fr}; selLine = null;
   // Keep the Library tab active while showing the preview.
   $("prev").hidden = false; renderChart();
   $("prev").scrollIntoView({behavior: "smooth", block: "start"});
   say("edBuilt", "ok");
 };
+$("libunit").onchange = () => { $("unit").value = $("libunit").value; $("unit").dispatchEvent(new Event("change")); };
+$("unit").addEventListener("change", () => { $("libunit").value = $("unit").value; });
+$("libunit").value = $("unit").value;
 
 // ---------- Historique et envoi ----------
 const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
