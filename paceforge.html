@@ -11,7 +11,7 @@
 @media (prefers-color-scheme:dark){:root{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
-main{max-width:1120px;margin:0 auto;padding:20px 16px 24px}
+main{max-width:1240px;margin:0 auto;padding:20px 16px 24px}
 h1{font-size:1.65rem;margin:0;font-weight:600;letter-spacing:-0.02em}
 p.sub{color:var(--mute);margin:6px 0 20px}
 section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
@@ -43,7 +43,7 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:cen
 .lang{display:flex;border:1px solid var(--acc);border-radius:6px;overflow:hidden}
 .lang button{margin:0;padding:6px 10px;border-radius:0;background:transparent;color:var(--acc);font-size:.85rem}
 .lang button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
-.layout{display:grid;grid-template-columns:minmax(0,640px) minmax(0,1fr);gap:16px;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,760px) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
 .phead{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .phead h2{margin:0 auto 0 0}
@@ -109,11 +109,19 @@ a.coffee.soon{opacity:.6}
 .wgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:6px}
 .wgrid label{display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;color:var(--ink);cursor:pointer}
 .wgrid input{width:auto;padding:0;margin:0}
+.act-row{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;margin:0 0 4px;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);cursor:pointer;font:inherit;font-size:.85rem;color:var(--ink);white-space:nowrap}
+.act-row:hover{border-color:var(--acc)}
+.act-row:disabled{opacity:.5;cursor:default}
+.act-row b{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.act-row .hint{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;text-align:right}
+#actbox{max-height:430px;overflow:auto}
 h2.ic{display:flex;align-items:center;gap:8px}
 .hic{width:22px;height:22px;flex:none;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mode{display:flex;gap:4px;padding:4px;margin-bottom:16px;background:var(--card);border:1px solid var(--line);border-radius:10px}
-.mode button{flex:1;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:7px;background:transparent;color:var(--ink);font-size:.95rem}
-.mode button svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mode button{flex:1;min-width:0;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem;white-space:nowrap}
+.mode button span{overflow:hidden;text-overflow:ellipsis}
+.mode button svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (max-width:560px){.mode button{gap:0;padding:9px 4px}.mode button span{display:none}}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .stp{display:inline-flex;align-items:center;gap:4px}
 .stp input{width:64px;padding:7px 4px;text-align:center;-moz-appearance:textfield;appearance:textfield}
@@ -239,10 +247,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
 <label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
 </div>
+<div class="hint" id="jnote" role="status" hidden></div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
+<button class="alt" id="impjson" type="button" data-i="jsonImp"></button>
+<button class="alt" id="expjson" type="button" data-i="jsonExp"></button>
 <button class="alt" id="close" type="button" data-i="close"></button>
 <button class="alt danger" id="clear" type="button" data-i="clearKeys"></button>
+<input type="file" id="impjsonin" accept=".json,application/json" hidden>
 </div>
 </dialog>
 
@@ -276,6 +288,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
 <button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
 <button type="button" role="tab" data-m="imp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="tabImp"></span></button>
+<button type="button" role="tab" data-m="act"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="tabAct"></span></button>
 </div>
 
 <section data-block="req">
@@ -345,6 +358,15 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <input type="file" id="impin" accept=".zwo,.fit,.xml" hidden>
 <p class="hint" data-i="impHint" style="margin-top:12px"></p>
 </div>
+</section>
+
+<!-- Section Depuis une activité -->
+<section data-block="act" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="actLbl"></span></h2>
+<select id="actper" data-ia="aria-label:actW"><option value="14" data-i="w2"></option><option value="28" data-i="w4"></option><option value="56" data-i="w8"></option></select>
+<button class="alt small" id="ract" type="button" data-ia="title:refresh;aria-label:refresh">↻</button></div>
+<p class="hint" data-i="actDesc"></p>
+<div id="actbox" style="margin-top:12px"></div>
 </section>
 
 <div id="prog" hidden>
@@ -451,6 +473,9 @@ iHelp:["How to find your intervals.icu API key: Settings → Developer Settings"
 iKey:["intervals.icu API key","Clé API intervals.icu"], aid:["intervals.icu athlete ID (0 = the key's athlete)","ID athlète intervals.icu (0 = athlète de la clé)"],
 icuData:["intervals.icu data","Données intervals.icu"], refresh:["Refresh","Actualiser"], show:["Show","Afficher"], hide:["Hide","Masquer"],
 loadList:["Load list","Charger la liste"], save:["Save","Enregistrer"], close:["Close","Fermer"], clearKeys:["Clear keys","Effacer les clés"],
+jsonImp:["Import JSON","Importer JSON"], jsonExp:["Export JSON","Exporter JSON"],
+jsonImpOk:["Keys loaded from {0} — review them, then click Save.","Clés chargées depuis {0} — vérifie-les puis clique sur Enregistrer."],
+jsonErr:["Invalid JSON file: {0}","Fichier JSON invalide : {0}"], jsonEmpty:["No keys found in this file.","Aucune clé trouvée dans ce fichier."],
 saved:["Saved","Enregistrée"], missing:["Missing","Manquante"], yes:["Confirm","Confirmer"], no:["Cancel","Annuler"],
 cfmClear:["Clear all saved API keys?","Effacer toutes les clés API enregistrées ?"],
 cfmDel:["Delete this workout from the history and from the intervals.icu calendar?","Supprimer cette séance de l'historique et du calendrier intervals.icu ?"],
@@ -529,6 +554,14 @@ impPick:["Choose a file…","Choisir un fichier…"],
 impOk:["Workout imported from {0}.","Séance importée depuis {0}."],
 impEmpty:["No workout steps found in this file.","Aucune étape de séance trouvée dans ce fichier."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
+tabAct:["From activity","Depuis une activité"],
+actLbl:["Rebuild a workout from an activity","Reconstruire une séance depuis une activité"],
+actDesc:["Pick one of your recent activities below: its power data is analyzed to rebuild the intervals you actually rode as an editable workout in the preview.","Choisis une de tes activités récentes ci-dessous : ses données de puissance sont analysées pour reconstruire les intervalles réellement effectués, en séance modifiable dans l'aperçu."],
+actW:["Activities range","Période d'activités"], w2:["2 weeks","2 semaines"], w4:["4 weeks","4 semaines"], w8:["8 weeks","8 semaines"],
+actNone:["No activity with power data in this period.","Aucune activité avec données de puissance sur cette période."],
+actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
+actNoPow:["No usable power data in this activity.","Aucune donnée de puissance exploitable dans cette activité."],
+actNeedFtp:["FTP unknown — check your intervals.icu connection.","FTP inconnue — vérifie ta connexion intervals.icu."],
 noChart:["No structured workout data","Aucune donnée de séance structurée"],
 lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
 lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
@@ -593,6 +626,7 @@ function loadSettings(){
   fillModels(modelList, store.get("si_model") || DEF.model);
   SECRET.forEach(k => $(k).type = "password");
   document.querySelectorAll(".tog").forEach(b => { b.dataset.i = "show"; b.textContent = t("show"); });
+  $("jnote").hidden = true;
   provUI(); badges(); applyWidgets();
 }
 document.querySelectorAll(".tog").forEach(b => b.onclick = () => {
@@ -611,6 +645,36 @@ $("close").onclick = () => $("cfg").close();
 $("cfg").addEventListener("close", loadSettings);
 $("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); WIDGETS.forEach(k => { const c = $("w_" + k); if(c && c.checked !== widgets.includes(k)) toggleWidget(k); }); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
 $("clear").onclick = async () => { if(!(await ask("cfmClear"))) return; SECRET.forEach(k => store.set("si_" + k, "")); loadSettings(); };
+// --- Import / export des réglages au format JSON ---
+function jnote(k, cls, ...a){ const n = $("jnote"); n.hidden = false; n.textContent = t(k, ...a); n.className = "hint " + (cls || ""); }
+$("impjson").onclick = () => $("impjsonin").click();
+$("impjsonin").onchange = () => {
+  const f = $("impjsonin").files[0]; $("impjsonin").value = "";
+  if(!f) return;
+  f.text().then(txt => {
+    const j = JSON.parse(txt);
+    let n = 0;
+    FIELDS.forEach(k => { if(j[k] !== undefined && j[k] !== null){ $(k).value = String(j[k]); n++; } });
+    // listes de modèles embarquées dans l'export, si présentes
+    if(Array.isArray(j.geminiModels) && j.geminiModels.length){ modelList = j.geminiModels; fillModels(modelList, $("model").value || modelList[0]); }
+    if(Array.isArray(j.hfModels) && j.hfModels.length){ hfList = j.hfModels; $("hfl").innerHTML = hfList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
+    if(Array.isArray(j.oaModels) && j.oaModels.length){ oaList = j.oaModels; $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
+    if(!n) return jnote("jsonEmpty", "err");
+    provUI(); badges();
+    jnote("jsonImpOk", "ok", f.name);
+  }).catch(e => jnote("jsonErr", "err", e.message || String(e)));
+};
+$("expjson").onclick = () => {
+  const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
+  // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
+  if(modelList.length) o.geminiModels = modelList;
+  if(hfList.length) o.hfModels = hfList;
+  if(oaList.length) o.oaModels = oaList;
+  const blob = new Blob([JSON.stringify(o, null, 2)], {type: "application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "paceforge-settings.json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
 
 $("openHelp").onclick = () => {
   $("helpBody").innerHTML = t("helpContent");
@@ -1845,6 +1909,119 @@ $("impin").onchange = () => { const f = $("impin").files[0]; $("impin").value = 
   z.addEventListener("drop", e => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) importFile(f); });
 }
 
+// ---------- Depuis une activité ----------
+const ACTS = {list: null};
+async function loadActs(){
+  const box = $("actbox");
+  if(!KEY()){ box.textContent = t("needI"); return; }
+  $("ract").disabled = true; box.textContent = t("loading");
+  try{
+    const days = parseInt($("actper").value, 10) || 14;
+    const acts = await icu(`/activities?oldest=${daysAgo(days)}&newest=${daysAgo(0)}`);
+    ACTS.list = acts.filter(a => a.moving_time && (a.icu_average_watts || a.average_watts))
+      .sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 40);
+    renderActs();
+  }catch(e){
+    box.textContent = t("errI", errText(e));
+  }
+  $("ract").disabled = false;
+}
+function renderActs(){
+  if(ACTS.list === null) return; // pas encore chargé : ne pas toucher la zone
+  const box = $("actbox"), L = ACTS.list;
+  if(!L.length){ box.textContent = t("actNone"); return; }
+  box.innerHTML = L.map((a, i) => `<button type="button" class="act-row" data-i="${i}"><b>${esc(a.name || a.type || "")}</b><div class="hint">${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"}))} · ${esc(actT(a.type))} · ${hm(a.moving_time)}${a.icu_weighted_avg_watts ? " · NP " + Math.round(a.icu_weighted_avg_watts) + " W" : ""}${a.icu_intensity ? " · IF " + (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2) : ""}</div></button>`).join("");
+  box.querySelectorAll(".act-row").forEach(b => b.onclick = () => buildFromAct(L[+b.dataset.i], b));
+}
+// Détection d'intervalles : lissage 5 s, segmentation par paliers, fusion des segments courts,
+// tolérance adaptative pour éviter les séances-patates d'arena à des centaines d'étapes.
+function detectSteps(watts, ftp){
+  const s = [];
+  for(const v of watts) s.push(typeof v === "number" && v >= 0 && v < 2500 ? v : 0);
+  const N = s.length;
+  if(N < 60 || !ftp) return [];
+  const K = 5, sm = [];
+  let sum = 0;
+  for(let i = 0; i < N; i++){ sum += s[i]; if(i >= K) sum -= s[i - K]; sm.push(sum / Math.min(i + 1, K)); }
+  const build = rel => {
+    const tol = v => Math.max(8, v * rel);
+    const groups = [];
+    let g = null;
+    for(let i = 0; i < N; i++){
+      const v = sm[i], avg = g ? g.sum / g.n : 0;
+      if(g && Math.abs(v - avg) <= tol(avg)){ g.sum += v; g.n++; g.end = i; }
+      else{ if(g) groups.push(g); g = {sum: v, n: 1, start: i, end: i}; }
+    }
+    if(g) groups.push(g);
+    // fusion des segments courts (< 20 s) dans le voisin
+    const min = 20, out = [];
+    for(const gr of groups){
+      if(gr.n >= min){ out.push({...gr}); continue; }
+      if(out.length){ const p = out[out.length - 1]; p.sum += gr.sum; p.n += gr.n; p.end = gr.end; }
+      else out.push({...gr}); // court en tête : absorbé par le suivant
+    }
+    const out2 = [];
+    for(let i = 0; i < out.length; i++){
+      if(!out2.length && out[i].n < min && i + 1 < out.length){ const nx = out[i + 1]; nx.sum += out[i].sum; nx.n += out[i].n; nx.start = out[i].start; continue; }
+      out2.push(out[i]);
+    }
+    // étapes : moyennes en excluant ~8 s de transition aux bords des groupes
+    const ents = [];
+    for(const gr of out2){
+      const raw = s.slice(gr.start, gr.end + 1);
+      const off = raw.length >= 25 ? 8 : 0;
+      const core = off ? raw.slice(off, raw.length - off) : raw;
+      const edge = arr => arr.reduce((x, y) => x + y, 0) / arr.length;
+      ents.push({d: gr.n, headW: edge(core.slice(0, Math.min(15, core.length))), tailW: edge(core.slice(-Math.min(15, core.length))), midW: edge(core), wN: core.length});
+    }
+    // fusion des paliers contigus : une rampe linéaire découpée par la segmentation est recollée
+    const mrg = [];
+    for(const e of ents){
+      const last = mrg[mrg.length - 1];
+      if(last && Math.abs(last.tailW - e.headW) <= Math.max(12, (last.midW + e.midW) / 2 * 0.12)){
+        last.d += e.d; last.tailW = e.tailW;
+        last.midW = (last.midW * last.wN + e.midW * e.wN) / (last.wN + e.wN); last.wN += e.wN;
+      }else mrg.push({...e});
+    }
+    // conversion en % FTP, rampe si l'écart début/fin est marqué
+    return mrg.map(e => {
+      const ramp = Math.abs(e.headW - e.tailW) > Math.max(10, e.midW * 0.12);
+      return ramp ? {d: e.d, a: e.headW / ftp * 100, b: e.tailW / ftp * 100} : {d: e.d, a: e.midW / ftp * 100, b: e.midW / ftp * 100};
+    });
+  };
+  let steps = [];
+  for(const rel of [0.07, 0.12, 0.18, 0.25]){
+    steps = build(rel);
+    if(steps.length <= 50) break;
+  }
+  return steps;
+}
+async function buildFromAct(a, btn){
+  btn.disabled = true; say(null);
+  try{
+    const ftp = curFtp() || ICU.ftpIn || ICU.ftpOut;
+    if(!ftp) throw new Error(t("actNeedFtp"));
+    const j = await icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`);
+    const list = Array.isArray(j) ? j : (j.streams || []);
+    const get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
+    const w = get("watts", "power", "watts_calc");
+    if(!w) throw new Error(t("actNoPow"));
+    const steps = detectSteps(w, ftp);
+    if(!steps.length) throw new Error(t("actNoPow"));
+    if(isBike(a.type)){ $("sport").value = a.type === "VirtualRide" ? "VirtualRide" : "Ride"; syncUnit(); }
+    $("name").value = (a.name || a.type || "Workout").trim().slice(0, 60);
+    $("desc").value = stepsToDesc(steps);
+    $("prev").hidden = false; selLine = null; EXPL = null;
+    renderChart(); say("actOk", "ok", a.name || a.type || "");
+    $("prev").scrollIntoView({behavior: "smooth", block: "start"});
+  }catch(e){
+    say("err", "err", errText(e));
+  }
+  btn.disabled = false;
+}
+$("ract").onclick = () => { store.set("si_actper", $("actper").value); loadActs().catch(() => {}); };
+$("actper").onchange = $("ract").onclick;
+
 // ---------- Explication de la séance ----------
 function renderExplain(steps){
   const el = $("explain"), tot = steps.reduce((x, y) => x + y.d, 0) || 1, z = {e: 0, t: 0, h: 0, v: 0};
@@ -2180,12 +2357,13 @@ function applyMode(){
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
+  document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelectorAll(".mode button").forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
 }
 document.querySelectorAll(".mode button").forEach(b => {
-  b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); };
+  b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); if(mode === "act" && ACTS.list === null) loadActs().catch(() => {}); };
   b.onkeydown = e => {
-    const modes = ["lib", "edit", "ai", "imp"]; let idx = modes.indexOf(mode);
+    const modes = ["lib", "edit", "ai", "imp", "act"]; let idx = modes.indexOf(mode);
     if(e.key === "ArrowLeft") idx = (idx - 1 + modes.length) % modes.length;
     else if(e.key === "ArrowRight") idx = (idx + 1) % modes.length;
     else return;
@@ -2208,14 +2386,14 @@ function applyWidgets(){
   WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
 }
 function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
-let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp"); }catch(e){}
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
     const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
@@ -2234,13 +2412,13 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
-$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
+$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 loadAll();
