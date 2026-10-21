@@ -72,8 +72,18 @@ dialog h2{margin-bottom:6px}
 .tip .act{margin-top:6px}
 #toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px;align-items:flex-start;max-width:min(92vw,560px);padding:12px 14px;border-radius:8px;background:var(--card);color:var(--ink);border:1px solid var(--err);border-left:6px solid var(--err);box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:.9rem}
 #toast button{margin:0;padding:0 6px;line-height:1.2;font-size:1.2rem;background:transparent;color:var(--mute)}
+#toastAct{font-family:inherit;font-size:.9rem;color:var(--acc)!important;text-decoration:underline}
+/* sections encadrées des réglages */
+.cfg-sec{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+.cfg-sec>h3{margin:-12px -14px 10px;padding:9px 14px;font-size:.9rem;font-weight:600;color:var(--on);background:var(--acc);border-radius:10px 10px 0 0;display:flex;align-items:center;gap:8px}
+.cfg-sec>h3 .badge{margin-left:auto;color:var(--on)!important;font-weight:400}
+.cfg-sec>h3 svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cfg-tabs{margin-bottom:10px}
+#cfg [data-cfgp]{min-height:var(--cfgH,0);box-sizing:border-box}
+.cfg-tabs button span{font-size:.85rem}
 #toast.ok{border-color:var(--ok);border-left-color:var(--ok)}
 #toast.info{border-color:var(--acc);border-left-color:var(--acc)}
+#expDlg [data-exp]:hover,#expDlg [data-exp]:focus-visible{background:var(--acc)!important;color:var(--on)!important;border-color:var(--acc)!important}
 #prog{position:fixed;top:76px;left:50%;transform:translateX(-50%);z-index:999;width:min(92vw,460px);padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.25);margin:0}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
 .explain{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:.9rem}.explain p{margin:4px 0 6px}
 #fsvg{display:block;width:100%;height:150px;border-radius:6px;background:var(--bg);touch-action:none}
@@ -199,12 +209,18 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button class="alt small" id="open" type="button" data-i="settings"></button>
 </div>
 </header>
-<div id="toast" role="alert" hidden><span id="toastt"></span><button type="button" id="toastx" data-ia="aria-label:close">×</button></div>
+<div id="toast" role="alert" hidden><span id="toastt"></span><button type="button" id="toastAct" hidden data-i="undo"></button><button type="button" id="toastx" data-ia="aria-label:close">×</button></div>
 <p class="sub" data-i="subtitle"></p>
 
 <dialog id="cfg" aria-labelledby="cfgt">
 <h2 id="cfgt" data-i="settingsTitle"></h2>
-<button class="alt small" id="openHelp" type="button" style="margin-bottom:12px">❓ <span data-i="helpBtn"></span></button>
+<div class="mode cfg-tabs" role="tablist" data-ia="aria-label:settingsTitle">
+<button type="button" role="tab" data-cfg="ai" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
+<button type="button" role="tab" data-cfg="icu" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span></button>
+<button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
+</div>
+<div class="cfg-sec" data-cfgp="ai">
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
 <label for="prov" data-i="provider"></label>
 <select id="prov"><option value="gemini">Gemini</option><option value="hf">Hugging Face</option><option value="oa" data-i="provOA"></option></select>
 <div id="pg">
@@ -217,8 +233,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <label for="think" data-i="think"></label>
 <select id="think"><option value="low" data-i="thLow"></option><option value="minimal" data-i="thMin"></option><option value="medium" data-i="thMed"></option><option value="high" data-i="thHigh"></option><option value="default" data-i="thDef"></option></select>
 </div>
-<div id="ph" hidden>
-<div class="lbl"><label for="hfkey" data-i="hfKey"></label><span id="bh" class="badge"></span></div>
+<div id="ph" hidden><div class="lbl"><label for="hfkey" data-i="hfKey"></label><span id="bh" class="badge"></span></div>
 <div class="pw"><input id="hfkey" type="password" autocomplete="off"><button class="alt tog" data-for="hfkey" type="button" data-i="show"></button></div>
 <a class="help" href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener" data-i="hfHelp"></a>
 <label for="hfmodel" data-i="hfModel"></label>
@@ -237,12 +252,17 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div id="onote" class="badge" role="status"></div>
 <div class="hint" data-i="oaHint"></div>
 </div>
+</div>
+<div class="cfg-sec" data-cfgp="icu" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span><span id="bicu" class="badge"></span></h3>
 <div class="lbl"><label for="ikey" data-i="iKey"></label><span id="bi" class="badge"></span></div>
 <div class="pw"><input id="ikey" type="password" autocomplete="off"><button class="alt tog" data-for="ikey" type="button" data-i="show"></button></div>
 <a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
 <label for="aid" data-i="aid"></label>
 <input id="aid">
-<div class="lbl" style="margin-top:14px"><label data-i="widgetsLbl"></label></div>
+</div>
+<div class="cfg-sec" data-cfgp="wid" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></h3>
 <div class="wgrid">
 <label><input type="checkbox" id="w_cal"><span data-i="calT"></span></label>
 <label><input type="checkbox" id="w_fit"><span data-i="fitT"></span></label>
@@ -251,6 +271,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
 </div>
 <div class="hint" id="jnote" role="status" hidden></div>
+</div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
 <button class="alt" id="impjson" type="button" data-i="jsonImp"></button>
@@ -258,6 +279,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button class="alt" id="close" type="button" data-i="close"></button>
 <button class="alt danger" id="clear" type="button" data-i="clearKeys"></button>
 <input type="file" id="impjsonin" accept=".json,application/json" hidden>
+<button class="alt small" id="openHelp" type="button" style="width:100%;margin-top:10px">❓ <span data-i="helpBtn"></span></button>
 </div>
 </dialog>
 
@@ -281,6 +303,18 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="phead" style="margin:6px 0 12px"><button class="alt small icon" id="dcalprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button><span id="dcalmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span><button class="alt small icon" id="dcalnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button><button class="alt small" id="dcalnow" type="button" data-i="today"></button></div>
 <div id="dcalbox"></div>
 <div class="actions"><button class="alt" id="closeDateCal" type="button" data-i="close"></button></div>
+</dialog>
+
+<dialog id="expDlg" aria-labelledby="expDlgT">
+<h2 id="expDlgT" data-i="expTitle"></h2>
+<div id="expBody" class="actions" style="margin-top:10px;flex-direction:column;align-items:stretch">
+<button class="alt" data-exp="zwo" type="button" data-i="exZwo"></button>
+<button class="alt" data-exp="fit" type="button" data-i="exFit"></button>
+<button class="alt" data-exp="erg" type="button" data-i="exErg"></button>
+<button class="alt" data-exp="mrc" type="button" data-i="exMrc"></button>
+<button class="alt" data-exp="json" type="button" data-i="exJson"></button>
+</div>
+<div class="actions" style="margin-top:10px"><button class="alt" id="closeExp" type="button" data-i="close"></button></div>
 </dialog>
 
 <div class="layout">
@@ -394,11 +428,15 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <select id="shrinksel"><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option></select></div>
 <div><label>&nbsp;</label><button class="alt small" id="shrinkbtn" type="button" data-i="shrinkBtn"></button></div>
 </div>
+<div class="row">
+<div><label data-i="intensLbl"></label>
+<div style="display:flex;gap:8px"><button class="alt small" id="minus5" type="button" data-i="easier"></button><button class="alt small" id="plus5" type="button" data-i="harder"></button></div></div>
+<div><label>&nbsp;</label><button class="alt small" id="undoBtn" type="button" data-i="undo" hidden></button></div>
+</div>
 <label for="desc" data-i="descLbl"></label>
 <textarea id="desc"></textarea>
 <div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button>
-<button class="alt small" id="expzwo" type="button" data-ia="title:exZwo;aria-label:exZwo">.zwo</button>
-<button class="alt small" id="expfit" type="button" data-ia="title:exFit;aria-label:exFit">.fit</button></div>
+<button class="alt small" id="expdl" type="button" data-i="exportBtn"></button></div>
 </section>
 
 
@@ -468,6 +506,7 @@ subtitle:["Forge your next session: describe it, let AI build it, then send it s
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
 contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
 provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
+secAI:["AI provider","Fournisseur d'IA"], secIcu:["intervals.icu connection","Connexion intervals.icu"], secWidgets:["Sidebar widgets","Widgets de la barre latérale"],
 gKey:["Gemini API key","Clé API Gemini"], gModel:["Gemini model","Modèle Gemini"],
 think:["Thinking level (Gemini 3 models): lower = faster","Niveau de réflexion (modèles Gemini 3) : plus bas = plus rapide"],
 thLow:["Low (fast)","Bas (rapide)"], thMin:["Minimal","Minimal"], thMed:["Medium","Moyen"], thHigh:["High (slow)","Élevé (lent)"], thDef:["Model default","Défaut du modèle"],
@@ -558,7 +597,11 @@ shrinkDone:["Workout shrunk from {0} to {1} — warm-up and cool-down shortened,
 shrinkPart:["Only {0} could be trimmed from warm-up/cool-down: the workout is now {1}.","Seulement {0} ont pu être retirés de l'échauffement/retour au calme : la séance fait désormais {1}."],
 shrinkNone:["Nothing to trim: the warm-up and cool-down are already minimal.","Rien à raccourcir : l'échauffement et le retour au calme sont déjà minimaux."],
 shrinkAlready:["The workout is already {0} or shorter.","La séance fait déjà {0} ou moins."],
-exZwo:["Export as .zwo (Zwift)","Exporter en .zwo (Zwift)"], exFit:["Export as .fit (Garmin)","Exporter en .fit (Garmin)"],
+undo:["Undo","Annuler"], undone:["Reverted.","Rétabli."],
+intensLbl:["Adjust all intensities","Ajuster toutes les intensités"], easier:["− 5% (easier)","− 5% (plus facile)"], harder:["+ 5% (harder)","+ 5% (plus dur)"],
+intensDone:["All intensities shifted by {0}.","Toutes les intensités ont été ajustées de {0}."],
+exportBtn:["Export","Exporter"], expTitle:["Export the workout","Exporter la séance"],
+exZwo:["Zwift — .zwo","Zwift — .zwo"], exFit:["Garmin — .fit","Garmin — .fit"], exErg:["Smart trainer, watts — .erg","Home trainer, watts — .erg"], exMrc:["Smart trainer, % FTP — .mrc","Home trainer, % FTP — .mrc"], exJson:["Backup / share — .json","Sauvegarde / partage — .json"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
@@ -583,15 +626,16 @@ lib4Name:["Endurance Zone 2 (1h30)","Endurance Zone 2 (1h30)"], lib4Desc:["Stead
 };
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-let MSG = null, toastT, ptimer, phide, abortGen = null;
-function toast(m, cls){ $("toastt").textContent = m; const el = $("toast"); el.className = cls || "err"; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, cls === "err" ? 12000 : 6000); }
+let MSG = null, toastT, ptimer, phide, abortGen = null, toastActCb = null;
+function toast(m, cls, act){ $("toastt").textContent = m; const el = $("toast"); el.className = cls || "err"; toastActCb = act || null; $("toastAct").hidden = !act; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; toastActCb = null; }, cls === "err" ? 12000 : 6000); }
 function say(k, cls, ...a){
   const txt = k ? t(k, ...a) : "";
   MSG = k ? {k, cls, a} : null;
   $("msg").textContent = ""; $("msg").className = "";
   if(txt) toast(txt, cls || "info");
 }
-$("toastx").onclick = () => { $("toast").hidden = true; };
+$("toastx").onclick = () => { $("toast").hidden = true; toastActCb = null; };
+$("toastAct").onclick = () => { if(toastActCb){ toastActCb(); toastActCb = null; } $("toast").hidden = true; };
 function progStart(k){
   clearInterval(ptimer); clearTimeout(phide); const t0 = Date.now();
   abortGen = new AbortController();
@@ -629,6 +673,7 @@ function badges(){
   [["gkey","bg"],["ikey","bi"],["hfkey","bh"],["oakey","bo"]].forEach(([k, b]) => {
     const ok = !!store.get("si_" + k); $(b).textContent = t(ok ? "saved" : "missing"); $(b).className = "badge " + (ok ? "ok" : "err");
   });
+  $("bicu").textContent = t(store.get("si_ikey") ? "saved" : "missing"); $("bicu").className = "badge " + (store.get("si_ikey") ? "ok" : "err");
 }
 function fillModels(list, sel){
   const ids = [...new Set([sel, ...list].filter(Boolean))];
@@ -649,7 +694,7 @@ document.querySelectorAll(".tog").forEach(b => b.onclick = () => {
 });
 $("prov").onchange = provUI;
 $("open").onclick = () => {
-  loadSettings(); $("cfg").showModal();
+  loadSettings(); $("cfg").showModal(); sizeCfg();
   const pv = store.get("si_prov");
   if(pv === "hf"){ if(!hfList.length) $("refh").click(); }
   else if(pv === "oa"){ if(store.get("si_oakey") && !oaList.length) $("refo").click(); }
@@ -695,6 +740,24 @@ $("openHelp").onclick = () => {
   $("helpDlg").showModal();
 };
 $("closeHelp").onclick = () => $("helpDlg").close();
+
+// --- onglets des réglages ---
+function cfgTab(k){
+  document.querySelectorAll(".cfg-tabs [data-cfg]").forEach(x => x.setAttribute("aria-selected", String(x.dataset.cfg === k)));
+  document.querySelectorAll("[data-cfgp]").forEach(p => p.hidden = p.dataset.cfgp !== k);
+}
+document.querySelectorAll(".cfg-tabs [data-cfg]").forEach(b => b.onclick = () => cfgTab(b.dataset.cfg));
+// Hauteur fixe du dialogue de réglages : calée sur la plus grande section
+function sizeCfg(){
+  const ps = [...document.querySelectorAll("#cfg [data-cfgp]")];
+  if(!ps.length) return;
+  const prev = ps.map(p => p.hidden);
+  ps.forEach(p => p.hidden = false);
+  const h = Math.max(...ps.map(p => p.offsetHeight));
+  ps.forEach((p, i) => p.hidden = prev[i]);
+  if(h) document.documentElement.style.setProperty("--cfgH", h + "px");
+}
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if($("cfg").open) sizeCfg(); });
 
 async function fetchList(url, key){
   const r = await fetch(url, key ? {headers: {Authorization: "Bearer " + key}} : {});
@@ -1153,7 +1216,7 @@ function tipText(s, ftp, pace){
 $("desc").addEventListener("input", () => { selLine = null; renderChart(); });
 const syncUnit = () => { $("unit").disabled = !isBike($("sport").value); };
 $("sport").onchange = () => { syncUnit(); renderChart(); };
-$("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; $("prev").hidden = true; renderChart(); say("previewDeleted", "ok"); };
+$("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; UNDO = null; $("undoBtn").hidden = true; $("prev").hidden = true; renderChart(); say("previewDeleted", "ok"); };
 
 // ---------- Réduction à durée cible (shrink) ----------
 function fmtDur(sec){
@@ -1187,8 +1250,47 @@ function shrinkRegion(lines, steps, cut){
   }
   return done;
 }
-$("shrinkbtn").onclick = () => {
+// --- pile d'annulation pour les transformations de l'aperçu (shrink, ± intensité) ---
+let UNDO = null;
+function pushUndo(){
+  UNDO = $("desc").value;
+  $("undoBtn").hidden = false;
+}
+function doUndo(){
+  if(UNDO == null) return;
+  $("desc").value = UNDO; UNDO = null; $("undoBtn").hidden = true; selLine = null; renderChart(); say("undone", "ok");
+}
+$("undoBtn").onclick = doUndo;
+// --- ajustement global des intensités (±5 % de FTP) ---
+function shiftIntensity(delta){
   const steps = parseWorkout($("desc").value, $("sport").value, curFtp());
+  if(!steps.length) return say("prevEmpty", "err");
+  pushUndo();
+  const lines = $("desc").value.split("\n");
+  let touched = 0;
+  // décale les pourcentages et les watts ; les rampes gardent leur écart
+  lines.forEach((line, i) => {
+    if(!/^\s*-/.test(line)) return;
+    let moved = false;
+    // décale les pourcentages (bornes des plages comprises) et les watts
+    const np = line.replace(/(\d+(?:\.\d+)?)(?:\s*-\s*(\d+(?:\.\d+)?))?\s*%/g, (m, p, q) => {
+      moved = true;
+      const sh = v => Math.max(0, Math.round((+v + delta) * 10) / 10);
+      return q != null ? sh(p) + "-" + sh(q) + "%" : sh(p) + "%";
+    });
+    const nw = np.replace(/(\d+(?:\.\d+)?)\s*w\b/gi, (m, w) => { moved = true; return (Math.max(0, Math.round((+w * (1 + delta / 100)) * 10) / 10)) + "w"; });
+    if(moved){ lines[i] = nw; touched++; }
+  });
+  if(!touched){ UNDO = null; $("undoBtn").hidden = true; return say("shrinkNone", "err"); }
+  $("desc").value = lines.join("\n"); selLine = null; renderChart();
+  say("intensDone", "ok", (delta > 0 ? "+" : "") + delta + " % FTP");
+  toast(t("intensDone", (delta > 0 ? "+" : "") + delta + " % FTP"), "ok", doUndo);
+}
+$("minus5").onclick = () => shiftIntensity(-5);
+$("plus5").onclick = () => shiftIntensity(+5);
+$("shrinkbtn").onclick = () => {
+  const before = $("desc").value;
+  const steps = parseWorkout(before, $("sport").value, curFtp());
   if(!steps.length) return say("prevEmpty", "err");
   const total = steps.reduce((s, x) => s + x.d, 0);
   const target = (+$("shrinksel").value) * 60;
@@ -1207,13 +1309,15 @@ $("shrinkbtn").onclick = () => {
   const excess = Math.min(total - target, wAvail + cAvail);
   let wCut = Math.min(Math.round(excess * wAvail / (wAvail + cAvail)), wAvail);
   const cCut = Math.min(excess - wCut, cAvail);
-  const lines = $("desc").value.split("\n");
+  const lines = before.split("\n");
   const done = shrinkRegion(lines, wSteps, wCut) + shrinkRegion(lines, cSteps, cCut);
   if(!done) return say("shrinkNone", "err");
+  pushUndo();
   $("desc").value = lines.join("\n"); selLine = null; renderChart();
   const newTotal = total - done;
   if(newTotal > target + 60) say("shrinkPart", "ok", hm(done), hm(newTotal));
   else say("shrinkDone", "ok", hm(total), hm(newTotal));
+  toast(t(newTotal > target + 60 ? "shrinkPart" : "shrinkDone", ...(newTotal > target + 60 ? [hm(done), hm(newTotal)] : [hm(total), hm(newTotal)])), "ok", doUndo);
 };
 
 // ---------- Génération ----------
@@ -1823,8 +1927,48 @@ function buildFit(steps){
   file.push(crc & 0xff, (crc >> 8) & 0xff);
   return file;
 }
-$("expzwo").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".zwo"), buildZwo(st), "application/xml"); };
-$("expfit").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".fit"), Uint8Array.from(buildFit(st)), "application/octet-stream"); };
+// --- ERG / MRC : points « minutes valeur » (rampes = deux points, paliers = saut vertical) ---
+function buildErgPoints(steps, val){
+  const rows = []; let t = 0;
+  steps.forEach(s => { rows.push(t.toFixed(2) + "\t" + val(s.a)); t += s.d / 60; rows.push(t.toFixed(2) + "\t" + val(s.b)); });
+  return rows;
+}
+function ergHeader(kind, fname, desc){
+  return `[COURSE HEADER]\nVERSION = 2\nUNITS = ENGLISH\nDESCRIPTION = ${desc}\nFILE NAME = ${fname}\nMINUTES ${kind === "mrc" ? "PERCENT" : "WATTS"}\n[END]\n[COURSE DATA]\n`;
+}
+function buildErg(steps){
+  const ftp = curFtp(), name = ($("name").value || "workout").trim();
+  return ergHeader("erg", expFname(".erg"), name) + buildErgPoints(steps, p => Math.round(p * ftp / 100)).join("\n") + "\n[END]";
+}
+function buildMrc(steps){
+  const name = ($("name").value || "workout").trim();
+  return ergHeader("mrc", expFname(".mrc"), name) + buildErgPoints(steps, p => p.toFixed(1)).join("\n") + "\n[END]";
+}
+function buildJson(steps){
+  return JSON.stringify({
+    name: ($("name").value || "Workout").trim(),
+    sport: $("sport").value,
+    ftp: curFtp(),
+    description: $("desc").value,
+    steps: steps.map((s, i) => ({index: i, duration_s: Math.round(s.d), from_pct: Math.round(s.a * 10) / 10, to_pct: Math.round(s.b * 10) / 10}))
+  }, null, 2);
+}
+// --- Boîte de dialogue d'export ---
+$("expdl").onclick = () => { if(!prevSteps()) return; $("expDlg").showModal(); };
+$("closeExp").onclick = () => $("expDlg").close();
+const EXPORTS = {
+  zwo: [".zwo", st => buildZwo(st), "application/xml"],
+  fit: [".fit", st => Uint8Array.from(buildFit(st)), "application/octet-stream"],
+  erg: [".erg", st => buildErg(st), "text/plain"],
+  mrc: [".mrc", st => buildMrc(st), "text/plain"],
+  json: [".json", st => buildJson(st), "application/json"]
+};
+document.querySelectorAll("[data-exp]").forEach(b => b.onclick = () => {
+  const [ext, build, mime] = EXPORTS[b.dataset.exp], st = prevSteps();
+  if(!st) return;
+  dlFile(expFname(ext), build(st), mime);
+  $("expDlg").close();
+});
 
 // ---------- Import .zwo / .fit ----------
 function fmtDurImp(sec){
@@ -2433,9 +2577,9 @@ function applyMode(){
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
-  document.querySelectorAll(".mode button").forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
 }
-document.querySelectorAll(".mode button").forEach(b => {
+document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
   b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); if(mode === "act" && ACTS.list === null) loadActs().catch(() => {}); };
   b.onkeydown = e => {
     const modes = ["lib", "edit", "ai", "imp", "act"]; let idx = modes.indexOf(mode);
