@@ -106,6 +106,9 @@ footer a{color:var(--acc);text-decoration:none}
 footer a:hover{text-decoration:underline}
 a.coffee{margin:0;display:inline-flex;gap:8px;align-items:center;background:#ffc439;color:#111!important;border-radius:999px;padding:10px 20px;font-weight:600;text-decoration:none}
 a.coffee.soon{opacity:.6}
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin-top:6px}
+.wgrid label{display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;color:var(--ink);cursor:pointer}
+.wgrid input{width:auto;padding:0;margin:0}
 h2.ic{display:flex;align-items:center;gap:8px}
 .hic{width:22px;height:22px;flex:none;stroke:var(--acc);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .mode{display:flex;gap:4px;padding:4px;margin-bottom:16px;background:var(--card);border:1px solid var(--line);border-radius:10px}
@@ -228,6 +231,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
 <label for="aid" data-i="aid"></label>
 <input id="aid">
+<div class="lbl" style="margin-top:14px"><label data-i="widgetsLbl"></label></div>
+<div class="wgrid">
+<label><input type="checkbox" id="w_cal"><span data-i="calT"></span></label>
+<label><input type="checkbox" id="w_fit"><span data-i="fitT"></span></label>
+<label><input type="checkbox" id="w_last"><span data-i="lastW"></span></label>
+<label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
+<label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
+</div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
 <button class="alt" id="close" type="button" data-i="close"></button>
@@ -261,9 +272,10 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="col">
 
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
-<button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
-<button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
 <button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
+<button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
+<button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
+<button type="button" role="tab" data-m="imp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="tabImp"></span></button>
 </div>
 
 <section data-block="req">
@@ -323,6 +335,16 @@ h2.ic{display:flex;align-items:center;gap:8px}
 </div>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
+</section>
+
+<!-- Section Import .zwo / .fit -->
+<section data-block="imp" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="impLbl"></span></h2></div>
+<div id="impzone" style="border:2px dashed var(--line);border-radius:10px;padding:24px 16px;text-align:center">
+<button id="imppick" type="button" data-i="impPick"></button>
+<input type="file" id="impin" accept=".zwo,.fit,.xml" hidden>
+<p class="hint" data-i="impHint" style="margin-top:12px"></p>
+</div>
 </section>
 
 <div id="prog" hidden>
@@ -500,6 +522,13 @@ libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","To
 pickDate:["Choose the date","Choisir la date"], today:["Today","Aujourd'hui"], prevEmpty:["The preview is empty — build a workout first.","L'aperçu est vide — construis d'abord une séance."],
 exZwo:["Export as .zwo (Zwift)","Exporter en .zwo (Zwift)"], exFit:["Export as .fit (Garmin)","Exporter en .fit (Garmin)"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
+widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
+tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
+impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
+impPick:["Choose a file…","Choisir un fichier…"],
+impOk:["Workout imported from {0}.","Séance importée depuis {0}."],
+impEmpty:["No workout steps found in this file.","Aucune étape de séance trouvée dans ce fichier."],
+impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 noChart:["No structured workout data","Aucune donnée de séance structurée"],
 lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
 lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
@@ -564,7 +593,7 @@ function loadSettings(){
   fillModels(modelList, store.get("si_model") || DEF.model);
   SECRET.forEach(k => $(k).type = "password");
   document.querySelectorAll(".tog").forEach(b => { b.dataset.i = "show"; b.textContent = t("show"); });
-  provUI(); badges();
+  provUI(); badges(); applyWidgets();
 }
 document.querySelectorAll(".tog").forEach(b => b.onclick = () => {
   const i = $(b.dataset.for), show = i.type === "password";
@@ -580,7 +609,7 @@ $("open").onclick = () => {
 };
 $("close").onclick = () => $("cfg").close();
 $("cfg").addEventListener("close", loadSettings);
-$("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
+$("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); WIDGETS.forEach(k => { const c = $("w_" + k); if(c && c.checked !== widgets.includes(k)) toggleWidget(k); }); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
 $("clear").onclick = async () => { if(!(await ask("cfmClear"))) return; SECRET.forEach(k => store.set("si_" + k, "")); loadSettings(); };
 
 $("openHelp").onclick = () => {
@@ -1658,6 +1687,164 @@ function buildFit(steps){
 $("expzwo").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".zwo"), buildZwo(st), "application/xml"); };
 $("expfit").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".fit"), Uint8Array.from(buildFit(st)), "application/octet-stream"); };
 
+// ---------- Import .zwo / .fit ----------
+function fmtDurImp(sec){
+  sec = Math.round(sec);
+  if(sec >= 3600 && sec % 3600 === 0) return (sec / 3600) + "h";
+  if(sec >= 3600) return Math.floor(sec / 3600) + "h" + Math.round((sec % 3600) / 60);
+  if(sec >= 60 && sec % 60 === 0) return (sec / 60) + "m";
+  if(sec < 60) return sec + "s";
+  return Math.floor(sec / 60) + "m" + (sec % 60);
+}
+function stepsToDesc(steps){
+  const key = s => Math.round(s.d) + "|" + s.a.toFixed(1) + "|" + s.b.toFixed(1);
+  const line = s => {
+    const p = Math.abs(s.a - s.b) > 0.5 ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + "% ramp" : Math.round(s.a) + "%";
+    return "- " + fmtDurImp(s.d) + " " + p;
+  };
+  const out = []; let i = 0;
+  while(i < steps.length){
+    if(i + 1 < steps.length && key(steps[i]) === key(steps[i + 1])){ // même étape répétée d'affilée
+      let n = 1, j = i + 1;
+      while(j < steps.length && key(steps[j]) === key(steps[i])){ n++; j++; }
+      out.push(n + " x", line(steps[i]), ""); i = j; continue;
+    }
+    if(i + 3 < steps.length && key(steps[i]) === key(steps[i + 2]) && key(steps[i + 1]) === key(steps[i + 3])){ // couple effort/récup répété
+      let n = 1, j = i + 2;
+      while(j + 1 < steps.length && key(steps[j]) === key(steps[i]) && key(steps[j + 1]) === key(steps[i + 1])){ n++; j += 2; }
+      out.push(n + " x", line(steps[i]), line(steps[i + 1]), ""); i = j; continue;
+    }
+    out.push(line(steps[i])); i++;
+  }
+  return out.join("\n");
+}
+function parseZwo(xml){
+  const doc = new DOMParser().parseFromString(xml, "application/xml");
+  if(doc.querySelector("parsererror")) throw new Error("invalid XML");
+  const wk = doc.querySelector("workout");
+  if(!wk) throw new Error("no <workout> element");
+  const out = [];
+  const p = (el, n) => { const v = el.getAttribute(n); return v == null ? null : parseFloat(v); };
+  const add = (d, a, b) => { if(d > 0 && a != null) out.push({d: Math.round(d), a: a * 100, b: b * 100}); };
+  for(const el of wk.children){
+    const tag = el.tagName.toLowerCase();
+    if(tag === "steadystate"){ add(p(el, "Duration"), p(el, "Power"), p(el, "Power")); }
+    else if(tag === "warmup" || tag === "cooldown" || tag === "ramp" || tag === "warmdown"){
+      const lo = p(el, "PowerLow"), hi = p(el, "PowerHigh");
+      add(p(el, "Duration"), Math.min(lo, hi), Math.max(lo, hi));
+    }
+    else if(tag === "intervals" || tag === "intervalst"){
+      const rep = p(el, "Repeat") || 1, on = p(el, "OnDuration"), off = p(el, "OffDuration");
+      const op = p(el, "OnPower"), fp2 = p(el, "OffPower");
+      for(let k = 0; k < rep; k++){ add(on, op, op); if(off && fp2 != null) add(off, fp2, fp2); }
+    }
+  }
+  return out;
+}
+// --- lecture d'un fichier FIT (workout) ---
+function parseFit(bytes){
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  if(bytes.length < 12 || bytes[1] !== 0x10 || String.fromCharCode(...bytes.slice(8, 12)) !== ".FIT") throw new Error("not a FIT file");
+  const hl = bytes[0];
+  const defs = new Map(), msgs = {};
+  const rd = (base, p, big) => {
+    switch(base){
+      case 0: case 2: case 10: return bytes[p];
+      case 1: return dv.getInt8(p);
+      case 3: return dv.getInt16(p, !big);
+      case 4: case 11: return dv.getUint16(p, !big);
+      case 5: return dv.getInt32(p, !big);
+      case 6: case 12: return dv.getUint32(p, !big);
+      case 8: return dv.getFloat32(p, !big);
+      case 9: return dv.getFloat64(p, !big);
+      default: return null;
+    }
+  };
+  const scan = (start, stop) => {
+    defs.clear(); Object.keys(msgs).forEach(k => delete msgs[k]);
+    let pos = start;
+    try{
+      while(pos < stop && pos < bytes.length){
+        let h = bytes[pos++];
+        if(h & 0x80){ pos += 2; continue; } // horodatage compressé : ignoré
+        if(h & 0x40){
+          pos++; // réservé
+          const big = bytes[pos] === 1; // architecture : 0 = petit boutiste, 1 = gros boutiste
+          pos++;
+          const g = dv.getUint16(pos, !big); pos += 2;
+          const n = bytes[pos++], fields = [];
+          for(let k = 0; k < n; k++){ fields.push([bytes[pos], bytes[pos + 1], bytes[pos + 2]]); pos += 3; }
+          defs.set(h & 0x0f, {g, fields, big});
+        }else{
+          const d = defs.get(h & 0x0f);
+          if(!d) break;
+          const rec = {};
+          for(const [num, sz, tp] of d.fields){
+            if((tp & 0x1f) === 7){ // chaîne
+              let e = pos; while(e < bytes.length && bytes[e]) e++;
+              rec[num] = new TextDecoder().decode(bytes.slice(pos, Math.min(e, pos + sz)));
+              pos += sz;
+            }else{
+              rec[num] = rd(tp & 0x1f, pos, d.big);
+              pos += sz;
+            }
+          }
+          (msgs[d.g] = msgs[d.g] || []).push(rec);
+        }
+      }
+    }catch(e){ /* flux désynchronisé ou tronqué : on garde ce qui a été lu */ }
+  };
+  scan(hl === 14 ? 14 : 12, hl === 14 ? 14 + dv.getUint32(4, true) : bytes.length);
+  if(!(msgs[27] || []).length && hl === 12 && bytes.length > 14){
+    // certaines écritures placent un CRC après une en-tête de 12 octets : les données commencent alors à 14
+    scan(14, bytes.length);
+  }
+  // workout (26) / workout_step (27)
+  const ftp = curFtp();
+  const out = [];
+  for(const r of (msgs[27] || [])){
+    let d = 0;
+    if((r[0] === 0 || r[0] == null) && r[1]) d = r[1] / 1000; // durée en ms
+    if(!d) continue;
+    let a = null, b = null;
+    if(r[2] === 4 && r[3] != null){ // cible puissance relative (pour mille)
+      const v = r[3];
+      if(v <= 1000) a = b = v / 10;
+      else if(ftp > 0) a = b = v / ftp * 100;
+    }
+    if(r[5] != null && r[6] != null){ // plage personnalisée
+      const lo = r[5], hi = r[6];
+      if(lo <= 1000 && hi <= 1000){ a = lo / 10; b = hi / 10; }
+      else if(ftp > 0){ a = lo / ftp * 100; b = hi / ftp * 100; }
+    }
+    if(a == null) continue;
+    out.push({d: Math.round(d), a, b});
+  }
+  return out;
+}
+async function importFile(f){
+  try{
+    const buf = new Uint8Array(await f.arrayBuffer());
+    const steps = /\.fit$/i.test(f.name) ? parseFit(buf) : parseZwo(new TextDecoder().decode(buf));
+    if(!steps.length) return say("impEmpty", "err");
+    const nm = f.name.replace(/\.(zwo|fit|xml)$/i, "").replace(/[_-]+/g, " ").replace(/\s*\b\w/g, c => c.toUpperCase()).trim().slice(0, 60);
+    if(nm) $("name").value = nm;
+    $("desc").value = stepsToDesc(steps);
+    $("prev").hidden = false; selLine = null; EXPL = null;
+    renderChart(); say("impOk", "ok", f.name);
+  }catch(e){
+    say("impErr", "err", e && e.message ? e.message : errText(e));
+  }
+}
+$("imppick").onclick = () => $("impin").click();
+$("impin").onchange = () => { const f = $("impin").files[0]; $("impin").value = ""; if(f) importFile(f); };
+{
+  const z = $("impzone");
+  ["dragover", "dragenter"].forEach(ev => z.addEventListener(ev, e => { e.preventDefault(); z.style.borderColor = "var(--acc)"; }));
+  ["dragleave", "drop"].forEach(ev => z.addEventListener(ev, e => { e.preventDefault(); z.style.borderColor = ""; }));
+  z.addEventListener("drop", e => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if(f) importFile(f); });
+}
+
 // ---------- Explication de la séance ----------
 function renderExplain(steps){
   const el = $("explain"), tot = steps.reduce((x, y) => x + y.d, 0) || 1, z = {e: 0, t: 0, h: 0, v: 0};
@@ -1992,12 +2179,13 @@ function applyMode(){
   document.querySelector('[data-block="req"]').hidden = mode !== "ai";
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
+  document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelectorAll(".mode button").forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
 }
 document.querySelectorAll(".mode button").forEach(b => {
   b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); };
   b.onkeydown = e => {
-    const modes = ["ai", "edit", "lib"]; let idx = modes.indexOf(mode);
+    const modes = ["lib", "edit", "ai", "imp"]; let idx = modes.indexOf(mode);
     if(e.key === "ArrowLeft") idx = (idx - 1 + modes.length) % modes.length;
     else if(e.key === "ArrowRight") idx = (idx + 1) % modes.length;
     else return;
@@ -2006,14 +2194,28 @@ document.querySelectorAll(".mode button").forEach(b => {
 });
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
-let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib"); }catch(e){}
+// --- Widgets visibles de la colonne de droite (réglages) ---
+const WIDGETS = ["cal", "fit", "last", "load", "best"];
+let widgets = [];
+function loadWidgets(){
+  const raw = store.get("si_widgets");
+  let v = null;
+  try{ v = raw ? JSON.parse(raw) : null; }catch(e){ v = null; }
+  widgets = WIDGETS.filter(k => v ? v.includes(k) : WIDGETS.indexOf(k) < 3);
+}
+function applyWidgets(){
+  WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
+  WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
+}
+function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
     const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
@@ -2037,7 +2239,7 @@ function applyLang(){
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 $("date").value = iso(new Date()); refreshDateBtn();
-applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
+loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
