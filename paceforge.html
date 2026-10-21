@@ -71,7 +71,7 @@ dialog h2{margin-bottom:6px}
 .tip .act{margin-top:6px}
 #toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px;align-items:flex-start;max-width:min(92vw,560px);padding:12px 14px;border-radius:8px;background:var(--card);color:var(--ink);border:1px solid var(--err);border-left:6px solid var(--err);box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:.9rem}
 #toast button{margin:0;padding:0 6px;line-height:1.2;font-size:1.2rem;background:transparent;color:var(--mute)}
-#prog{margin:-4px 0 16px}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
+#prog{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:999;width:min(92vw,460px);padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.25);margin:0}#toast{top:76px}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
 .explain{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:.9rem}.explain p{margin:4px 0 6px}
 #fsvg{display:block;width:100%;height:150px;border-radius:6px;background:var(--bg);touch-action:none}
 #fsvg .fc{fill:#3b82c4;fill-opacity:.35;stroke:#3b82c4;stroke-width:1.2;vector-effect:non-scaling-stroke}
@@ -132,12 +132,19 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .cal-d.today .cal-n{color:var(--ink);font-weight:600}
 .cal-ev{display:flex;align-items:center;gap:2px;background:var(--acc);color:var(--on);border-radius:4px;padding:1px 3px;cursor:grab;min-width:0}
 .cal-ev.run{background:#8e44ad}
+.cal-ev.done{background:#4a90d9;opacity:.78;cursor:default}
+.cal-ev.done.run{background:#8e44ad}
+.cal-ev.done .cal-x{display:none}
 .cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
 .cal-x:hover{opacity:1}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
+#calbox,#dcalbox{position:relative}
+.tip .cal-prev{display:block;width:210px;height:46px;margin:6px 0 2px;border-radius:4px;background:var(--bg)}
+.tip .cal-prev svg{display:block;width:100%;height:100%}
+.tip b{display:block;margin-bottom:2px}
 .cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
 #aiBody{line-height:1.6}
 #aiBody p{margin:8px 0}
@@ -493,6 +500,7 @@ libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","To
 pickDate:["Choose the date","Choisir la date"], today:["Today","Aujourd'hui"], prevEmpty:["The preview is empty — build a workout first.","L'aperçu est vide — construis d'abord une séance."],
 exZwo:["Export as .zwo (Zwift)","Exporter en .zwo (Zwift)"], exFit:["Export as .fit (Garmin)","Exporter en .fit (Garmin)"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
+noChart:["No structured workout data","Aucune donnée de séance structurée"],
 lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
 lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
 lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc:["High-intensity intervals to boost maximal aerobic power.","Intervalles de haute intensité pour booster la puissance aérobie maximale."],
@@ -779,7 +787,7 @@ function renderLast(){
   const pos = (LAST.list || []).length > 1 ? ` · ${LAST.li + 1}/${LAST.list.length}` : "";
   $("lprev").disabled = !(LAST.list || []).length || (LAST.li || 0) >= LAST.list.length - 1;
   $("lnext").disabled = !(LAST.list || []).length || (LAST.li || 0) <= 0;
-  box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}${pos}</div>` + (LAST.sw || LAST.sh ? streamsSvg() : "") +
+  box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}${pos}</div>` + (LAST.strTried ? streamsSvg() : "") +
     `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>`;
   updateIcuLinks();
 }
@@ -793,16 +801,19 @@ $("lastbox").addEventListener("pointermove", e => {
 async function loadLast(idx){
   const done = (LAST.acts || []).filter(a => a.moving_time).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
   LAST.list = done;
-  if(!done.length){ LAST.last = null; LAST.li = 0; LAST.sw = LAST.sh = null; renderLast(); return; }
+  if(!done.length){ LAST.last = null; LAST.li = 0; LAST.sw = LAST.sh = null; LAST.strTried = false; renderLast(); return; }
   LAST.li = Math.min(Math.max(idx || 0, 0), done.length - 1);
-  LAST.last = done[LAST.li]; LAST.sw = LAST.sh = null; renderLast();
+  LAST.last = done[LAST.li]; LAST.sw = LAST.sh = null; LAST.strTried = false; renderLast();
   const cur = LAST.last;
   try{
     const j = await icuFetch(`https://intervals.icu/api/v1/activity/${cur.id}/streams?types=watts,heartrate`);
-    const list = Array.isArray(j) ? j : (j.streams || []), get = ty => (list.find(s => s.type === ty) || {}).data;
+    const list = Array.isArray(j) ? j : (j.streams || []);
+    // noms de flux acceptés en repli selon la source de l'activité
+    const get = (...tys) => { for(const ty of tys){ const d = (list.find(s => s.type === ty) || {}).data; if(d && d.length) return d; } return null; };
     if(LAST.last !== cur) return;
-    LAST.sw = get("watts"); LAST.sh = get("heartrate");
+    LAST.sw = get("watts", "power", "watts_calc"); LAST.sh = get("heartrate", "heart_rate", "hr");
   }catch(e){}
+  LAST.strTried = true;
   if(LAST.last === cur) renderLast();
 }
 $("lprev").onclick = () => loadLast((LAST.li || 0) + 1).catch(() => {});
@@ -935,8 +946,17 @@ function parseWorkout(txt, sport, ftp){
   const flush = () => { if(group){ for(let i = 0; i < group.n; i++) steps.push(...group.items); group = null; } };
   const num = x => parseFloat(String(x).replace(",", "."));
   const dur = str => {
-    let tt = 0, m; const re = /(\d+(?:[.,]\d+)?)\s*(h|min|m|s)(?![a-z])/gi;
-    while((m = re.exec(str))){ const v = num(m[1]), u = m[2].toLowerCase(); tt += u === "h" ? v * 3600 : u === "s" ? v : v * 60; }
+    let tt = 0, m;
+    // formes : 10m, 5min, 30s, 1h, 1h30, 2m45 (composées), 10:00 (mm:ss), 1:30:00 (h:mm:ss)
+    const re = /(\d+(?:[.,]\d+)?)\s*(h|min|m|s)(?![a-z])|(\d+):(\d{2})(?::(\d{2}))?/gi;
+    while((m = re.exec(str))){
+      if(m[3] != null){ tt += m[5] != null ? (+m[3]) * 3600 + (+m[4]) * 60 + (+m[5]) : (+m[3]) * 60 + (+m[4]); continue; }
+      const v = num(m[1]), u = m[2].toLowerCase();
+      tt += u === "h" ? v * 3600 : u === "s" ? v : v * 60;
+      // nombre isolé juste après une unité h ou m/min : "1h30" → 30 min, "2m45" → 45 s
+      const rest = str.slice(re.lastIndex).match(/^\s*(\d{1,2})(?![^\s])/);
+      if(rest && u !== "s") tt += u === "h" ? (+rest[1]) * 60 : +rest[1];
+    }
     return tt;
   };
   const dist = str => {
@@ -956,14 +976,19 @@ function parseWorkout(txt, sport, ftp){
   for(const [li, raw] of txt.split("\n").entries()){
     const line = raw.trim();
     if(!line){ flush(); continue; }
-    if(line.startsWith("-")){
-      const it = inten(line); if(!it) continue;
-      const pre = line.slice(0, it.idx), mid = (it.a + it.b) / 2;
+    const dashed = line.startsWith("-");
+    const body = dashed ? line.slice(1).replace(/^\s*/, "") : line;
+    const it = inten(body);
+    if(it){
+      // une ligne avec durée + intensité est une étape, avec ou sans tiret (format natif intervals.icu)
+      const pre = body.slice(0, it.idx), mid = (it.a + it.b) / 2;
       let d = dur(pre);
       if(!d){ const m = dist(pre); if(m) d = m * spm / Math.max(mid / 100, 0.3); }
       if(!d) continue;
       const step = {d, a: it.ramp ? it.a : mid, b: it.ramp ? it.b : mid, line: li};
       if(group) group.items.push(step); else steps.push(step);
+    }else if(dashed){
+      continue;
     }else{
       flush();
       const r = line.match(/(\d+)\s*x\s*$/i);
@@ -1413,7 +1438,7 @@ function libDuration(item){
   return item._dur;
 }
 function libStats(item, ftp){
-  const steps = parseWorkout(item.desc_en, item.sport, 0);
+  const steps = parseWorkout(item.desc_en, item.sport, ftp);
   if(!steps.length) return null;
   const total = steps.reduce((s, x) => s + x.d, 0);
   const avgPct = steps.reduce((s, x) => s + x.d * (x.a + x.b) / 2, 0) / total;
@@ -1643,27 +1668,30 @@ function renderExplain(steps){
 }
 
 // ---------- Calendrier du planning (drag & drop, suppression, sélecteur de date) ----------
-const CAL = {m: 0, pm: 0, ev: [], pev: []};
+const CAL = {m: 0, pm: 0, ev: [], pev: [], acts: [], dacts: []};
 function calFirst(off){ const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (off || 0)); return d; }
 function calRange(off){
   const f = calFirst(off);
   return [iso(new Date(f.getFullYear(), f.getMonth(), 1)), iso(new Date(f.getFullYear(), f.getMonth() + 1, 0))];
 }
 function calLabel(el, off){ el.textContent = calFirst(off).toLocaleDateString(loc(), {month: "long", year: "numeric"}); }
-function calHtml(off, evList, pick, selDate){
+function calHtml(off, evList, pick, selDate, actList){
   const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date());
   const blank = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
-  const by = {};
+  const by = {}, byA = {};
   (evList || []).forEach(e => { const k = (e.start_date_local || "").slice(0, 10); (by[k] = by[k] || []).push(e); });
+  (actList || []).forEach(a => { const k = (a.start_date_local || "").slice(0, 10); (byA[k] = byA[k] || []).push(a); });
   const heads = lang === "fr" ? ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"] : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   let html = `<div class="cal">` + heads.map(h => `<div class="cal-h">${esc(h)}</div>`).join("");
   for(let i = 0; i < blank; i++) html += `<div class="cal-d empty"></div>`;
   let n = 0;
+  const byStart = (x, y) => (x.start_date_local || "") < (y.start_date_local || "") ? -1 : 1;
   for(let d = 1; d <= dim; d++){
-    const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort((a, b) => (a.start_date_local || "") < (b.start_date_local || "") ? -1 : 1);
-    n += evs.length;
+    const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort(byStart), acts = (byA[k] || []).slice().sort(byStart);
+    n += evs.length + acts.length;
     html += `<div class="cal-d${k === today ? " today" : ""}${pick && k === selDate ? " sel" : ""}" data-date="${k}"><span class="cal-n">${d}</span>` +
-      evs.map(e => `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button></div>`).join("") + `</div>`;
+      evs.map(e => `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button></div>`).join("") +
+      acts.map(a => `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}" data-eid="a${esc(String(a.id))}" title="${esc(a.name || a.type || "")}"><span class="cal-ev-t">${esc(a.name || a.type || "—")}</span></div>`).join("") + `</div>`;
   }
   return {html: html + `</div>`, n};
 }
@@ -1672,6 +1700,87 @@ function bindCalChips(box){
     el.addEventListener("dragstart", ev => { ev.dataTransfer.setData("text/plain", el.dataset.eid); ev.dataTransfer.effectAllowed = "move"; });
     el.addEventListener("dragend", () => box.querySelectorAll(".cal-d.over").forEach(c => c.classList.remove("over")));
   });
+}
+// Infobulle au survol d'une séance planifiée (détails + mini-graphe)
+// Mini-profil d'une séance réalisée (puissance, ou FC en repli) à partir de ses streams
+const STREAM_CACHE = {};
+function actStreams(id){
+  if(STREAM_CACHE[id] !== undefined) return STREAM_CACHE[id];
+  STREAM_CACHE[id] = (async () => {
+    const pick = list => {
+      list = Array.isArray(list) ? list : (list && list.streams) || [];
+      const get = (...tys) => { for(const ty of tys){ const d = (list.find(s => s.type === ty) || {}).data; if(d && d.length) return d; } return null; };
+      return {w: get("watts", "power", "watts_calc"), h: get("heartrate", "heart_rate", "hr"), s: get("velocity_smooth", "speed", "velocity")};
+    };
+    try{
+      // sans filtre de types : certains noms (p.ex. "speed") ne sont pas acceptés
+      // par le paramètre types et feraient échouer toute la requête
+      const j = await icuFetch(`https://intervals.icu/api/v1/activity/${id}/streams`);
+      const r = pick(j);
+      if(r.w || r.h || r.s) return r;
+    }catch(e){}
+    try{
+      const j = await icuFetch(`https://intervals.icu/api/v1/activity/${id}/streams?types=watts,heartrate`);
+      return pick(j);
+    }catch(e){ return {w: null, h: null, s: null}; }
+  })();
+  return STREAM_CACHE[id];
+}
+function actPrevSvg(sw){
+  // priorité : puissance, sinon vitesse (tous sports), sinon fréquence cardiaque
+  const src = ds(sw.w || sw.s || sw.h || [], 120);
+  if(!src.length) return "";
+  const col = sw.w ? "#3b82c4" : sw.s ? "#1d7a3a" : "#d6336c";
+  const op = sw.w ? ".35" : sw.s ? ".3" : ".18";
+  const m = Math.max(...src, 1);
+  const X = i => (i / Math.max(1, src.length - 1) * 300).toFixed(1);
+  const pts = src.map((v, i) => `L${X(i)} ${(96 - v / m * 92).toFixed(1)}`).join("");
+  return `<svg viewBox="0 0 300 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 100${pts}L300 100Z" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-width="1.2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function calTipHtml(e, isAct){
+  const desc = e.description || "";
+  const ftp = curFtp(), sport = e.type || "Ride";
+  const pseudo = {desc_en: desc, sport};
+  const steps = !isAct && desc ? parseWorkout(desc, sport, ftp) : [];
+  let h = `<b>${esc(e.name || "—")}</b>${esc(actT(e.type || ""))}`;
+  if(steps.length){
+    const st = libStats(pseudo, ftp);
+    const w = ftp > 0;
+    h += `<div class="cal-prev">${workoutPreviewSvg(desc, pseudo.sport, ftp)}</div>` +
+      hm(st.total) + " · " + t("libAvg") + " " + (w ? Math.round(st.avgPct * ftp / 100) + " W" : Math.round(st.avgPct) + " %") +
+      " · NP " + (w ? Math.round(st.npPct * ftp / 100) + " W" : Math.round(st.npPct) + " %");
+  }else{
+    if(e.start_date_local) h += "\n" + new Date(e.start_date_local).toLocaleString(loc(), {weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
+    if(e.moving_time) h += "\n" + hm(e.moving_time) + (e.distance ? " · " + (Math.round(e.distance / 100) / 10) + " km" : "");
+    if(isAct) h += `<div class="cal-prev" data-pid="${esc(String(e.id))}"></div>`;
+    else if(desc) h += "\n" + esc(t("noChart"));
+  }
+  return h;
+}
+function bindCalTips(box, getEv){
+  const getTip = () => { let d = box.querySelector(".tip"); if(!d){ d = document.createElement("div"); d.className = "tip"; d.hidden = true; box.appendChild(d); } return d; };
+  if(box._tipped) return; box._tipped = true;
+  box.addEventListener("pointermove", e => {
+    const tip = getTip(), el = e.target.closest ? e.target.closest(".cal-ev") : null;
+    if(!el || !box.contains(el)){ tip.hidden = true; return; }
+    if(tip.dataset.eid !== el.dataset.eid){
+      tip.dataset.eid = el.dataset.eid;
+      const isAct = el.dataset.eid[0] === "a";
+      const ev = (getEv() || []).find(x => isAct ? "a" + String(x.id) === el.dataset.eid : String(x.id) === el.dataset.eid);
+      tip.innerHTML = ev ? calTipHtml(ev, isAct) : esc(el.title || "");
+      if(isAct && ev) actStreams(String(ev.id)).then(sw => {
+        if(tip.dataset.eid !== el.dataset.eid) return;
+        const pv = tip.querySelector(".cal-prev");
+        const svg = actPrevSvg(sw);
+        if(pv){ if(svg) pv.innerHTML = svg; else pv.remove(); }
+      });
+    }
+    tip.hidden = false;
+    const r = box.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(e.clientX - r.left + 12, r.width - tip.offsetWidth - 4)) + "px";
+    tip.style.top = Math.min(e.clientY - r.top + 14, Math.max(0, r.height - tip.offsetHeight - 4)) + "px";
+  });
+  box.addEventListener("pointerleave", () => { const tip = box.querySelector(".tip"); if(tip) tip.hidden = true; });
 }
 function setupCalBox(box, getEv, refresh, onPick){
   box.addEventListener("dragover", e => { const c = e.target.closest(".cal-d:not(.empty)"); if(c){ e.preventDefault(); e.dataTransfer.dropEffect = "move"; c.classList.add("over"); } });
@@ -1707,19 +1816,34 @@ function setupCalBox(box, getEv, refresh, onPick){
   });
 }
 // calendrier de droite
+// Un workout planifié disparaît dès qu'il est passé (avant aujourd'hui) ou dès qu'une
+// séance réalisée figure sur le même jour : on garde alors uniquement la séance faite.
+function mergeCal(evs, acts){
+  const today = iso(new Date());
+  const doneDays = new Set((acts || []).map(a => (a.start_date_local || "").slice(0, 10)));
+  return (evs || []).filter(e => {
+    const k = (e.start_date_local || "").slice(0, 10);
+    return k >= today && !doneDays.has(k);
+  });
+}
 async function loadCal(){
   if(!KEY()) return;
   const [a, b] = calRange(CAL.m);
-  CAL.ev = await icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []);
+  [CAL.ev, CAL.acts] = await Promise.all([
+    icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []),
+    icu(`/activities?oldest=${a}&newest=${b}`).catch(() => [])
+  ]);
+  CAL.ev = mergeCal(CAL.ev, CAL.acts);
   renderCal();
 }
 function renderCal(){
   const box = $("calbox"); if(!box) return;
   if(!KEY()){ box.textContent = ""; $("calmonth").textContent = ""; return; }
   calLabel($("calmonth"), CAL.m);
-  const r = calHtml(CAL.m, CAL.ev, false);
+  const r = calHtml(CAL.m, CAL.ev, false, null, CAL.acts || []);
   box.innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
   bindCalChips(box);
+  bindCalTips(box, () => (CAL.ev || []).concat(CAL.acts || []));
   updateIcuLinks();
 }
 $("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
@@ -1732,15 +1856,22 @@ function refreshDateBtn(){
   $("datebtn").textContent = v ? new Date(v + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short", year: "numeric"}) : t("pickDate");
 }
 async function loadDCal(){
-  if(KEY()){ const [a, b] = calRange(CAL.pm); CAL.pev = await icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []); }
-  else CAL.pev = [];
+  if(KEY()){ const [a, b] = calRange(CAL.pm);
+    [CAL.pev, CAL.dacts] = await Promise.all([
+      icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []),
+      icu(`/activities?oldest=${a}&newest=${b}`).catch(() => [])
+    ]);
+    CAL.pev = mergeCal(CAL.pev, CAL.dacts);
+  }
+  else{ CAL.pev = []; CAL.dacts = []; }
   renderDCal();
 }
 function renderDCal(){
   calLabel($("dcalmonth"), CAL.pm);
-  const r = calHtml(CAL.pm, CAL.pev, true, $("date").value);
+  const r = calHtml(CAL.pm, CAL.pev, true, $("date").value, CAL.dacts || []);
   $("dcalbox").innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
   bindCalChips($("dcalbox"));
+  bindCalTips($("dcalbox"), () => (CAL.pev || []).concat(CAL.dacts || []));
 }
 $("datebtn").onclick = () => {
   const cur = $("date").value || iso(new Date()), d = new Date(cur + "T12:00:00"), now = new Date();
