@@ -72,7 +72,9 @@ dialog h2{margin-bottom:6px}
 .tip .act{margin-top:6px}
 #toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;gap:10px;align-items:flex-start;max-width:min(92vw,560px);padding:12px 14px;border-radius:8px;background:var(--card);color:var(--ink);border:1px solid var(--err);border-left:6px solid var(--err);box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:.9rem}
 #toast button{margin:0;padding:0 6px;line-height:1.2;font-size:1.2rem;background:transparent;color:var(--mute)}
-#prog{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:999;width:min(92vw,460px);padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.25);margin:0}#toast{top:76px}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
+#toast.ok{border-color:var(--ok);border-left-color:var(--ok)}
+#toast.info{border-color:var(--acc);border-left-color:var(--acc)}
+#prog{position:fixed;top:76px;left:50%;transform:translateX(-50%);z-index:999;width:min(92vw,460px);padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);box-shadow:0 6px 24px rgba(0,0,0,.25);margin:0}.pt{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--mute);margin-bottom:4px}.pb{height:10px;border-radius:999px;background:var(--line);overflow:hidden}.pb i{display:block;height:100%;width:0;border-radius:999px;background:var(--acc);transition:width .3s}
 .explain{margin-top:10px;padding:10px 12px;border-radius:6px;background:var(--bg);font-size:.9rem}.explain p{margin:4px 0 6px}
 #fsvg{display:block;width:100%;height:150px;border-radius:6px;background:var(--bg);touch-action:none}
 #fsvg .fc{fill:#3b82c4;fill-opacity:.35;stroke:#3b82c4;stroke-width:1.2;vector-effect:non-scaling-stroke}
@@ -582,11 +584,12 @@ lib4Name:["Endurance Zone 2 (1h30)","Endurance Zone 2 (1h30)"], lib4Desc:["Stead
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 let MSG = null, toastT, ptimer, phide, abortGen = null;
-function toast(m){ $("toastt").textContent = m; $("toast").hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { $("toast").hidden = true; }, 12000); }
+function toast(m, cls){ $("toastt").textContent = m; const el = $("toast"); el.className = cls || "err"; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, cls === "err" ? 12000 : 6000); }
 function say(k, cls, ...a){
   const txt = k ? t(k, ...a) : "";
-  if(cls === "err"){ MSG = null; $("msg").textContent = ""; if(txt) toast(txt); return; }
-  MSG = k ? {k, cls, a} : null; $("msg").textContent = txt; $("msg").className = cls || "";
+  MSG = k ? {k, cls, a} : null;
+  $("msg").textContent = ""; $("msg").className = "";
+  if(txt) toast(txt, cls || "info");
 }
 $("toastx").onclick = () => { $("toast").hidden = true; };
 function progStart(k){
