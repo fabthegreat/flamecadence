@@ -15,6 +15,7 @@ main{max-width:1240px;margin:0 auto;padding:20px 16px 24px}
 h1{font-size:1.65rem;margin:0;font-weight:600;letter-spacing:-0.02em}
 p.sub{color:var(--mute);margin:6px 0 20px}
 section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+#prev{position:sticky;top:8px;z-index:20;box-shadow:0 6px 24px rgba(0,0,0,.18);max-height:calc(100vh - 24px);overflow:auto}
 h2{font-size:1rem;margin:0 0 12px}
 h3.blk{font-size:1rem;margin:20px 0 0}
 label{display:block;font-size:.85rem;color:var(--mute);margin:10px 0 4px}
@@ -386,6 +387,11 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div><label for="name" data-i="name"></label><input id="name"></div>
 <div><label data-i="date"></label><input type="hidden" id="date"><button type="button" class="alt" id="datebtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
 </div>
+<div class="row">
+<div><label for="shrinksel" data-i="shrinkLbl"></label>
+<select id="shrinksel"><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option></select></div>
+<div><label>&nbsp;</label><button class="alt small" id="shrinkbtn" type="button" data-i="shrinkBtn"></button></div>
+</div>
 <label for="desc" data-i="descLbl"></label>
 <textarea id="desc"></textarea>
 <div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button>
@@ -545,6 +551,11 @@ libDesc:["Select a proven session from the library to instantly preview it and s
 libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
 libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","Toutes les durées"], libAvg:["avg","moy."],
 pickDate:["Choose the date","Choisir la date"], today:["Today","Aujourd'hui"], prevEmpty:["The preview is empty — build a workout first.","L'aperçu est vide — construis d'abord une séance."],
+shrinkLbl:["Shrink to duration","Réduire à la durée"], shrinkBtn:["Shrink warm-up / cool-down","Réduire échauffement / retour au calme"],
+shrinkDone:["Workout shrunk from {0} to {1} — warm-up and cool-down shortened, core kept.","Séance réduite de {0} à {1} — échauffement et retour au calme raccourcis, cœur conservé."],
+shrinkPart:["Only {0} could be trimmed from warm-up/cool-down: the workout is now {1}.","Seulement {0} ont pu être retirés de l'échauffement/retour au calme : la séance fait désormais {1}."],
+shrinkNone:["Nothing to trim: the warm-up and cool-down are already minimal.","Rien à raccourcir : l'échauffement et le retour au calme sont déjà minimaux."],
+shrinkAlready:["The workout is already {0} or shorter.","La séance fait déjà {0} ou moins."],
 exZwo:["Export as .zwo (Zwift)","Exporter en .zwo (Zwift)"], exFit:["Export as .fit (Garmin)","Exporter en .fit (Garmin)"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
@@ -1140,6 +1151,67 @@ $("desc").addEventListener("input", () => { selLine = null; renderChart(); });
 const syncUnit = () => { $("unit").disabled = !isBike($("sport").value); };
 $("sport").onchange = () => { syncUnit(); renderChart(); };
 $("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; $("prev").hidden = true; renderChart(); say("previewDeleted", "ok"); };
+
+// ---------- Réduction à durée cible (shrink) ----------
+function fmtDur(sec){
+  sec = Math.max(1, Math.round(sec));
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? `${h}h${m}m` : m ? (s ? `${m}m${s}s` : `${m}m`) : `${s}s`;
+}
+function reTime(line, sec){
+  const tok = "(?:\\d+(?:[.,]\\d+)?\\s*(?:h|min|m|s)(?![a-z])|\\d+:\\d{2}(?::\\d{2})?)";
+  // remplace TOUTE l'expression de durée en tête de ligne (« 15m », « 1h30 », « 2m5s »…) par une durée unique et propre
+  const re = new RegExp("^(\\s*-\\s*)(" + tok + "(?:\\s*\\d{1,2}(?![a-z0-9%:-]))?(?:\\s*" + tok + ")*)(?=\\s|$)", "i");
+  const m = line.match(re);
+  return m ? m[1] + fmtDur(sec) + line.slice(m[0].length) : line;
+}
+function shrinkRegion(lines, steps, cut){
+  // raccourcit les lignes de la région (échauffement ou retour au calme) pour lui retirer ~cut secondes
+  if(!steps.length || cut <= 0) return 0;
+  const tot = steps.reduce((s, x) => s + x.d, 0);
+  const scale = Math.max(0, (tot - cut) / tot);
+  const byLine = {};
+  steps.forEach(s => { (byLine[s.line] = byLine[s.line] || []).push(s); });
+  let done = 0;
+  for(const li of Object.keys(byLine)){
+    const ls = byLine[li], per = ls[0].d;
+    const newPer = Math.max(30, Math.round(per * scale / 30) * 30);
+    if(newPer >= per) continue;
+    const nl = reTime(lines[li], newPer);
+    if(nl === lines[li]) continue; // durée non réécrite (ex. étape en distance) : ne pas comptabiliser
+    lines[li] = nl;
+    done += ls.length * (per - newPer);
+  }
+  return done;
+}
+$("shrinkbtn").onclick = () => {
+  const steps = parseWorkout($("desc").value, $("sport").value, curFtp());
+  if(!steps.length) return say("prevEmpty", "err");
+  const total = steps.reduce((s, x) => s + x.d, 0);
+  const target = (+$("shrinksel").value) * 60;
+  if(total <= target + 5) return say("shrinkAlready", "ok", hm(target));
+  const mid = s => (s.a + s.b) / 2;
+  const cnt = {}; steps.forEach(s => cnt[s.line] = (cnt[s.line] || 0) + 1);
+  // les étapes d'un bloc de répétitions font partie du cœur : on n'y touche pas
+  const easy = s => mid(s) < 80 && cnt[s.line] === 1;
+  let wi = 0; while(wi < steps.length && easy(steps[wi])) wi++;
+  let ci = steps.length; while(ci > wi && easy(steps[ci - 1])) ci--;
+  if(wi >= steps.length){ wi = Math.ceil(steps.length / 2); ci = wi; } // séance entièrement facile : couper au milieu
+  const wSteps = steps.slice(0, wi), cSteps = steps.slice(ci);
+  const wTot = wSteps.reduce((s, x) => s + x.d, 0), cTot = cSteps.reduce((s, x) => s + x.d, 0);
+  const wAvail = Math.max(0, wTot - 300), cAvail = Math.max(0, cTot - 300); // on laisse jusqu'à 5' de chaque côté
+  if(wAvail + cAvail <= 0) return say("shrinkNone", "err");
+  const excess = Math.min(total - target, wAvail + cAvail);
+  let wCut = Math.min(Math.round(excess * wAvail / (wAvail + cAvail)), wAvail);
+  const cCut = Math.min(excess - wCut, cAvail);
+  const lines = $("desc").value.split("\n");
+  const done = shrinkRegion(lines, wSteps, wCut) + shrinkRegion(lines, cSteps, cCut);
+  if(!done) return say("shrinkNone", "err");
+  $("desc").value = lines.join("\n"); selLine = null; renderChart();
+  const newTotal = total - done;
+  if(newTotal > target + 60) say("shrinkPart", "ok", hm(done), hm(newTotal));
+  else say("shrinkDone", "ok", hm(total), hm(newTotal));
+};
 
 // ---------- Génération ----------
 const SYSTEM = `You are an expert coach. You create ONE structured workout.
