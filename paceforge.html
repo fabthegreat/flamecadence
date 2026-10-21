@@ -121,6 +121,29 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-card p{margin:0 0 10px;font-size:.85rem;color:var(--mute)}
 .lib-preview{display:block;width:100%;height:42px;margin:8px 0 10px;border-radius:6px;background:var(--card);overflow:hidden}
 .lib-preview svg{display:block;width:100%;height:100%}
+.lib-stats{margin:0 0 8px;font-size:.8rem;color:var(--mute)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.75rem}
+.cal-h{text-align:center;color:var(--mute);padding:2px 0;font-size:.7rem}
+.cal-d{min-height:54px;border:1px solid var(--line);border-radius:5px;padding:2px;background:var(--bg);display:flex;flex-direction:column;gap:2px;overflow:hidden}
+.cal-d.empty{border:0;background:transparent;min-height:0}
+.cal-d.today{border-color:var(--acc)}
+.cal-d.over{outline:2px dashed var(--acc);outline-offset:-2px}
+.cal-n{color:var(--mute);font-size:.7rem;padding-left:3px}
+.cal-d.today .cal-n{color:var(--ink);font-weight:600}
+.cal-ev{display:flex;align-items:center;gap:2px;background:var(--acc);color:var(--on);border-radius:4px;padding:1px 3px;cursor:grab;min-width:0}
+.cal-ev.run{background:#8e44ad}
+.cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
+.cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
+.cal-x:hover{opacity:1}
+.phead .ext{margin:0;padding:5px 7px!important;flex:none}
+.phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#dcalbox .cal-d:not(.empty){cursor:pointer}
+.cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
+#aiBody{line-height:1.6}
+#aiBody p{margin:8px 0}
+#aiBody ul,#aiBody ol{margin:8px 0;padding-left:22px}
+#aiBody li{margin:4px 0}
+#aiBody h3{margin:14px 0 4px;font-size:1rem}
 .lib-theme{border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden;background:var(--card)}
 .lib-theme>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:13px 14px;font-weight:600;background:var(--bg);user-select:none}
 .lib-theme>summary::-webkit-details-marker{display:none}
@@ -216,8 +239,15 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <dialog id="aiDlg" aria-labelledby="aiDlgT">
 <h2 id="aiDlgT" data-i="aiTitle"></h2>
-<div id="aiBody" style="font-size:.9rem;line-height:1.5;margin-top:10px;white-space:pre-wrap"></div>
+<div id="aiBody" style="font-size:.95rem;margin-top:10px"></div>
 <div class="actions" style="margin-top:20px"><button class="alt" id="closeAi" type="button" data-i="close"></button></div>
+</dialog>
+
+<dialog id="dateDlg" aria-labelledby="dateDlgT">
+<h2 id="dateDlgT" data-i="pickDate"></h2>
+<div class="phead" style="margin:6px 0 12px"><button class="alt small icon" id="dcalprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button><span id="dcalmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span><button class="alt small icon" id="dcalnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button><button class="alt small" id="dcalnow" type="button" data-i="today"></button></div>
+<div id="dcalbox"></div>
+<div class="actions"><button class="alt" id="closeDateCal" type="button" data-i="close"></button></div>
 </dialog>
 
 <div class="layout">
@@ -280,7 +310,10 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div><label for="libftp" data-i="ftpLbl"></label><select id="libftp"><option value="in"></option><option value="out"></option></select></div>
 <div><label for="libunit" data-i="unitLbl"></label><select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 </div>
-<input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px">
+<div class="row">
+<div><input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px"></div>
+<div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="45">≤ 45 min</option><option value="75">45 – 75 min</option><option value="105">75 – 105 min</option><option value="inf">&gt; 105 min</option></select></div>
+</div>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
 </section>
@@ -300,19 +333,32 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div id="explain" class="explain" hidden></div>
 <div class="row">
 <div><label for="name" data-i="name"></label><input id="name"></div>
-<div><label for="date" data-i="date"></label><input id="date" type="date"></div>
+<div><label data-i="date"></label><input type="hidden" id="date"><button type="button" class="alt" id="datebtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
 </div>
 <label for="desc" data-i="descLbl"></label>
 <textarea id="desc"></textarea>
-<button id="send" type="button" data-i="send"></button>
+<div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button>
+<button class="alt small" id="expzwo" type="button" data-ia="title:exZwo;aria-label:exZwo">.zwo</button>
+<button class="alt small" id="expfit" type="button" data-ia="title:exFit;aria-label:exFit">.fit</button></div>
 </section>
 
 
 </div>
 <aside class="col">
 
+<section data-block="cal">
+<div class="phead"><h2 data-i="calT"></h2>
+<button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
+<span id="calmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
+<button class="alt small icon" id="calnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
+<button class="alt small icon" id="rcal" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<a class="alt small icon ext" id="lkCal" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="calbox"></div>
+</section>
+
 <section data-block="fit">
 <div class="phead"><h2 data-i="fitT"></h2>
+<a class="alt small icon ext" id="lkFit" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a>
 <select id="fper" data-ia="aria-label:fitPer"><option value="30" data-i="p1m"></option><option value="60" data-i="p2m" selected></option><option value="90" data-i="p3m"></option><option value="180" data-i="p6m"></option><option value="365" data-i="p1y"></option></select></div>
 <div id="fitbox"></div>
 </section>
@@ -321,12 +367,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="phead"><h2 data-i="lastW"></h2>
 <button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
 <button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
-<button class="alt small" id="lastai" type="button" data-i="lastAi"></button></div>
+<button class="alt small" id="lastai" type="button" data-i="lastAi"></button>
+<a class="alt small icon ext" id="lkLast" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="lastbox"></div>
 </section>
 
 <section data-block="load">
-<div class="phead"><h2 data-i="load2"></h2><button class="alt small" id="rload" type="button" data-ia="title:refresh;aria-label:refresh">↻</button></div>
+<div class="phead"><h2 data-i="load2"></h2><button class="alt small" id="rload" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<a class="alt small icon ext" id="lkLoad" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="loadbox"></div>
 <div id="loadcap" class="hint"></div>
 </section>
@@ -334,7 +382,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <section data-block="best">
 <div class="phead"><h2 data-i="best"></h2>
 <select id="bkind"><option value="VirtualRide" data-i="indoor"></option><option value="Ride" data-i="outdoor"></option></select>
-<select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select></div>
+<select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select>
+<a class="alt small icon ext" id="lkBest" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="bestbox" class="tbl"></div>
 </section>
 
@@ -412,7 +461,7 @@ colDur:["Duration","Durée"], capAvg:[" · avg "," · moy. "], pctPace:[" % pace
 dLoad:["Load {0}","Charge {0}"], dAvg:["avg {0} W","moy. {0} W"], dHR:["HR {0}","FC {0}"],
 loadCap:["{0} workouts · {1} · load {2}","{0} séances · {1} · charge {2}"], loadCap2:[" · CTL {0} · ATL {1} · form {2}"," · CTL {0} · ATL {1} · forme {2}"],
 age:["{0} y/o","{0} ans"],
-fitT:["Fitness","Fitness"], fFit:["Fitness (CTL)","Fitness (CTL)"], fFat:["Fatigue (ATL)","Fatigue (ATL)"], fForm:["Form (TSB)","Forme (TSB)"],
+fitT:["Fitness","Fitness"], calT:["Calendar","Calendrier"], calMoved:["Workout moved to {0}.","Séance déplacée au {0}."], calNone:["No planned workout this month.","Aucune séance planifiée ce mois-ci."], fFit:["Fitness (CTL)","Fitness (CTL)"], fFat:["Fatigue (ATL)","Fatigue (ATL)"], fForm:["Form (TSB)","Forme (TSB)"],
 langLbl:["Language","Langue"], dElev:["Elev. {0} m","D+ {0} m"], lPace:["Pace","Allure"], lSpeed:["Avg speed","Vitesse moy."], lPow:["Power","Puissance"], lHRs:["Heart rate","Fréquence cardiaque"], pace:["pace","allure"],
 exTitle:["About this workout","À propos de cette séance"],
 exE:["Mostly low-intensity work: builds your aerobic base, improves fat oxidation and endurance, and promotes recovery without adding much fatigue.","Surtout du travail à faible intensité : développe la base aérobie, améliore l'oxydation des graisses et l'endurance, et favorise la récupération sans ajouter beaucoup de fatigue."],
@@ -440,6 +489,10 @@ helpContent:[
 ],
 libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
 libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
+libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","Toutes les durées"], libAvg:["avg","moy."],
+pickDate:["Choose the date","Choisir la date"], today:["Today","Aujourd'hui"], prevEmpty:["The preview is empty — build a workout first.","L'aperçu est vide — construis d'abord une séance."],
+exZwo:["Export as .zwo (Zwift)","Exporter en .zwo (Zwift)"], exFit:["Export as .fit (Garmin)","Exporter en .fit (Garmin)"],
+extT:["View this on intervals.icu","Voir sur intervals.icu"],
 lib1Name:["Sweet Spot 3 x 10 min","Sweet Spot 3 x 10 min"], lib1Desc:["Classic aerobic efficiency builder with 3 intervals at 90% FTP.","Développement de l'endurance aérobie avec 3 blocs à 90 % de FTP."],
 lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], lib2Desc:["Alternating surges above and below FTP to improve lactate clearance.","Alternance d'efforts au-dessus et en dessous du seuil pour progresser."],
 lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc:["High-intensity intervals to boost maximal aerobic power.","Intervalles de haute intensité pour booster la puissance aérobie maximale."],
@@ -595,6 +648,20 @@ const mmss = sec => Math.floor(sec / 60) + ":" + pad(Math.round(sec) % 60);
 const loc = () => lang === "fr" ? "fr-FR" : "en-GB";
 const isBike = s => /Ride/.test(s);
 function curFtp(){ return ($("ftpsel").value === "in" ? ICU.ftpIn : ICU.ftpOut) || 0; }
+// Liens vers les pages intervals.icu correspondantes
+const icuAthlete = () => ICU.id || AID();
+const icuPage = path => `https://intervals.icu/athlete/${icuAthlete()}${path || ""}`;
+function updateIcuLinks(){
+  if(!KEY() || !icuAthlete()){ ["lkCal","lkFit","lkLoad","lkBest","lkLast"].forEach(id => $(id).href = "https://intervals.icu"); return; }
+  // semaine affichée dans le bloc calendrier (lundi de la semaine courante ou du 1er du mois visionné)
+  const ref = CAL.m ? calFirst(CAL.m) : new Date();
+  const mon = new Date(ref); mon.setDate(ref.getDate() - ((ref.getDay() + 6) % 7));
+  $("lkCal").href = "https://intervals.icu/?w=" + iso(mon);
+  $("lkFit").href = "https://intervals.icu/fitness";
+  $("lkLoad").href = icuPage("");
+  $("lkBest").href = "https://intervals.icu/power";
+  $("lkLast").href = LAST.last && LAST.last.id ? icuPage("/activities/" + LAST.last.id) : icuPage("/activities");
+}
 function fillFtp(){
   const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
   [$("ftpsel"), $("edftp"), $("libftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
@@ -606,6 +673,7 @@ function profText(){
 }
 async function loadProfile(){
   const a = await icu("");
+  ICU.id = a.id;
   const rideSet = x => (x.types || []).includes("Ride");
   let ss = (a.sportSettings || []).find(rideSet);
   if(!ss){ try{ ss = (await icu("/sport-settings")).find(rideSet); }catch(e){} }
@@ -613,7 +681,7 @@ async function loadProfile(){
   ICU.weight = a.icu_weight || a.weight || 0;
   const dob = a.icu_date_of_birth || a.date_of_birth || a.birthdate;
   ICU.age = dob ? Math.floor((Date.now() - new Date(dob)) / 31557600000) : null;
-  LAST.profErr = ""; fillFtp(); profText();
+  LAST.profErr = ""; fillFtp(); profText(); updateIcuLinks();
 }
 
 // --- deux dernières semaines ---
@@ -713,6 +781,7 @@ function renderLast(){
   $("lnext").disabled = !(LAST.list || []).length || (LAST.li || 0) <= 0;
   box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}${pos}</div>` + (LAST.sw || LAST.sh ? streamsSvg() : "") +
     `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>`;
+  updateIcuLinks();
 }
 $("lastbox").addEventListener("pointermove", e => {
   const svg = e.target.closest ? e.target.closest("#lsvg") : null; if(!svg || !LAST.last) return;
@@ -741,6 +810,30 @@ $("lnext").onclick = () => loadLast((LAST.li || 0) - 1).catch(() => {});
 
 // --- analyse IA de la séance ---
 const SYSTEM_ANALYSIS = "You are an expert cycling coach. The user sends the summary and downsampled power/heart-rate data of a completed workout. Analyze it in plain text: what the session actually trained, pacing quality and consistency, intensity balance, signs of fatigue or fitness, and one or two concrete suggestions for the coming days. Use short paragraphs or bullet points.";
+// Mise en forme légère (markdown minimal) de l'analyse IA
+function mdLite(txt){
+  const inline = s => esc(s).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<i>$2</i>");
+  const out = [];
+  let list = null;
+  const closeList = () => { if(list){ out.push(list === "ul" ? "</ul>" : "</ol>"); list = null; } };
+  for(const raw of String(txt).split(/\r?\n/)){
+    const line = raw.trim();
+    if(!line){ closeList(); continue; }
+    const li = line.match(/^[-*•]\s+(.*)$/) || line.match(/^\d+[.)]\s+(.*)$/);
+    if(li){
+      const kind = /^[-*•]/.test(line) ? "ul" : "ol";
+      if(list !== kind){ closeList(); out.push(kind === "ul" ? "<ul>" : "<ol>"); list = kind; }
+      out.push(`<li>${inline(li[1])}</li>`);
+    }else{
+      closeList();
+      const h = line.match(/^#{1,4}\s+(.*)$/);
+      if(h) out.push(`<h3>${inline(h[1])}</h3>`);
+      else out.push(`<p>${inline(line)}</p>`);
+    }
+  }
+  closeList();
+  return out.join("");
+}
 async function aiComplete(system, user){
   const prov = $("prov").value, chat = prov !== "gemini";
   let url = "", key, model;
@@ -787,7 +880,7 @@ async function analyzeLast(){
     const h = ds(LAST.sh || [], 60).map(f).filter(Boolean);
     if(h.length) kv.push(`Heart-rate curve (bpm, ${h.length} evenly spaced samples): ${h.join(",")}`);
     const txt = await aiComplete(SYSTEM_ANALYSIS, kv.join("\n") + `\nAnalyze this completed workout. Reply in ${lang === "fr" ? "French" : "English"}, plain text only.`);
-    $("aiBody").textContent = txt || t("badResp");
+    $("aiBody").innerHTML = mdLite(txt || t("badResp"));
     $("aiDlg").showModal();
   }catch(e){
     say($("prov").value === "hf" ? "errH" : $("prov").value === "oa" ? "errA" : "errG", "err", errText(e));
@@ -824,9 +917,10 @@ async function loadBest(){
   LAST.curve = (j.list || [j])[0] || {}; renderBest();
 }
 async function loadAll(){
-  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); return; }
+  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
+  loadCal().catch(e => { $("calbox").textContent = t("errI", errText(e)); });
   loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
 }
@@ -895,7 +989,7 @@ function renderChart(){
   }
   const avg = Math.round(wsum / total), pace = sport === "Run" || sport === "Swim", mins = Math.round(total / 60);
   const dtxt = mins >= 60 ? Math.floor(mins / 60) + "h" + pad(mins % 60) : mins + " min";
-  const cap = dtxt + t("capAvg") + avg + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + Math.round(avg * ftp / 100) + " W)" : "");
+  const cap = dtxt + t("capAvg") + (!pace && ftp > 0 && $("unit").value === "w" ? Math.round(avg * ftp / 100) + " W (" + avg + t("pctFtp") + ")" : avg + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + Math.round(avg * ftp / 100) + " W)" : ""));
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg><div class="cap">${esc(cap)}</div><div class="tip" hidden></div>`;
   box._steps = meta; renderExplain(steps);
 }
@@ -903,9 +997,11 @@ function tipText(s, ftp, pace){
   const f = v => Math.round(v), sec = Math.round(s.d);
   const d = sec < 60 ? sec + " s" : (sec % 60 ? Math.floor(sec / 60) + "'" + pad(sec % 60) : Math.round(sec / 60) + " min");
   const ramp = Math.abs(s.a - s.b) > 0.5;
+  const wmode = !pace && ftp > 0 && $("unit").value === "w";
   const pct = ramp ? f(s.a) + " → " + f(s.b) : f(s.a);
-  const watts = !pace && ftp > 0 ? " (" + (ramp ? f(s.a * ftp / 100) + " → " + f(s.b * ftp / 100) : f(s.a * ftp / 100)) + " W)" : "";
-  return d + " · " + pct + (pace ? t("pctPace") : t("pctFtp")) + watts + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
+  const wat = ramp ? f(s.a * ftp / 100) + " → " + f(s.b * ftp / 100) : f(s.a * ftp / 100);
+  const val = wmode ? wat + " W (" + pct + t("pctFtp") + ")" : pct + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + wat + " W)" : "");
+  return d + " · " + val + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
 }
 {
   const cb = $("chart");
@@ -1031,7 +1127,7 @@ const DURS_RAND = {bike: [45, 60, 75, 90, 120]};
 const pick = a => a[Math.floor(Math.random() * a.length)];
 function classicRandom(){
   const k = "bike", [en, fr] = pick(IDEAS[k]), d = $("dur").value || pick(DURS_RAND[k]);
-  $("date").value = iso(new Date());
+  $("date").value = iso(new Date()); refreshDateBtn();
   $("prompt").value = lang === "fr" ? `${fr}, durée totale d'environ ${d} min` : `${en}, total duration about ${d} min`;
   generate();
 }
@@ -1055,7 +1151,7 @@ async function smartRandom(){
     else if(mod) rule += "\nYesterday was fairly demanding: no hard intervals today, prefer endurance or light tempo.";
     if(!hard && tsb < -25) rule += "\nMANDATORY: accumulated fatigue is high (form " + Math.round(tsb) + "), so today MUST be an easy day: Z1-Z2 only, no intervals.";
     const ctx = `intervals.icu context (last 28 days):\n${lines || "- no workout"}\n${fit}\n${rule}\nPropose today's workout in the spirit of these recent workouts and adapted to my current load, with some variety.`;
-    $("date").value = iso(new Date());
+    $("date").value = iso(new Date()); refreshDateBtn();
     $("prompt").value = t("randPrompt");
     $("rand").disabled = false;
     generate(ctx);
@@ -1308,53 +1404,85 @@ function workoutPreviewSvg(desc, sport, ftp){
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${path}</svg>`;
 }
 
+// Durée / puissance moyenne / NP d'une séance de la bibliothèque
+function libDuration(item){
+  if(item._dur == null){
+    const steps = parseWorkout(item.desc_en, item.sport, 0);
+    item._dur = steps.reduce((s, x) => s + x.d, 0);
+  }
+  return item._dur;
+}
+function libStats(item, ftp){
+  const steps = parseWorkout(item.desc_en, item.sport, 0);
+  if(!steps.length) return null;
+  const total = steps.reduce((s, x) => s + x.d, 0);
+  const avgPct = steps.reduce((s, x) => s + x.d * (x.a + x.b) / 2, 0) / total;
+  // NP : moyenne glissante 30 s, puissance^4, moyenne, racine 4e (échantillonnage à la seconde)
+  const win = 30, ser = [];
+  for(const st of steps){
+    const d = Math.round(st.d);
+    for(let i = 0; i < d; i++) ser.push(st.a + (st.b - st.a) * (d > 1 ? i / (d - 1) : 0));
+  }
+  let npPct = avgPct;
+  if(ser.length >= win){
+    let sum = 0; const pre = [];
+    for(let i = 0; i < ser.length; i++){ sum += ser[i]; if(i >= win) sum -= ser[i - win]; if(i >= win - 1) pre.push(sum / win); }
+    const m4 = pre.reduce((s, v) => s + Math.pow(Math.max(v, 0), 4), 0) / pre.length;
+    npPct = Math.pow(m4, 0.25);
+  }
+  return {total, avgPct, npPct};
+}
+function libStatsText(item, ftp){
+  const st = libStats(item, ftp);
+  if(!st) return "";
+  const w = ftp > 0;
+  const pw = w ? " (" + Math.round(st.avgPct) + " % · " + Math.round(st.npPct) + " %)" : "";
+  const np = w ? " · NP " + Math.round(st.npPct * ftp / 100) + " W" : " · NP " + Math.round(st.npPct) + " %";
+  return hm(st.total) + " · " + t("libAvg") + " " + (w ? Math.round(st.avgPct * ftp / 100) + " W" : Math.round(st.avgPct) + " %") + np + pw;
+}
+
 function renderLibrary(){
   const c = $("libContainer");
   const q = ($("libsearch").value || "").trim().toLowerCase();
+  const durF = $("libdur").value || "all";
   const matches = item => {
-    if(!q) return true;
-    const hay = [item.name_en, item.name_fr, item.expl_en, item.expl_fr, item.desc_en].join(" ").toLowerCase();
-    return q.split(/\s+/).every(w => hay.includes(w));
+    if(q){
+      const hay = [item.name_en, item.name_fr, item.expl_en, item.expl_fr, item.desc_en].join(" ").toLowerCase();
+      if(!q.split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    if(durF !== "all"){
+      const d = libDuration(item);
+      if(durF === "inf" ? d <= 105 * 60 : !(durF === "45" ? d <= 45 * 60 : durF === "75" ? d > 45 * 60 && d <= 75 * 60 : d > 75 * 60 && d <= 105 * 60)) return false;
+    }
+    return true;
   };
   const themes = [
-    {id:"beginner",icon:"🌱",en:"Beginner",fr:"Débutant"},
-    {id:"short",icon:"⏱️",en:"Under 35 Min",fr:"Moins de 35 min"},
-    {id:"fast",icon:"⚡",en:"Fast Fitness",fr:"Fitness rapide"},
-    {id:"testing",icon:"🎯",en:"Testing & Preparation",fr:"Tests & préparation"},
-    {id:"anaerobic",icon:"🔥",en:"Anaerobic",fr:"Anaérobie"},
+    {id:"beginner",icon:"🌱",en:"Beginner & Short Sessions",fr:"Débutant & séances courtes"},
+    {id:"recovery",icon:"🌿",en:"Recovery & Taper",fr:"Récupération & affûtage"},
     {id:"endurance",icon:"🚴",en:"Endurance",fr:"Endurance"},
-    {id:"sprint",icon:"💥",en:"Sprint",fr:"Sprint"},
-    {id:"sweetspot",icon:"🟠",en:"Sweet Spot",fr:"Sweet spot"},
-    {id:"taper",icon:"🏁",en:"Taper",fr:"Affûtage"},
-    {id:"tempo",icon:"📈",en:"Tempo",fr:"Tempo"},
+    {id:"tempo",icon:"📈",en:"Tempo & Sweet Spot",fr:"Tempo & sweet spot"},
     {id:"threshold",icon:"🔥",en:"Threshold",fr:"Seuil"},
-    {id:"uae",icon:"🏔️",en:"UAE Team Emirates Style",fr:"Style UAE Team Emirates"},
-    {id:"adq",icon:"🚴‍♀️",en:"UAE Team ADQ Style",fr:"Style UAE Team ADQ"},
-    {id:"vo2max",icon:"⚡",en:"VO₂ Max",fr:"VO₂ Max"},
-    {id:"recovery",icon:"🌿",en:"Recovery",fr:"Récupération"},
-    {id:"bz_recovery",icon:"🌿",en:"Blocks — Recovery",fr:"Blocks — Récupération"},
-    {id:"bz_endurance",icon:"🚴",en:"Blocks — Endurance",fr:"Blocks — Endurance"},
-    {id:"bz_tempo",icon:"📈",en:"Blocks — Tempo & Sweet Spot",fr:"Blocks — Tempo & Sweet spot"},
-    {id:"bz_threshold",icon:"🔥",en:"Blocks — Threshold",fr:"Blocks — Seuil"},
-    {id:"bz_vo2max",icon:"⚡",en:"Blocks — VO₂ Max",fr:"Blocks — VO₂ Max"},
-    {id:"bz_sprint",icon:"💥",en:"Blocks — Sprint & Anaerobic",fr:"Blocks — Sprint & Anaérobie"},
-    {id:"bz_test",icon:"🎯",en:"Blocks — Testing",fr:"Blocks — Tests"}
+    {id:"vo2max",icon:"⚡",en:"VO₂ Max & Anaerobic",fr:"VO₂ Max & anaérobie"},
+    {id:"sprint",icon:"💥",en:"Sprint & Race",fr:"Sprint & course"},
+    {id:"testing",icon:"🎯",en:"Testing",fr:"Tests"}
   ];
+  // Regroupement des anciennes catégories (toutes les séances sont conservées)
+  const CATMAP = {beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint",uae:"sprint",adq:"sprint",testing:"testing",bz_test:"testing"};
   const groups=themes.map(theme=>({...theme,items:[]}));
   const categorize=item=>{
-    if(item.category) return item.category;
+    if(item.category) return CATMAP[item.category] || "endurance";
     const n=(item.name_en+" "+item.name_fr).toLowerCase();
-    if(/recovery|récupération/.test(n)) return "recovery";
-    if(/vo2|max|punchy|explosif/.test(n)) return "vo2max";
-    if(/sprint/.test(n)) return "sprint";
-    if(/threshold|seuil|over-under|redline/.test(n)) return "threshold";
-    if(/sweet spot/.test(n)) return "sweetspot";
-    if(/tempo|cadence|fast finish/.test(n)) return "tempo";
-    if(/endurance|aerobic|aérobie/.test(n)) return "endurance";
-    if(/uae team em/.test(n)) return "uae";
-    if(/uae team adq/.test(n)) return "adq";
-    if(/beginner|débutant/.test(n)) return "beginner";
-    return "endurance";
+    let base="endurance";
+    if(/recovery|récupération/.test(n)) base="recovery";
+    else if(/vo2|max|punchy|explosif|anaerobic|anaérobie/.test(n)) base="vo2max";
+    else if(/sprint/.test(n)) base="sprint";
+    else if(/threshold|seuil|over-under|redline/.test(n)) base="threshold";
+    else if(/sweet spot/.test(n)) base="tempo";
+    else if(/tempo|cadence|fast finish/.test(n)) base="tempo";
+    else if(/endurance|aerobic|aérobie/.test(n)) base="endurance";
+    else if(/uae team em|uae team adq/.test(n)) base="sprint";
+    else if(/beginner|débutant/.test(n)) base="beginner";
+    return CATMAP[base] || "endurance";
   };
   LIBRARY.forEach((item,idx)=>{ if(!matches(item)) return; const group=groups.find(g=>g.id===categorize(item))||groups[5]; group.items.push({item,idx}); });
   const filled = groups.filter(g => g.items.length);
@@ -1365,11 +1493,13 @@ function renderLibrary(){
       const title=lang==="fr"?item.name_fr:item.name_en;
       const desc=lang==="fr"?item.expl_fr:item.expl_en;
       const chart=workoutPreviewSvg(item.desc_en,item.sport,curFtp());
-      return `<div class="lib-card"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview">${chart}</div><p>${esc(desc)}</p><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div>`;
+      const stats=libStatsText(item,curFtp());
+      return `<div class="lib-card"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview">${chart}</div><p class="lib-stats">${esc(stats)}</p><p>${esc(desc)}</p><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div>`;
     }).join("")}</div></div>
   </details>`).join("");
 }
 $("libsearch").addEventListener("input", renderLibrary);
+$("libdur").addEventListener("change", renderLibrary);
 $("libContainer").onclick = e => {
   const btn = e.target.closest("[data-lib]"); if(!btn) return;
   const item = LIBRARY[+btn.dataset.lib];
@@ -1405,7 +1535,7 @@ function addHist(h){
 }
 $("hist").onchange = () => {
   const h = hist()[+$("hist").value]; if(!h) return;
-  $("date").value = h.date; $("sport").value = h.sport; $("name").value = h.name; $("desc").value = h.desc; EXPL = h.ex || null;
+  $("date").value = h.date; refreshDateBtn(); $("sport").value = h.sport; $("name").value = h.name; $("desc").value = h.desc; EXPL = h.ex || null;
   syncUnit(); selLine = null; $("prev").hidden = false; renderChart();
 };
 $("hdel").onclick = async () => {
@@ -1415,7 +1545,7 @@ $("hdel").onclick = async () => {
     try{ await icuFetch(icuUrl("/events/" + h.id), {method: "DELETE"}); }
     catch(e){ if(!/404/.test(e.message)) return say("errI", "err", errText(e)); }
   }
-  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); say("workoutDeleted", "ok");
+  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); loadCal().catch(() => {}); say("workoutDeleted", "ok");
 };
 $("send").onclick = async () => {
   if(!KEY()) return say("needI", "err");
@@ -1426,10 +1556,82 @@ $("send").onclick = async () => {
     if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
     const ev = await r.json().catch(() => ({}));
     addHist({id: ev.id, date: $("date").value, sport: $("sport").value, name: $("name").value.trim(), desc: $("desc").value, ex: EXPL});
+    loadCal().catch(() => {});
     say("sentOk", "ok", $("date").value);
   }catch(e){ say("errI", "err", errText(e)); }
   $("send").disabled = false;
 };
+
+// ---------- Export .zwo / .fit ----------
+function dlFile(name, data, mime){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([data], {type: mime}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+function prevSteps(){
+  const steps = parseWorkout($("desc").value, $("sport").value, curFtp());
+  if(!steps.length) return say("prevEmpty", "err");
+  return steps;
+}
+function expFname(ext){
+  return (($("name").value || "workout").trim().replace(/[^\w\-]+/g, "_").slice(0, 60) + ext);
+}
+function buildZwo(steps){
+  const body = steps.map(s => {
+    const dur = Math.round(s.d), lo = Math.min(s.a, s.b) / 100, hi = Math.max(s.a, s.b) / 100;
+    if(Math.abs(s.a - s.b) > 0.5) return `<${lo < hi ? "Warmup" : "Cooldown"} Duration="${dur}" PowerLow="${lo.toFixed(3)}" PowerHigh="${hi.toFixed(3)}"/>`;
+    return `<SteadyState Duration="${dur}" Power="${(s.a / 100).toFixed(3)}"/>`;
+  }).join("\n      ");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>PaceForge</author>\n  <name>${esc(($("name").value || "Workout").trim())}</name>\n  <workout>\n      ${body}\n  </workout>\n</workout_file>`;
+}
+// --- FIT binaire (workout) ---
+function fitCrc(bytes){
+  let crc = 0;
+  for(const b of bytes){ crc ^= b << 8; for(let i = 0; i < 8; i++) crc = crc & 0x8000 ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff; }
+  return crc;
+}
+function fitDef(local, global, fields){
+  const b = [0x40 | local, 0, 0, global & 0xff, (global >> 8) & 0xff, fields.length];
+  fields.forEach(([n, s, t]) => b.push(n, s, t));
+  return b;
+}
+const u16 = v => [v & 0xff, (v >> 8) & 0xff];
+const u32 = v => [v & 0xff, (v >> 8) & 0xff, (v >> 16) & 0xff, (v >>> 24) & 0xff];
+function buildFit(steps){
+  const str = (s, n) => { const b = []; for(let i = 0; i < n; i++) b.push(i < s.length ? s.charCodeAt(i) & 0xff : 0); return b; };
+  const pad4 = n => Math.min(64, (Math.floor(n / 4) + 1) * 4); // chaîne FIT : multiple de 4 recommandé
+  const name = ($("name").value || "Workout").trim().slice(0, 40), nameLen = pad4(name.length + 1);
+  const ts = Math.floor(Date.now() / 1000) - 631065600; // epoch FIT : 31/12/1989
+  const records = [];
+  // file_id (local 0) : time(4,u32), manufacturer(1,u16), product(2,u16), serial(3,u32), type(0,enum)
+  records.push(fitDef(0, 0, [[4, 4, 134], [1, 2, 132], [2, 2, 132], [3, 4, 134], [0, 1, 0]]));
+  records.push([0, ...u32(ts), ...u16(255), ...u16(0), ...u32(ts), 5]);
+  // workout (local 1) : sport(0,enum), num_valid_steps(5,u16), wkt_name(6,string), sub_sport(11,enum)
+  records.push(fitDef(1, 26, [[0, 1, 0], [5, 2, 132], [6, nameLen, 7], [11, 1, 0]]));
+  records.push([1, isBike($("sport").value) ? 2 : 1, ...u16(steps.length), ...str(name, nameLen), 0]);
+  // workout_step (local 2) : message_index(254,u16), duration_type(0,enum), duration_value(1,u32),
+  // target_type(2,enum), target_value(3,u32), custom_target_value_low(5,u32), custom_target_value_high(6,u32), intensity(7,enum)
+  records.push(fitDef(2, 27, [[254, 2, 132], [0, 1, 0], [1, 4, 134], [2, 1, 0], [3, 4, 134], [5, 4, 134], [6, 4, 134], [7, 1, 0]]));
+  steps.forEach((s, i) => {
+    const mid = (s.a + s.b) / 2;
+    let intensity = 0; // active
+    if(i === 0 && mid < 76) intensity = 2; // warmup
+    else if(i === steps.length - 1 && mid < 76) intensity = 3; // cooldown
+    else if(mid < 56) intensity = 1; // rest
+    const pm = Math.max(0, Math.min(1000, Math.round(mid * 10))); // puissance relative 0..1000 pour mille
+    records.push([2, ...u16(i), 0, ...u32(Math.round(s.d) * 1000), 4, ...u32(0), ...u32(pm), ...u32(pm), intensity]);
+  });
+  const data = records.flat();
+  const head = [12, 0x10, 0xB6, 0x0B, ...u32(data.length), 0x2E, 0x46, 0x49, 0x54];
+  const headCrc = fitCrc(head);
+  const file = [...head, headCrc & 0xff, (headCrc >> 8) & 0xff, ...data];
+  const crc = fitCrc(file);
+  file.push(crc & 0xff, (crc >> 8) & 0xff);
+  return file;
+}
+$("expzwo").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".zwo"), buildZwo(st), "application/xml"); };
+$("expfit").onclick = () => { const st = prevSteps(); if(st) dlFile(expFname(".fit"), Uint8Array.from(buildFit(st)), "application/octet-stream"); };
 
 // ---------- Explication de la séance ----------
 function renderExplain(steps){
@@ -1439,6 +1641,117 @@ function renderExplain(steps){
   el.innerHTML = `<b>${esc(t("exTitle"))}</b><p>${esc((EXPL && EXPL[lang]) || t(k))}</p><div class="hint">${esc(t("exMix", pc(z.e), pc(z.t), pc(z.h + z.v)))}</div>`;
   el.hidden = false;
 }
+
+// ---------- Calendrier du planning (drag & drop, suppression, sélecteur de date) ----------
+const CAL = {m: 0, pm: 0, ev: [], pev: []};
+function calFirst(off){ const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (off || 0)); return d; }
+function calRange(off){
+  const f = calFirst(off);
+  return [iso(new Date(f.getFullYear(), f.getMonth(), 1)), iso(new Date(f.getFullYear(), f.getMonth() + 1, 0))];
+}
+function calLabel(el, off){ el.textContent = calFirst(off).toLocaleDateString(loc(), {month: "long", year: "numeric"}); }
+function calHtml(off, evList, pick, selDate){
+  const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date());
+  const blank = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
+  const by = {};
+  (evList || []).forEach(e => { const k = (e.start_date_local || "").slice(0, 10); (by[k] = by[k] || []).push(e); });
+  const heads = lang === "fr" ? ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"] : ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  let html = `<div class="cal">` + heads.map(h => `<div class="cal-h">${esc(h)}</div>`).join("");
+  for(let i = 0; i < blank; i++) html += `<div class="cal-d empty"></div>`;
+  let n = 0;
+  for(let d = 1; d <= dim; d++){
+    const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort((a, b) => (a.start_date_local || "") < (b.start_date_local || "") ? -1 : 1);
+    n += evs.length;
+    html += `<div class="cal-d${k === today ? " today" : ""}${pick && k === selDate ? " sel" : ""}" data-date="${k}"><span class="cal-n">${d}</span>` +
+      evs.map(e => `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button></div>`).join("") + `</div>`;
+  }
+  return {html: html + `</div>`, n};
+}
+function bindCalChips(box){
+  box.querySelectorAll(".cal-ev").forEach(el => {
+    el.addEventListener("dragstart", ev => { ev.dataTransfer.setData("text/plain", el.dataset.eid); ev.dataTransfer.effectAllowed = "move"; });
+    el.addEventListener("dragend", () => box.querySelectorAll(".cal-d.over").forEach(c => c.classList.remove("over")));
+  });
+}
+function setupCalBox(box, getEv, refresh, onPick){
+  box.addEventListener("dragover", e => { const c = e.target.closest(".cal-d:not(.empty)"); if(c){ e.preventDefault(); e.dataTransfer.dropEffect = "move"; c.classList.add("over"); } });
+  box.addEventListener("dragleave", e => { const c = e.target.closest(".cal-d"); if(c) c.classList.remove("over"); });
+  box.addEventListener("drop", async e => {
+    const c = e.target.closest(".cal-d:not(.empty)"); if(!c) return;
+    e.preventDefault(); c.classList.remove("over");
+    const id = e.dataTransfer.getData("text/plain"); if(!id) return;
+    const ev = (getEv() || []).find(x => String(x.id) === id); if(!ev) return;
+    const nd = c.dataset.date;
+    if((ev.start_date_local || "").slice(0, 10) === nd) return;
+    try{
+      await icuFetch(icuUrl("/events/" + id), {method: "PUT", headers: {...icuAuth(), "Content-Type": "application/json"}, body: JSON.stringify({...ev, start_date_local: nd + "T00:00:00"})});
+      ev.start_date_local = nd + "T00:00:00"; say("calMoved", "ok", nd); refresh();
+    }catch(err){ say("errI", "err", errText(err)); }
+  });
+  box.addEventListener("click", async e => {
+    const x = e.target.closest(".cal-x");
+    if(x){
+      e.stopPropagation();
+      const ev = (getEv() || []).find(v => String(v.id) === x.dataset.xid); if(!ev) return;
+      if(!(await ask("cfmDel"))) return;
+      try{
+        await icuFetch(icuUrl("/events/" + ev.id), {method: "DELETE"});
+        say("workoutDeleted", "ok"); refresh();
+      }catch(err){ say("errI", "err", errText(err)); }
+      return;
+    }
+    if(onPick){
+      const c = e.target.closest(".cal-d:not(.empty)"); if(!c || e.target.closest(".cal-ev")) return;
+      onPick(c.dataset.date);
+    }
+  });
+}
+// calendrier de droite
+async function loadCal(){
+  if(!KEY()) return;
+  const [a, b] = calRange(CAL.m);
+  CAL.ev = await icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []);
+  renderCal();
+}
+function renderCal(){
+  const box = $("calbox"); if(!box) return;
+  if(!KEY()){ box.textContent = ""; $("calmonth").textContent = ""; return; }
+  calLabel($("calmonth"), CAL.m);
+  const r = calHtml(CAL.m, CAL.ev, false);
+  box.innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
+  bindCalChips(box);
+  updateIcuLinks();
+}
+$("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
+$("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
+$("rcal").onclick = () => loadCal().catch(() => {});
+setupCalBox($("calbox"), () => CAL.ev, () => loadCal().catch(() => {}), null);
+// sélecteur de date (popup)
+function refreshDateBtn(){
+  const v = $("date").value;
+  $("datebtn").textContent = v ? new Date(v + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short", year: "numeric"}) : t("pickDate");
+}
+async function loadDCal(){
+  if(KEY()){ const [a, b] = calRange(CAL.pm); CAL.pev = await icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []); }
+  else CAL.pev = [];
+  renderDCal();
+}
+function renderDCal(){
+  calLabel($("dcalmonth"), CAL.pm);
+  const r = calHtml(CAL.pm, CAL.pev, true, $("date").value);
+  $("dcalbox").innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
+  bindCalChips($("dcalbox"));
+}
+$("datebtn").onclick = () => {
+  const cur = $("date").value || iso(new Date()), d = new Date(cur + "T12:00:00"), now = new Date();
+  CAL.pm = (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth();
+  $("dateDlg").showModal(); loadDCal().catch(() => {});
+};
+$("closeDateCal").onclick = () => $("dateDlg").close();
+$("dcalprev").onclick = () => { CAL.pm--; loadDCal().catch(() => {}); };
+$("dcalnext").onclick = () => { CAL.pm++; loadDCal().catch(() => {}); };
+$("dcalnow").onclick = () => { CAL.pm = 0; loadDCal().catch(() => {}); };
+setupCalBox($("dcalbox"), () => CAL.pev, () => { loadDCal().catch(() => {}); loadCal().catch(() => {}); }, k => { $("date").value = k; refreshDateBtn(); $("dateDlg").close(); });
 
 // ---------- Graphe fitness ----------
 const fitDays = () => +$("fper").value || 60;
@@ -1588,11 +1901,11 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  setLinks(); fillFtp(); profText(); badges(); renderHist(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); edRender(); renderLibrary();
+  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
-$("date").value = iso(new Date());
+$("date").value = iso(new Date()); refreshDateBtn();
 applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
