@@ -102,6 +102,16 @@ dialog h2{margin-bottom:6px}
 .st.dropover,.gh.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
 .fld{position:relative}.fld input{padding-right:58px}.fld span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--mute);pointer-events:none}
 .grp{border:1px dashed var(--acc);border-radius:8px;padding:8px;margin-bottom:8px}.gh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}.gh .fld{width:90px}.gh .ctl{grid-column:auto;margin-left:auto}.grp>.actions{margin-top:6px}
+/* blocs de l'éditeur manuel : étapes consécutives de même type regroupées */
+.blk{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:8px;margin-bottom:10px;background:var(--bg)}
+.blk .st{margin-bottom:6px;background:var(--card)}
+.blk .st:last-child{margin-bottom:0}
+.blk-h{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--mute);margin:0 0 8px;padding-left:2px}
+.blk-h .badge{margin-left:auto;font-weight:400}
+.blk-warm{border-left-color:#5cb85c}.blk-work{border-left-color:#ee6c4d}.blk-rec{border-left-color:#3a9d8f}.blk-cool{border-left-color:#4a90d9}
+.blk.closed .st{display:none}
+.blk.closed{padding:6px 8px}
+.blk-h .tglb{margin:0!important;padding:3px 10px!important;font-size:.85rem!important;line-height:1.2!important}
 #loadbox,#lastbox{position:relative}
 .days{display:flex;gap:3px;align-items:flex-end;height:96px}
 .d{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.65rem;color:var(--mute);cursor:default}
@@ -370,6 +380,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button class="alt small" type="button" data-add="rec" data-i="addRec"></button>
 <button class="alt small" type="button" data-add="cool" data-i="addCool"></button>
 <button class="alt small" type="button" data-add="grp" data-i="addGrp"></button>
+<button class="alt small danger" id="edreset" type="button" data-i="edReset"></button>
 </div>
 <div class="hint" id="edsum"></div>
 <button id="edgo" type="button" data-i="edGo"></button>
@@ -585,6 +596,8 @@ tt_warm:["Warm-up","Échauffement"], tt_work:["Interval","Intervalle"], tt_rec:[
 edTime:["Time","Durée"], edDist:["Distance","Distance"], edInt:["Intensity","Intensité"], edNote:["Note (optional)","Note (facultatif)"], repLbl:["Repeat","Répéter"],
 mvUp:["Move up","Monter"], mvDown:["Move down","Descendre"], dup:["Duplicate","Dupliquer"], addRecAfter:["+ Recovery after","+ Récup après"],
 addWarm:["+ Warm-up","+ Échauffement"], addWork:["+ Interval","+ Intervalle"], addRec:["+ Recovery","+ Récupération"], addCool:["+ Cool-down","+ Retour au calme"], addGrp:["+ Repeat block","+ Bloc de répétitions"],
+std_warm:["⇅ Standard warm-up","⇅ Échauffement standard"], std_cool:["⇅ Standard cool-down","⇅ Retour au calme standard"],
+edReset:["Reset","Réinitialiser"], cfmReset:["Clear the manual workout editor?","Vider l'éditeur de séance manuel ?"], edResetOk:["Editor cleared.","Éditeur vidé."],
 edHintW:["Intensity in watts (follows the “Power units” setting above).","Intensité en watts (selon le réglage « Unités de puissance » ci-dessus)."], edHintP:["Intensity in % of FTP.","Intensité en % de la FTP."], edHintPace:["Intensity in % of threshold pace.","Intensité en % de l'allure seuil."],
 edTot:["Estimated duration: {0}","Durée estimée : {0}"], edGo:["Build preview","Générer l'aperçu"], edBuilt:["Workout built: check the preview, then add it to your calendar.","Séance construite : vérifie l'aperçu, puis ajoute-la au calendrier."], edDefName:["My workout","Ma séance"],
 tabAi:["AI generator","Générateur IA"], tabEd:["Manual editor","Éditeur manuel"], tabLib:["Library","Bibliothèque"], modeLbl:["Workout creation mode","Mode de création de la séance"],
@@ -2736,22 +2749,34 @@ $("fitbox").addEventListener("pointerleave", () => { const c = $("fcur"); if(c) 
 
 // ---------- Éditeur de séance manuel ----------
 const ED = [];
+let edUid = 0; const edCollapsed = new Set(); // identifiants de blocs + blocs repliés
 const edSp = () => $("edsport").value, edKm = () => isBike(edSp()), edW = () => edKm() && $("unit").value === "w";
 const opts = (a, cur) => a.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${esc(l)}</option>`).join("");
 function edDef(ty){
   const pc = {warm: 55, work: 95, rec: 50, cool: 50}[ty], f = curFtp();
-  return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: ""};
+  return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid};
 }
 const edAt = p => { const a = String(p).split(".").map(Number); return a.length === 1 ? {list: ED, i: a[0]} : {list: ED[a[0]].items, i: a[1]}; };
+// Échauffement / retour au calme standards : progression de paliers insérée en un clic
+// depuis le bouton « Standard » de l'étape. Les intensités suivent le réglage des unités
+// (% FTP ou watts absolus via la FTP sélectionnée), comme pour les autres étapes.
+const ED_STD = {
+  warm: [[5, 0, 50], [3, 0, 60], [2, 0, 70], [1, 0, 80], [1, 0, 55]],
+  cool: [[2, 0, 60], [3, 0, 50], [5, 0, 40]]
+};
+function stdSteps(ty){
+  const f = curFtp();
+  return (ED_STD[ty] || []).map(([m, s, pc]) => ({k: "s", ty, mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
+}
 const edBtn = (a, txt, ttl, cls) => `<button class="alt small${cls ? " " + cls : ""}" data-a="${a}" type="button"${ttl ? ` title="${esc(ttl)}" aria-label="${esc(ttl)}"` : ""}>${txt}</button>`;
-const edCtl = rec => `<span class="drg" title="${esc(t("dragLbl"))}" aria-label="${esc(t("dragLbl"))}">⠿</span><span class="ctl">${edBtn("up", "↑", t("mvUp"))}${edBtn("down", "↓", t("mvDown"))}${edBtn("dup", "⧉", t("dup"))}${rec ? edBtn("rec", esc(t("addRecAfter"))) : ""}${edBtn("del", "✕", t("del"), "danger")}</span>`;
+const edCtl = (rec, std) => `<span class="drg" title="${esc(t("dragLbl"))}" aria-label="${esc(t("dragLbl"))}">⠿</span><span class="ctl">${edBtn("up", "↑", t("mvUp"))}${edBtn("down", "↓", t("mvDown"))}${edBtn("dup", "⧉", t("dup"))}${rec ? edBtn("rec", esc(t("addRecAfter"))) : ""}${std ? edBtn("std", esc(std)) : ""}${edBtn("del", "✕", t("del"), "danger")}</span>`;
 function edStep(x, p){
   const u = edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
   return `<div class="st ${x.ty}" data-p="${p}"><select data-f="ty" aria-label="${esc(t("edT"))}">${opts(["warm", "work", "rec", "cool"].map(y => [y, t("tt_" + y)]), x.ty)}</select>` +
     `<select data-f="mode">${opts([["t", t("edTime")], ["d", t("edDist")]], x.mode)}</select>` +
     `<div class="fld"><input data-f="v" value="${esc(x.v)}" aria-label="${esc(t(x.mode === "d" ? "edDist" : "edTime"))}"><span>${x.mode === "d" ? (edKm() ? "km" : "m") : "mm:ss"}</span></div>` +
     `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}" aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
-    `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec")}</div>`;
+    `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec", x.ty === "warm" || x.ty === "cool" ? t("std_" + x.ty) : null)}</div>`;
 }
 const edGrp = (g, i) => `<div class="grp"><div class="gh" data-p="${i}"><b>${esc(t("repLbl"))}</b><span class="stp">${edBtn("rm", "−", t("repDec"))}<input data-f="r" type="number" min="1" max="50" value="${esc(g.r)}" aria-label="${esc(t("repLbl"))}">${edBtn("rp", "+", t("repInc"))}<span aria-hidden="true">×</span></span>${edCtl(false)}</div>${g.items.map((x, j) => edStep(x, i + "." + j)).join("")}<div class="actions"><button class="alt small" data-a="addin" data-g="${i}" data-ty="work" type="button">${esc(t("addWork"))}</button><button class="alt small" data-a="addin" data-g="${i}" data-ty="rec" type="button">${esc(t("addRec"))}</button></div></div>`;
 function edDur(x){
@@ -2764,18 +2789,40 @@ function edLine(x){
   return `- ${edDur(x)}${i}${n ? " " + n : ""}`;
 }
 function edText(){
-  const out = [];
-  ED.forEach(x => { if(x.k === "g") out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); else out.push(t("tt_" + x.ty), edLine(x), ""); });
+  const out = []; let lastTy = null;
+  ED.forEach(x => {
+    if(x.k === "g"){ out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); lastTy = null; return; }
+    // les étapes consécutives de même type sont regroupées sous un seul titre
+    // (utile pour les échauffements / retours au calme multi-paliers)
+    if(x.ty !== lastTy){ if(lastTy !== null) out.push(""); out.push(t("tt_" + x.ty)); lastTy = x.ty; }
+    out.push(edLine(x));
+  });
   return out.join("\n").trim();
 }
 function edSum(){
   const tot = parseWorkout(edText(), edSp(), curFtp()).reduce((a, b) => a + b.d, 0);
   $("edsum").textContent = tot ? t("edTot", hm(tot)) : "";
 }
+function edHtml(){
+  // regroupe les étapes consécutives de même type dans un bloc encadré (même logique
+  // que les titres de sections du texte généré par edText) ; chaque bloc est repliable
+  let out = "", run = [];
+  const edSec = x => { if(x.mode !== "t") return 0; const [m, s] = String(x.v).split(":"); return (parseInt(m, 10) || 0) * 60 + (parseInt(s, 10) || 0); };
+  const flush = () => {
+    if(!run.length) return;
+    const ty = ED[run[0]].ty, bk = "b" + (ED[run[0]].uid || 0), closed = edCollapsed.has(bk);
+    const tot = run.reduce((a, i) => a + edSec(ED[i]), 0);
+    out += `<div class="blk blk-${ty}${closed ? " closed" : ""}" data-bk="${bk}"><div class="blk-h">${esc(t("tt_" + ty))}<span class="badge">${run.length}${tot ? " · " + fmtDur(tot) : ""}</span><button class="alt small tglb" data-tb="${bk}" type="button" aria-expanded="${!closed}" title="${esc(t("collapse"))}" aria-label="${esc(t("collapse"))}">${closed ? "▸" : "▾"}</button></div>${run.map(i => edStep(ED[i], String(i))).join("")}</div>`;
+    run = [];
+  };
+  ED.forEach((x, i) => { if(x.k === "g"){ flush(); out += edGrp(x, i); } else run.push(i); });
+  flush();
+  return out;
+}
 function edRender(){
   $("edftp").disabled = $("edunit").disabled = !edKm();
   $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace");
-  $("edbox").innerHTML = ED.length ? ED.map((x, i) => x.k === "g" ? edGrp(x, i) : edStep(x, String(i))).join("") : `<div class="hint">${esc(t("edNone"))}</div>`;
+  $("edbox").innerHTML = ED.length ? edHtml() : `<div class="hint">${esc(t("edNone"))}</div>`;
   edSum();
 }
 $("edbox").addEventListener("input", e => {
@@ -2784,6 +2831,8 @@ $("edbox").addEventListener("input", e => {
   if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else edSum();
 });
 $("edbox").addEventListener("click", e => {
+  const tb = e.target.closest(".tglb");
+  if(tb){ const k = tb.dataset.tb; if(edCollapsed.has(k)) edCollapsed.delete(k); else edCollapsed.add(k); edRender(); return; }
   const b = e.target.closest("[data-a]"); if(!b) return; const a = b.dataset.a;
   const gp = (a === "rm" || a === "rp") ? b.closest("[data-p]").dataset.p : null;
   if(a === "addin") ED[+b.dataset.g].items.push(edDef(b.dataset.ty));
@@ -2791,8 +2840,9 @@ $("edbox").addEventListener("click", e => {
     const {list, i} = edAt(b.closest("[data-p]").dataset.p);
     if(a === "rm" || a === "rp") list[i].r = Math.min(50, Math.max(1, (parseInt(list[i].r, 10) || 1) + (a === "rp" ? 1 : -1)));
     else if(a === "del") list.splice(i, 1);
-    else if(a === "dup") list.splice(i + 1, 0, JSON.parse(JSON.stringify(list[i])));
+    else if(a === "dup"){ const c = JSON.parse(JSON.stringify(list[i])); c.uid = ++edUid; list.splice(i + 1, 0, c); }
     else if(a === "rec") list.splice(i + 1, 0, edDef("rec"));
+    else if(a === "std") list.splice(i, 1, ...stdSteps(list[i].ty));
     else if(a === "up" && i > 0){ const o = list[i - 1]; list[i - 1] = list[i]; list[i] = o; }
     else if(a === "down" && i < list.length - 1){ const o = list[i + 1]; list[i + 1] = list[i]; list[i] = o; }
   }
@@ -2843,6 +2893,7 @@ $("edbox").addEventListener("drop", e => {
   edRender();
 });
 document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const ty = b.dataset.add; ED.push(ty === "grp" ? {k: "g", r: 4, items: [edDef("work"), edDef("rec")]} : edDef(ty)); edRender(); });
+$("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); edRender(); say("edResetOk", "ok"); };
 $("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
 $("edgo").onclick = () => {
   const txt = edText(); if(!txt) return say("edNone", "err");
