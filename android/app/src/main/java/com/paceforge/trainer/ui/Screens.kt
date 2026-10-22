@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.paceforge.trainer.ui
 
 import androidx.compose.foundation.layout.*
@@ -93,7 +95,6 @@ fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
