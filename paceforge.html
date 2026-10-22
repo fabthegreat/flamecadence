@@ -228,6 +228,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
 <a class="alt small icon" id="mail" data-ia="title:contact;aria-label:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg></a>
 <a class="alt small icon" id="gh" data-ia="title:github;aria-label:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+<a class="alt small icon" id="android" data-ia="title:androidApp;aria-label:androidApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 3.6 0 0 1 12 0"/><path d="M6 9l-1.8-2.6M18 9l1.8-2.6"/><path d="M7 9h10v7a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2z"/><path d="M4 10v5M20 10v5"/></svg></a>
 <a class="alt small icon" id="coffeeTop" data-ia="title:coffee;aria-label:coffee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M7 3v3M11 3v3"/></svg></a>
 <button class="alt small" id="open" type="button" data-i="settings"></button>
 </div>
@@ -525,7 +526,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 "use strict";
 const $ = id => document.getElementById(id);
 const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
-const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/paceforge", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
+const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/paceforge", android: "", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
 let lang = store.get("si_lang") === "fr" ? "fr" : "en";
 
 // ---------- Thème clair / sombre / auto ----------
@@ -552,7 +553,7 @@ docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta procha
 title:["PaceForge","PaceForge"],
 subtitle:["Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.","Forge ta prochaine séance : décris-la, laisse l'IA la construire, puis envoie-la directement dans intervals.icu."],
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
-contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
+contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], androidApp:["Android app","App Android"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
 provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
 secAI:["AI provider","Fournisseur d'IA"], secIcu:["intervals.icu connection","Connexion intervals.icu"], secWidgets:["Sidebar widgets","Widgets de la barre latérale"],
 gKey:["Gemini API key","Clé API Gemini"], gModel:["Gemini model","Modèle Gemini"],
@@ -3090,7 +3091,7 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
 });
 function setLinks(){
   $("mail").href = LINKS.mail;
-  [["gh", LINKS.github], ["coffee", LINKS.coffee], ["coffeeTop", LINKS.coffee]].forEach(([id, url]) => {
+  [["gh", LINKS.github], ["android", LINKS.android], ["coffee", LINKS.coffee], ["coffeeTop", LINKS.coffee]].forEach(([id, url]) => {
     const a = $(id);
     if(url){ a.href = url; a.target = "_blank"; a.rel = "noopener"; a.classList.remove("soon"); }
     else{ a.removeAttribute("href"); a.classList.add("soon"); a.title = t("soon"); }

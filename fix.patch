@@ -1,344 +1,200 @@
-diff -ruN -x .gradle -x '*.jar' a/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt b/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt
---- a/app/src/main/java/com/paceforge/trainer/IcuRepository.kt	2026-10-22 18:37:33.000000000 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/IcuRepository.kt	2026-10-22 19:12:49.181697375 +0000
-@@ -25,7 +25,8 @@
-     val id: Long,
-     val name: String,
-     val description: String,
--    val segments: List<Segment>
-+    val segments: List<Segment>,
-+    val date: String = ""      // yyyy-MM-dd (local)
- ) {
-     val totalSec: Int get() = segments.sumOf { it.durationSec }
- }
-@@ -51,17 +52,21 @@
-         .readTimeout(30, TimeUnit.SECONDS)
-         .build()
+--- a/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:12:49.181987017 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:30:44.497123278 +0000
+@@ -16,6 +16,8 @@
+ import android.bluetooth.le.ScanSettings
+ import android.content.Context
+ import android.content.pm.PackageManager
++import android.os.Handler
++import android.os.Looper
+ import android.os.ParcelUuid
+ import android.util.Log
+ import androidx.core.content.ContextCompat
+@@ -56,6 +58,8 @@
+     // --- FTMS control point opcodes ---
+     private const val OP_REQUEST_CONTROL = 0x00
+     private const val OP_SET_TARGET_POWER = 0x05
++    private const val OP_START_RESUME = 0x07
++    private const val OP_RESPONSE = 0x80
  
--    private fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
-+    fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+     enum class ConnState { DISCONNECTED, CONNECTING, CONNECTED }
  
-     private fun basicAuth(apiKey: String): String =
-         "Basic " + android.util.Base64.encodeToString("API_KEY:$apiKey".toByteArray(),
-             android.util.Base64.NO_WRAP)
+@@ -73,6 +77,9 @@
+     /** True once the trainer's FTMS control point is ready, i.e. ERG targets can be sent. */
+     val ergAvailable = MutableStateFlow(false)
  
--    suspend fun fetchToday(apiKey: String, athleteId: String): List<PlannedWorkout> =
-+    /** Planned workouts from today through today + [days], sorted by date. */
-+    suspend fun fetchUpcoming(apiKey: String, athleteId: String, days: Int = 7): List<PlannedWorkout> =
-         withContext(Dispatchers.IO) {
--            val today = todayIso()
-+            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-+            val today = fmt.format(Date())
-+            val cal = Calendar.getInstance(); cal.add(Calendar.DAY_OF_YEAR, days)
-+            val last = fmt.format(cal.time)
-             val url = "https://intervals.icu/api/v1/athlete/$athleteId/events" +
--                "?category=WORKOUT&resolve=true&oldest=$today&newest=$today"
-+                "?category=WORKOUT&resolve=true&oldest=$today&newest=$last"
-             val req = Request.Builder().url(url)
-                 .header("Authorization", basicAuth(apiKey))
-                 .build()
-@@ -69,7 +74,7 @@
-             http.newCall(req).execute().use { resp ->
-                 if (!resp.isSuccessful) throw RuntimeException("intervals.icu HTTP ${resp.code}")
-                 val body = resp.body?.string() ?: throw RuntimeException("Empty response")
--                parse(JSONArray(body), today)
-+                parse(JSONArray(body), null).sortedBy { it.date }
-             }
++    /** Human-readable list of the services the trainer exposes (shown when ERG is unavailable). */
++    val servicesInfo = MutableStateFlow("")
++
+     /** True while a BLE scan is running (drives the spinner on the Devices screen). */
+     val scanningState = MutableStateFlow(false)
+ 
+@@ -95,6 +102,8 @@
+         set(v) { scanningState.value = v }
+     private val found = LinkedHashMap<String, ScanHit>()
+     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
++    @Volatile private var writeBusy = false   // a control-point write is in flight
++    private val main = Handler(Looper.getMainLooper())
+ 
+     /** Must be called once (TrainerService) before any BLE operation. */
+     fun init(ctx: Context) { appContext = ctx.applicationContext }
+@@ -165,12 +174,12 @@
+             trainerState.value = ConnState.CONNECTING
+             trainerName.value = hit.name
+             trainerGatt?.close()
+-            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb)
++            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
+         } else {
+             hrState.value = ConnState.CONNECTING
+             hrName.value = hit.name
+             hrGatt?.close()
+-            hrGatt = hit.device.connectGatt(ctx, false, hrCb)
++            hrGatt = hit.device.connectGatt(ctx, false, hrCb, BluetoothDevice.TRANSPORT_LE)
          }
- 
-@@ -148,12 +153,12 @@
-         else -> "overloaded"
      }
  
--    private fun parse(events: JSONArray, today: String): List<PlannedWorkout> {
-+    private fun parse(events: JSONArray, onlyDate: String?): List<PlannedWorkout> {
-         val out = ArrayList<PlannedWorkout>()
-         for (i in 0 until events.length()) {
-             val ev = events.getJSONObject(i)
-             val start = ev.optString("start_date_local", "")
--            if (!start.startsWith(today)) continue
-+            if (onlyDate != null && !start.startsWith(onlyDate)) continue
-             val doc = ev.optJSONObject("workout_doc") ?: continue
-             val ftp = doc.optDouble("ftp", 0.0)
-             val segs = ArrayList<Segment>()
-@@ -163,7 +168,8 @@
-                 id = ev.optLong("id"),
-                 name = ev.optString("name", "Workout"),
-                 description = doc.optString("description", ""),
--                segments = segs
-+                segments = segs,
-+                date = start.take(10)
-             ))
-         }
-         return out
-diff -ruN -x .gradle -x '*.jar' a/android/app/src/main/java/com/paceforge/trainer/IcuUpload.kt b/android/app/src/main/java/com/paceforge/trainer/IcuUpload.kt
---- a/app/src/main/java/com/paceforge/trainer/IcuUpload.kt	2026-10-22 17:00:19.000000000 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/IcuUpload.kt	2026-10-22 19:12:49.181660788 +0000
-@@ -8,6 +8,7 @@
- import okhttp3.Request
- import okhttp3.RequestBody.Companion.toRequestBody
- import org.json.JSONArray
-+import org.json.JSONObject
- import java.net.URLEncoder
- import java.text.SimpleDateFormat
- import java.util.Date
-@@ -97,7 +98,19 @@
-             val text = resp.body?.string() ?: ""
-             if (!resp.isSuccessful)
-                 throw RuntimeException("intervals.icu HTTP ${resp.code}: ${text.take(200)}")
--            JSONArray(text).optJSONObject(0)?.optString("id") ?: "ok"
-+            // The upload endpoint returns a JSON *object* (id + activities[]), not an array.
-+            // The HTTP call already succeeded, so never fail the upload on a parsing detail.
-+            try {
-+                val t = text.trim()
-+                if (t.startsWith("[")) {
-+                    JSONArray(t).optJSONObject(0)?.optString("id").orEmpty().ifBlank { "ok" }
-+                } else {
-+                    val o = JSONObject(t)
-+                    o.optString("id").ifBlank {
-+                        o.optJSONArray("activities")?.optJSONObject(0)?.optString("id").orEmpty()
-+                    }.ifBlank { "ok" }
+@@ -189,8 +198,14 @@
+     private val trainerCb = object : BluetoothGattCallback() {
+         override fun onConnectionStateChange(g: BluetoothGatt, status: Int, newState: Int) {
+             when (newState) {
+-                BluetoothProfile.STATE_CONNECTED -> { g.discoverServices() }
++                BluetoothProfile.STATE_CONNECTED -> {
++                    // A bonded trainer may have a stale cached service list (e.g. from before a
++                    // firmware update added FTMS): drop it, then discover.
++                    refreshCache(g)
++                    main.postDelayed({ g.discoverServices() }, 600)
 +                }
-+            } catch (e: Exception) { "ok" }
-         }
-     }
- }
-diff -ruN -x .gradle -x '*.jar' a/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt b/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt
---- a/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 18:37:33.000000000 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:12:49.181987017 +0000
-@@ -200,6 +200,8 @@
- 
-         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
+                 BluetoothProfile.STATE_DISCONNECTED -> {
++                    writeQueue.clear(); writeBusy = false
+                     trainerGatt = null
+                     ergAvailable.value = false
+                     trainerState.value = ConnState.DISCONNECTED
+@@ -202,6 +217,11 @@
              if (status != BluetoothGatt.GATT_SUCCESS) return
-+            lastCrankRevs = -1
-+            Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
+             lastCrankRevs = -1
+             Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
++            servicesInfo.value = g.services.mapNotNull {
++                when (it.uuid) {
++                    FTMS -> "FTMS"; CYCLING_POWER -> "Cycling Power"; TACX_FEC -> "FE-C"; else -> null
++                }
++            }.joinToString(", ").ifBlank { "none of FTMS / Cycling Power / FE-C" }
              val svc = g.getService(FTMS)
              if (svc == null) {
                  // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
-@@ -249,33 +251,63 @@
+@@ -222,15 +242,20 @@
+             if (bike == null || cp == null) {
+                 trainerState.value = ConnState.DISCONNECTED; g.close(); return
+             }
++            // Android allows ONE pending GATT operation: a second writeDescriptor issued right
++            // away is rejected. Subscribe to bike data now, and to the control point in
++            // onDescriptorWrite once this one has completed.
+             enableNotify(g, bike, indications = false)
+-            enableNotify(g, cp, indications = true) // control point responses arrive as indications
+         }
+ 
+         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
+-            if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
+-                ergAvailable.value = true
++            val uuid = descriptor.characteristic?.uuid
++            if (uuid == INDOOR_BIKE) {
++                // step 2: now the control point (responses arrive as indications)
++                g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
++            } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
+                 trainerState.value = ConnState.CONNECTED
+-                enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // take control before ERG writes
++                enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // ERG becomes available once granted
+             }
+         }
+ 
+@@ -241,13 +266,13 @@
+             when (ch.uuid) {
+                 INDOOR_BIKE -> parseIndoorBike(value)
+                 CPS_MEASUREMENT -> parseCps(value)
+-                CONTROL_POINT -> { /* opcode response codes; future: surface errors */ }
++                CONTROL_POINT -> onControlPointResponse(value)
+             }
+         }
+ 
+         override fun onCharacteristicWrite(g: BluetoothGatt, ch: BluetoothGattCharacteristic, status: Int) {
+-            val next = writeQueue.poll()
+-            if (next != null) writeNow(g, ch, next)
++            writeBusy = false
++            pump()
          }
      }
  
--    /** Cycling Power Measurement (0x2A63) fallback: flags u16 then power s16. */
-+    private fun u16(b: ByteArray, i: Int) = (b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8)
-+    private fun s16(b: ByteArray, i: Int): Int { val r = u16(b, i); return if (r > 0x7FFF) r - 0x10000 else r }
-+
-+    // Crank state for cadence derived from Cycling Power Measurement
-+    private var lastCrankRevs = -1
-+    private var lastCrankTime = 0
-+    private var lastCrankChangeMs = 0L
-+
-+    /**
-+     * Cycling Power Measurement (0x2A63): flags u16, power s16, then optional fields in this
-+     * order: pedal balance (1), accumulated torque (2), wheel rev data (6), crank rev data (4).
-+     * Cadence = delta crank revolutions / delta crank event time (1/1024 s).
-+     */
-     private fun parseCps(b: ByteArray) {
-         if (b.size < 4) return
--        val raw = ((b[2].toInt() and 0xFF) or ((b[3].toInt() and 0xFF) shl 8))
--        powerW.value = if (raw > 0x7FFF) raw - 0x10000 else raw
-+        val flags = u16(b, 0)
-+        powerW.value = s16(b, 2)
-+        var i = 4
-+        if (flags and 0x0001 != 0) i += 1   // pedal power balance
-+        if (flags and 0x0004 != 0) i += 2   // accumulated torque
-+        if (flags and 0x0010 != 0) i += 6   // wheel revolution data
-+        if (flags and 0x0020 != 0 && i + 4 <= b.size) {
-+            val revs = u16(b, i)
-+            val t = u16(b, i + 2)
-+            val now = System.currentTimeMillis()
-+            if (lastCrankRevs >= 0) {
-+                val dRev = (revs - lastCrankRevs) and 0xFFFF
-+                val dT = (t - lastCrankTime) and 0xFFFF
-+                if (dRev > 0 && dT > 0) {
-+                    cadence.value = (dRev * 1024 * 60 + dT / 2) / dT
-+                    lastCrankChangeMs = now
-+                } else if (now - lastCrankChangeMs > 2500) {
-+                    cadence.value = 0   // no new crank event: pedalling stopped
-+                }
-+            } else lastCrankChangeMs = now
-+            lastCrankRevs = revs; lastCrankTime = t
-+        }
+@@ -321,18 +346,47 @@
      }
  
--    /** Indoor Bike Data (0x2AD2): flags u16 LE, then optional fields. */
-+    /**
-+     * Indoor Bike Data (0x2AD2): flags u16 LE, then optional fields in spec order.
-+     * Note bit 0 ("More Data") is inverted: instantaneous speed is present when it is 0.
-+     */
-     private fun parseIndoorBike(b: ByteArray) {
--        if (b.size < 4) return
--        val flags = (b[0].toInt() and 0xFF) or ((b[1].toInt() and 0xFF) shl 8)
-+        if (b.size < 2) return
-+        val flags = u16(b, 0)
-         var i = 2
--        if (flags and 0x0002 != 0) i += 2            // instantaneous speed
--        if (flags and 0x0004 != 0) {                 // instantaneous cadence
--            if (i + 2 <= b.size) {
--                val raw = ((b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8))
--                cadence.value = raw / 2              // 0.5 rpm resolution
--                i += 2
--            }
-+        if (flags and 0x0001 == 0) i += 2            // instantaneous speed
-+        if (flags and 0x0002 != 0) i += 2            // average speed
-+        if (flags and 0x0004 != 0) {                 // instantaneous cadence, 0.5 rpm
-+            if (i + 2 <= b.size) cadence.value = u16(b, i) / 2
-+            i += 2
-         }
-         if (flags and 0x0008 != 0) i += 2            // average cadence
-         if (flags and 0x0010 != 0) i += 3            // total distance
--        if (flags and 0x0020 != 0) i += 3            // resistance level
--        if (flags and 0x0040 != 0 && i + 2 <= b.size) { // instantaneous power (s16)
--            val raw = ((b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8))
--            powerW.value = if (raw > 0x7FFF) raw - 0x10000 else raw
--        }
-+        if (flags and 0x0020 != 0) i += 2            // resistance level
-+        if (flags and 0x0040 != 0 && i + 2 <= b.size) powerW.value = s16(b, i)  // instantaneous power
+     private fun enqueue(bytes: ByteArray) {
++        if (writeQueue.size > 4) writeQueue.clear()   // slow trainer: keep only the freshest commands
++        writeQueue.add(bytes)
++        pump()
++    }
++
++    /** Send the next queued command if none is in flight. */
++    private fun pump() {
++        if (writeBusy) return
+         val g = trainerGatt ?: return
+-        val svc = g.getService(FTMS) ?: return
+-        val cp = svc.getCharacteristic(CONTROL_POINT) ?: return
+-        if (writeQueue.isEmpty()) writeNow(g, cp, bytes) else writeQueue.add(bytes)
++        val cp = g.getService(FTMS)?.getCharacteristic(CONTROL_POINT) ?: return
++        val next = writeQueue.poll() ?: return
++        writeBusy = true
++        if (!writeNow(g, cp, next)) { writeBusy = false; pump() }   // rejected: try the next one
      }
  
-     /** ERG mode: send a new target power (watts) to the trainer. */
-diff -ruN -x .gradle -x '*.jar' a/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt b/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt
---- a/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 18:37:33.000000000 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 19:12:49.181862290 +0000
-@@ -91,7 +91,13 @@
- 
-     val w = workout
-     val total = w?.totalSec ?: 0
--    val next = w?.segments?.getOrNull(segIdx + 1)
-+    // Current step timing, running averages and upcoming steps
-+    val stepStart = w?.segments?.take(segIdx)?.sumOf { it.durationSec } ?: 0
-+    val stepLeft = ((w?.segments?.getOrNull(segIdx)?.durationSec ?: 0) - (elapsed - stepStart)).coerceAtLeast(0)
-+    val avgAll = if (session.isEmpty()) null else session.sumOf { it.watts } / session.size
-+    val stepPts = session.filter { it.sec > stepStart }
-+    val avgStep = if (stepPts.isEmpty()) null else stepPts.sumOf { it.watts } / stepPts.size
-+    val upcoming = w?.segments?.drop(segIdx + 1)?.take(2) ?: emptyList()
-     val active = status == WorkoutEngine.Status.RUNNING || status == WorkoutEngine.Status.PAUSED
- 
-     fun endWorkout() {
-@@ -152,14 +158,14 @@
-         }
- 
-         if (total > 0) {
--            Text("${clock(elapsed)} / ${clock(total)}" + (next?.let { "  ·  next: ${nextLabel(it)}" } ?: ""),
-+            Text("${clock(elapsed)} / ${clock(total)}  ·  ${clock((total - elapsed).coerceAtLeast(0))} left",
-                 fontSize = 12.sp, color = Forge.Header, textAlign = TextAlign.Center,
-                 modifier = Modifier.padding(top = 6.dp))
-         }
- 
-         // Full workout profile + live progression
-         WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
--            Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
-+            Modifier.fillMaxWidth().height(120.dp).padding(top = 8.dp))
- 
-         // Target power — the hero number
-         Text("$target W",
-@@ -175,6 +181,24 @@
-             Metric("CADENCE", "$cadence rpm")
-             Metric("HEART RATE", if (hr > 0) "$hr bpm" else "—")
-         }
-+        Row(Modifier.fillMaxWidth().padding(top = 10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-+            Metric("AVG POWER", avgAll?.let { "$it W" } ?: "—")
-+            Metric("STEP AVG", avgStep?.let { "$it W" } ?: "—")
-+            Metric("STEP LEFT", clock(stepLeft))
-+        }
+     @SuppressLint("MissingPermission")
+-    private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray) {
++    private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray): Boolean {
+         cp.value = bytes
+         cp.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+-        val ok = try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
+-        if (!ok) writeQueue.poll()?.let { writeNow(g, cp, it) } // avoid stuck queue
++        return try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
++    }
 +
-+        // Upcoming steps: when, how long, how hard
-+        if (upcoming.isNotEmpty()) {
-+            Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
-+                Text("NEXT", fontSize = 11.sp, letterSpacing = 1.sp, color = Forge.Muted)
-+                upcoming.forEachIndexed { n, sg ->
-+                    val whenTxt = if (n == 0) "in ${clock(stepLeft)}" else "then"
-+                    Text("$whenTxt  ·  ${nextLabel(sg)}" + (if (sg.text.isNotBlank()) "  ·  ${sg.text}" else ""),
-+                        fontSize = 13.sp, color = Forge.Header, maxLines = 1,
-+                        modifier = Modifier.padding(top = 3.dp))
-+                }
++    /** FTMS control point response: 0x80, request opcode, result (0x01 = success). */
++    private fun onControlPointResponse(v: ByteArray) {
++        if (v.size < 3 || (v[0].toInt() and 0xFF) != OP_RESPONSE) return
++        val op = v[1].toInt() and 0xFF
++        val result = v[2].toInt() and 0xFF
++        Log.i(TAG, "Control point: op=0x%02X result=0x%02X".format(op, result))
++        if (op == OP_REQUEST_CONTROL) {
++            if (result == 0x01) {
++                enqueue(byteArrayOf(OP_START_RESUME.toByte()))   // required before target power on most trainers
++                ergAvailable.value = true
++            } else {
++                ergAvailable.value = false   // e.g. another app already controls the trainer
 +            }
 +        }
- 
-         Spacer(Modifier.height(14.dp))
- 
-diff -ruN -x .gradle -x '*.jar' a/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt b/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt
---- a/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 18:37:33.000000000 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 19:12:49.181917342 +0000
-@@ -103,7 +103,7 @@
-     LaunchedEffect(apiKey, athleteId, retry) {
-         if (apiKey.isBlank()) return@LaunchedEffect
-         loading = true; error = null
--        try { workouts = IcuRepository.fetchToday(apiKey, athleteId) }
-+        try { workouts = IcuRepository.fetchUpcoming(apiKey, athleteId, 7) }
-         catch (e: Exception) { error = e.message }
-         loading = false
-         if (error == null) week = IcuRepository.fetchWeek(apiKey, athleteId)
-@@ -124,13 +124,28 @@
-                 Spacer(Modifier.height(8.dp))
-                 GhostButton("Retry", Modifier.fillMaxWidth()) { retry++ }
-             }
--            workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.",
-+            workouts.isEmpty() -> Text("No planned workout in the next 7 days. Plan one on intervals.icu.",
-                 color = Forge.Muted, modifier = Modifier.padding(top = 16.dp))
-             else -> LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {
--                item { SectionTitle("Today's planned workout${if (workouts.size > 1) "s" else ""}") }
--                items(workouts) { w ->
--                    WorkoutCard(w, trainer, onPlayWorkout)
--                    Spacer(Modifier.height(8.dp))
-+                val today = IcuRepository.todayIso()
-+                val todays = workouts.filter { it.date <= today }
-+                val later = workouts.filter { it.date > today }
-+                if (todays.isEmpty()) {
-+                    item { Text("No workout planned for today.", color = Forge.Muted,
-+                        modifier = Modifier.padding(top = 8.dp)) }
-+                } else {
-+                    item { SectionTitle("Today's planned workout${if (todays.size > 1) "s" else ""}") }
-+                    items(todays) { w ->
-+                        WorkoutCard(w, trainer, onPlayWorkout)
-+                        Spacer(Modifier.height(8.dp))
-+                    }
-+                }
-+                if (later.isNotEmpty()) {
-+                    item { SectionTitle("Coming up") }
-+                    items(later) { w ->
-+                        WorkoutCard(w, trainer, onPlayWorkout, playable = false, dayLabel = dayLabel(w.date))
-+                        Spacer(Modifier.height(8.dp))
-+                    }
-                 }
-                 val wk = week
-                 if (wk != null && (wk.ctlDelta != null || wk.nextName != null)) {
-@@ -160,15 +175,27 @@
-     }
- }
- 
-+private fun dayLabel(date: String): String = try {
-+    val d = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).parse(date)!!
-+    java.text.SimpleDateFormat("EEE d MMM", java.util.Locale.getDefault()).format(d)
-+} catch (e: Exception) { date }
++    }
 +
- @Composable
--private fun WorkoutCard(w: PlannedWorkout, trainer: FtmsCenter.ConnState, onPlay: (PlannedWorkout) -> Unit) {
-+private fun WorkoutCard(
-+    w: PlannedWorkout,
-+    trainer: FtmsCenter.ConnState,
-+    onPlay: (PlannedWorkout) -> Unit,
-+    playable: Boolean = true,
-+    dayLabel: String? = null
-+) {
-     val connected = trainer == FtmsCenter.ConnState.CONNECTED
-     ForgeCard {
-         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
-             verticalAlignment = Alignment.CenterVertically) {
-             Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
-             Spacer(Modifier.width(8.dp))
--            if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
-+            if (!playable) StatusPill(dayLabel ?: "", Forge.Muted)
-+            else if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
++    /** Hidden-API cache refresh; harmless if the platform blocks it. */
++    private fun refreshCache(g: BluetoothGatt) {
++        try { g.javaClass.getMethod("refresh").invoke(g) } catch (e: Exception) { Log.w(TAG, "GATT cache refresh unavailable", e) }
+     }
+ 
+     // --------------------------------------------------------------- GATT: heart rate
+
+--- a/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 19:12:49.181862290 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 19:30:44.497588185 +0000
+@@ -56,6 +56,7 @@
+     val cadence by FtmsCenter.cadence.collectAsState()
+     val hr by FtmsCenter.hrBpm.collectAsState()
+     val ergOk by FtmsCenter.ergAvailable.collectAsState()
++    val svcInfo by FtmsCenter.servicesInfo.collectAsState()
+ 
+     val ctx = androidx.compose.ui.platform.LocalContext.current
+     val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
+@@ -157,6 +158,10 @@
+             }
          }
-         Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
-             fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
-@@ -178,7 +205,7 @@
-         if (w.description.isNotBlank())
-             Text(w.description.take(140), fontSize = 12.sp, color = Forge.Faint, maxLines = 3,
-                 lineHeight = 17.sp, modifier = Modifier.padding(top = 7.dp))
--        PrimaryButton(
-+        if (playable) PrimaryButton(
-             if (connected) "▶  Play on trainer" else "Pair a trainer first (Devices)",
-             Modifier.fillMaxWidth().padding(top = 12.dp), enabled = connected
-         ) { onPlay(w) }
+ 
++        if (!ergOk && svcInfo.isNotBlank())
++            Text("Trainer exposes: $svcInfo", fontSize = 11.sp, color = Forge.Warn,
++                modifier = Modifier.padding(top = 4.dp))
++
+         if (total > 0) {
+             Text("${clock(elapsed)} / ${clock(total)}  ·  ${clock((total - elapsed).coerceAtLeast(0))} left",
+                 fontSize = 12.sp, color = Forge.Header, textAlign = TextAlign.Center,

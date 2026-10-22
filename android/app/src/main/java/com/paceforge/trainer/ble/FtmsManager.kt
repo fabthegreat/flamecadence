@@ -16,6 +16,8 @@ import android.bluetooth.le.ScanResult
 import android.bluetooth.le.ScanSettings
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import android.os.ParcelUuid
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -56,6 +58,8 @@ object FtmsCenter {
     // --- FTMS control point opcodes ---
     private const val OP_REQUEST_CONTROL = 0x00
     private const val OP_SET_TARGET_POWER = 0x05
+    private const val OP_START_RESUME = 0x07
+    private const val OP_RESPONSE = 0x80
 
     enum class ConnState { DISCONNECTED, CONNECTING, CONNECTED }
 
@@ -72,6 +76,9 @@ object FtmsCenter {
 
     /** True once the trainer's FTMS control point is ready, i.e. ERG targets can be sent. */
     val ergAvailable = MutableStateFlow(false)
+
+    /** Human-readable list of the services the trainer exposes (shown when ERG is unavailable). */
+    val servicesInfo = MutableStateFlow("")
 
     /** True while a BLE scan is running (drives the spinner on the Devices screen). */
     val scanningState = MutableStateFlow(false)
@@ -95,6 +102,8 @@ object FtmsCenter {
         set(v) { scanningState.value = v }
     private val found = LinkedHashMap<String, ScanHit>()
     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
+    @Volatile private var writeBusy = false   // a control-point write is in flight
+    private val main = Handler(Looper.getMainLooper())
 
     /** Must be called once (TrainerService) before any BLE operation. */
     fun init(ctx: Context) { appContext = ctx.applicationContext }
@@ -165,12 +174,12 @@ object FtmsCenter {
             trainerState.value = ConnState.CONNECTING
             trainerName.value = hit.name
             trainerGatt?.close()
-            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb)
+            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
         } else {
             hrState.value = ConnState.CONNECTING
             hrName.value = hit.name
             hrGatt?.close()
-            hrGatt = hit.device.connectGatt(ctx, false, hrCb)
+            hrGatt = hit.device.connectGatt(ctx, false, hrCb, BluetoothDevice.TRANSPORT_LE)
         }
     }
 
@@ -189,8 +198,14 @@ object FtmsCenter {
     private val trainerCb = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(g: BluetoothGatt, status: Int, newState: Int) {
             when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> { g.discoverServices() }
+                BluetoothProfile.STATE_CONNECTED -> {
+                    // A bonded trainer may have a stale cached service list (e.g. from before a
+                    // firmware update added FTMS): drop it, then discover.
+                    refreshCache(g)
+                    main.postDelayed({ g.discoverServices() }, 600)
+                }
                 BluetoothProfile.STATE_DISCONNECTED -> {
+                    writeQueue.clear(); writeBusy = false
                     trainerGatt = null
                     ergAvailable.value = false
                     trainerState.value = ConnState.DISCONNECTED
@@ -202,6 +217,11 @@ object FtmsCenter {
             if (status != BluetoothGatt.GATT_SUCCESS) return
             lastCrankRevs = -1
             Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
+            servicesInfo.value = g.services.mapNotNull {
+                when (it.uuid) {
+                    FTMS -> "FTMS"; CYCLING_POWER -> "Cycling Power"; TACX_FEC -> "FE-C"; else -> null
+                }
+            }.joinToString(", ").ifBlank { "none of FTMS / Cycling Power / FE-C" }
             val svc = g.getService(FTMS)
             if (svc == null) {
                 // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
@@ -222,15 +242,20 @@ object FtmsCenter {
             if (bike == null || cp == null) {
                 trainerState.value = ConnState.DISCONNECTED; g.close(); return
             }
+            // Android allows ONE pending GATT operation: a second writeDescriptor issued right
+            // away is rejected. Subscribe to bike data now, and to the control point in
+            // onDescriptorWrite once this one has completed.
             enableNotify(g, bike, indications = false)
-            enableNotify(g, cp, indications = true) // control point responses arrive as indications
         }
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
-                ergAvailable.value = true
+            val uuid = descriptor.characteristic?.uuid
+            if (uuid == INDOOR_BIKE) {
+                // step 2: now the control point (responses arrive as indications)
+                g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
+            } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
                 trainerState.value = ConnState.CONNECTED
-                enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // take control before ERG writes
+                enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // ERG becomes available once granted
             }
         }
 
@@ -241,13 +266,13 @@ object FtmsCenter {
             when (ch.uuid) {
                 INDOOR_BIKE -> parseIndoorBike(value)
                 CPS_MEASUREMENT -> parseCps(value)
-                CONTROL_POINT -> { /* opcode response codes; future: surface errors */ }
+                CONTROL_POINT -> onControlPointResponse(value)
             }
         }
 
         override fun onCharacteristicWrite(g: BluetoothGatt, ch: BluetoothGattCharacteristic, status: Int) {
-            val next = writeQueue.poll()
-            if (next != null) writeNow(g, ch, next)
+            writeBusy = false
+            pump()
         }
     }
 
@@ -321,18 +346,47 @@ object FtmsCenter {
     }
 
     private fun enqueue(bytes: ByteArray) {
+        if (writeQueue.size > 4) writeQueue.clear()   // slow trainer: keep only the freshest commands
+        writeQueue.add(bytes)
+        pump()
+    }
+
+    /** Send the next queued command if none is in flight. */
+    private fun pump() {
+        if (writeBusy) return
         val g = trainerGatt ?: return
-        val svc = g.getService(FTMS) ?: return
-        val cp = svc.getCharacteristic(CONTROL_POINT) ?: return
-        if (writeQueue.isEmpty()) writeNow(g, cp, bytes) else writeQueue.add(bytes)
+        val cp = g.getService(FTMS)?.getCharacteristic(CONTROL_POINT) ?: return
+        val next = writeQueue.poll() ?: return
+        writeBusy = true
+        if (!writeNow(g, cp, next)) { writeBusy = false; pump() }   // rejected: try the next one
     }
 
     @SuppressLint("MissingPermission")
-    private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray) {
+    private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray): Boolean {
         cp.value = bytes
         cp.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-        val ok = try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
-        if (!ok) writeQueue.poll()?.let { writeNow(g, cp, it) } // avoid stuck queue
+        return try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
+    }
+
+    /** FTMS control point response: 0x80, request opcode, result (0x01 = success). */
+    private fun onControlPointResponse(v: ByteArray) {
+        if (v.size < 3 || (v[0].toInt() and 0xFF) != OP_RESPONSE) return
+        val op = v[1].toInt() and 0xFF
+        val result = v[2].toInt() and 0xFF
+        Log.i(TAG, "Control point: op=0x%02X result=0x%02X".format(op, result))
+        if (op == OP_REQUEST_CONTROL) {
+            if (result == 0x01) {
+                enqueue(byteArrayOf(OP_START_RESUME.toByte()))   // required before target power on most trainers
+                ergAvailable.value = true
+            } else {
+                ergAvailable.value = false   // e.g. another app already controls the trainer
+            }
+        }
+    }
+
+    /** Hidden-API cache refresh; harmless if the platform blocks it. */
+    private fun refreshCache(g: BluetoothGatt) {
+        try { g.javaClass.getMethod("refresh").invoke(g) } catch (e: Exception) { Log.w(TAG, "GATT cache refresh unavailable", e) }
     }
 
     // --------------------------------------------------------------- GATT: heart rate

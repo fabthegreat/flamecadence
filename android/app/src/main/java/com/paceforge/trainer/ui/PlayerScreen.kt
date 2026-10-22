@@ -56,6 +56,7 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
     val cadence by FtmsCenter.cadence.collectAsState()
     val hr by FtmsCenter.hrBpm.collectAsState()
     val ergOk by FtmsCenter.ergAvailable.collectAsState()
+    val svcInfo by FtmsCenter.servicesInfo.collectAsState()
 
     val ctx = androidx.compose.ui.platform.LocalContext.current
     val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
@@ -156,6 +157,10 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
                 if (ergOk) StatusPill("ERG", Forge.Green) else StatusPill("NO ERG · read-only", Forge.Warn)
             }
         }
+
+        if (!ergOk && svcInfo.isNotBlank())
+            Text("Trainer exposes: $svcInfo", fontSize = 11.sp, color = Forge.Warn,
+                modifier = Modifier.padding(top = 4.dp))
 
         if (total > 0) {
             Text("${clock(elapsed)} / ${clock(total)}  ·  ${clock((total - elapsed).coerceAtLeast(0))} left",
