@@ -97,9 +97,11 @@ dialog h2{margin-bottom:6px}
 .st{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;align-items:center;padding:8px;margin-bottom:6px;border-left:5px solid var(--line);border-radius:6px;background:var(--bg)}
 .st.warm{border-color:#5cb85c}.st.work{border-color:#ee6c4d}.st.rec{border-color:#3a9d8f}.st.cool{border-color:#4a90d9}
 .st select,.st input,.gh input{padding:7px;background:var(--card)}
+.grp .actions select{margin-top:0;flex:1 1 150px;max-width:280px;padding:8px 10px;background:var(--card);color:var(--acc);border-color:var(--acc);font-size:.85rem}
 .ctl{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}.ctl button{margin:0!important}
 .drg{cursor:grab;color:var(--mute);user-select:none;font-size:1.05rem;line-height:1;padding:0 3px}
 .st.dropover,.gh.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
+.blk.dropover,.grp.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
 .fld{position:relative}.fld input{padding-right:58px}.fld span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--mute);pointer-events:none}
 .grp{border:1px dashed var(--acc);border-radius:8px;padding:8px;margin-bottom:8px}.gh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}.gh .fld{width:90px}.gh .ctl{grid-column:auto;margin-left:auto}.grp>.actions{margin-top:6px}
 /* blocs de l'éditeur manuel : étapes consécutives de même type regroupées */
@@ -112,6 +114,8 @@ dialog h2{margin-bottom:6px}
 .blk.closed .st{display:none}
 .blk.closed{padding:6px 8px}
 .blk-h .tglb{margin:0!important;padding:3px 10px!important;font-size:.85rem!important;line-height:1.2!important}
+.blk.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
+.blk[draggable="true"] .blk-h{cursor:grab}
 #loadbox,#lastbox{position:relative}
 .days{display:flex;gap:3px;align-items:flex-end;height:96px}
 .d{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.65rem;color:var(--mute);cursor:default}
@@ -598,6 +602,7 @@ mvUp:["Move up","Monter"], mvDown:["Move down","Descendre"], dup:["Duplicate","D
 addWarm:["+ Warm-up","+ Échauffement"], addWork:["+ Interval","+ Intervalle"], addRec:["+ Recovery","+ Récupération"], addCool:["+ Cool-down","+ Retour au calme"], addGrp:["+ Repeat block","+ Bloc de répétitions"],
 std_warm:["⇅ Standard warm-up","⇅ Échauffement standard"], std_cool:["⇅ Standard cool-down","⇅ Retour au calme standard"],
 edReset:["Reset","Réinitialiser"], cfmReset:["Clear the manual workout editor?","Vider l'éditeur de séance manuel ?"], edResetOk:["Editor cleared.","Éditeur vidé."],
+gstdLbl:["Standard repeats…","Répétitions standard…"], gstdOk:["Repeat block set to {0}.","Bloc de répétitions réglé sur {0}."],
 edHintW:["Intensity in watts (follows the “Power units” setting above).","Intensité en watts (selon le réglage « Unités de puissance » ci-dessus)."], edHintP:["Intensity in % of FTP.","Intensité en % de la FTP."], edHintPace:["Intensity in % of threshold pace.","Intensité en % de l'allure seuil."],
 edTot:["Estimated duration: {0}","Durée estimée : {0}"], edGo:["Build preview","Générer l'aperçu"], edBuilt:["Workout built: check the preview, then add it to your calendar.","Séance construite : vérifie l'aperçu, puis ajoute-la au calendrier."], edDefName:["My workout","Ma séance"],
 tabAi:["AI generator","Générateur IA"], tabEd:["Manual editor","Éditeur manuel"], tabLib:["Library","Bibliothèque"], modeLbl:["Workout creation mode","Mode de création de la séance"],
@@ -2778,7 +2783,24 @@ function edStep(x, p){
     `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}" aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
     `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec", x.ty === "warm" || x.ty === "cool" ? t("std_" + x.ty) : null)}</div>`;
 }
-const edGrp = (g, i) => `<div class="grp"><div class="gh" data-p="${i}"><b>${esc(t("repLbl"))}</b><span class="stp">${edBtn("rm", "−", t("repDec"))}<input data-f="r" type="number" min="1" max="50" value="${esc(g.r)}" aria-label="${esc(t("repLbl"))}">${edBtn("rp", "+", t("repInc"))}<span aria-hidden="true">×</span></span>${edCtl(false)}</div>${g.items.map((x, j) => edStep(x, i + "." + j)).join("")}<div class="actions"><button class="alt small" data-a="addin" data-g="${i}" data-ty="work" type="button">${esc(t("addWork"))}</button><button class="alt small" data-a="addin" data-g="${i}" data-ty="rec" type="button">${esc(t("addRec"))}</button></div></div>`;
+// Préréglages de répétitions standard : [répétitions, [[min, sec, %FTP] effort, [min, sec, %FTP] récup]]
+const ED_GSTD = [
+  [10, [[1, 0, 105], [1, 0, 50]]],
+  [5,  [[2, 0, 100], [2, 0, 50]]],
+  [5,  [[4, 0, 95],  [4, 0, 50]]],
+  [4,  [[5, 0, 95],  [3, 0, 50]]],
+  [3,  [[8, 0, 90],  [4, 0, 50]]],
+  [8,  [[0, 30, 130], [0, 30, 55]]],
+  [6,  [[0, 40, 120], [0, 20, 60]]],
+  [2,  [[12, 0, 88], [6, 0, 50]]]
+];
+const gStdLabel = p => { const sec = x => x[0] * 60 + x[1]; return `${p[0]} × ${fmtDur(sec(p[1][0]))}/${fmtDur(sec(p[1][1]))} @${p[1][0][2]}%`; };
+function gStdSteps(p){
+  const f = curFtp();
+  return p[1].map(([m, s, pc], j) => ({k: "s", ty: j % 2 ? "rec" : "work", mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
+}
+const gStdSel = i => `<select class="gstd" data-gstd="${i}" aria-label="${esc(t("gstdLbl"))}"><option value="">${esc(t("gstdLbl"))}</option>${ED_GSTD.map((p, k) => `<option value="${k}">${esc(gStdLabel(p))}</option>`).join("")}</select>`;
+const edGrp = (g, i) => `<div class="grp" data-gi="${i}"><div class="gh" data-p="${i}"><b>${esc(t("repLbl"))}</b><span class="stp">${edBtn("rm", "−", t("repDec"))}<input data-f="r" type="number" min="1" max="50" value="${esc(g.r)}" aria-label="${esc(t("repLbl"))}">${edBtn("rp", "+", t("repInc"))}<span aria-hidden="true">×</span></span>${edCtl(false)}</div>${g.items.map((x, j) => edStep(x, i + "." + j)).join("")}<div class="actions">${gStdSel(i)}<button class="alt small" data-a="addin" data-g="${i}" data-ty="work" type="button">${esc(t("addWork"))}</button><button class="alt small" data-a="addin" data-g="${i}" data-ty="rec" type="button">${esc(t("addRec"))}</button></div></div>`;
 function edDur(x){
   if(x.mode === "d") return (parseFloat(String(x.v).replace(",", ".")) || 0) + (edKm() ? "km" : "mtr");
   const [m, sc] = String(x.v).split(":"), sec = (parseInt(m, 10) || 0) * 60 + (parseInt(sc, 10) || 0), h = Math.floor(sec / 3600), mm = Math.floor(sec % 3600 / 60), ss = sec % 60;
@@ -2792,6 +2814,7 @@ function edText(){
   const out = []; let lastTy = null;
   ED.forEach(x => {
     if(x.k === "g"){ out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); lastTy = null; return; }
+    if(x.k === "b"){ if(lastTy !== null){ out.push(""); lastTy = null; } return; } // séparateur : force un nouveau titre
     // les étapes consécutives de même type sont regroupées sous un seul titre
     // (utile pour les échauffements / retours au calme multi-paliers)
     if(x.ty !== lastTy){ if(lastTy !== null) out.push(""); out.push(t("tt_" + x.ty)); lastTy = x.ty; }
@@ -2812,23 +2835,42 @@ function edHtml(){
     if(!run.length) return;
     const ty = ED[run[0]].ty, bk = "b" + (ED[run[0]].uid || 0), closed = edCollapsed.has(bk);
     const tot = run.reduce((a, i) => a + edSec(ED[i]), 0);
-    out += `<div class="blk blk-${ty}${closed ? " closed" : ""}" data-bk="${bk}"><div class="blk-h">${esc(t("tt_" + ty))}<span class="badge">${run.length}${tot ? " · " + fmtDur(tot) : ""}</span><button class="alt small tglb" data-tb="${bk}" type="button" aria-expanded="${!closed}" title="${esc(t("collapse"))}" aria-label="${esc(t("collapse"))}">${closed ? "▸" : "▾"}</button></div>${run.map(i => edStep(ED[i], String(i))).join("")}</div>`;
+    out += `<div class="blk blk-${ty}${closed ? " closed" : ""}" data-bs="${run[0]}" data-bn="${run.length}" data-bk="${bk}"><div class="blk-h"><span class="drg" title="${esc(t("dragLbl"))}" aria-label="${esc(t("dragLbl"))}">⠿</span>${esc(t("tt_" + ty))}<span class="badge">${run.length}${tot ? " · " + fmtDur(tot) : ""}</span><button class="alt small tglb" data-tb="${bk}" type="button" aria-expanded="${!closed}" title="${esc(t("collapse"))}" aria-label="${esc(t("collapse"))}">${closed ? "▸" : "▾"}</button></div>${run.map(i => edStep(ED[i], String(i))).join("")}</div>`;
     run = [];
   };
-  ED.forEach((x, i) => { if(x.k === "g"){ flush(); out += edGrp(x, i); } else run.push(i); });
+  ED.forEach((x, i) => { if(x.k === "g"){ flush(); out += edGrp(x, i); } else if(x.k === "b"){ flush(); } else run.push(i); });
   flush();
   return out;
+}
+// Aperçu mis à jour en direct : toute modification de l'éditeur régénère la séance
+// dans le panneau d'aperçu (nom, sport, description, graphe) sans cliquer « Générer l'aperçu ».
+function edLive(){
+  const txt = edText();
+  if(!txt) return;
+  $("sport").value = edSp(); syncUnit();
+  if($("edname").value.trim()) $("name").value = $("edname").value.trim();
+  else if(!$("name").value) $("name").value = t("edDefName");
+  $("desc").value = txt;
+  EXPL = null; selLine = null;
+  $("prev").hidden = false;
+  renderChart();
 }
 function edRender(){
   $("edftp").disabled = $("edunit").disabled = !edKm();
   $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace");
   $("edbox").innerHTML = ED.length ? edHtml() : `<div class="hint">${esc(t("edNone"))}</div>`;
   edSum();
+  edLive();
 }
 $("edbox").addEventListener("input", e => {
   const el = e.target, h = el.closest("[data-p]"); if(!h || !el.dataset.f) return;
   const {list, i} = edAt(h.dataset.p); list[i][el.dataset.f] = el.value;
   if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else edSum();
+});
+$("edbox").addEventListener("change", e => {
+  const s = e.target.closest("[data-gstd]"); if(!s || s.value === "") return;
+  const g = ED[+s.dataset.gstd], p = ED_GSTD[+s.value];
+  if(g && p){ g.r = p[0]; g.items = gStdSteps(p); edRender(); say("gstdOk", "ok", gStdLabel(p)); }
 });
 $("edbox").addEventListener("click", e => {
   const tb = e.target.closest(".tglb");
@@ -2849,17 +2891,25 @@ $("edbox").addEventListener("click", e => {
   edRender();
   if(gp !== null){ const nb = $("edbox").querySelector(`[data-p="${gp}"] [data-a="${a}"]`); if(nb) nb.focus(); }
 });
-// Glisser-déposer pour réordonner les étapes (poignée ⠿)
+// Glisser-déposer pour réordonner : étapes individuelles (⠿) et blocs entiers (⠿ du titre)
 let edDrag = null;
 $("edbox").addEventListener("mousedown", e => {
-  const row = e.target.closest && e.target.closest(".drg") ? e.target.closest(".drg").closest("[data-p]") : null;
   document.querySelectorAll('#edbox [draggable="true"]').forEach(el => el.removeAttribute("draggable"));
-  if(row) row.setAttribute("draggable", "true");
+  const dg = e.target.closest && e.target.closest(".drg") ? e.target.closest(".drg") : null;
+  if(!dg) return;
+  const row = dg.closest("[data-p]");
+  if(row){ row.setAttribute("draggable", "true"); return; }
+  const blk = dg.closest(".blk");
+  if(blk) blk.setAttribute("draggable", "true");
 });
 $("edbox").addEventListener("dragstart", e => {
   const row = e.target.closest ? e.target.closest("[data-p]") : null;
-  if(!row || row.getAttribute("draggable") !== "true"){ e.preventDefault(); return; }
-  edDrag = row.dataset.p;
+  const blk = e.target.closest ? e.target.closest(".blk") : null;
+  let d = null;
+  if(row && row.getAttribute("draggable") === "true") d = row.dataset.p;
+  else if(blk && blk.getAttribute("draggable") === "true") d = "b" + blk.dataset.bs + ":" + blk.dataset.bn;
+  if(!d){ e.preventDefault(); return; }
+  edDrag = d;
   e.dataTransfer.effectAllowed = "move";
   try{ e.dataTransfer.setData("text/plain", edDrag); }catch(err){}
 });
@@ -2870,19 +2920,45 @@ $("edbox").addEventListener("dragend", () => {
 $("edbox").addEventListener("dragover", e => {
   if(!edDrag) return;
   const row = e.target.closest ? e.target.closest("[data-p]") : null;
-  if(!row || row.dataset.p === edDrag) return;
+  const isBlk = edDrag.charAt(0) === "b";
+  let hl = null;
+  if(isBlk){
+    // un bloc peut être déposé sur un autre bloc, un bloc de répétitions entier
+    // ou une étape racine (permet aussi de le placer tout en haut ou tout en bas)
+    hl = (e.target.closest && (e.target.closest(".blk") || e.target.closest(".grp"))) || (row && row.dataset.p.indexOf(".") < 0 ? row : null);
+  }else if(row && row.dataset.p !== edDrag) hl = row;
+  if(!hl) return;
   e.preventDefault();
   document.querySelectorAll('#edbox .dropover').forEach(el => el.classList.remove("dropover"));
-  row.classList.add("dropover");
+  hl.classList.add("dropover");
 });
 $("edbox").addEventListener("drop", e => {
   if(!edDrag) return;
-  const row = e.target.closest ? e.target.closest("[data-p]") : null;
   e.preventDefault();
-  const src = edAt(edDrag);
-  edDrag = null;
+  const d = edDrag; edDrag = null;
   document.querySelectorAll('#edbox .dropover').forEach(el => el.classList.remove("dropover"));
+  const row = e.target.closest ? e.target.closest("[data-p]") : null;
+  if(d.charAt(0) === "b"){
+    // déplacement d'un bloc complet (suite d'étapes de même type) d'un seul geste
+    // position avant/après selon la moitié haut/bas de l'élément survolé
+    const el = e.target.closest ? (e.target.closest(".blk") || e.target.closest(".grp") || null) : null;
+    let idx = -1;
+    if(el){
+      const r = el.getBoundingClientRect(), after = (e.clientY - r.top) > r.height / 2;
+      idx = el.classList.contains("blk") ? (+el.dataset.bs) + (after ? +el.dataset.bn : 0) : (+el.dataset.gi) + (after ? 1 : 0);
+    }else if(row && row.dataset.p.indexOf(".") < 0){
+      const r = row.getBoundingClientRect();
+      idx = (+row.dataset.p) + ((e.clientY - r.top) > r.height / 2 ? 1 : 0);
+    }else return;
+    const [bs, bn] = d.slice(1).split(":").map(Number);
+    if(idx >= bs && idx <= bs + bn) return; // déposé sur lui-même : rien à faire
+    const items = ED.splice(bs, bn);
+    if(bs < idx) idx -= bn;
+    ED.splice(Math.max(0, Math.min(ED.length, idx)), 0, ...items);
+    edRender(); return;
+  }
   if(!row) return;
+  const src = edAt(d);
   const tgt = edAt(row.dataset.p);
   if(src.list !== tgt.list || src.i === tgt.i) return;
   const r = row.getBoundingClientRect(), after = (e.clientY - r.top) > r.height / 2;
@@ -2892,7 +2968,16 @@ $("edbox").addEventListener("drop", e => {
   src.list.splice(Math.max(0, Math.min(src.list.length, j)), 0, it);
   edRender();
 });
-document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const ty = b.dataset.add; ED.push(ty === "grp" ? {k: "g", r: 4, items: [edDef("work"), edDef("rec")]} : edDef(ty)); edRender(); });
+document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const ty = b.dataset.add;
+  if(ty === "grp") ED.push({k: "g", r: 4, items: [edDef("work"), edDef("rec")]});
+  else{
+    // chaque ajout crée un bloc indépendant : on insère un séparateur si le dernier
+    // élément est une étape (sinon le nouveau palier fusionnerait dans le bloc existant) ;
+    // à l'intérieur d'un bloc, on change simplement le type d'une étape existante.
+    if(ED.length && ED[ED.length - 1].k === "s") ED.push({k: "b"});
+    ED.push(edDef(ty));
+  }
+  edRender(); });
 $("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); edRender(); say("edResetOk", "ok"); };
 $("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
 $("edgo").onclick = () => {
