@@ -167,7 +167,7 @@ object FtmsCenter {
         }
 
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
-            if (status != BluetoothGatt.STATUS_SUCCESS) return
+            if (status != BluetoothGatt.GATT_SUCCESS) return
             val svc = g.getService(FTMS) ?: run {
                 trainerState.value = ConnState.DISCONNECTED; g.close(); return
             }
@@ -181,9 +181,9 @@ object FtmsCenter {
         }
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.STATUS_SUCCESS) {
+            if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
                 trainerState.value = ConnState.CONNECTED
-                enqueue(byteArrayOf(OP_REQUEST_CONTROL))  // take control before ERG writes
+                enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // take control before ERG writes
             }
         }
 
@@ -231,7 +231,7 @@ object FtmsCenter {
         val svc = g.getService(FTMS) ?: return
         val cp = svc.getCharacteristic(CONTROL_POINT) ?: return
         val w = watts.coerceAtLeast(0)
-        val payload = byteArrayOf(OP_SET_TARGET_POWER, (w and 0xFF).toByte(), ((w shr 8) and 0xFF).toByte())
+        val payload = byteArrayOf(OP_SET_TARGET_POWER.toByte(), (w and 0xFF).toByte(), ((w shr 8) and 0xFF).toByte())
         enqueue(payload)
     }
 
@@ -260,13 +260,13 @@ object FtmsCenter {
             }
         }
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
-            if (status != BluetoothGatt.STATUS_SUCCESS) return
+            if (status != BluetoothGatt.GATT_SUCCESS) return
             val ch = g.getService(HR_SERVICE)?.getCharacteristic(HR_MEASUREMENT)
                 ?: run { hrState.value = ConnState.DISCONNECTED; g.close(); return }
             enableNotify(g, ch, indications = false)
         }
         override fun onDescriptorWrite(g: BluetoothGatt, d: BluetoothGattDescriptor, status: Int) {
-            if (status == BluetoothGatt.STATUS_SUCCESS) hrState.value = ConnState.CONNECTED
+            if (status == BluetoothGatt.GATT_SUCCESS) hrState.value = ConnState.CONNECTED
         }
         @Deprecated("Deprecated in Java")
         override fun onCharacteristicChanged(g: BluetoothGatt, ch: BluetoothGattCharacteristic) {
