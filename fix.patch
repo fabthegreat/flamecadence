@@ -1,149 +1,203 @@
 
---- a/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:42:14.049093624 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:42:14.109903134 +0000
-@@ -54,6 +54,16 @@
-     private val CYCLING_POWER   = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb")
-     private val CPS_MEASUREMENT = UUID.fromString("00002a63-0000-1000-8000-00805f9b34fb")
-     private val TACX_FEC        = UUID.fromString("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e")
-+    private val FEC_RX          = UUID.fromString("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e") // write (commands)
-+    private val FEC_TX          = UUID.fromString("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e") // notify (trainer data)
-+
-+    // FE-C over BLE carries raw ANT+ messages: A4 | len | msgId | channel | 8 data bytes | xor checksum
-+    private const val ANT_SYNC = 0xA4
-+    private const val ANT_ACKNOWLEDGED = 0x4F   // commands; change to 0x4E (broadcast) if a trainer ignores them
-+    private const val ANT_BROADCAST = 0x4E
-+    private const val FEC_CHANNEL = 0x05
-+    private const val FEC_PAGE_TRAINER_DATA = 0x19   // specific trainer data: cadence + instantaneous power
-+    private const val FEC_PAGE_TARGET_POWER = 0x31   // command: target power in 0.25 W units
+--- a/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:53:22.458452119 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 19:53:22.511787419 +0000
+@@ -90,6 +90,9 @@
+     /** Human-readable list of the services the trainer exposes (shown when ERG is unavailable). */
+     val servicesInfo = MutableStateFlow("")
  
-     // --- FTMS control point opcodes ---
-     private const val OP_REQUEST_CONTROL = 0x00
-@@ -103,6 +113,7 @@
-     private val found = LinkedHashMap<String, ScanHit>()
++    /** Last connection problem (status codes etc.), shown under the trainer pill on Home. */
++    val lastError = MutableStateFlow("")
++
+     /** True while a BLE scan is running (drives the spinner on the Devices screen). */
+     val scanningState = MutableStateFlow(false)
+ 
+@@ -114,6 +117,8 @@
      private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
      @Volatile private var writeBusy = false   // a control-point write is in flight
-+    @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
+     @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
++    private var lastTrainerHit: ScanHit? = null
++    private var connectAttempts = 0
      private val main = Handler(Looper.getMainLooper())
  
      /** Must be called once (TrainerService) before any BLE operation. */
-@@ -205,7 +216,7 @@
+@@ -182,10 +187,10 @@
+         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) return
+         stopScan()
+         if (hit.isTrainer) {
+-            trainerState.value = ConnState.CONNECTING
+-            trainerName.value = hit.name
+-            trainerGatt?.close()
+-            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
++            lastError.value = ""
++            lastTrainerHit = hit
++            connectAttempts = 0
++            openTrainer(hit)
+         } else {
+             hrState.value = ConnState.CONNECTING
+             hrName.value = hit.name
+@@ -194,6 +199,45 @@
+         }
+     }
+ 
++    /** Open the trainer connection, with a timeout so a stuck attempt never stays "connecting". */
++    @SuppressLint("MissingPermission")
++    private fun openTrainer(hit: ScanHit) {
++        val ctx = appContext ?: return
++        trainerState.value = ConnState.CONNECTING
++        trainerName.value = hit.name
++        trainerGatt?.let { try { it.disconnect(); it.close() } catch (e: Exception) { Log.w(TAG, e) } }
++        val gatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
++        trainerGatt = gatt
++        main.postDelayed({
++            if (trainerGatt === gatt && trainerState.value == ConnState.CONNECTING)
++                failTrainer(gatt, "Trainer connection timed out")
++        }, 15000)
++    }
++
++    /** Release the GATT client (an unclosed one leaks and Android eventually refuses new connections). */
++    @SuppressLint("MissingPermission")
++    private fun failTrainer(g: BluetoothGatt, msg: String) {
++        Log.w(TAG, msg)
++        lastError.value = msg
++        try { g.disconnect() } catch (e: Exception) { Log.w(TAG, e) }
++        try { g.close() } catch (e: Exception) { Log.w(TAG, e) }
++        if (trainerGatt === g) trainerGatt = null
++        writeQueue.clear(); writeBusy = false; useFec = false
++        ergAvailable.value = false
++        trainerState.value = ConnState.DISCONNECTED
++    }
++
++    /** FE-C unusable: keep the connection alive in read-only mode through the Cycling Power Service. */
++    private fun fallbackToCps(g: BluetoothGatt, why: String) {
++        Log.w(TAG, why)
++        useFec = false
++        val cps = g.getService(CYCLING_POWER)?.getCharacteristic(CPS_MEASUREMENT)
++        if (cps == null || !enableNotify(g, cps, indications = false)) { failTrainer(g, why); return }
++        lastError.value = "$why - read-only fallback"
++        ergAvailable.value = false
++        trainerState.value = ConnState.CONNECTED
++    }
++
+     @SuppressLint("MissingPermission")
+     fun disconnectAll() {
+         trainerGatt?.let { g -> g.disconnect(); g.close() }
+@@ -216,16 +260,26 @@
                      main.postDelayed({ g.discoverServices() }, 600)
                  }
                  BluetoothProfile.STATE_DISCONNECTED -> {
--                    writeQueue.clear(); writeBusy = false
-+                    writeQueue.clear(); writeBusy = false; useFec = false
-                     trainerGatt = null
++                    val retry = trainerState.value == ConnState.CONNECTING &&
++                        status != BluetoothGatt.GATT_SUCCESS && connectAttempts < 2 && lastTrainerHit != null
++                    try { g.close() } catch (e: Exception) { Log.w(TAG, e) }   // never leak the client
++                    if (trainerGatt === g) trainerGatt = null
+                     writeQueue.clear(); writeBusy = false; useFec = false
+-                    trainerGatt = null
                      ergAvailable.value = false
-                     trainerState.value = ConnState.DISCONNECTED
-@@ -223,6 +234,16 @@
+-                    trainerState.value = ConnState.DISCONNECTED
++                    if (retry) {
++                        connectAttempts++
++                        lastError.value = "Connect failed (status $status), retrying…"
++                        main.postDelayed({ lastTrainerHit?.let { openTrainer(it) } }, 800)
++                    } else {
++                        if (status != BluetoothGatt.GATT_SUCCESS) lastError.value = "Disconnected (status $status)"
++                        trainerState.value = ConnState.DISCONNECTED
++                    }
                  }
-             }.joinToString(", ").ifBlank { "none of FTMS / Cycling Power / FE-C" }
-             val svc = g.getService(FTMS)
-+            useFec = false
-+            val fec = g.getService(TACX_FEC)
-+            val fecTx = fec?.getCharacteristic(FEC_TX)
-+            if (svc == null && fec != null && fecTx != null && fec.getCharacteristic(FEC_RX) != null) {
-+                // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
-+                Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
-+                useFec = true
-+                enableNotify(g, fecTx, indications = false)
-+                return
-+            }
-             if (svc == null) {
-                 // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
-                 // older firmware): fall back to the Cycling Power Service for
-@@ -250,7 +271,15 @@
- 
-         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-             val uuid = descriptor.characteristic?.uuid
--            if (uuid == INDOOR_BIKE) {
-+            if (uuid == FEC_TX) {
-+                if (status == BluetoothGatt.GATT_SUCCESS) {
-+                    trainerState.value = ConnState.CONNECTED
-+                    ergAvailable.value = true      // FE-C has no "request control": target power just works
-+                } else {
-+                    Log.w(TAG, "FE-C notification subscribe failed: $status")
-+                    trainerState.value = ConnState.DISCONNECTED
-+                }
-+            } else if (uuid == INDOOR_BIKE) {
-                 // step 2: now the control point (responses arrive as indications)
-                 g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
-             } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
-@@ -267,6 +296,7 @@
-                 INDOOR_BIKE -> parseIndoorBike(value)
-                 CPS_MEASUREMENT -> parseCps(value)
-                 CONTROL_POINT -> onControlPointResponse(value)
-+                FEC_TX -> parseFec(value)
              }
          }
  
-@@ -338,6 +368,14 @@
-     /** ERG mode: send a new target power (watts) to the trainer. */
-     fun setTargetPower(watts: Int) {
-         val g = trainerGatt ?: return
-+        if (useFec) {
-+            val q = (watts.coerceAtLeast(0) * 4).coerceAtMost(16000)   // 0.25 W units, max 4000 W
-+            val ff = 0xFF.toByte()
-+            enqueue(fecMessage(ANT_ACKNOWLEDGED, byteArrayOf(
-+                FEC_PAGE_TARGET_POWER.toByte(), ff, ff, ff, ff, ff,
-+                (q and 0xFF).toByte(), ((q shr 8) and 0xFF).toByte())))
-+            return
-+        }
-         val svc = g.getService(FTMS) ?: return
-         val cp = svc.getCharacteristic(CONTROL_POINT) ?: return
-         val w = watts.coerceAtLeast(0)
-@@ -355,7 +393,8 @@
-     private fun pump() {
-         if (writeBusy) return
-         val g = trainerGatt ?: return
--        val cp = g.getService(FTMS)?.getCharacteristic(CONTROL_POINT) ?: return
-+        val cp = (if (useFec) g.getService(TACX_FEC)?.getCharacteristic(FEC_RX)
-+                  else g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)) ?: return
-         val next = writeQueue.poll() ?: return
-         writeBusy = true
-         if (!writeNow(g, cp, next)) { writeBusy = false; pump() }   // rejected: try the next one
-@@ -364,10 +403,43 @@
-     @SuppressLint("MissingPermission")
-     private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray): Boolean {
-         cp.value = bytes
--        cp.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
-+        cp.writeType = if (cp.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0)
-+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT else BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
-         return try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
-     }
+         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
+-            if (status != BluetoothGatt.GATT_SUCCESS) return
++            if (status != BluetoothGatt.GATT_SUCCESS) { failTrainer(g, "Service discovery failed (status $status)"); return }
+             lastCrankRevs = -1
+             Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
+             servicesInfo.value = g.services.mapNotNull {
+@@ -241,7 +295,7 @@
+                 // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
+                 Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
+                 useFec = true
+-                enableNotify(g, fecTx, indications = false)
++                if (!enableNotify(g, fecTx, indications = false)) fallbackToCps(g, "FE-C subscribe rejected")
+                 return
+             }
+             if (svc == null) {
+@@ -249,9 +303,7 @@
+                 // older firmware): fall back to the Cycling Power Service for
+                 // read-only power. ERG control is not possible in this mode.
+                 val cps = g.getService(CYCLING_POWER)?.getCharacteristic(CPS_MEASUREMENT)
+-                if (cps == null) {
+-                    trainerState.value = ConnState.DISCONNECTED; g.close(); return
+-                }
++                if (cps == null) { failTrainer(g, "Trainer exposes no usable power service"); return }
+                 Log.w(TAG, "No FTMS service; read-only via Cycling Power Service (no ERG)")
+                 ergAvailable.value = false
+                 trainerState.value = ConnState.CONNECTED
+@@ -260,29 +312,28 @@
+             }
+             val bike = svc.getCharacteristic(INDOOR_BIKE)
+             val cp = svc.getCharacteristic(CONTROL_POINT)
+-            if (bike == null || cp == null) {
+-                trainerState.value = ConnState.DISCONNECTED; g.close(); return
+-            }
++            if (bike == null || cp == null) { failTrainer(g, "FTMS service incomplete"); return }
+             // Android allows ONE pending GATT operation: a second writeDescriptor issued right
+             // away is rejected. Subscribe to bike data now, and to the control point in
+             // onDescriptorWrite once this one has completed.
+-            enableNotify(g, bike, indications = false)
++            if (!enableNotify(g, bike, indications = false)) failTrainer(g, "FTMS subscribe rejected")
+         }
  
-+    /** Wrap an 8-byte ANT+ data page into a BLE FE-C message with the XOR checksum. */
-+    private fun fecMessage(msgId: Int, page: ByteArray): ByteArray {
-+        val m = ByteArray(13)
-+        m[0] = ANT_SYNC.toByte(); m[1] = 9; m[2] = msgId.toByte(); m[3] = FEC_CHANNEL.toByte()
-+        System.arraycopy(page, 0, m, 4, 8)
-+        var c = 0
-+        for (i in 0 until 12) c = c xor (m[i].toInt() and 0xFF)
-+        m[12] = c.toByte()
-+        return m
-+    }
-+
-+    /** Parse FE-C notifications (one or several ANT messages per packet). Page 0x19 carries cadence and power. */
-+    private fun parseFec(b: ByteArray) {
-+        var i = 0
-+        while (i + 1 < b.size) {
-+            if ((b[i].toInt() and 0xFF) != ANT_SYNC) { i++; continue }
-+            val len = b[i + 1].toInt() and 0xFF
-+            val total = len + 4
-+            if (i + total > b.size) break
-+            val id = b[i + 2].toInt() and 0xFF
-+            if ((id == ANT_BROADCAST || id == ANT_ACKNOWLEDGED) && len == 9) {
-+                val d = i + 4   // start of the 8 data bytes
-+                if ((b[d].toInt() and 0xFF) == FEC_PAGE_TRAINER_DATA) {
-+                    val cad = b[d + 2].toInt() and 0xFF
-+                    if (cad != 0xFF) cadence.value = cad                      // 0xFF = invalid
-+                    powerW.value = (b[d + 5].toInt() and 0xFF) or ((b[d + 6].toInt() and 0x0F) shl 8)
-+                }
-+            }
-+            i += total
-+        }
-+    }
-+
-     /** FTMS control point response: 0x80, request opcode, result (0x01 = success). */
-     private fun onControlPointResponse(v: ByteArray) {
-         if (v.size < 3 || (v[0].toInt() and 0xFF) != OP_RESPONSE) return
+         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
+             val uuid = descriptor.characteristic?.uuid
+             if (uuid == FEC_TX) {
+                 if (status == BluetoothGatt.GATT_SUCCESS) {
++                    lastError.value = ""
+                     trainerState.value = ConnState.CONNECTED
+                     ergAvailable.value = true      // FE-C has no "request control": target power just works
+                 } else {
+-                    Log.w(TAG, "FE-C notification subscribe failed: $status")
+-                    trainerState.value = ConnState.DISCONNECTED
++                    fallbackToCps(g, "FE-C subscribe failed (status $status)")
+                 }
+             } else if (uuid == INDOOR_BIKE) {
+                 // step 2: now the control point (responses arrive as indications)
+                 g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
+             } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
++                lastError.value = ""
+                 trainerState.value = ConnState.CONNECTED
+                 enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // ERG becomes available once granted
+             }
+@@ -495,11 +546,11 @@
+      * notifications; the FTMS Control Point uses indications.
+      */
+     @SuppressLint("MissingPermission")
+-    private fun enableNotify(g: BluetoothGatt, ch: BluetoothGattCharacteristic, indications: Boolean) {
++    private fun enableNotify(g: BluetoothGatt, ch: BluetoothGattCharacteristic, indications: Boolean): Boolean {
+         g.setCharacteristicNotification(ch, true)
+-        val cccd = ch.getDescriptor(CCCD) ?: return
++        val cccd = ch.getDescriptor(CCCD) ?: return false
+         cccd.value = if (indications) BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+                      else BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+-        g.writeDescriptor(cccd)
++        return g.writeDescriptor(cccd)
+     }
+ }
+
+--- a/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 19:53:22.458140343 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 19:53:22.512066944 +0000
+@@ -96,6 +96,7 @@
+     val trainer by FtmsCenter.trainerState.collectAsState()
+     val trainerName by FtmsCenter.trainerName.collectAsState()
+     val ergOk by FtmsCenter.ergAvailable.collectAsState()
++    val trainerErr by FtmsCenter.lastError.collectAsState()
+ 
+     // Fetch only once the settings are actually loaded from disk, and re-run on Retry.
+     val apiKey = settings?.apiKey.orEmpty()
+@@ -112,6 +113,8 @@
+     Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
+         HomeHeader(onSettings, onDevices)
+         TrainerPill(trainer, trainerName, ergOk)
++        if (trainerErr.isNotBlank())
++            Text(trainerErr, fontSize = 11.sp, color = Forge.Warn, modifier = Modifier.padding(top = 4.dp))
+ 
+         val s = settings
+         when {

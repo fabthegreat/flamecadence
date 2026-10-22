@@ -96,6 +96,7 @@ fun HomeScreen(
     val trainer by FtmsCenter.trainerState.collectAsState()
     val trainerName by FtmsCenter.trainerName.collectAsState()
     val ergOk by FtmsCenter.ergAvailable.collectAsState()
+    val trainerErr by FtmsCenter.lastError.collectAsState()
 
     // Fetch only once the settings are actually loaded from disk, and re-run on Retry.
     val apiKey = settings?.apiKey.orEmpty()
@@ -112,6 +113,8 @@ fun HomeScreen(
     Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
         HomeHeader(onSettings, onDevices)
         TrainerPill(trainer, trainerName, ergOk)
+        if (trainerErr.isNotBlank())
+            Text(trainerErr, fontSize = 11.sp, color = Forge.Warn, modifier = Modifier.padding(top = 4.dp))
 
         val s = settings
         when {

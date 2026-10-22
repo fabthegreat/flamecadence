@@ -90,6 +90,9 @@ object FtmsCenter {
     /** Human-readable list of the services the trainer exposes (shown when ERG is unavailable). */
     val servicesInfo = MutableStateFlow("")
 
+    /** Last connection problem (status codes etc.), shown under the trainer pill on Home. */
+    val lastError = MutableStateFlow("")
+
     /** True while a BLE scan is running (drives the spinner on the Devices screen). */
     val scanningState = MutableStateFlow(false)
 
@@ -114,6 +117,8 @@ object FtmsCenter {
     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
     @Volatile private var writeBusy = false   // a control-point write is in flight
     @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
+    private var lastTrainerHit: ScanHit? = null
+    private var connectAttempts = 0
     private val main = Handler(Looper.getMainLooper())
 
     /** Must be called once (TrainerService) before any BLE operation. */
@@ -182,16 +187,55 @@ object FtmsCenter {
         if (!hasPermission(Manifest.permission.BLUETOOTH_CONNECT)) return
         stopScan()
         if (hit.isTrainer) {
-            trainerState.value = ConnState.CONNECTING
-            trainerName.value = hit.name
-            trainerGatt?.close()
-            trainerGatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
+            lastError.value = ""
+            lastTrainerHit = hit
+            connectAttempts = 0
+            openTrainer(hit)
         } else {
             hrState.value = ConnState.CONNECTING
             hrName.value = hit.name
             hrGatt?.close()
             hrGatt = hit.device.connectGatt(ctx, false, hrCb, BluetoothDevice.TRANSPORT_LE)
         }
+    }
+
+    /** Open the trainer connection, with a timeout so a stuck attempt never stays "connecting". */
+    @SuppressLint("MissingPermission")
+    private fun openTrainer(hit: ScanHit) {
+        val ctx = appContext ?: return
+        trainerState.value = ConnState.CONNECTING
+        trainerName.value = hit.name
+        trainerGatt?.let { try { it.disconnect(); it.close() } catch (e: Exception) { Log.w(TAG, e) } }
+        val gatt = hit.device.connectGatt(ctx, false, trainerCb, BluetoothDevice.TRANSPORT_LE)
+        trainerGatt = gatt
+        main.postDelayed({
+            if (trainerGatt === gatt && trainerState.value == ConnState.CONNECTING)
+                failTrainer(gatt, "Trainer connection timed out")
+        }, 15000)
+    }
+
+    /** Release the GATT client (an unclosed one leaks and Android eventually refuses new connections). */
+    @SuppressLint("MissingPermission")
+    private fun failTrainer(g: BluetoothGatt, msg: String) {
+        Log.w(TAG, msg)
+        lastError.value = msg
+        try { g.disconnect() } catch (e: Exception) { Log.w(TAG, e) }
+        try { g.close() } catch (e: Exception) { Log.w(TAG, e) }
+        if (trainerGatt === g) trainerGatt = null
+        writeQueue.clear(); writeBusy = false; useFec = false
+        ergAvailable.value = false
+        trainerState.value = ConnState.DISCONNECTED
+    }
+
+    /** FE-C unusable: keep the connection alive in read-only mode through the Cycling Power Service. */
+    private fun fallbackToCps(g: BluetoothGatt, why: String) {
+        Log.w(TAG, why)
+        useFec = false
+        val cps = g.getService(CYCLING_POWER)?.getCharacteristic(CPS_MEASUREMENT)
+        if (cps == null || !enableNotify(g, cps, indications = false)) { failTrainer(g, why); return }
+        lastError.value = "$why - read-only fallback"
+        ergAvailable.value = false
+        trainerState.value = ConnState.CONNECTED
     }
 
     @SuppressLint("MissingPermission")
@@ -216,16 +260,26 @@ object FtmsCenter {
                     main.postDelayed({ g.discoverServices() }, 600)
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
+                    val retry = trainerState.value == ConnState.CONNECTING &&
+                        status != BluetoothGatt.GATT_SUCCESS && connectAttempts < 2 && lastTrainerHit != null
+                    try { g.close() } catch (e: Exception) { Log.w(TAG, e) }   // never leak the client
+                    if (trainerGatt === g) trainerGatt = null
                     writeQueue.clear(); writeBusy = false; useFec = false
-                    trainerGatt = null
                     ergAvailable.value = false
-                    trainerState.value = ConnState.DISCONNECTED
+                    if (retry) {
+                        connectAttempts++
+                        lastError.value = "Connect failed (status $status), retrying…"
+                        main.postDelayed({ lastTrainerHit?.let { openTrainer(it) } }, 800)
+                    } else {
+                        if (status != BluetoothGatt.GATT_SUCCESS) lastError.value = "Disconnected (status $status)"
+                        trainerState.value = ConnState.DISCONNECTED
+                    }
                 }
             }
         }
 
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
-            if (status != BluetoothGatt.GATT_SUCCESS) return
+            if (status != BluetoothGatt.GATT_SUCCESS) { failTrainer(g, "Service discovery failed (status $status)"); return }
             lastCrankRevs = -1
             Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
             servicesInfo.value = g.services.mapNotNull {
@@ -241,7 +295,7 @@ object FtmsCenter {
                 // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
                 Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
                 useFec = true
-                enableNotify(g, fecTx, indications = false)
+                if (!enableNotify(g, fecTx, indications = false)) fallbackToCps(g, "FE-C subscribe rejected")
                 return
             }
             if (svc == null) {
@@ -249,9 +303,7 @@ object FtmsCenter {
                 // older firmware): fall back to the Cycling Power Service for
                 // read-only power. ERG control is not possible in this mode.
                 val cps = g.getService(CYCLING_POWER)?.getCharacteristic(CPS_MEASUREMENT)
-                if (cps == null) {
-                    trainerState.value = ConnState.DISCONNECTED; g.close(); return
-                }
+                if (cps == null) { failTrainer(g, "Trainer exposes no usable power service"); return }
                 Log.w(TAG, "No FTMS service; read-only via Cycling Power Service (no ERG)")
                 ergAvailable.value = false
                 trainerState.value = ConnState.CONNECTED
@@ -260,29 +312,28 @@ object FtmsCenter {
             }
             val bike = svc.getCharacteristic(INDOOR_BIKE)
             val cp = svc.getCharacteristic(CONTROL_POINT)
-            if (bike == null || cp == null) {
-                trainerState.value = ConnState.DISCONNECTED; g.close(); return
-            }
+            if (bike == null || cp == null) { failTrainer(g, "FTMS service incomplete"); return }
             // Android allows ONE pending GATT operation: a second writeDescriptor issued right
             // away is rejected. Subscribe to bike data now, and to the control point in
             // onDescriptorWrite once this one has completed.
-            enableNotify(g, bike, indications = false)
+            if (!enableNotify(g, bike, indications = false)) failTrainer(g, "FTMS subscribe rejected")
         }
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             val uuid = descriptor.characteristic?.uuid
             if (uuid == FEC_TX) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
+                    lastError.value = ""
                     trainerState.value = ConnState.CONNECTED
                     ergAvailable.value = true      // FE-C has no "request control": target power just works
                 } else {
-                    Log.w(TAG, "FE-C notification subscribe failed: $status")
-                    trainerState.value = ConnState.DISCONNECTED
+                    fallbackToCps(g, "FE-C subscribe failed (status $status)")
                 }
             } else if (uuid == INDOOR_BIKE) {
                 // step 2: now the control point (responses arrive as indications)
                 g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
             } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
+                lastError.value = ""
                 trainerState.value = ConnState.CONNECTED
                 enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // ERG becomes available once granted
             }
@@ -495,11 +546,11 @@ object FtmsCenter {
      * notifications; the FTMS Control Point uses indications.
      */
     @SuppressLint("MissingPermission")
-    private fun enableNotify(g: BluetoothGatt, ch: BluetoothGattCharacteristic, indications: Boolean) {
+    private fun enableNotify(g: BluetoothGatt, ch: BluetoothGattCharacteristic, indications: Boolean): Boolean {
         g.setCharacteristicNotification(ch, true)
-        val cccd = ch.getDescriptor(CCCD) ?: return
+        val cccd = ch.getDescriptor(CCCD) ?: return false
         cccd.value = if (indications) BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
                      else BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-        g.writeDescriptor(cccd)
+        return g.writeDescriptor(cccd)
     }
 }
