@@ -44,27 +44,36 @@ fun App(onPlay: () -> Unit) {
 @Composable
 fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
-    val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = AppSettings("", "0"))
+    val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
     var workouts by remember { mutableStateOf<List<PlannedWorkout>>(emptyList()) }
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
+    var retry by remember { mutableStateOf(0) }
     val trainer by FtmsCenter.trainerState.collectAsState()
 
-    LaunchedEffect(settings.apiKey) {
-        if (settings.apiKey.isBlank()) return@LaunchedEffect
+    // Fetch only once the settings are actually loaded from disk, and re-run on Retry.
+    val apiKey = settings?.apiKey.orEmpty()
+    val athleteId = settings?.athleteId ?: "0"
+    LaunchedEffect(apiKey, retry) {
+        if (apiKey.isBlank()) return@LaunchedEffect
         loading = true; error = null
-        try { workouts = IcuRepository.fetchToday(settings.apiKey, settings.athleteId) }
+        try { workouts = IcuRepository.fetchToday(apiKey, athleteId) }
         catch (e: Exception) { error = e.message }
         loading = false
     }
 
     Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
+        val s = settings
         when {
-            settings.apiKey.isBlank() -> Text("Set your intervals.icu API key in Settings first.",
+            s == null -> CircularProgressIndicator()   // settings still loading
+            s.apiKey.isBlank() -> Text("Set your intervals.icu API key in Settings first.",
                 color = MaterialTheme.colorScheme.error)
             loading -> CircularProgressIndicator()
-            error != null -> Text("Error: $error", color = MaterialTheme.colorScheme.error)
+            error != null -> Column {
+                Text("Error: $error", color = MaterialTheme.colorScheme.error)
+                Spacer(Modifier.height(8.dp))
+                Button(onClick = { retry++ }) { Text("Retry") }
+            }
             workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.")
             else -> {
                 Text("Today's planned workout(s)", fontSize = 18.sp, fontWeight = FontWeight.Bold)
@@ -98,35 +107,44 @@ fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
 @Composable
 fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
-    val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = AppSettings("", "0"))
+    val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
     var key by remember { mutableStateOf<String?>(null) }
     var athlete by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
-    val apiKey = key ?: settings.apiKey
-    val athleteId = athlete ?: settings.athleteId
+
+    // Don't touch the fields until the saved settings are loaded: previously the
+    // screen could briefly show empty fields while DataStore was still reading,
+    // and saving then would overwrite the key with a blank one.
+    val loaded = settings
+    val apiKey = key ?: loaded?.apiKey ?: ""
+    val athleteId = athlete ?: loaded?.athleteId ?: ""
 
     Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
         Text("intervals.icu connection", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(12.dp))
-        OutlinedTextField(value = apiKey, onValueChange = { key = it }, label = { Text("API Key") },
-            modifier = Modifier.fillMaxWidth(), singleLine = true)
-        Spacer(Modifier.height(8.dp))
-        OutlinedTextField(value = athleteId, onValueChange = { athlete = it },
-            label = { Text("Athlete ID (0 = key owner)") },
-            modifier = Modifier.fillMaxWidth(), singleLine = true)
-        Spacer(Modifier.height(8.dp))
-        Text("Settings → Developer Settings on intervals.icu to find your API key.",
-            fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.height(12.dp))
-        Row {
-            Button(onClick = {
-                scope.launch {
-                    SettingsStore.save(ctx, apiKey, athleteId)
-                    onBack()
-                }
-            }) { Text("Save") }
-            Spacer(Modifier.width(8.dp))
-            OutlinedButton(onClick = onBack) { Text("Cancel") }
+        if (loaded == null) {
+            CircularProgressIndicator()
+        } else {
+            OutlinedTextField(value = apiKey, onValueChange = { key = it }, label = { Text("API Key") },
+                modifier = Modifier.fillMaxWidth(), singleLine = true)
+            Spacer(Modifier.height(8.dp))
+            OutlinedTextField(value = athleteId, onValueChange = { athlete = it },
+                label = { Text("Athlete ID (0 = key owner)") },
+                modifier = Modifier.fillMaxWidth(), singleLine = true)
+            Spacer(Modifier.height(8.dp))
+            Text("Settings → Developer Settings on intervals.icu to find your API key.",
+                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Spacer(Modifier.height(12.dp))
+            Row {
+                Button(onClick = {
+                    scope.launch {
+                        SettingsStore.save(ctx, apiKey, athleteId)
+                        onBack()
+                    }
+                }) { Text("Save") }
+                Spacer(Modifier.width(8.dp))
+                OutlinedButton(onClick = onBack) { Text("Cancel") }
+            }
         }
     }
 }
