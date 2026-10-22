@@ -386,6 +386,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div><input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px"></div>
 <div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="45">≤ 45 min</option><option value="75">45 – 75 min</option><option value="105">75 – 105 min</option><option value="inf">&gt; 105 min</option></select></div>
 </div>
+<label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
 </section>
@@ -406,6 +407,10 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <select id="actper" data-ia="aria-label:actW"><option value="14" data-i="w2"></option><option value="28" data-i="w4"></option><option value="56" data-i="w8"></option></select>
 <button class="alt small" id="ract" type="button" data-ia="title:refresh;aria-label:refresh">↻</button></div>
 <p class="hint" data-i="actDesc"></p>
+<div class="row">
+<div><label for="actout" data-i="actOutLbl"></label><select id="actout"><option value="w" data-i="actOutW"></option><option value="pct" data-i="actOutP"></option></select></div>
+<div id="actftpbox" hidden><label for="actftp" data-i="ftpLbl"></label><select id="actftp"><option value="in"></option><option value="out"></option></select><p class="hint" data-i="actFtpHint"></p></div>
+</div>
 <div id="actbox" style="margin-top:12px"></div>
 </section>
 
@@ -594,6 +599,7 @@ helpContent:[
 ],
 libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
 libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
+libStarOnly:["★ Starred only","★ Favoris seulement"], starT:["Star/unstar this session","Ajouter/retirer des favoris"],
 libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","Toutes les durées"], libAvg:["avg","moy."],
 dragHint:["🖱️ Tip: drag a block in the chart above to reorder the workout — the description updates automatically.","🖱️ Astuce : glisse un bloc du graphique ci-dessus pour réordonner la séance — la description se met à jour automatiquement."],
 dragLbl:["Drag to reorder","Glisser pour réordonner"], dragDone:["Workout blocks reordered — description updated.","Blocs de la séance réordonnés — description mise à jour."], libCount:["{0} workouts available","{0} séances disponibles"], libShown:[" · {0} shown"," · {0} affichées"],
@@ -618,6 +624,10 @@ impEmpty:["No workout steps found in this file.","Aucune étape de séance trouv
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
 actLbl:["Rebuild a workout from an activity","Reconstruire une séance depuis une activité"],
+actOutLbl:["Output units","Unités de sortie"],
+actOutW:["Absolute watts","Watts absolus"],
+actOutP:["% of selected FTP","% de la FTP sélectionnée"],
+actFtpHint:["Percentages are scaled to this FTP so the rebuilt steps keep the exact absolute watts of the ride; the preview FTP selector follows it.","Les pourcentages sont calés sur cette FTP pour conserver les watts absolus exacts de la sortie ; le sélecteur de FTP de l'aperçu s'aligne dessus."],
 actDesc:["Pick one of your recent activities below: its power data is analyzed to rebuild the intervals you actually rode as an editable workout in the preview.","Choisis une de tes activités récentes ci-dessous : ses données de puissance sont analysées pour reconstruire les intervalles réellement effectués, en séance modifiable dans l'aperçu."],
 actW:["Activities range","Période d'activités"], w2:["2 weeks","2 semaines"], w4:["4 weeks","4 semaines"], w8:["8 weeks","8 semaines"],
 actNone:["No activity with power data in this period.","Aucune activité avec données de puissance sur cette période."],
@@ -724,6 +734,7 @@ $("impjsonin").onchange = () => {
     if(Array.isArray(j.geminiModels) && j.geminiModels.length){ modelList = j.geminiModels; fillModels(modelList, $("model").value || modelList[0]); }
     if(Array.isArray(j.hfModels) && j.hfModels.length){ hfList = j.hfModels; $("hfl").innerHTML = hfList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
     if(Array.isArray(j.oaModels) && j.oaModels.length){ oaList = j.oaModels; $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
+    if(Array.isArray(j.starred)){ setStars(j.starred.filter(x => typeof x === "string")); n++; renderLibraryKeepOpen(); }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
     jnote("jsonImpOk", "ok", f.name);
@@ -731,6 +742,7 @@ $("impjsonin").onchange = () => {
 };
 $("expjson").onclick = () => {
   const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
+  const stArr = stars(); if(stArr.length) o.starred = stArr;
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
   if(hfList.length) o.hfModels = hfList;
@@ -848,7 +860,7 @@ function updateIcuLinks(){
 }
 function fillFtp(){
   const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
-  [$("ftpsel"), $("edftp"), $("libftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
+  [$("ftpsel"), $("edftp"), $("libftp"), $("actftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
 }
 function profText(){
   if(!$("prof")) return;
@@ -1901,7 +1913,9 @@ function renderLibrary(){
   const c = $("libContainer");
   const q = ($("libsearch").value || "").trim().toLowerCase();
   const durF = $("libdur").value || "all";
+  const starOnly = $("libstar").checked;
   const matches = item => {
+    if(starOnly && !stars().includes(item.id)) return false;
     if(q){
       const hay = [item.name_en, item.name_fr, item.expl_en, item.expl_fr, item.desc_en].join(" ").toLowerCase();
       if(!q.split(/\s+/).every(w => hay.includes(w))) return false;
@@ -1951,13 +1965,18 @@ function renderLibrary(){
       const desc=lang==="fr"?item.expl_fr:item.expl_en;
       const chart=workoutPreviewSvg(item.desc_en,item.sport,curFtp());
       const stats=libStatsText(item,curFtp());
-      return `<div class="lib-card"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview">${chart}</div><p class="lib-stats">${esc(stats)}</p><p>${esc(desc)}</p><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div>`;
+      const st = stars().includes(item.id);
+      return `<div class="lib-card"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview">${chart}</div><p class="lib-stats">${esc(stats)}</p><p>${esc(desc)}</p><div style="display:flex;gap:8px;align-items:center"><button class="alt small" data-star="${esc(item.id)}" type="button" aria-pressed="${st}" title="${esc(t("starT"))}">${st ? "★" : "☆"}</button><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div></div>`;
     }).join("")}</div></div>
   </details>`).join("");
 }
 $("libsearch").addEventListener("input", renderLibrary);
 $("libdur").addEventListener("change", renderLibrary);
+$("libstar").addEventListener("change", renderLibrary);
+function renderLibraryKeepOpen(){ const c = $("libContainer"); const open = [...c.querySelectorAll("details.lib-theme")].map(d => d.open); renderLibrary(); c.querySelectorAll("details.lib-theme").forEach((d, i) => { d.open = !!open[i]; }); }
 $("libContainer").onclick = e => {
+  const sb = e.target.closest("[data-star]");
+  if(sb){ toggleStar(sb.dataset.star); if($("libstar").checked) renderLibraryKeepOpen(); else { const st = stars().includes(sb.dataset.star); sb.textContent = st ? "★" : "☆"; sb.setAttribute("aria-pressed", String(st)); } return; }
   const btn = e.target.closest("[data-lib]"); if(!btn) return;
   const item = LIBRARY[+btn.dataset.lib];
   $("sport").value = item.sport; syncUnit();
@@ -1987,6 +2006,14 @@ for(const w of LIBRARY_V2){
   w.desc_fr = w.desc_en.replace(/Warmup/g,"Échauffement").replace(/Main set/g,"Série principale").replace(/Cooldown/g,"Retour au calme");
   LIBRARY.push(w);
 }
+
+// ---------- Favoris (★) : ID unique par séance + persistance localStorage ----------
+{ const seen = {}; LIBRARY.forEach(w => { const b = w.name_en; seen[b] = (seen[b] || 0) + 1; w.id = seen[b] === 1 ? b : b + " #" + seen[b]; }); }
+// cache mémoire = source de vérité ; localStorage peut être indisponible (sandbox), store.set ignore silencieusement les échecs
+let starList = (() => { try{ const a = JSON.parse(store.get("si_stars") || "[]"); return Array.isArray(a) ? a : []; }catch(e){ return []; } })();
+const stars = () => starList;
+function setStars(a){ starList = Array.isArray(a) ? a.slice() : []; store.set("si_stars", JSON.stringify(starList)); }
+function toggleStar(id){ const a = stars().slice(); const i = a.indexOf(id); if(i >= 0) a.splice(i, 1); else a.push(id); setStars(a); }
 
 // ---------- Historique et envoi ----------
 const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
@@ -2149,10 +2176,12 @@ function fmtDurImp(sec){
   if(sec < 60) return sec + "s";
   return Math.floor(sec / 60) + "m" + (sec % 60);
 }
-function stepsToDesc(steps){
+function stepsToDesc(steps, watt){
   const key = s => Math.round(s.d) + "|" + s.a.toFixed(1) + "|" + s.b.toFixed(1);
   const line = s => {
-    const p = Math.abs(s.a - s.b) > 0.5 ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + "% ramp" : Math.round(s.a) + "%";
+    const p = Math.abs(s.a - s.b) > 0.5
+      ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + (watt ? "w" : "% ramp")
+      : Math.round(s.a) + (watt ? "w" : "%");
     return "- " + fmtDurImp(s.d) + " " + p;
   };
   const out = []; let i = 0;
@@ -2372,10 +2401,32 @@ function detectSteps(watts, ftp){
         last.midW = (last.midW * last.wN + e.midW * e.wN) / (last.wN + e.wN); last.wN += e.wN;
       }else mrg.push({...e});
     }
-    // conversion en % FTP, rampe si l'écart début/fin est marqué
-    return mrg.map(e => {
-      const ramp = Math.abs(e.headW - e.tailW) > Math.max(10, e.midW * 0.12);
-      return ramp ? {d: e.d, a: e.headW / ftp * 100, b: e.tailW / ftp * 100} : {d: e.d, a: e.midW / ftp * 100, b: e.midW / ftp * 100};
+    // conversion en % FTP — pas de rampes (certains home trainers ne les gèrent pas) :
+    // chaque ancienne rampe devient un palier plat au maximum ou au minimum de la rampe,
+    // selon le contexte : voisins plus durs que la rampe → maximum, voisins plus faciles → minimum ;
+    // sans voisin, on garde la valeur d'arrivée de la rampe (montante → max, descendante → min).
+    // étapes en WATTS ABSOLUS (moyennes réelles du flux de puissance) : pas de conversion en % FTP
+    // qui dépend d'une FTP parfois différente de celle de l'activité et surestime les blocs.
+    // Les paliers plats utilisent la moyenne du cœur du segment ; les rares rampes sont aplaties
+    // au maximum ou au minimum selon le contexte (voisins plus durs → max, plus faciles → min).
+    const flat = mrg.map(e => {
+      if(e.d >= 30 && Math.abs(e.headW - e.tailW) > Math.max(15, e.midW * 0.15)){
+        return {d: e.d, ramp: true, rise: e.tailW >= e.headW, hi: Math.max(e.headW, e.tailW), lo: Math.min(e.headW, e.tailW), mid: e.midW};
+      }
+      return {d: e.d, ramp: false, mid: e.midW};
+    });
+    return flat.map((e, i) => {
+      if(!e.ramp) return {d: e.d, a: e.mid, b: e.mid};
+      const ref = st => st.ramp ? (st.hi + st.lo) / 2 : st.mid;
+      const pv = i > 0 ? ref(flat[i - 1]) : null, nx = i + 1 < flat.length ? ref(flat[i + 1]) : null;
+      const arr = [pv, nx].filter(x => x != null);
+      let v;
+      if(!arr.length) v = e.rise ? e.hi : e.lo; // pas de voisin : valeur d'arrivée de la rampe
+      else{
+        const ctx = arr.reduce((x, y) => x + y, 0) / arr.length;
+        v = ctx >= e.mid ? Math.min(e.hi, Math.max(...arr)) : Math.max(e.lo, Math.min(...arr));
+      }
+      return {d: e.d, a: v, b: v};
     });
   };
   let steps = [];
@@ -2388,18 +2439,38 @@ function detectSteps(watts, ftp){
 async function buildFromAct(a, btn){
   btn.disabled = true; say(null);
   try{
-    const ftp = curFtp() || ICU.ftpIn || ICU.ftpOut;
+    // FTP adaptée à l'activité : home trainer (VirtualRide) → FTP indoor, sortie extérieure → FTP outdoor.
+    // On ne suit PAS le sélecteur du panneau « Générer » (souvent sur indoor) : une sortie outdoor
+    // reconstruite avec la FTP indoor surestime tous les blocs. Repli sur l'autre FTP si absente.
+    const virt = a.type === "VirtualRide";
+    const ftp = (virt ? ICU.ftpIn : ICU.ftpOut) || (virt ? ICU.ftpOut : ICU.ftpIn);
     if(!ftp) throw new Error(t("actNeedFtp"));
     const j = await icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`);
     const list = Array.isArray(j) ? j : (j.streams || []);
     const get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
     const w = get("watts", "power", "watts_calc");
     if(!w) throw new Error(t("actNoPow"));
-    const steps = detectSteps(w, ftp);
+    let steps = detectSteps(w, ftp);
     if(!steps.length) throw new Error(t("actNoPow"));
     if(isBike(a.type)){ $("sport").value = a.type === "VirtualRide" ? "VirtualRide" : "Ride"; syncUnit(); }
     $("name").value = (a.name || a.type || "Workout").trim().slice(0, 60);
-    $("desc").value = stepsToDesc(steps);
+    if($("actout").value === "pct"){
+      // Pourcentages calés sur la FTP sélectionnée pour conserver exactement les watts
+      // absolus de l'activité : pct = watts / FTP × 100. On aligne ensuite le sélecteur
+      // « intervals.icu FTP » de l'aperçu sur cette même FTP, car l'aperçu, les exports
+      // et l'envoi vers intervals.icu réappliquent les pourcentages sur cette FTP :
+      // la valeur absolue est ainsi identique de bout en bout.
+      const fIn = ICU.ftpIn, fOut = ICU.ftpOut;
+      let pf = ($("actftp").value === "out" ? fOut : fIn) || fIn || fOut;
+      if(!pf) pf = curFtp();
+      if(!pf) throw new Error(t("actNeedFtp"));
+      $("ftpsel").value = (pf === fOut && fOut) ? "out" : "in";
+      store.set("si_ftpsel", $("ftpsel").value);
+      steps = steps.map(s => ({d: s.d, a: s.a / pf * 100, b: s.b / pf * 100}));
+      $("desc").value = stepsToDesc(steps);
+    }else{
+      $("desc").value = stepsToDesc(steps, true); // valeurs absolues en watts : la séance reproduit la puissance réelle
+    }
     $("prev").hidden = false; selLine = null; EXPL = null;
     renderChart(); say("actOk", "ok", a.name || a.type || "");
     $("prev").scrollIntoView({behavior: "smooth", block: "start"});
@@ -2410,6 +2481,8 @@ async function buildFromAct(a, btn){
 }
 $("ract").onclick = () => { store.set("si_actper", $("actper").value); loadActs().catch(() => {}); };
 $("actper").onchange = $("ract").onclick;
+$("actout").onchange = () => { store.set("si_actout", $("actout").value); $("actftpbox").hidden = $("actout").value !== "pct"; };
+$("actftp").onchange = () => store.set("si_actftp", $("actftp").value);
 
 // ---------- Explication de la séance ----------
 function renderExplain(steps){
@@ -2850,7 +2923,7 @@ function applyLang(){
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
-$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14";
+$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 loadAll();
