@@ -46,6 +46,13 @@ object FtmsCenter {
     private val HR_MEASUREMENT = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb")
     private val CCCD           = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb")
 
+    // Trainers such as the Tacx NEO series do NOT advertise the FTMS service;
+    // they advertise Cycling Power (0x1818) and/or the Tacx FE-C-over-BLE
+    // service instead, even when FTMS is available once connected.
+    private val CYCLING_POWER   = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb")
+    private val CPS_MEASUREMENT = UUID.fromString("00002a63-0000-1000-8000-00805f9b34fb")
+    private val TACX_FEC        = UUID.fromString("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e")
+
     // --- FTMS control point opcodes ---
     private const val OP_REQUEST_CONTROL = 0x00
     private const val OP_SET_TARGET_POWER = 0x05
@@ -97,7 +104,9 @@ object FtmsCenter {
         scanning = true
         val filters = listOf(
             ScanFilter.Builder().setServiceUuid(ParcelUuid(FTMS)).build(),
-            ScanFilter.Builder().setServiceUuid(ParcelUuid(HR_SERVICE)).build()
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(HR_SERVICE)).build(),
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(CYCLING_POWER)).build(),
+            ScanFilter.Builder().setServiceUuid(ParcelUuid(TACX_FEC)).build()
         )
         val settings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -117,7 +126,9 @@ object FtmsCenter {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             val dev = result.device
             val name = dev.name ?: result.scanRecord?.deviceName ?: found[dev.address]?.name ?: dev.address
-            val isTrainer = result.scanRecord?.serviceUuids?.any { it.uuid == FTMS } ?: false
+            val uuids = result.scanRecord?.serviceUuids
+            val isTrainer = (uuids?.any { it.uuid == FTMS || it.uuid == TACX_FEC } ?: false) ||
+                name.contains("tacx", ignoreCase = true) || name.contains("neo", ignoreCase = true)
             found[dev.address] = ScanHit(dev, name.ifBlank { dev.address }, result.rssi, isTrainer)
             _scanResults.tryEmit(found.values.sortedByDescending { it.rssi })
         }
@@ -168,8 +179,19 @@ object FtmsCenter {
 
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
             if (status != BluetoothGatt.GATT_SUCCESS) return
-            val svc = g.getService(FTMS) ?: run {
-                trainerState.value = ConnState.DISCONNECTED; g.close(); return
+            val svc = g.getService(FTMS)
+            if (svc == null) {
+                // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
+                // older firmware): fall back to the Cycling Power Service for
+                // read-only power. ERG control is not possible in this mode.
+                val cps = g.getService(CYCLING_POWER)?.getCharacteristic(CPS_MEASUREMENT)
+                if (cps == null) {
+                    trainerState.value = ConnState.DISCONNECTED; g.close(); return
+                }
+                Log.w(TAG, "No FTMS service; read-only via Cycling Power Service (no ERG)")
+                trainerState.value = ConnState.CONNECTED
+                enableNotify(g, cps, indications = false)
+                return
             }
             val bike = svc.getCharacteristic(INDOOR_BIKE)
             val cp = svc.getCharacteristic(CONTROL_POINT)
@@ -193,6 +215,7 @@ object FtmsCenter {
             val value = ch.value ?: return
             when (ch.uuid) {
                 INDOOR_BIKE -> parseIndoorBike(value)
+                CPS_MEASUREMENT -> parseCps(value)
                 CONTROL_POINT -> { /* opcode response codes; future: surface errors */ }
             }
         }
@@ -201,6 +224,13 @@ object FtmsCenter {
             val next = writeQueue.poll()
             if (next != null) writeNow(g, ch, next)
         }
+    }
+
+    /** Cycling Power Measurement (0x2A63) fallback: flags u16 then power s16. */
+    private fun parseCps(b: ByteArray) {
+        if (b.size < 4) return
+        val raw = ((b[2].toInt() and 0xFF) or ((b[3].toInt() and 0xFF) shl 8))
+        powerW.value = if (raw > 0x7FFF) raw - 0x10000 else raw
     }
 
     /** Indoor Bike Data (0x2AD2): flags u16 LE, then optional fields. */
