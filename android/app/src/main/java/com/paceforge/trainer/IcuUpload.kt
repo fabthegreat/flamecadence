@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
+import org.json.JSONObject
 import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -97,7 +98,19 @@ object IcuUpload {
             val text = resp.body?.string() ?: ""
             if (!resp.isSuccessful)
                 throw RuntimeException("intervals.icu HTTP ${resp.code}: ${text.take(200)}")
-            JSONArray(text).optJSONObject(0)?.optString("id") ?: "ok"
+            // The upload endpoint returns a JSON *object* (id + activities[]), not an array.
+            // The HTTP call already succeeded, so never fail the upload on a parsing detail.
+            try {
+                val t = text.trim()
+                if (t.startsWith("[")) {
+                    JSONArray(t).optJSONObject(0)?.optString("id").orEmpty().ifBlank { "ok" }
+                } else {
+                    val o = JSONObject(t)
+                    o.optString("id").ifBlank {
+                        o.optJSONArray("activities")?.optJSONObject(0)?.optString("id").orEmpty()
+                    }.ifBlank { "ok" }
+                }
+            } catch (e: Exception) { "ok" }
         }
     }
 }

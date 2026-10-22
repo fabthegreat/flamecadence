@@ -91,7 +91,13 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
 
     val w = workout
     val total = w?.totalSec ?: 0
-    val next = w?.segments?.getOrNull(segIdx + 1)
+    // Current step timing, running averages and upcoming steps
+    val stepStart = w?.segments?.take(segIdx)?.sumOf { it.durationSec } ?: 0
+    val stepLeft = ((w?.segments?.getOrNull(segIdx)?.durationSec ?: 0) - (elapsed - stepStart)).coerceAtLeast(0)
+    val avgAll = if (session.isEmpty()) null else session.sumOf { it.watts } / session.size
+    val stepPts = session.filter { it.sec > stepStart }
+    val avgStep = if (stepPts.isEmpty()) null else stepPts.sumOf { it.watts } / stepPts.size
+    val upcoming = w?.segments?.drop(segIdx + 1)?.take(2) ?: emptyList()
     val active = status == WorkoutEngine.Status.RUNNING || status == WorkoutEngine.Status.PAUSED
 
     fun endWorkout() {
@@ -152,14 +158,14 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
         }
 
         if (total > 0) {
-            Text("${clock(elapsed)} / ${clock(total)}" + (next?.let { "  ·  next: ${nextLabel(it)}" } ?: ""),
+            Text("${clock(elapsed)} / ${clock(total)}  ·  ${clock((total - elapsed).coerceAtLeast(0))} left",
                 fontSize = 12.sp, color = Forge.Header, textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 6.dp))
         }
 
         // Full workout profile + live progression
         WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
-            Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
+            Modifier.fillMaxWidth().height(120.dp).padding(top = 8.dp))
 
         // Target power — the hero number
         Text("$target W",
@@ -174,6 +180,24 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
             Metric("ACTUAL", "$power W")
             Metric("CADENCE", "$cadence rpm")
             Metric("HEART RATE", if (hr > 0) "$hr bpm" else "—")
+        }
+        Row(Modifier.fillMaxWidth().padding(top = 10.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Metric("AVG POWER", avgAll?.let { "$it W" } ?: "—")
+            Metric("STEP AVG", avgStep?.let { "$it W" } ?: "—")
+            Metric("STEP LEFT", clock(stepLeft))
+        }
+
+        // Upcoming steps: when, how long, how hard
+        if (upcoming.isNotEmpty()) {
+            Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+                Text("NEXT", fontSize = 11.sp, letterSpacing = 1.sp, color = Forge.Muted)
+                upcoming.forEachIndexed { n, sg ->
+                    val whenTxt = if (n == 0) "in ${clock(stepLeft)}" else "then"
+                    Text("$whenTxt  ·  ${nextLabel(sg)}" + (if (sg.text.isNotBlank()) "  ·  ${sg.text}" else ""),
+                        fontSize = 13.sp, color = Forge.Header, maxLines = 1,
+                        modifier = Modifier.padding(top = 3.dp))
+                }
+            }
         }
 
         Spacer(Modifier.height(14.dp))

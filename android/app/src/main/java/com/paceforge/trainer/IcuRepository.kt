@@ -25,7 +25,8 @@ data class PlannedWorkout(
     val id: Long,
     val name: String,
     val description: String,
-    val segments: List<Segment>
+    val segments: List<Segment>,
+    val date: String = ""      // yyyy-MM-dd (local)
 ) {
     val totalSec: Int get() = segments.sumOf { it.durationSec }
 }
@@ -51,17 +52,21 @@ object IcuRepository {
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    private fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+    fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
 
     private fun basicAuth(apiKey: String): String =
         "Basic " + android.util.Base64.encodeToString("API_KEY:$apiKey".toByteArray(),
             android.util.Base64.NO_WRAP)
 
-    suspend fun fetchToday(apiKey: String, athleteId: String): List<PlannedWorkout> =
+    /** Planned workouts from today through today + [days], sorted by date. */
+    suspend fun fetchUpcoming(apiKey: String, athleteId: String, days: Int = 7): List<PlannedWorkout> =
         withContext(Dispatchers.IO) {
-            val today = todayIso()
+            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val today = fmt.format(Date())
+            val cal = Calendar.getInstance(); cal.add(Calendar.DAY_OF_YEAR, days)
+            val last = fmt.format(cal.time)
             val url = "https://intervals.icu/api/v1/athlete/$athleteId/events" +
-                "?category=WORKOUT&resolve=true&oldest=$today&newest=$today"
+                "?category=WORKOUT&resolve=true&oldest=$today&newest=$last"
             val req = Request.Builder().url(url)
                 .header("Authorization", basicAuth(apiKey))
                 .build()
@@ -69,7 +74,7 @@ object IcuRepository {
             http.newCall(req).execute().use { resp ->
                 if (!resp.isSuccessful) throw RuntimeException("intervals.icu HTTP ${resp.code}")
                 val body = resp.body?.string() ?: throw RuntimeException("Empty response")
-                parse(JSONArray(body), today)
+                parse(JSONArray(body), null).sortedBy { it.date }
             }
         }
 
@@ -148,12 +153,12 @@ object IcuRepository {
         else -> "overloaded"
     }
 
-    private fun parse(events: JSONArray, today: String): List<PlannedWorkout> {
+    private fun parse(events: JSONArray, onlyDate: String?): List<PlannedWorkout> {
         val out = ArrayList<PlannedWorkout>()
         for (i in 0 until events.length()) {
             val ev = events.getJSONObject(i)
             val start = ev.optString("start_date_local", "")
-            if (!start.startsWith(today)) continue
+            if (onlyDate != null && !start.startsWith(onlyDate)) continue
             val doc = ev.optJSONObject("workout_doc") ?: continue
             val ftp = doc.optDouble("ftp", 0.0)
             val segs = ArrayList<Segment>()
@@ -163,7 +168,8 @@ object IcuRepository {
                 id = ev.optLong("id"),
                 name = ev.optString("name", "Workout"),
                 description = doc.optString("description", ""),
-                segments = segs
+                segments = segs,
+                date = start.take(10)
             ))
         }
         return out

@@ -103,7 +103,7 @@ fun HomeScreen(
     LaunchedEffect(apiKey, athleteId, retry) {
         if (apiKey.isBlank()) return@LaunchedEffect
         loading = true; error = null
-        try { workouts = IcuRepository.fetchToday(apiKey, athleteId) }
+        try { workouts = IcuRepository.fetchUpcoming(apiKey, athleteId, 7) }
         catch (e: Exception) { error = e.message }
         loading = false
         if (error == null) week = IcuRepository.fetchWeek(apiKey, athleteId)
@@ -124,13 +124,28 @@ fun HomeScreen(
                 Spacer(Modifier.height(8.dp))
                 GhostButton("Retry", Modifier.fillMaxWidth()) { retry++ }
             }
-            workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.",
+            workouts.isEmpty() -> Text("No planned workout in the next 7 days. Plan one on intervals.icu.",
                 color = Forge.Muted, modifier = Modifier.padding(top = 16.dp))
             else -> LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {
-                item { SectionTitle("Today's planned workout${if (workouts.size > 1) "s" else ""}") }
-                items(workouts) { w ->
-                    WorkoutCard(w, trainer, onPlayWorkout)
-                    Spacer(Modifier.height(8.dp))
+                val today = IcuRepository.todayIso()
+                val todays = workouts.filter { it.date <= today }
+                val later = workouts.filter { it.date > today }
+                if (todays.isEmpty()) {
+                    item { Text("No workout planned for today.", color = Forge.Muted,
+                        modifier = Modifier.padding(top = 8.dp)) }
+                } else {
+                    item { SectionTitle("Today's planned workout${if (todays.size > 1) "s" else ""}") }
+                    items(todays) { w ->
+                        WorkoutCard(w, trainer, onPlayWorkout)
+                        Spacer(Modifier.height(8.dp))
+                    }
+                }
+                if (later.isNotEmpty()) {
+                    item { SectionTitle("Coming up") }
+                    items(later) { w ->
+                        WorkoutCard(w, trainer, onPlayWorkout, playable = false, dayLabel = dayLabel(w.date))
+                        Spacer(Modifier.height(8.dp))
+                    }
                 }
                 val wk = week
                 if (wk != null && (wk.ctlDelta != null || wk.nextName != null)) {
@@ -160,15 +175,27 @@ private fun TrainerPill(state: FtmsCenter.ConnState, name: String, ergOk: Boolea
     }
 }
 
+private fun dayLabel(date: String): String = try {
+    val d = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).parse(date)!!
+    java.text.SimpleDateFormat("EEE d MMM", java.util.Locale.getDefault()).format(d)
+} catch (e: Exception) { date }
+
 @Composable
-private fun WorkoutCard(w: PlannedWorkout, trainer: FtmsCenter.ConnState, onPlay: (PlannedWorkout) -> Unit) {
+private fun WorkoutCard(
+    w: PlannedWorkout,
+    trainer: FtmsCenter.ConnState,
+    onPlay: (PlannedWorkout) -> Unit,
+    playable: Boolean = true,
+    dayLabel: String? = null
+) {
     val connected = trainer == FtmsCenter.ConnState.CONNECTED
     ForgeCard {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
             Spacer(Modifier.width(8.dp))
-            if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
+            if (!playable) StatusPill(dayLabel ?: "", Forge.Muted)
+            else if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
         }
         Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
             fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
@@ -178,7 +205,7 @@ private fun WorkoutCard(w: PlannedWorkout, trainer: FtmsCenter.ConnState, onPlay
         if (w.description.isNotBlank())
             Text(w.description.take(140), fontSize = 12.sp, color = Forge.Faint, maxLines = 3,
                 lineHeight = 17.sp, modifier = Modifier.padding(top = 7.dp))
-        PrimaryButton(
+        if (playable) PrimaryButton(
             if (connected) "▶  Play on trainer" else "Pair a trainer first (Devices)",
             Modifier.fillMaxWidth().padding(top = 12.dp), enabled = connected
         ) { onPlay(w) }

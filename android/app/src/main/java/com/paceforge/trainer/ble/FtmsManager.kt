@@ -200,6 +200,8 @@ object FtmsCenter {
 
         override fun onServicesDiscovered(g: BluetoothGatt, status: Int) {
             if (status != BluetoothGatt.GATT_SUCCESS) return
+            lastCrankRevs = -1
+            Log.i(TAG, "Trainer services: " + g.services.joinToString { it.uuid.toString() })
             val svc = g.getService(FTMS)
             if (svc == null) {
                 // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
@@ -249,33 +251,63 @@ object FtmsCenter {
         }
     }
 
-    /** Cycling Power Measurement (0x2A63) fallback: flags u16 then power s16. */
+    private fun u16(b: ByteArray, i: Int) = (b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8)
+    private fun s16(b: ByteArray, i: Int): Int { val r = u16(b, i); return if (r > 0x7FFF) r - 0x10000 else r }
+
+    // Crank state for cadence derived from Cycling Power Measurement
+    private var lastCrankRevs = -1
+    private var lastCrankTime = 0
+    private var lastCrankChangeMs = 0L
+
+    /**
+     * Cycling Power Measurement (0x2A63): flags u16, power s16, then optional fields in this
+     * order: pedal balance (1), accumulated torque (2), wheel rev data (6), crank rev data (4).
+     * Cadence = delta crank revolutions / delta crank event time (1/1024 s).
+     */
     private fun parseCps(b: ByteArray) {
         if (b.size < 4) return
-        val raw = ((b[2].toInt() and 0xFF) or ((b[3].toInt() and 0xFF) shl 8))
-        powerW.value = if (raw > 0x7FFF) raw - 0x10000 else raw
+        val flags = u16(b, 0)
+        powerW.value = s16(b, 2)
+        var i = 4
+        if (flags and 0x0001 != 0) i += 1   // pedal power balance
+        if (flags and 0x0004 != 0) i += 2   // accumulated torque
+        if (flags and 0x0010 != 0) i += 6   // wheel revolution data
+        if (flags and 0x0020 != 0 && i + 4 <= b.size) {
+            val revs = u16(b, i)
+            val t = u16(b, i + 2)
+            val now = System.currentTimeMillis()
+            if (lastCrankRevs >= 0) {
+                val dRev = (revs - lastCrankRevs) and 0xFFFF
+                val dT = (t - lastCrankTime) and 0xFFFF
+                if (dRev > 0 && dT > 0) {
+                    cadence.value = (dRev * 1024 * 60 + dT / 2) / dT
+                    lastCrankChangeMs = now
+                } else if (now - lastCrankChangeMs > 2500) {
+                    cadence.value = 0   // no new crank event: pedalling stopped
+                }
+            } else lastCrankChangeMs = now
+            lastCrankRevs = revs; lastCrankTime = t
+        }
     }
 
-    /** Indoor Bike Data (0x2AD2): flags u16 LE, then optional fields. */
+    /**
+     * Indoor Bike Data (0x2AD2): flags u16 LE, then optional fields in spec order.
+     * Note bit 0 ("More Data") is inverted: instantaneous speed is present when it is 0.
+     */
     private fun parseIndoorBike(b: ByteArray) {
-        if (b.size < 4) return
-        val flags = (b[0].toInt() and 0xFF) or ((b[1].toInt() and 0xFF) shl 8)
+        if (b.size < 2) return
+        val flags = u16(b, 0)
         var i = 2
-        if (flags and 0x0002 != 0) i += 2            // instantaneous speed
-        if (flags and 0x0004 != 0) {                 // instantaneous cadence
-            if (i + 2 <= b.size) {
-                val raw = ((b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8))
-                cadence.value = raw / 2              // 0.5 rpm resolution
-                i += 2
-            }
+        if (flags and 0x0001 == 0) i += 2            // instantaneous speed
+        if (flags and 0x0002 != 0) i += 2            // average speed
+        if (flags and 0x0004 != 0) {                 // instantaneous cadence, 0.5 rpm
+            if (i + 2 <= b.size) cadence.value = u16(b, i) / 2
+            i += 2
         }
         if (flags and 0x0008 != 0) i += 2            // average cadence
         if (flags and 0x0010 != 0) i += 3            // total distance
-        if (flags and 0x0020 != 0) i += 3            // resistance level
-        if (flags and 0x0040 != 0 && i + 2 <= b.size) { // instantaneous power (s16)
-            val raw = ((b[i].toInt() and 0xFF) or ((b[i + 1].toInt() and 0xFF) shl 8))
-            powerW.value = if (raw > 0x7FFF) raw - 0x10000 else raw
-        }
+        if (flags and 0x0020 != 0) i += 2            // resistance level
+        if (flags and 0x0040 != 0 && i + 2 <= b.size) powerW.value = s16(b, i)  // instantaneous power
     }
 
     /** ERG mode: send a new target power (watts) to the trainer. */
