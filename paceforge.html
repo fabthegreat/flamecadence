@@ -7,10 +7,13 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ffb000'/%3E%3Cstop offset='1' stop-color='%23ff3d00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='%23141b24'/%3E%3Cpath d='M34 5C38 18 23 21 29 34c-5-3-8-8-8-13C9 34 13 49 25 56c-1-9 7-12 9-19 8 8 8 14 4 20 13-4 19-17 12-29-1 8-5 10-7 11C45 25 45 16 34 5Z' fill='url(%23g)'/%3E%3Cpath d='M35 24 24 40h9l-3 12 13-19h-9z' fill='%23fff4d6'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b78;--line:#cfd7de;--acc:#0f6e6e;--err:#b3261e;--ok:#1d7a3a;--on:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f}}
+:root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b78;--line:#cfd7de;--acc:#0f6e6e;--err:#b3261e;--ok:#1d7a3a;--on:#fff;color-scheme:light}
+:root[data-theme="dark"]{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+body{margin:0;min-height:100vh;background:radial-gradient(1100px 480px at 50% 115%,rgba(255,157,0,.16),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,77,0,.09),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(15,110,110,.08),transparent 60%),linear-gradient(180deg,#f8fafc 0%,var(--bg) 45%,#f4efe9 100%);background-attachment:fixed;color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+:root[data-theme="dark"] body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}}
 main{max-width:1240px;margin:0 auto;padding:20px 16px 24px}
 h1{font-size:1.65rem;margin:0;font-weight:600;letter-spacing:-0.02em}
 p.sub{color:var(--mute);margin:6px 0 20px}
@@ -42,6 +45,7 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:cen
 .logo rect{fill:var(--acc)}
 .tools{display:flex;gap:8px;align-items:center}
 .lang{display:flex;border:1px solid var(--acc);border-radius:6px;overflow:hidden}
+#theme{line-height:1.2!important;font-size:1.05rem}
 .lang button{margin:0;padding:6px 10px;border-radius:0;background:transparent;color:var(--acc);font-size:.85rem}
 .lang button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
 .layout{display:grid;grid-template-columns:minmax(0,760px) minmax(0,1fr);gap:16px;align-items:start}
@@ -203,6 +207,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 </style>
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;}catch(e){}</script>
 </head>
 <body>
 <main>
@@ -219,6 +224,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
   <h1 data-i="title"></h1>
 </div>
 <div class="tools">
+<button class="alt small icon" id="theme" type="button" data-ia="title:thAuto;aria-label:thAuto">🌓</button>
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
 <a class="alt small icon" id="mail" data-ia="title:contact;aria-label:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg></a>
 <a class="alt small icon" id="gh" data-ia="title:github;aria-label:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
@@ -399,7 +405,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 </div>
 <div class="row">
 <div><input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px"></div>
-<div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="45">≤ 45 min</option><option value="75">45 – 75 min</option><option value="105">75 – 105 min</option><option value="inf">&gt; 105 min</option></select></div>
+<div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="0-30">≤ 30 min</option><option value="30-45">30 – 45 min</option><option value="45-60">45 – 60 min</option><option value="60-75">60 – 75 min</option><option value="75-90">75 – 90 min</option><option value="90-105">90 – 105 min</option><option value="105-120">105 – 120 min</option><option value="120-inf">&gt; 120 min</option></select></div>
 </div>
 <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
@@ -522,6 +528,24 @@ const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ ret
 const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/paceforge", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
 let lang = store.get("si_lang") === "fr" ? "fr" : "en";
 
+// ---------- Thème clair / sombre / auto ----------
+const THEME_ORDER = ["auto", "light", "dark"];
+const THEME_ICON = {auto: "🌓", light: "☀️", dark: "🌙"};
+const THEME_KEY = {auto: "thAuto", light: "thLight", dark: "thDark"};
+let theme = store.get("si_theme"); if(!THEME_ORDER.includes(theme)) theme = "auto";
+function applyTheme(){
+  const root = document.documentElement;
+  if(theme === "auto") delete root.dataset.theme; else root.dataset.theme = theme;
+  const btn = document.getElementById("theme");
+  if(btn){
+    const lbl = t(THEME_KEY[theme]);
+    btn.textContent = THEME_ICON[theme];
+    btn.title = lbl;
+    btn.setAttribute("aria-label", lbl);
+    btn.setAttribute("data-ia", "title:" + THEME_KEY[theme] + ";aria-label:" + THEME_KEY[theme]);
+  }
+}
+
 // ---------- Traductions ----------
 const T = {
 docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
@@ -586,6 +610,7 @@ colDur:["Duration","Durée"], capAvg:[" · avg "," · moy. "], pctPace:[" % pace
 dLoad:["Load {0}","Charge {0}"], dAvg:["avg {0} W","moy. {0} W"], dHR:["HR {0}","FC {0}"],
 loadCap:["{0} workouts · {1} · load {2}","{0} séances · {1} · charge {2}"], loadCap2:[" · CTL {0} · ATL {1} · form {2}"," · CTL {0} · ATL {1} · forme {2}"],
 age:["{0} y/o","{0} ans"],
+thAuto:["Theme: auto (follow system)","Thème : auto (selon le système)"], thLight:["Theme: light","Thème : clair"], thDark:["Theme: dark","Thème : sombre"],
 fitT:["Fitness","Fitness"], calT:["Calendar","Calendrier"], calMoved:["Workout moved to {0}.","Séance déplacée au {0}."], calNone:["No planned workout this month.","Aucune séance planifiée ce mois-ci."], fFit:["Fitness (CTL)","Fitness (CTL)"], fFat:["Fatigue (ATL)","Fatigue (ATL)"], fForm:["Form (TSB)","Forme (TSB)"],
 langLbl:["Language","Langue"], dElev:["Elev. {0} m","D+ {0} m"], lPace:["Pace","Allure"], lSpeed:["Avg speed","Vitesse moy."], lPow:["Power","Puissance"], lHRs:["Heart rate","Fréquence cardiaque"], pace:["pace","allure"],
 exTitle:["About this workout","À propos de cette séance"],
@@ -1939,8 +1964,12 @@ function renderLibrary(){
       if(!q.split(/\s+/).every(w => hay.includes(w))) return false;
     }
     if(durF !== "all"){
+      // bornes explicites « lo-hi » en minutes (hi = « inf » → sans limite haute)
+      const m = durF.match(/^(\d+|inf)?-(\d+|inf)?$/);
       const d = libDuration(item);
-      if(durF === "inf" ? d <= 105 * 60 : !(durF === "45" ? d <= 45 * 60 : durF === "75" ? d > 45 * 60 && d <= 75 * 60 : d > 75 * 60 && d <= 105 * 60)) return false;
+      const lo = m && m[1] && m[1] !== "inf" ? +m[1] * 60 : 0;
+      const hi = m && m[2] && m[2] !== "inf" ? +m[2] * 60 : Infinity;
+      if(!(d > lo && d <= hi)) return false;
     }
     return true;
   };
@@ -2027,6 +2056,25 @@ for(const w of LIBRARY_V2){
 
 // ---------- Favoris (★) : ID unique par séance + persistance localStorage ----------
 { const seen = {}; LIBRARY.forEach(w => { const b = w.name_en; seen[b] = (seen[b] || 0) + 1; w.id = seen[b] === 1 ? b : b + " #" + seen[b]; }); }
+
+// ---------- Récupération courte entre l'échauffement et le cœur de séance ----------
+// Beaucoup de séances enchaînent directement la fin de la montée en puissance de
+// l'échauffement (jusqu'à ~80 %) et le premier bloc dur. On insère automatiquement
+// 2 minutes de récupération (50 % FTP) quand le premier palier après l'échauffement
+// est un effort dur (>= 85 % FTP).
+function insertWarmRest(desc){
+  const d = "\n" + desc;
+  const m = d.match(/\n(?:warmup|échauffement)\n((?:[ \t]*-[^\n]*\n)+)/i);
+  if(!m) return desc;
+  const end = m.index + m[0].length;
+  const after = d.slice(end);
+  const first = after.match(/[ \t]*-[^\n]*%/); // première étape après l'échauffement
+  if(!first) return desc;
+  const pm = first[0].match(/(\d+(?:\.\d+)?)\s*%/);
+  if(!pm || parseFloat(pm[1]) < 85) return desc;
+  return (d.slice(0, end) + "- 2m 50%\n" + after).slice(1);
+}
+LIBRARY.forEach(w => { w.desc_en = insertWarmRest(w.desc_en); w.desc_fr = insertWarmRest(w.desc_fr); });
 // cache mémoire = source de vérité ; localStorage peut être indisponible (sandbox), store.set ignore silencieusement les échecs
 let starList = (() => { try{ const a = JSON.parse(store.get("si_stars") || "[]"); return Array.isArray(a) ? a : []; }catch(e){ return []; } })();
 const stars = () => starList;
@@ -3053,10 +3101,12 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
+  applyTheme();
   setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
+$("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
