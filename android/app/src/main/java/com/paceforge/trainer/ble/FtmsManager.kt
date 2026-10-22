@@ -54,8 +54,8 @@ object FtmsCenter {
     private val CYCLING_POWER   = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb")
     private val CPS_MEASUREMENT = UUID.fromString("00002a63-0000-1000-8000-00805f9b34fb")
     private val TACX_FEC        = UUID.fromString("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e")
-    private val FEC_RX          = UUID.fromString("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e") // write (commands)
-    private val FEC_TX          = UUID.fromString("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e") // notify (trainer data)
+    // The two FE-C characteristics are 6e40fec2 / 6e40fec3. Which one notifies and which one is
+    // written differs between sources, so they are picked at runtime from their GATT properties.
 
     // FE-C over BLE carries raw ANT+ messages: A4 | len | msgId | channel | 8 data bytes | xor checksum
     private const val ANT_SYNC = 0xA4
@@ -117,6 +117,8 @@ object FtmsCenter {
     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
     @Volatile private var writeBusy = false   // a control-point write is in flight
     @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
+    @Volatile private var fecNotifyChar: BluetoothGattCharacteristic? = null   // trainer -> app
+    @Volatile private var fecWriteChar: BluetoothGattCharacteristic? = null    // app -> trainer
     private var lastTrainerHit: ScanHit? = null
     private var connectAttempts = 0
     private val main = Handler(Looper.getMainLooper())
@@ -290,12 +292,25 @@ object FtmsCenter {
             val svc = g.getService(FTMS)
             useFec = false
             val fec = g.getService(TACX_FEC)
-            val fecTx = fec?.getCharacteristic(FEC_TX)
-            if (svc == null && fec != null && fecTx != null && fec.getCharacteristic(FEC_RX) != null) {
+            if (svc == null && fec != null) {
                 // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
-                Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
+                val chars = fec.characteristics
+                val props = chars.joinToString(" ") { "${it.uuid.toString().substring(4, 8)}:0x%02X".format(it.properties) }
+                Log.i(TAG, "FE-C characteristics: $props")
+                servicesInfo.value = servicesInfo.value + " [FE-C $props]"
+                val notifyMask = BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE
+                val writeMask = BluetoothGattCharacteristic.PROPERTY_WRITE or BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
+                val notify = chars.firstOrNull { it.properties and notifyMask != 0 && it.getDescriptor(CCCD) != null }
+                val write = chars.firstOrNull { it.properties and writeMask != 0 }
+                if (notify == null || write == null) {
+                    fallbackToCps(g, "FE-C characteristics unexpected ($props)")
+                    return
+                }
+                fecNotifyChar = notify
+                fecWriteChar = write
                 useFec = true
-                if (!enableNotify(g, fecTx, indications = false)) fallbackToCps(g, "FE-C subscribe rejected")
+                val indicate = notify.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY == 0
+                if (!enableNotify(g, notify, indications = indicate)) fallbackToCps(g, "FE-C subscribe rejected ($props)")
                 return
             }
             if (svc == null) {
@@ -321,7 +336,7 @@ object FtmsCenter {
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             val uuid = descriptor.characteristic?.uuid
-            if (uuid == FEC_TX) {
+            if (useFec && uuid == fecNotifyChar?.uuid) {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     lastError.value = ""
                     trainerState.value = ConnState.CONNECTED
@@ -347,7 +362,7 @@ object FtmsCenter {
                 INDOOR_BIKE -> parseIndoorBike(value)
                 CPS_MEASUREMENT -> parseCps(value)
                 CONTROL_POINT -> onControlPointResponse(value)
-                FEC_TX -> parseFec(value)
+                else -> if (useFec && ch.uuid == fecNotifyChar?.uuid) parseFec(value)
             }
         }
 
@@ -444,7 +459,7 @@ object FtmsCenter {
     private fun pump() {
         if (writeBusy) return
         val g = trainerGatt ?: return
-        val cp = (if (useFec) g.getService(TACX_FEC)?.getCharacteristic(FEC_RX)
+        val cp = (if (useFec) fecWriteChar
                   else g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)) ?: return
         val next = writeQueue.poll() ?: return
         writeBusy = true
