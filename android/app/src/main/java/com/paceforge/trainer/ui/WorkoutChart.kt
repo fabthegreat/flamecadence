@@ -25,6 +25,8 @@ import kotlin.math.ceil
  *  - Actual power drawn as a smoothed curve (1 Hz samples).
  *  - 100 W gridlines with watt labels on the left axis.
  *  - Vertical cursor + dimmed overlay showing where you are.
+ *  - compact = true: tiny thumbnail for the home workout card (no grid,
+ *    no axis, no actual trace, no cursor).
  */
 @Composable
 fun WorkoutChart(
@@ -32,7 +34,8 @@ fun WorkoutChart(
     totalSec: Int,
     elapsedSec: Int,
     history: List<Pair<Int, Int>>,   // (elapsedSec, actualW)
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    compact: Boolean = false
 ) {
     val target = Color(0xFFFF9D00)
     val targetTop = Color(0xFFFFC24D)
@@ -51,31 +54,32 @@ fun WorkoutChart(
         // Round the axis up to the next 50 W so blocks never touch the top.
         val maxW = ceil(maxOf(maxTarget, maxActual, 50.0) / 50.0) * 50.0
 
-        val axisPad = 34f          // room for the watt labels
+        val axisPad = if (compact) 0f else 34f   // room for the watt labels
         val plotW = size.width - axisPad
         val h = size.height
         fun x(t: Int) = axisPad + t.toFloat() / totalSec * plotW
         fun y(p: Double) = h - (p / maxW * (h - 4f)).toFloat()
 
-        // --- 100 W gridlines + labels ---
-        val paint = android.graphics.Paint().apply {
-            textSize = 18f
-            color = labelColor.toArgb()
-            isAntiAlias = true
+        // --- 100 W gridlines + labels (full mode only) ---
+        if (!compact) {
+            val paint = android.graphics.Paint().apply {
+                textSize = 18f
+                color = labelColor.toArgb()
+                isAntiAlias = true
+            }
+            var level = 100
+            while (level < maxW) {
+                val gy = y(level.toDouble())
+                drawLine(grid, Offset(axisPad, gy), Offset(size.width, gy), 1f)
+                drawContext.canvas.nativeCanvas.drawText("$level", 2f, gy + 6f, paint)
+                level += 100
+            }
+            // Baseline
+            drawLine(grid, Offset(axisPad, y(0.0)), Offset(size.width, y(0.0)), 1f)
         }
-        var level = 100
-        while (level < maxW) {
-            val gy = y(level.toDouble())
-            drawLine(grid, Offset(axisPad, gy), Offset(size.width, gy), 1f)
-            drawContext.canvas.nativeCanvas.drawText("$level", 2f, gy + 6f, paint)
-            level += 100
-        }
-
-        // --- Baseline ---
-        drawLine(grid, Offset(axisPad, y(0.0)), Offset(size.width, y(0.0)), 1f)
 
         // --- Target profile: one block per segment ---
-        val gap = 2f
+        val gap = if (compact) 1f else 2f
         val blockFill = Brush.verticalGradient(listOf(targetTop, targetDark), startY = 0f, endY = h)
         var t = 0
         for (s in segments) {
@@ -91,11 +95,13 @@ fun WorkoutChart(
                 }
                 drawPath(block, blockFill)
                 // Bright top edge so ramps read clearly even a few pixels wide
-                drawLine(target, Offset(x0, y(s.startW)), Offset(x1, y(s.endW)), 2.dp.toPx(),
-                    cap = StrokeCap.Round)
+                drawLine(target, Offset(x0, y(s.startW)), Offset(x1, y(s.endW)),
+                    if (compact) 1.dp.toPx() else 2.dp.toPx(), cap = StrokeCap.Round)
             }
             t += s.durationSec
         }
+
+        if (compact) return@Canvas
 
         // --- Actual power: smoothed curve through the 1 Hz samples ---
         if (history.size > 1) {

@@ -5,6 +5,7 @@ package com.paceforge.trainer.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +28,7 @@ fun App(onPlay: () -> Unit) {
     var selected by remember { mutableStateOf<PlannedWorkout?>(null) }
 
     Scaffold(topBar = {
-        TopAppBar(title = { Text("PaceForge Trainer") }, actions = {
+        TopAppBar(title = { Text("PaceForge", fontWeight = FontWeight.Bold) }, actions = {
             TextButton(onClick = { screen = "settings" }) { Text("Settings") }
             TextButton(onClick = { screen = "devices" }) { Text("Devices") }
         })
@@ -41,6 +42,25 @@ fun App(onPlay: () -> Unit) {
     }
 }
 
+/** Small rounded status badge, e.g. "Tacx NEO 2T · connected". */
+@Composable
+fun StatusPill(text: String, color: Color) {
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = color.copy(alpha = 0.12f),
+        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f))
+    ) {
+        Row(
+            Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            androidx.compose.foundation.Canvas(Modifier.size(7.dp)) { drawCircle(color) }
+            Text(text, fontSize = 11.sp, color = color)
+        }
+    }
+}
+
 @Composable
 fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
@@ -50,6 +70,7 @@ fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
     var loading by remember { mutableStateOf(false) }
     var retry by remember { mutableStateOf(0) }
     val trainer by FtmsCenter.trainerState.collectAsState()
+    val trainerName by FtmsCenter.trainerName.collectAsState()
 
     // Fetch only once the settings are actually loaded from disk, and re-run on Retry.
     val apiKey = settings?.apiKey.orEmpty()
@@ -76,23 +97,48 @@ fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
             }
             workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.")
             else -> {
-                Text("Today's planned workout(s)", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                StatusPill(
+                    when (trainer) {
+                        FtmsCenter.ConnState.CONNECTED ->
+                            (trainerName.ifBlank { "Smart trainer" }) + " · connected"
+                        FtmsCenter.ConnState.CONNECTING -> "Trainer connecting…"
+                        FtmsCenter.ConnState.DISCONNECTED -> "No trainer connected"
+                    },
+                    when (trainer) {
+                        FtmsCenter.ConnState.CONNECTED -> Color(0xFF57D98A)
+                        FtmsCenter.ConnState.CONNECTING -> Color(0xFFFFC24D)
+                        FtmsCenter.ConnState.DISCONNECTED -> Color(0xFF8A97A3)
+                    }
+                )
+                Spacer(Modifier.height(12.dp))
+                Text("Today's planned workout${if (workouts.size > 1) "s" else ""}",
+                    fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(8.dp))
                 LazyColumn {
                     items(workouts) { w ->
-                        Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                        ElevatedCard(
+                            Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                            shape = RoundedCornerShape(16.dp)
+                        ) {
                             Column(Modifier.padding(14.dp)) {
-                                Text(w.name, fontWeight = FontWeight.SemiBold)
-                                Text("${w.totalSec / 60} min · ${w.segments.size} steps",
-                                    fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(w.name, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                                Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
+                                    fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                // Miniature power-profile preview
+                                WorkoutChart(w.segments, w.totalSec, 0, emptyList(),
+                                    Modifier.fillMaxWidth().height(64.dp).padding(top = 10.dp),
+                                    compact = true)
                                 if (w.description.isNotBlank())
-                                    Text(w.description.take(140), fontSize = 12.sp, maxLines = 3)
-                                Spacer(Modifier.height(8.dp))
+                                    Text(w.description.take(140), fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 3, modifier = Modifier.padding(top = 8.dp))
+                                Spacer(Modifier.height(10.dp))
                                 Button(
                                     enabled = trainer == FtmsCenter.ConnState.CONNECTED,
-                                    onClick = { onPlayWorkout(w) }
+                                    onClick = { onPlayWorkout(w) },
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    Text(if (trainer == FtmsCenter.ConnState.CONNECTED) "Play on trainer"
+                                    Text(if (trainer == FtmsCenter.ConnState.CONNECTED) "▶  Play on trainer"
                                          else "Pair a trainer first (Devices)")
                                 }
                             }
@@ -125,14 +171,16 @@ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
         if (loaded == null) {
             CircularProgressIndicator()
         } else {
-            OutlinedTextField(value = apiKey, onValueChange = { key = it }, label = { Text("API Key") },
+            OutlinedTextField(value = apiKey, onValueChange = { key = it },
+                label = { Text(if (apiKey.isNotBlank()) "API key (saved)" else "API key") },
                 modifier = Modifier.fillMaxWidth(), singleLine = true)
             Spacer(Modifier.height(8.dp))
             OutlinedTextField(value = athleteId, onValueChange = { athlete = it },
                 label = { Text("Athlete ID (0 = key owner)") },
                 modifier = Modifier.fillMaxWidth(), singleLine = true)
             Spacer(Modifier.height(8.dp))
-            Text("Settings → Developer Settings on intervals.icu to find your API key.",
+            Text("Create your key on intervals.icu → Settings → Developer settings. " +
+                "It is stored on this device only.",
                 fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(12.dp))
             Row {
@@ -176,25 +224,29 @@ fun DevicesScreen(pad: PaddingValues, onBack: () -> Unit) {
             items(results, key = { it.device.address }) { hit ->
                 ListItem(headlineContent = { Text(hit.name) },
                     supportingContent = {
-                        Text((if (hit.isTrainer) "Smart trainer (FTMS)" else "Heart rate") + " · ${hit.rssi} dBm") },
+                        Text((if (hit.isTrainer) "Smart trainer (FTMS/FE-C)" else "Heart rate") + " · ${hit.rssi} dBm") },
                     trailingContent = { OutlinedButton(onClick = { FtmsCenter.connect(hit) }) { Text("Connect") } })
             }
         }
+        Text("Trainers that don't advertise FTMS (e.g. some Tacx NEO firmware) are detected " +
+                "via Cycling Power / FE-C and run in read-only mode (no ERG).",
+            fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
 private fun DeviceRow(label: String, name: String, state: FtmsCenter.ConnState) {
     val color = when (state) {
-        FtmsCenter.ConnState.CONNECTED -> Color(0xFF1D7A3A)
-        FtmsCenter.ConnState.CONNECTING -> Color(0xFFB8860B)
+        FtmsCenter.ConnState.CONNECTED -> Color(0xFF2ECC71)
+        FtmsCenter.ConnState.CONNECTING -> Color(0xFFFFC24D)
         FtmsCenter.ConnState.DISCONNECTED -> MaterialTheme.colorScheme.error
     }
-    Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+    ElevatedCard(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Row(Modifier.padding(14.dp).fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Column { Text(label, fontWeight = FontWeight.SemiBold); Text(name.ifBlank { "—" }) }
-            Text(state.name, color = color, fontWeight = FontWeight.Bold)
+            Column { Text(label, fontWeight = FontWeight.SemiBold); Text(name.ifBlank { "—" },
+                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+            Text(state.name, color = color, fontWeight = FontWeight.Bold, fontSize = 11.sp)
         }
     }
 }

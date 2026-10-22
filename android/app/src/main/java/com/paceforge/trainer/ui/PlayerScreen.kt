@@ -62,42 +62,52 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
 
     Column(Modifier.fillMaxSize().padding(pad).padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(w?.name ?: "No workout", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-        Spacer(Modifier.height(12.dp))
+
+        // Header: name + ERG badge
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(w?.name ?: "No workout", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            if (total > 0) {
+                Spacer(Modifier.width(8.dp))
+                StatusPill("ERG", Color(0xFFFFC24D))
+            }
+        }
+        Spacer(Modifier.height(10.dp))
 
         // Progress
         if (total > 0) {
             LinearProgressIndicator(progress = { elapsed.toFloat() / total }, Modifier.fillMaxWidth())
             Spacer(Modifier.height(6.dp))
-            Text("${elapsed / 60}:${"%02d".format(elapsed % 60)} / ${total / 60}:${"%02d".format(total % 60)}",
-                fontSize = 13.sp)
+            Text("${elapsed / 60}:${"%02d".format(elapsed % 60)} / ${total / 60}:${"%02d".format(total % 60)}"
+                + (next?.let {
+                    "  ·  next: ${it.durationSec / 60} min @ " +
+                        if (it.startW == it.endW) "${it.startW.toInt()} W"
+                        else "${it.startW.toInt()}–${it.endW.toInt()} W"
+                } ?: ""),
+                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
         // Full workout profile + live progression
         WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
             Modifier.fillMaxWidth().height(160.dp))
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
 
-        // Target power — the big number
-        Text("$target W", fontSize = 64.sp, fontWeight = FontWeight.Black)
-        if (bias != 0) Text("bias $bias W", fontSize = 13.sp)
+        // Target power — the hero number
+        Text("$target W", fontSize = 64.sp, fontWeight = FontWeight.Black,
+            color = Color(0xFFFFC24D))
+        Text(if (bias != 0) "TARGET · BIAS ${if (bias > 0) "+" else ""}$bias W" else "TARGET",
+            fontSize = 11.sp, letterSpacing = 1.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(14.dp))
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            Metric("Actual", "$power W")
-            Metric("Cadence", "$cadence rpm")
-            Metric("HR", if (hr > 0) "$hr bpm" else "—")
+            Metric("ACTUAL", "$power W")
+            Metric("CADENCE", "$cadence rpm")
+            Metric("HEART RATE", if (hr > 0) "$hr bpm" else "—")
         }
 
-        Spacer(Modifier.height(16.dp))
-        next?.let {
-            Text("Next: ${it.durationSec / 60} min at ${if (it.startW == it.endW) "${it.startW.toInt()} W" else "${it.startW.toInt()}–${it.endW.toInt()} W"}",
-                fontSize = 13.sp)
-        }
-
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(20.dp))
 
         if (askSave) {
             SaveSection(
@@ -112,10 +122,10 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
             when (status) {
                 WorkoutEngine.Status.IDLE, WorkoutEngine.Status.DONE ->
                     Button(onClick = { WorkoutEngine.start() }, modifier = Modifier.fillMaxWidth(0.7f)) {
-                        Text(if (status == WorkoutEngine.Status.DONE) "Done 🎉" else "Start workout")
+                        Text(if (status == WorkoutEngine.Status.DONE) "Done 🎉" else "▶  Start workout")
                     }
                 WorkoutEngine.Status.RUNNING ->
-                    Button(onClick = { WorkoutEngine.pause() }, modifier = Modifier.fillMaxWidth(0.7f)) { Text("Pause") }
+                    Button(onClick = { WorkoutEngine.pause() }, modifier = Modifier.fillMaxWidth(0.7f)) { Text("⏸  Pause") }
                 WorkoutEngine.Status.PAUSED ->
                     Button(onClick = { WorkoutEngine.resume() }, modifier = Modifier.fillMaxWidth(0.7f)) { Text("Resume") }
             }
@@ -147,7 +157,7 @@ private fun SaveSection(
     val scope = rememberCoroutineScope()
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Workout complete", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+        Text("Workout complete 🎉", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Text("${points.size} samples · ${points.lastOrNull()?.sec ?: 0}s recorded",
             fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(12.dp))
@@ -158,7 +168,7 @@ private fun SaveSection(
                 Text("Uploading to intervals.icu…", fontSize = 12.sp)
             }
             "saved" -> {
-                Text("Saved to intervals.icu ✓", color = Color(0xFF1D7A3A), fontWeight = FontWeight.Bold)
+                Text("Saved to intervals.icu ✓", color = Color(0xFF57D98A), fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(12.dp))
                 Button(onClick = onDone, modifier = Modifier.fillMaxWidth(0.7f)) { Text("Done") }
             }
@@ -195,7 +205,8 @@ private fun SaveSection(
 @Composable
 private fun Metric(label: String, value: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(value, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-        Text(label, fontSize = 12.sp)
+        Text(value, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+        Text(label, fontSize = 10.sp, letterSpacing = 1.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
