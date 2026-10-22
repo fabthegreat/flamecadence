@@ -26,6 +26,12 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
     val cadence by FtmsCenter.cadence.collectAsState()
     val hr by FtmsCenter.hrBpm.collectAsState()
 
+    // 1 Hz actual-power history for the full-workout chart
+    val history = remember { mutableStateListOf<Pair<Int, Int>>() }
+    LaunchedEffect(elapsed) {
+        if (status == WorkoutEngine.Status.RUNNING) history.add(elapsed to power)
+    }
+
     val w = workout
     val total = w?.totalSec ?: 0
     val next = w?.segments?.getOrNull((segIdx + 1).coerceAtMost((w.segments.size - 1).coerceAtLeast(0)))
@@ -42,6 +48,10 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
             Text("${elapsed / 60}:${"%02d".format(elapsed % 60)} / ${total / 60}:${"%02d".format(total % 60)}",
                 fontSize = 13.sp)
         }
+
+        // Full workout profile + live progression
+        WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
+            Modifier.fillMaxWidth().height(160.dp))
 
         Spacer(Modifier.height(16.dp))
 

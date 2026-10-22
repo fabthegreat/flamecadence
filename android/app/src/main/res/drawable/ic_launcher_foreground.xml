@@ -1,0 +1,35 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- PaceForge logo (flame + lightning bolt), centered in the adaptive-icon safe zone -->
+    <group
+        android:translateX="21.6"
+        android:translateY="21.6"
+        android:scaleX="1.35"
+        android:scaleY="1.35">
+        <!-- flame glow (was the SVG gaussian blur layer) -->
+        <path
+            android:fillColor="#FF4B00"
+            android:fillAlpha="0.35"
+            android:pathData="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" />
+        <!-- flame -->
+        <path
+            android:fillColor="#FF7A00"
+            android:pathData="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" />
+        <!-- lightning bolt -->
+        <path
+            android:fillColor="#FFFBE9"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="0.45"
+            android:strokeLineJoin="round"
+            android:pathData="M27 14 18 27h7l-3 10 12-17h-8z" />
+        <!-- sparks -->
+        <path
+            android:strokeColor="#FFD166"
+            android:strokeWidth="1.5"
+            android:strokeLineCap="round"
+            android:pathData="M7 14h5M36 8l3-2M39 34l3 2" />
+    </group>
+</vector>
