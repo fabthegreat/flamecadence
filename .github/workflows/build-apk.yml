@@ -6,6 +6,9 @@ on:
     paths: [ "android/**", ".github/workflows/build-apk.yml" ]
   workflow_dispatch:
 
+permissions:
+  contents: write   # needed to create releases
+
 defaults:
   run:
     working-directory: android
@@ -32,8 +35,22 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: paceforge-trainer-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish APK as a GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Fixed file name so the download URL never changes:
+          # https://github.com/<owner>/<repo>/releases/latest/download/paceforge.apk
+          cp app/build/outputs/apk/debug/app-debug.apk paceforge.apk
+
+          TAG="build-${{ github.run_number }}"
+          gh release create "$TAG" paceforge.apk \
+            --target "${{ github.sha }}" \
+            --title "Build ${{ github.run_number }}" \
+            --notes "Debug APK built from ${GITHUB_SHA::7}" \
+            --latest
+
+          # Keep only the 5 most recent build releases
+          gh release list --limit 100 --json tagName -q '.[].tagName' \
+            | grep '^build-' | tail -n +6 \
+            | xargs -r -I{} gh release delete {} --cleanup-tag --yes
