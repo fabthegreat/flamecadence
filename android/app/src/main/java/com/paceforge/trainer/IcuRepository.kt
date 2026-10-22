@@ -44,7 +44,7 @@ object IcuRepository {
     private fun todayIso(): String = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
 
     private fun basicAuth(apiKey: String): String =
-        "Basic " + android.util.Base64.encodeToString("API_Key:$apiKey".toByteArray(),
+        "Basic " + android.util.Base64.encodeToString("API_KEY:$apiKey".toByteArray(),
             android.util.Base64.NO_WRAP)
 
     suspend fun fetchToday(apiKey: String, athleteId: String): List<PlannedWorkout> =

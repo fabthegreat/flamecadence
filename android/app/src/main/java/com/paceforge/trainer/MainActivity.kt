@@ -19,6 +19,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FtmsCenter.init(this) // BLE must be usable before the workout service ever starts
         requestNeededPermissions()
         setContent { Theme { App(onPlay = { startTrainerService() }) } }
     }
