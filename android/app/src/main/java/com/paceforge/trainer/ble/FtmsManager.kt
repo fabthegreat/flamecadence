@@ -54,6 +54,16 @@ object FtmsCenter {
     private val CYCLING_POWER   = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb")
     private val CPS_MEASUREMENT = UUID.fromString("00002a63-0000-1000-8000-00805f9b34fb")
     private val TACX_FEC        = UUID.fromString("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e")
+    private val FEC_RX          = UUID.fromString("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e") // write (commands)
+    private val FEC_TX          = UUID.fromString("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e") // notify (trainer data)
+
+    // FE-C over BLE carries raw ANT+ messages: A4 | len | msgId | channel | 8 data bytes | xor checksum
+    private const val ANT_SYNC = 0xA4
+    private const val ANT_ACKNOWLEDGED = 0x4F   // commands; change to 0x4E (broadcast) if a trainer ignores them
+    private const val ANT_BROADCAST = 0x4E
+    private const val FEC_CHANNEL = 0x05
+    private const val FEC_PAGE_TRAINER_DATA = 0x19   // specific trainer data: cadence + instantaneous power
+    private const val FEC_PAGE_TARGET_POWER = 0x31   // command: target power in 0.25 W units
 
     // --- FTMS control point opcodes ---
     private const val OP_REQUEST_CONTROL = 0x00
@@ -103,6 +113,7 @@ object FtmsCenter {
     private val found = LinkedHashMap<String, ScanHit>()
     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
     @Volatile private var writeBusy = false   // a control-point write is in flight
+    @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
     private val main = Handler(Looper.getMainLooper())
 
     /** Must be called once (TrainerService) before any BLE operation. */
@@ -205,7 +216,7 @@ object FtmsCenter {
                     main.postDelayed({ g.discoverServices() }, 600)
                 }
                 BluetoothProfile.STATE_DISCONNECTED -> {
-                    writeQueue.clear(); writeBusy = false
+                    writeQueue.clear(); writeBusy = false; useFec = false
                     trainerGatt = null
                     ergAvailable.value = false
                     trainerState.value = ConnState.DISCONNECTED
@@ -223,6 +234,16 @@ object FtmsCenter {
                 }
             }.joinToString(", ").ifBlank { "none of FTMS / Cycling Power / FE-C" }
             val svc = g.getService(FTMS)
+            useFec = false
+            val fec = g.getService(TACX_FEC)
+            val fecTx = fec?.getCharacteristic(FEC_TX)
+            if (svc == null && fec != null && fecTx != null && fec.getCharacteristic(FEC_RX) != null) {
+                // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
+                Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
+                useFec = true
+                enableNotify(g, fecTx, indications = false)
+                return
+            }
             if (svc == null) {
                 // Trainer without FTMS advertised/implemented (e.g. Tacx NEO on
                 // older firmware): fall back to the Cycling Power Service for
@@ -250,7 +271,15 @@ object FtmsCenter {
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             val uuid = descriptor.characteristic?.uuid
-            if (uuid == INDOOR_BIKE) {
+            if (uuid == FEC_TX) {
+                if (status == BluetoothGatt.GATT_SUCCESS) {
+                    trainerState.value = ConnState.CONNECTED
+                    ergAvailable.value = true      // FE-C has no "request control": target power just works
+                } else {
+                    Log.w(TAG, "FE-C notification subscribe failed: $status")
+                    trainerState.value = ConnState.DISCONNECTED
+                }
+            } else if (uuid == INDOOR_BIKE) {
                 // step 2: now the control point (responses arrive as indications)
                 g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)?.let { enableNotify(g, it, indications = true) }
             } else if (uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
@@ -267,6 +296,7 @@ object FtmsCenter {
                 INDOOR_BIKE -> parseIndoorBike(value)
                 CPS_MEASUREMENT -> parseCps(value)
                 CONTROL_POINT -> onControlPointResponse(value)
+                FEC_TX -> parseFec(value)
             }
         }
 
@@ -338,6 +368,14 @@ object FtmsCenter {
     /** ERG mode: send a new target power (watts) to the trainer. */
     fun setTargetPower(watts: Int) {
         val g = trainerGatt ?: return
+        if (useFec) {
+            val q = (watts.coerceAtLeast(0) * 4).coerceAtMost(16000)   // 0.25 W units, max 4000 W
+            val ff = 0xFF.toByte()
+            enqueue(fecMessage(ANT_ACKNOWLEDGED, byteArrayOf(
+                FEC_PAGE_TARGET_POWER.toByte(), ff, ff, ff, ff, ff,
+                (q and 0xFF).toByte(), ((q shr 8) and 0xFF).toByte())))
+            return
+        }
         val svc = g.getService(FTMS) ?: return
         val cp = svc.getCharacteristic(CONTROL_POINT) ?: return
         val w = watts.coerceAtLeast(0)
@@ -355,7 +393,8 @@ object FtmsCenter {
     private fun pump() {
         if (writeBusy) return
         val g = trainerGatt ?: return
-        val cp = g.getService(FTMS)?.getCharacteristic(CONTROL_POINT) ?: return
+        val cp = (if (useFec) g.getService(TACX_FEC)?.getCharacteristic(FEC_RX)
+                  else g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)) ?: return
         val next = writeQueue.poll() ?: return
         writeBusy = true
         if (!writeNow(g, cp, next)) { writeBusy = false; pump() }   // rejected: try the next one
@@ -364,8 +403,41 @@ object FtmsCenter {
     @SuppressLint("MissingPermission")
     private fun writeNow(g: BluetoothGatt, cp: BluetoothGattCharacteristic, bytes: ByteArray): Boolean {
         cp.value = bytes
-        cp.writeType = BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+        cp.writeType = if (cp.properties and BluetoothGattCharacteristic.PROPERTY_WRITE != 0)
+            BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT else BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
         return try { g.writeCharacteristic(cp) } catch (e: Exception) { Log.w(TAG, e); false }
+    }
+
+    /** Wrap an 8-byte ANT+ data page into a BLE FE-C message with the XOR checksum. */
+    private fun fecMessage(msgId: Int, page: ByteArray): ByteArray {
+        val m = ByteArray(13)
+        m[0] = ANT_SYNC.toByte(); m[1] = 9; m[2] = msgId.toByte(); m[3] = FEC_CHANNEL.toByte()
+        System.arraycopy(page, 0, m, 4, 8)
+        var c = 0
+        for (i in 0 until 12) c = c xor (m[i].toInt() and 0xFF)
+        m[12] = c.toByte()
+        return m
+    }
+
+    /** Parse FE-C notifications (one or several ANT messages per packet). Page 0x19 carries cadence and power. */
+    private fun parseFec(b: ByteArray) {
+        var i = 0
+        while (i + 1 < b.size) {
+            if ((b[i].toInt() and 0xFF) != ANT_SYNC) { i++; continue }
+            val len = b[i + 1].toInt() and 0xFF
+            val total = len + 4
+            if (i + total > b.size) break
+            val id = b[i + 2].toInt() and 0xFF
+            if ((id == ANT_BROADCAST || id == ANT_ACKNOWLEDGED) && len == 9) {
+                val d = i + 4   // start of the 8 data bytes
+                if ((b[d].toInt() and 0xFF) == FEC_PAGE_TRAINER_DATA) {
+                    val cad = b[d + 2].toInt() and 0xFF
+                    if (cad != 0xFF) cadence.value = cad                      // 0xFF = invalid
+                    powerW.value = (b[d + 5].toInt() and 0xFF) or ((b[d + 6].toInt() and 0x0F) shl 8)
+                }
+            }
+            i += total
+        }
     }
 
     /** FTMS control point response: 0x80, request opcode, result (0x01 = success). */
