@@ -70,8 +70,19 @@ object FtmsCenter {
     val hrState = MutableStateFlow(ConnState.DISCONNECTED)
     val hrName = MutableStateFlow("")
 
+    /** True once the trainer's FTMS control point is ready, i.e. ERG targets can be sent. */
+    val ergAvailable = MutableStateFlow(false)
+
+    /** True while a BLE scan is running (drives the spinner on the Devices screen). */
+    val scanningState = MutableStateFlow(false)
+
     // --- Scan results (device + kind) ---
-    data class ScanHit(val device: BluetoothDevice, val name: String, val rssi: Int, val isTrainer: Boolean)
+    data class ScanHit(
+        val device: BluetoothDevice, val name: String, val rssi: Int,
+        val isTrainer: Boolean,
+        /** "FTMS", "FE-C" or "Cycling Power" for trainers; empty for heart-rate straps. */
+        val protocol: String = ""
+    )
     private val _scanResults = MutableSharedFlow<List<ScanHit>>(
         replay = 1, extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val scanResults: SharedFlow<List<ScanHit>> = _scanResults
@@ -79,7 +90,9 @@ object FtmsCenter {
     private var appContext: Context? = null
     private var trainerGatt: BluetoothGatt? = null
     private var hrGatt: BluetoothGatt? = null
-    private var scanning = false
+    private var scanning: Boolean
+        get() = scanningState.value
+        set(v) { scanningState.value = v }
     private val found = LinkedHashMap<String, ScanHit>()
     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
 
@@ -129,7 +142,13 @@ object FtmsCenter {
             val uuids = result.scanRecord?.serviceUuids
             val isTrainer = (uuids?.any { it.uuid == FTMS || it.uuid == TACX_FEC } ?: false) ||
                 name.contains("tacx", ignoreCase = true) || name.contains("neo", ignoreCase = true)
-            found[dev.address] = ScanHit(dev, name.ifBlank { dev.address }, result.rssi, isTrainer)
+            val protocol = when {
+                uuids?.any { it.uuid == FTMS } == true -> "FTMS"
+                uuids?.any { it.uuid == TACX_FEC } == true -> "FE-C"
+                isTrainer -> "Cycling Power"
+                else -> ""
+            }
+            found[dev.address] = ScanHit(dev, name.ifBlank { dev.address }, result.rssi, isTrainer, protocol)
             _scanResults.tryEmit(found.values.sortedByDescending { it.rssi })
         }
         override fun onScanFailed(errorCode: Int) { Log.e(TAG, "Scan failed: $errorCode"); scanning = false }
@@ -162,6 +181,7 @@ object FtmsCenter {
         trainerGatt = null; hrGatt = null
         trainerState.value = ConnState.DISCONNECTED
         hrState.value = ConnState.DISCONNECTED
+        ergAvailable.value = false
     }
 
     // --------------------------------------------------------------- GATT: trainer
@@ -172,6 +192,7 @@ object FtmsCenter {
                 BluetoothProfile.STATE_CONNECTED -> { g.discoverServices() }
                 BluetoothProfile.STATE_DISCONNECTED -> {
                     trainerGatt = null
+                    ergAvailable.value = false
                     trainerState.value = ConnState.DISCONNECTED
                 }
             }
@@ -189,6 +210,7 @@ object FtmsCenter {
                     trainerState.value = ConnState.DISCONNECTED; g.close(); return
                 }
                 Log.w(TAG, "No FTMS service; read-only via Cycling Power Service (no ERG)")
+                ergAvailable.value = false
                 trainerState.value = ConnState.CONNECTED
                 enableNotify(g, cps, indications = false)
                 return
@@ -204,6 +226,7 @@ object FtmsCenter {
 
         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
             if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
+                ergAvailable.value = true
                 trainerState.value = ConnState.CONNECTED
                 enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // take control before ERG writes
             }

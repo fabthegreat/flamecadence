@@ -3,6 +3,8 @@ package com.paceforge.trainer.engine
 import com.paceforge.trainer.PlannedWorkout
 import com.paceforge.trainer.Segment
 import com.paceforge.trainer.ble.FtmsCenter
+import android.media.AudioManager
+import android.media.ToneGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -24,10 +26,14 @@ object WorkoutEngine {
     val elapsedSec = MutableStateFlow(0)
     val targetW = MutableStateFlow(0)
     val segmentIndex = MutableStateFlow(0)
-    val bias = MutableStateFlow(0)   // manual offset in watts (+/- buttons)
+    val bias = MutableStateFlow(0)   // manual offset in watts (+/- buttons), cleared at each interval change
+    val beepEnabled = MutableStateFlow(false)  // audio cue 3 s before the next interval
 
     private var scope: CoroutineScope? = null
     private var tickJob: Job? = null
+    private val tone: ToneGenerator? by lazy {
+        try { ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80) } catch (e: RuntimeException) { null }
+    }
 
     fun attach(scope: CoroutineScope) { this.scope = scope }
 
@@ -87,8 +93,12 @@ object WorkoutEngine {
             idx = i
             if (i == w.segments.lastIndex && t >= 0) { idx = i; t = w.segments[i].durationSec }
         }
+        // Bias nudges only last until the end of the current interval.
+        if (idx != segmentIndex.value) bias.value = 0
         segmentIndex.value = idx
         val s: Segment = w.segments[idx]
+        if (beepEnabled.value && idx < w.segments.lastIndex && s.durationSec - t == 3)
+            tone?.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
         val frac = if (s.durationSec == 0) 1.0 else (t.toDouble() / s.durationSec).coerceIn(0.0, 1.0)
         val watts = (s.startW + (s.endW - s.startW) * frac).roundToInt() + bias.value
         targetW.value = (s.startW + (s.endW - s.startW) * frac).roundToInt()

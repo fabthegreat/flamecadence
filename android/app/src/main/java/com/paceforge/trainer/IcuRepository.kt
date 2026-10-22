@@ -7,9 +7,11 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 /** One flat, time-ordered slice of the workout (already resolved in watts). */
 data class Segment(
@@ -27,6 +29,14 @@ data class PlannedWorkout(
 ) {
     val totalSec: Int get() = segments.sumOf { it.durationSec }
 }
+
+/** Data for the Home "This week" card. Every field is optional: failures just hide it. */
+data class WeekSummary(
+    val ctlDelta: Int?,       // fitness (CTL) change over the last 7 days
+    val loadLabel: String?,   // fresh / neutral / loaded / overloaded (from TSB = CTL - ATL)
+    val nextName: String?,    // next planned workout after today
+    val nextWhen: String?     // "tomorrow" or the weekday name
+)
 
 /**
  * intervals.icu API client.
@@ -62,6 +72,81 @@ object IcuRepository {
                 parse(JSONArray(body), today)
             }
         }
+
+    private fun httpGet(url: String, apiKey: String): String {
+        val req = Request.Builder().url(url).header("Authorization", basicAuth(apiKey)).build()
+        http.newCall(req).execute().use { resp ->
+            if (!resp.isSuccessful) throw RuntimeException("intervals.icu HTTP ${resp.code}")
+            return resp.body?.string() ?: throw RuntimeException("Empty response")
+        }
+    }
+
+    /**
+     * Fitness trend (wellness endpoint) and the next planned workout, for the
+     * Home "This week" card. Never throws: each half fails independently.
+     */
+    suspend fun fetchWeek(apiKey: String, athleteId: String): WeekSummary =
+        withContext(Dispatchers.IO) {
+            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val cal = Calendar.getInstance()
+            val today = fmt.format(cal.time)
+            cal.add(Calendar.DAY_OF_YEAR, -7); val weekAgo = fmt.format(cal.time)
+            cal.add(Calendar.DAY_OF_YEAR, 8); val tomorrow = fmt.format(cal.time)
+            cal.add(Calendar.DAY_OF_YEAR, 13); val horizon = fmt.format(cal.time)
+            val base = "https://intervals.icu/api/v1/athlete/$athleteId"
+
+            var ctlDelta: Int? = null
+            var load: String? = null
+            try {
+                val arr = JSONArray(httpGet("$base/wellness?oldest=$weekAgo&newest=$today", apiKey))
+                var first: Double? = null
+                var last: Double? = null
+                var lastAtl: Double? = null
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    if (o.isNull("ctl")) continue
+                    val c = o.optDouble("ctl")
+                    if (first == null) first = c
+                    last = c
+                    lastAtl = if (o.isNull("atl")) null else o.optDouble("atl")
+                }
+                val f = first; val l = last; val a = lastAtl
+                if (f != null && l != null) {
+                    ctlDelta = (l - f).roundToInt()
+                    if (a != null) load = loadLabel(l - a)
+                }
+            } catch (e: Exception) { }
+
+            var nextName: String? = null
+            var nextWhen: String? = null
+            try {
+                val arr = JSONArray(httpGet("$base/events?category=WORKOUT&oldest=$tomorrow&newest=$horizon", apiKey))
+                var bestDate: String? = null
+                for (i in 0 until arr.length()) {
+                    val o = arr.getJSONObject(i)
+                    val d = o.optString("start_date_local", "").take(10)
+                    if (d.length < 10) continue
+                    if (bestDate == null || d < bestDate) {
+                        bestDate = d
+                        nextName = o.optString("name", "Workout")
+                    }
+                }
+                bestDate?.let { d ->
+                    nextWhen = if (d == tomorrow) "tomorrow"
+                    else fmt.parse(d)?.let { SimpleDateFormat("EEEE", Locale.getDefault()).format(it) } ?: d
+                }
+            } catch (e: Exception) { }
+
+            WeekSummary(ctlDelta, load, nextName, nextWhen)
+        }
+
+    /** Form (TSB = CTL - ATL) as a plain-language label. */
+    private fun loadLabel(tsb: Double): String = when {
+        tsb > 5 -> "fresh"
+        tsb > -10 -> "neutral"
+        tsb > -30 -> "loaded"
+        else -> "overloaded"
+    }
 
     private fun parse(events: JSONArray, today: String): List<PlannedWorkout> {
         val out = ArrayList<PlannedWorkout>()

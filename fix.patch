@@ -1,193 +1,1403 @@
---- a/android/app/src/main/AndroidManifest.xml
-+++ b/android/app/src/main/AndroidManifest.xml
-@@ -18,7 +18,8 @@
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt b/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt	2026-10-22 18:07:30.442383829 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/IcuRepository.kt	2026-10-22 18:07:30.445588578 +0000
+@@ -7,9 +7,11 @@
+ import org.json.JSONArray
+ import org.json.JSONObject
+ import java.text.SimpleDateFormat
++import java.util.Calendar
+ import java.util.Date
+ import java.util.Locale
+ import java.util.concurrent.TimeUnit
++import kotlin.math.roundToInt
  
-     <application
-         android:label="PaceForge Trainer"
--        android:icon="@android:drawable/ic_menu_manage"
-+        android:icon="@mipmap/ic_launcher"
-+        android:roundIcon="@mipmap/ic_launcher_round"
-         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+ /** One flat, time-ordered slice of the workout (already resolved in watts). */
+ data class Segment(
+@@ -28,6 +30,14 @@
+     val totalSec: Int get() = segments.sumOf { it.durationSec }
+ }
  
-         <activity android:name=".MainActivity" android:exported="true"
---- a/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt
-+++ b/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt
-@@ -26,6 +26,12 @@
-     val cadence by FtmsCenter.cadence.collectAsState()
-     val hr by FtmsCenter.hrBpm.collectAsState()
- 
-+    // 1 Hz actual-power history for the full-workout chart
-+    val history = remember { mutableStateListOf<Pair<Int, Int>>() }
-+    LaunchedEffect(elapsed) {
-+        if (status == WorkoutEngine.Status.RUNNING) history.add(elapsed to power)
-+    }
++/** Data for the Home "This week" card. Every field is optional: failures just hide it. */
++data class WeekSummary(
++    val ctlDelta: Int?,       // fitness (CTL) change over the last 7 days
++    val loadLabel: String?,   // fresh / neutral / loaded / overloaded (from TSB = CTL - ATL)
++    val nextName: String?,    // next planned workout after today
++    val nextWhen: String?     // "tomorrow" or the weekday name
++)
 +
-     val w = workout
-     val total = w?.totalSec ?: 0
-     val next = w?.segments?.getOrNull((segIdx + 1).coerceAtMost((w.segments.size - 1).coerceAtLeast(0)))
-@@ -43,6 +49,10 @@
-                 fontSize = 13.sp)
+ /**
+  * intervals.icu API client.
+  * Docs: https://intervals.icu/api-docs.html  (Basic auth: "API_Key" / <your key>)
+@@ -63,6 +73,81 @@
+             }
          }
  
-+        // Full workout profile + live progression
-+        WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
-+            Modifier.fillMaxWidth().height(160.dp))
++    private fun httpGet(url: String, apiKey: String): String {
++        val req = Request.Builder().url(url).header("Authorization", basicAuth(apiKey)).build()
++        http.newCall(req).execute().use { resp ->
++            if (!resp.isSuccessful) throw RuntimeException("intervals.icu HTTP ${resp.code}")
++            return resp.body?.string() ?: throw RuntimeException("Empty response")
++        }
++    }
 +
-         Spacer(Modifier.height(16.dp))
- 
-         // Target power — the big number
---- /dev/null
-+++ b/android/app/src/main/java/com/paceforge/trainer/ui/WorkoutChart.kt
-@@ -0,0 +1,89 @@
-+package com.paceforge.trainer.ui
++    /**
++     * Fitness trend (wellness endpoint) and the next planned workout, for the
++     * Home "This week" card. Never throws: each half fails independently.
++     */
++    suspend fun fetchWeek(apiKey: String, athleteId: String): WeekSummary =
++        withContext(Dispatchers.IO) {
++            val fmt = SimpleDateFormat("yyyy-MM-dd", Locale.US)
++            val cal = Calendar.getInstance()
++            val today = fmt.format(cal.time)
++            cal.add(Calendar.DAY_OF_YEAR, -7); val weekAgo = fmt.format(cal.time)
++            cal.add(Calendar.DAY_OF_YEAR, 8); val tomorrow = fmt.format(cal.time)
++            cal.add(Calendar.DAY_OF_YEAR, 13); val horizon = fmt.format(cal.time)
++            val base = "https://intervals.icu/api/v1/athlete/$athleteId"
 +
-+import androidx.compose.foundation.Canvas
-+import androidx.compose.runtime.Composable
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.geometry.Offset
-+import androidx.compose.ui.geometry.Size
-+import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.Path
-+import androidx.compose.ui.graphics.drawscope.Stroke
-+import androidx.compose.ui.unit.dp
-+import com.paceforge.trainer.Segment
++            var ctlDelta: Int? = null
++            var load: String? = null
++            try {
++                val arr = JSONArray(httpGet("$base/wellness?oldest=$weekAgo&newest=$today", apiKey))
++                var first: Double? = null
++                var last: Double? = null
++                var lastAtl: Double? = null
++                for (i in 0 until arr.length()) {
++                    val o = arr.getJSONObject(i)
++                    if (o.isNull("ctl")) continue
++                    val c = o.optDouble("ctl")
++                    if (first == null) first = c
++                    last = c
++                    lastAtl = if (o.isNull("atl")) null else o.optDouble("atl")
++                }
++                val f = first; val l = last; val a = lastAtl
++                if (f != null && l != null) {
++                    ctlDelta = (l - f).roundToInt()
++                    if (a != null) load = loadLabel(l - a)
++                }
++            } catch (e: Exception) { }
++
++            var nextName: String? = null
++            var nextWhen: String? = null
++            try {
++                val arr = JSONArray(httpGet("$base/events?category=WORKOUT&oldest=$tomorrow&newest=$horizon", apiKey))
++                var bestDate: String? = null
++                for (i in 0 until arr.length()) {
++                    val o = arr.getJSONObject(i)
++                    val d = o.optString("start_date_local", "").take(10)
++                    if (d.length < 10) continue
++                    if (bestDate == null || d < bestDate) {
++                        bestDate = d
++                        nextName = o.optString("name", "Workout")
++                    }
++                }
++                bestDate?.let { d ->
++                    nextWhen = if (d == tomorrow) "tomorrow"
++                    else fmt.parse(d)?.let { SimpleDateFormat("EEEE", Locale.getDefault()).format(it) } ?: d
++                }
++            } catch (e: Exception) { }
++
++            WeekSummary(ctlDelta, load, nextName, nextWhen)
++        }
++
++    /** Form (TSB = CTL - ATL) as a plain-language label. */
++    private fun loadLabel(tsb: Double): String = when {
++        tsb > 5 -> "fresh"
++        tsb > -10 -> "neutral"
++        tsb > -30 -> "loaded"
++        else -> "overloaded"
++    }
++
+     private fun parse(events: JSONArray, today: String): List<PlannedWorkout> {
+         val out = ArrayList<PlannedWorkout>()
+         for (i in 0 until events.length()) {
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/SecretBox.kt b/android/app/src/main/java/com/paceforge/trainer/SecretBox.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/SecretBox.kt	1970-01-01 00:00:00.000000000 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/SecretBox.kt	2026-10-22 18:07:30.445575922 +0000
+@@ -0,0 +1,62 @@
++package com.paceforge.trainer
++
++import android.security.keystore.KeyGenParameterSpec
++import android.security.keystore.KeyProperties
++import android.util.Base64
++import java.security.KeyStore
++import javax.crypto.Cipher
++import javax.crypto.KeyGenerator
++import javax.crypto.SecretKey
++import javax.crypto.spec.GCMParameterSpec
 +
 +/**
-+ * Full-workout power profile chart, TrainerRoad-style.
-+ *
-+ *  - Golden filled steps/ramps: the planned target power for the whole session.
-+ *  - White line: actual power recorded during the ride (1 Hz).
-+ *  - Vertical cursor + dimmed overlay: where you are in the workout.
++ * AES-256-GCM encryption backed by the Android Keystore, used to keep the
++ * intervals.icu API key encrypted at rest. The key material never leaves the
++ * Keystore; only the ciphertext is written to DataStore.
 + */
-+@Composable
-+fun WorkoutChart(
-+    segments: List<Segment>,
-+    totalSec: Int,
-+    elapsedSec: Int,
-+    history: List<Pair<Int, Int>>,   // (elapsedSec, actualW)
-+    modifier: Modifier = Modifier
-+) {
-+    val target = Color(0xFFFF9D00)
-+    val targetFill = target.copy(alpha = 0.35f)
-+    val actual = Color.White
-+    val cursor = Color(0xFFFFD166)
-+    val dimmed = Color.Black.copy(alpha = 0.35f)
++object SecretBox {
++    private const val ALIAS = "paceforge_icu_key"
++    private const val PREFIX = "enc1:"
++    private const val IV_BYTES = 12
 +
-+    Canvas(modifier) {
-+        if (totalSec <= 0) return@Canvas
++    private fun key(): SecretKey {
++        val ks = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
++        (ks.getKey(ALIAS, null) as? SecretKey)?.let { return it }
++        val gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
++        gen.init(
++            KeyGenParameterSpec.Builder(ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
++                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
++                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
++                .setKeySize(256)
++                .build()
++        )
++        return gen.generateKey()
++    }
 +
-+        val maxTarget = segments.maxOf { maxOf(it.startW, it.endW) }
-+        val maxActual = history.maxOfOrNull { it.second.toDouble() } ?: 0.0
-+        val maxW = maxOf(maxTarget, maxActual, 50.0)
++    fun encrypt(plain: String): String {
++        if (plain.isEmpty()) return ""
++        val c = Cipher.getInstance("AES/GCM/NoPadding")
++        c.init(Cipher.ENCRYPT_MODE, key())
++        val ct = c.doFinal(plain.toByteArray(Charsets.UTF_8))
++        return PREFIX + Base64.encodeToString(c.iv + ct, Base64.NO_WRAP)
++    }
 +
-+        val w = size.width
-+        val h = size.height
-+        fun x(t: Int) = t.toFloat() / totalSec * w
-+        fun y(p: Double) = h - (p / maxW * h).toFloat()
-+
-+        // --- Target profile: filled steps/ramps ---
-+        val fill = Path()
-+        var t = 0
-+        fill.moveTo(0f, y(0.0))
-+        for (s in segments) {
-+            fill.lineTo(x(t), y(s.startW))
-+            fill.lineTo(x(t + s.durationSec), y(s.endW))
-+            t += s.durationSec
-+        }
-+        fill.lineTo(w, y(0.0))
-+        fill.close()
-+        drawPath(fill, targetFill)
-+
-+        // --- Target profile: outline ---
-+        val outline = Path()
-+        var started = false
-+        t = 0
-+        for (s in segments) {
-+            if (!started) { outline.moveTo(x(t), y(s.startW)); started = true }
-+            outline.lineTo(x(t + s.durationSec), y(s.endW))
-+            t += s.durationSec
-+        }
-+        if (started) drawPath(outline, target, style = Stroke(width = 2.dp.toPx()))
-+
-+        // --- Actual power progression ---
-+        if (history.size > 1) {
-+            val ap = Path()
-+            history.forEachIndexed { i, (sec, watts) ->
-+                val px = x(sec)
-+                val py = y(watts.toDouble())
-+                if (i == 0) ap.moveTo(px, py) else ap.lineTo(px, py)
-+            }
-+            drawPath(ap, actual, style = Stroke(width = 2.dp.toPx()))
-+        }
-+
-+        // --- Elapsed cursor + dim completed region ---
-+        if (elapsedSec > 0) {
-+            val cx = x(elapsedSec)
-+            drawRect(dimmed, topLeft = Offset.Zero, size = Size(cx, h))
-+            drawLine(cursor, Offset(cx, 0f), Offset(cx, h), strokeWidth = 1.5.dp.toPx())
++    /**
++     * Values without the prefix are keys saved by an older build in plain text:
++     * they are returned as-is and get encrypted the next time Settings is saved.
++     * If decryption fails (e.g. Keystore wiped after a restore) the key is
++     * treated as unset and the user simply re-enters it.
++     */
++    fun decrypt(stored: String): String {
++        if (stored.isEmpty()) return ""
++        if (!stored.startsWith(PREFIX)) return stored
++        return try {
++            val raw = Base64.decode(stored.removePrefix(PREFIX), Base64.NO_WRAP)
++            val c = Cipher.getInstance("AES/GCM/NoPadding")
++            c.init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, raw.copyOfRange(0, IV_BYTES)))
++            String(c.doFinal(raw, IV_BYTES, raw.size - IV_BYTES), Charsets.UTF_8)
++        } catch (e: Exception) {
++            ""
 +        }
 +    }
 +}
---- /dev/null
-+++ b/android/app/src/main/res/drawable/ic_launcher_foreground.xml
-@@ -0,0 +1,35 @@
-+<vector xmlns:android="http://schemas.android.com/apk/res/android"
-+    android:width="108dp"
-+    android:height="108dp"
-+    android:viewportWidth="108"
-+    android:viewportHeight="108">
-+    <!-- PaceForge logo (flame + lightning bolt), centered in the adaptive-icon safe zone -->
-+    <group
-+        android:translateX="21.6"
-+        android:translateY="21.6"
-+        android:scaleX="1.35"
-+        android:scaleY="1.35">
-+        <!-- flame glow (was the SVG gaussian blur layer) -->
-+        <path
-+            android:fillColor="#FF4B00"
-+            android:fillAlpha="0.35"
-+            android:pathData="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" />
-+        <!-- flame -->
-+        <path
-+            android:fillColor="#FF7A00"
-+            android:pathData="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" />
-+        <!-- lightning bolt -->
-+        <path
-+            android:fillColor="#FFFBE9"
-+            android:strokeColor="#FFFFFF"
-+            android:strokeWidth="0.45"
-+            android:strokeLineJoin="round"
-+            android:pathData="M27 14 18 27h7l-3 10 12-17h-8z" />
-+        <!-- sparks -->
-+        <path
-+            android:strokeColor="#FFD166"
-+            android:strokeWidth="1.5"
-+            android:strokeLineCap="round"
-+            android:pathData="M7 14h5M36 8l3-2M39 34l3 2" />
-+    </group>
-+</vector>
---- /dev/null
-+++ b/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-@@ -0,0 +1,6 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-+    <background android:drawable="@color/ic_launcher_background" />
-+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
-+</adaptive-icon>
---- /dev/null
-+++ b/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
-@@ -0,0 +1,6 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-+    <background android:drawable="@color/ic_launcher_background" />
-+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
-+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
-+</adaptive-icon>
---- /dev/null
-+++ b/android/app/src/main/res/values/colors.xml
-@@ -0,0 +1,4 @@
-+<?xml version="1.0" encoding="utf-8"?>
-+<resources>
-+    <color name="ic_launcher_background">#10151C</color>
-+</resources>
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/SettingsStore.kt b/android/app/src/main/java/com/paceforge/trainer/SettingsStore.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/SettingsStore.kt	2026-10-22 18:07:30.442372092 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/SettingsStore.kt	2026-10-22 18:07:30.445218953 +0000
+@@ -1,6 +1,7 @@
+ package com.paceforge.trainer
+ 
+ import android.content.Context
++import androidx.datastore.preferences.core.booleanPreferencesKey
+ import androidx.datastore.preferences.core.edit
+ import androidx.datastore.preferences.core.stringPreferencesKey
+ import androidx.datastore.preferences.preferencesDataStore
+@@ -9,22 +10,50 @@
+ 
+ val Context.settings by preferencesDataStore("settings")
+ 
+-data class AppSettings(val apiKey: String, val athleteId: String)
++data class AppSettings(
++    val apiKey: String,
++    val athleteId: String,
++    /** Skip the save prompt and upload the finished ride straight away. */
++    val autoUpload: Boolean = true,
++    /** Audio cue 3 s before each interval change. */
++    val beep: Boolean = false,
++    /** Keep the screen on while the player is open. */
++    val keepAwake: Boolean = true
++)
+ 
+ object SettingsStore {
+     private val KEY_API = stringPreferencesKey("icu_api_key")
+     private val KEY_ATHLETE = stringPreferencesKey("icu_athlete_id")
++    private val KEY_AUTO_UPLOAD = booleanPreferencesKey("auto_upload")
++    private val KEY_BEEP = booleanPreferencesKey("beep_interval")
++    private val KEY_AWAKE = booleanPreferencesKey("keep_awake")
+ 
+     /**
+      * Emits null until the persisted file has actually been read, so the UI can
+      * tell "still loading" apart from "no API key saved" — this was the source of
+      * the app occasionally asking to re-enter a key that was in fact saved.
++     * The API key is stored encrypted (see [SecretBox]) and decrypted here.
+      */
+     fun flow(ctx: Context): Flow<AppSettings?> = ctx.settings.data.map { p ->
+-        AppSettings(p[KEY_API] ?: "", p[KEY_ATHLETE].let { if (it.isNullOrEmpty()) "0" else it })
++        AppSettings(
++            apiKey = SecretBox.decrypt(p[KEY_API] ?: ""),
++            athleteId = p[KEY_ATHLETE].let { if (it.isNullOrEmpty()) "0" else it },
++            autoUpload = p[KEY_AUTO_UPLOAD] ?: true,
++            beep = p[KEY_BEEP] ?: false,
++            keepAwake = p[KEY_AWAKE] ?: true
++        )
+     }
+ 
+-    suspend fun save(ctx: Context, apiKey: String, athleteId: String) {
+-        ctx.settings.edit { it[KEY_API] = apiKey.trim(); it[KEY_ATHLETE] = athleteId.trim().ifEmpty { "0" } }
++    suspend fun save(
++        ctx: Context, apiKey: String, athleteId: String,
++        autoUpload: Boolean, beep: Boolean, keepAwake: Boolean
++    ) {
++        ctx.settings.edit {
++            it[KEY_API] = SecretBox.encrypt(apiKey.trim())
++            it[KEY_ATHLETE] = athleteId.trim().ifEmpty { "0" }
++            it[KEY_AUTO_UPLOAD] = autoUpload
++            it[KEY_BEEP] = beep
++            it[KEY_AWAKE] = keepAwake
++        }
+     }
+ }
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt b/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 18:07:30.442512838 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 18:07:30.445522343 +0000
+@@ -70,8 +70,19 @@
+     val hrState = MutableStateFlow(ConnState.DISCONNECTED)
+     val hrName = MutableStateFlow("")
+ 
++    /** True once the trainer's FTMS control point is ready, i.e. ERG targets can be sent. */
++    val ergAvailable = MutableStateFlow(false)
++
++    /** True while a BLE scan is running (drives the spinner on the Devices screen). */
++    val scanningState = MutableStateFlow(false)
++
+     // --- Scan results (device + kind) ---
+-    data class ScanHit(val device: BluetoothDevice, val name: String, val rssi: Int, val isTrainer: Boolean)
++    data class ScanHit(
++        val device: BluetoothDevice, val name: String, val rssi: Int,
++        val isTrainer: Boolean,
++        /** "FTMS", "FE-C" or "Cycling Power" for trainers; empty for heart-rate straps. */
++        val protocol: String = ""
++    )
+     private val _scanResults = MutableSharedFlow<List<ScanHit>>(
+         replay = 1, extraBufferCapacity = 16, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+     val scanResults: SharedFlow<List<ScanHit>> = _scanResults
+@@ -79,7 +90,9 @@
+     private var appContext: Context? = null
+     private var trainerGatt: BluetoothGatt? = null
+     private var hrGatt: BluetoothGatt? = null
+-    private var scanning = false
++    private var scanning: Boolean
++        get() = scanningState.value
++        set(v) { scanningState.value = v }
+     private val found = LinkedHashMap<String, ScanHit>()
+     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
+ 
+@@ -129,7 +142,13 @@
+             val uuids = result.scanRecord?.serviceUuids
+             val isTrainer = (uuids?.any { it.uuid == FTMS || it.uuid == TACX_FEC } ?: false) ||
+                 name.contains("tacx", ignoreCase = true) || name.contains("neo", ignoreCase = true)
+-            found[dev.address] = ScanHit(dev, name.ifBlank { dev.address }, result.rssi, isTrainer)
++            val protocol = when {
++                uuids?.any { it.uuid == FTMS } == true -> "FTMS"
++                uuids?.any { it.uuid == TACX_FEC } == true -> "FE-C"
++                isTrainer -> "Cycling Power"
++                else -> ""
++            }
++            found[dev.address] = ScanHit(dev, name.ifBlank { dev.address }, result.rssi, isTrainer, protocol)
+             _scanResults.tryEmit(found.values.sortedByDescending { it.rssi })
+         }
+         override fun onScanFailed(errorCode: Int) { Log.e(TAG, "Scan failed: $errorCode"); scanning = false }
+@@ -162,6 +181,7 @@
+         trainerGatt = null; hrGatt = null
+         trainerState.value = ConnState.DISCONNECTED
+         hrState.value = ConnState.DISCONNECTED
++        ergAvailable.value = false
+     }
+ 
+     // --------------------------------------------------------------- GATT: trainer
+@@ -172,6 +192,7 @@
+                 BluetoothProfile.STATE_CONNECTED -> { g.discoverServices() }
+                 BluetoothProfile.STATE_DISCONNECTED -> {
+                     trainerGatt = null
++                    ergAvailable.value = false
+                     trainerState.value = ConnState.DISCONNECTED
+                 }
+             }
+@@ -189,6 +210,7 @@
+                     trainerState.value = ConnState.DISCONNECTED; g.close(); return
+                 }
+                 Log.w(TAG, "No FTMS service; read-only via Cycling Power Service (no ERG)")
++                ergAvailable.value = false
+                 trainerState.value = ConnState.CONNECTED
+                 enableNotify(g, cps, indications = false)
+                 return
+@@ -204,6 +226,7 @@
+ 
+         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
+             if (descriptor.characteristic?.uuid == CONTROL_POINT && status == BluetoothGatt.GATT_SUCCESS) {
++                ergAvailable.value = true
+                 trainerState.value = ConnState.CONNECTED
+                 enqueue(byteArrayOf(OP_REQUEST_CONTROL.toByte()))  // take control before ERG writes
+             }
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/engine/WorkoutEngine.kt b/android/app/src/main/java/com/paceforge/trainer/engine/WorkoutEngine.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/engine/WorkoutEngine.kt	2026-10-22 18:07:30.442568065 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/engine/WorkoutEngine.kt	2026-10-22 18:07:30.445560705 +0000
+@@ -3,6 +3,8 @@
+ import com.paceforge.trainer.PlannedWorkout
+ import com.paceforge.trainer.Segment
+ import com.paceforge.trainer.ble.FtmsCenter
++import android.media.AudioManager
++import android.media.ToneGenerator
+ import kotlinx.coroutines.CoroutineScope
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.delay
+@@ -24,10 +26,14 @@
+     val elapsedSec = MutableStateFlow(0)
+     val targetW = MutableStateFlow(0)
+     val segmentIndex = MutableStateFlow(0)
+-    val bias = MutableStateFlow(0)   // manual offset in watts (+/- buttons)
++    val bias = MutableStateFlow(0)   // manual offset in watts (+/- buttons), cleared at each interval change
++    val beepEnabled = MutableStateFlow(false)  // audio cue 3 s before the next interval
+ 
+     private var scope: CoroutineScope? = null
+     private var tickJob: Job? = null
++    private val tone: ToneGenerator? by lazy {
++        try { ToneGenerator(AudioManager.STREAM_NOTIFICATION, 80) } catch (e: RuntimeException) { null }
++    }
+ 
+     fun attach(scope: CoroutineScope) { this.scope = scope }
+ 
+@@ -87,8 +93,12 @@
+             idx = i
+             if (i == w.segments.lastIndex && t >= 0) { idx = i; t = w.segments[i].durationSec }
+         }
++        // Bias nudges only last until the end of the current interval.
++        if (idx != segmentIndex.value) bias.value = 0
+         segmentIndex.value = idx
+         val s: Segment = w.segments[idx]
++        if (beepEnabled.value && idx < w.segments.lastIndex && s.durationSec - t == 3)
++            tone?.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
+         val frac = if (s.durationSec == 0) 1.0 else (t.toDouble() / s.durationSec).coerceIn(0.0, 1.0)
+         val watts = (s.startW + (s.endW - s.startW) * frac).roundToInt() + bias.value
+         targetW.value = (s.startW + (s.endW - s.startW) * frac).roundToInt()
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/ui/Components.kt b/android/app/src/main/java/com/paceforge/trainer/ui/Components.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/ui/Components.kt	1970-01-01 00:00:00.000000000 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/ui/Components.kt	2026-10-22 18:07:30.445463982 +0000
+@@ -0,0 +1,139 @@
++package com.paceforge.trainer.ui
++
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.*
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material3.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.graphics.Brush
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.unit.Dp
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import com.paceforge.trainer.R
++
++/** Small rounded status badge, e.g. "Tacx NEO 2T · connected". */
++@Composable
++fun StatusPill(text: String, color: Color) {
++    val shape = RoundedCornerShape(50)
++    Row(
++        Modifier
++            .clip(shape)
++            .background(color.copy(alpha = 0.12f))
++            .border(1.dp, color.copy(alpha = 0.35f), shape)
++            .padding(horizontal = 10.dp, vertical = 4.dp),
++        verticalAlignment = Alignment.CenterVertically,
++        horizontalArrangement = Arrangement.spacedBy(6.dp)
++    ) {
++        Box(Modifier.size(7.dp).background(color, CircleShape))
++        Text(text, fontSize = 11.sp, color = color)
++    }
++}
++
++@Composable
++fun ForgeCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
++    val shape = RoundedCornerShape(16.dp)
++    Column(
++        modifier
++            .fillMaxWidth()
++            .background(Forge.Card, shape)
++            .border(1.dp, Forge.CardBorder, shape)
++            .padding(14.dp),
++        content = content
++    )
++}
++
++/** Orange gradient call-to-action button. */
++@Composable
++fun PrimaryButton(text: String, modifier: Modifier = Modifier, enabled: Boolean = true, onClick: () -> Unit) {
++    val brush = if (enabled) Brush.verticalGradient(listOf(Forge.Amber, Forge.Orange))
++                else Brush.verticalGradient(listOf(Forge.Disabled, Forge.Disabled))
++    Box(
++        modifier
++            .clip(RoundedCornerShape(12.dp))
++            .background(brush)
++            .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
++            .padding(vertical = 12.dp),
++        contentAlignment = Alignment.Center
++    ) {
++        Text(text, color = if (enabled) Forge.OnPrimary else Forge.Off,
++            fontWeight = FontWeight.Bold, fontSize = 14.sp)
++    }
++}
++
++/** Outlined secondary button. */
++@Composable
++fun GhostButton(text: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
++    val shape = RoundedCornerShape(12.dp)
++    Box(
++        modifier
++            .clip(shape)
++            .border(1.dp, Forge.GhostBorder, shape)
++            .clickable(role = Role.Button, onClick = onClick)
++            .padding(vertical = 12.dp),
++        contentAlignment = Alignment.Center
++    ) {
++        Text(text, color = Forge.GhostText, fontWeight = FontWeight.Bold, fontSize = 14.sp)
++    }
++}
++
++/** Compact control used in the player's button row (−10 W / +10 W / Pause / End). */
++@Composable
++fun ForgeChip(text: String, modifier: Modifier = Modifier, accent: Boolean = false, onClick: () -> Unit) {
++    val shape = RoundedCornerShape(10.dp)
++    Box(
++        modifier
++            .clip(shape)
++            .background(if (accent) Forge.AccentChipBg else Forge.ChipBg)
++            .border(1.dp, if (accent) Forge.AccentChipBorder else Forge.GhostBorder, shape)
++            .clickable(role = Role.Button, onClick = onClick)
++            .padding(vertical = 11.dp),
++        contentAlignment = Alignment.Center
++    ) {
++        Text(text, fontSize = 13.sp, color = if (accent) Forge.Amber else Forge.GhostText)
++    }
++}
++
++@Composable
++fun SectionTitle(text: String) {
++    Text(text, fontSize = 16.sp, fontWeight = FontWeight.Bold,
++        modifier = Modifier.padding(start = 4.dp, top = 14.dp, bottom = 10.dp))
++}
++
++/** "◀ Title" header for sub-screens. With onBack = null it renders the title only. */
++@Composable
++fun BackHeader(title: String, onBack: (() -> Unit)?, modifier: Modifier = Modifier) {
++    val m = if (onBack != null)
++        modifier.clip(RoundedCornerShape(8.dp)).clickable(role = Role.Button, onClick = onBack)
++    else modifier
++    Text(
++        (if (onBack != null) "◀  " else "") + title,
++        modifier = m.padding(horizontal = 4.dp, vertical = 10.dp),
++        fontSize = 13.sp, fontWeight = FontWeight.Bold, color = Forge.Header,
++        maxLines = 1, overflow = TextOverflow.Ellipsis
++    )
++}
++
++/** PaceForge flame + bolt on a dark rounded tile (reuses the launcher foreground). */
++@Composable
++fun ForgeLogo(size: Dp) {
++    val shape = RoundedCornerShape(size * 0.28f)
++    Box(
++        Modifier.size(size).clip(shape).background(Color(0xFF10151C))
++            .border(1.dp, Color(0xFF526170), shape)
++    ) {
++        Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "PaceForge",
++            modifier = Modifier.fillMaxSize())
++    }
++}
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt b/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 18:07:30.442434402 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-22 18:07:30.445311094 +0000
+@@ -1,22 +1,46 @@
+ package com.paceforge.trainer.ui
+ 
++import androidx.activity.compose.BackHandler
+ import androidx.compose.foundation.layout.*
+-import androidx.compose.material3.*
++import androidx.compose.material3.AlertDialog
++import androidx.compose.material3.CircularProgressIndicator
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.material3.TextButton
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.Brush
+ import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.platform.LocalView
++import androidx.compose.ui.text.TextStyle
+ import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import com.paceforge.trainer.IcuUpload
+ import com.paceforge.trainer.PlannedWorkout
++import com.paceforge.trainer.Segment
+ import com.paceforge.trainer.SessionPoint
+ import com.paceforge.trainer.SettingsStore
+ import com.paceforge.trainer.ble.FtmsCenter
+ import com.paceforge.trainer.engine.WorkoutEngine
+ import kotlinx.coroutines.launch
++import java.util.Locale
++
++private fun clock(sec: Int) = "${sec / 60}:${"%02d".format(sec % 60)}"
++
++private fun nextLabel(s: Segment): String {
++    val dur = when {
++        s.durationSec % 60 == 0 -> "${s.durationSec / 60} min"
++        s.durationSec < 60 -> "${s.durationSec} s"
++        else -> clock(s.durationSec)
++    }
++    val watts = if (s.startW.toInt() == s.endW.toInt()) "${s.startW.toInt()} W"
++                else "${s.startW.toInt()}–${s.endW.toInt()} W"
++    return "$dur @ $watts"
++}
+ 
+ @Composable
+ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Unit) {
+@@ -31,10 +55,19 @@
+     val power by FtmsCenter.powerW.collectAsState()
+     val cadence by FtmsCenter.cadence.collectAsState()
+     val hr by FtmsCenter.hrBpm.collectAsState()
++    val ergOk by FtmsCenter.ergAvailable.collectAsState()
+ 
+     val ctx = androidx.compose.ui.platform.LocalContext.current
+     val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
+-    val scope = rememberCoroutineScope()
++
++    // Preferences that act during the workout
++    val s = settings
++    LaunchedEffect(s?.beep) { WorkoutEngine.beepEnabled.value = s?.beep == true }
++    val view = LocalView.current
++    DisposableEffect(s?.keepAwake) {
++        view.keepScreenOn = s?.keepAwake ?: true
++        onDispose { view.keepScreenOn = false }
++    }
+ 
+     // 1 Hz session recording (power + hr + cadence) for the chart and the upload
+     val session = remember { mutableStateListOf<SessionPoint>() }
+@@ -58,86 +91,111 @@
+ 
+     val w = workout
+     val total = w?.totalSec ?: 0
+-    val next = w?.segments?.getOrNull((segIdx + 1).coerceAtMost((w.segments.size - 1).coerceAtLeast(0)))
++    val next = w?.segments?.getOrNull(segIdx + 1)
++    val active = status == WorkoutEngine.Status.RUNNING || status == WorkoutEngine.Status.PAUSED
++
++    fun endWorkout() {
++        WorkoutEngine.stop()
++        if (session.isEmpty()) onExit() else askSave = true
++    }
++
++    // Leaving mid-ride needs a confirmation; on the save screen the rider must save or discard.
++    var confirmEnd by remember { mutableStateOf(false) }
++    fun requestBack() {
++        if (active) confirmEnd = true
++        else if (!askSave) onExit()
++    }
++    BackHandler { requestBack() }
++    if (confirmEnd) {
++        AlertDialog(
++            onDismissRequest = { confirmEnd = false },
++            title = { Text("End workout?") },
++            text = { Text("The ride so far can still be saved to intervals.icu.") },
++            confirmButton = { TextButton(onClick = { confirmEnd = false; endWorkout() }) { Text("End workout") } },
++            dismissButton = { TextButton(onClick = { confirmEnd = false }) { Text("Keep riding") } }
++        )
++    }
++
++    if (askSave) {
++        // ---------------------------------------------------------- end of ride
++        Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
++            BackHeader(w?.name ?: "PaceForge workout", onBack = null)
++            // elapsed = 0: no cursor / dimming, the whole session is traced in white
++            WorkoutChart(w?.segments ?: emptyList(), total, 0, history,
++                Modifier.fillMaxWidth().height(150.dp).padding(top = 4.dp))
++            Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
++                SaveSection(
++                    name = w?.name ?: "PaceForge workout",
++                    points = session.toList(),
++                    startMs = startMs.value ?: System.currentTimeMillis(),
++                    apiKey = s?.apiKey ?: "",
++                    athleteId = s?.athleteId ?: "0",
++                    autoUpload = s?.autoUpload ?: false,
++                    onDone = { session.clear(); onExit() }
++                )
++            }
++        }
++        return
++    }
+ 
+-    Column(Modifier.fillMaxSize().padding(pad).padding(16.dp),
++    // ---------------------------------------------------------------- player
++    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp),
+         horizontalAlignment = Alignment.CenterHorizontally) {
+ 
+-        // Header: name + ERG badge
+-        Row(verticalAlignment = Alignment.CenterVertically) {
+-            Text(w?.name ?: "No workout", fontSize = 18.sp, fontWeight = FontWeight.Bold)
++        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
++            verticalAlignment = Alignment.CenterVertically) {
++            BackHeader(w?.name ?: "No workout", onBack = { requestBack() }, modifier = Modifier.weight(1f, fill = false))
+             if (total > 0) {
+                 Spacer(Modifier.width(8.dp))
+-                StatusPill("ERG", Color(0xFFFFC24D))
++                if (ergOk) StatusPill("ERG", Forge.Green) else StatusPill("NO ERG · read-only", Forge.Warn)
+             }
+         }
+-        Spacer(Modifier.height(10.dp))
+ 
+-        // Progress
+         if (total > 0) {
+-            LinearProgressIndicator(progress = { elapsed.toFloat() / total }, Modifier.fillMaxWidth())
+-            Spacer(Modifier.height(6.dp))
+-            Text("${elapsed / 60}:${"%02d".format(elapsed % 60)} / ${total / 60}:${"%02d".format(total % 60)}"
+-                + (next?.let {
+-                    "  ·  next: ${it.durationSec / 60} min @ " +
+-                        if (it.startW == it.endW) "${it.startW.toInt()} W"
+-                        else "${it.startW.toInt()}–${it.endW.toInt()} W"
+-                } ?: ""),
+-                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
++            Text("${clock(elapsed)} / ${clock(total)}" + (next?.let { "  ·  next: ${nextLabel(it)}" } ?: ""),
++                fontSize = 12.sp, color = Forge.Header, textAlign = TextAlign.Center,
++                modifier = Modifier.padding(top = 6.dp))
+         }
+ 
+         // Full workout profile + live progression
+         WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
+-            Modifier.fillMaxWidth().height(160.dp))
+-
+-        Spacer(Modifier.height(12.dp))
++            Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
+ 
+         // Target power — the hero number
+-        Text("$target W", fontSize = 64.sp, fontWeight = FontWeight.Black,
+-            color = Color(0xFFFFC24D))
+-        Text(if (bias != 0) "TARGET · BIAS ${if (bias > 0) "+" else ""}$bias W" else "TARGET",
+-            fontSize = 11.sp, letterSpacing = 1.sp,
+-            color = MaterialTheme.colorScheme.onSurfaceVariant)
+-
+-        Spacer(Modifier.height(14.dp))
++        Text("$target W",
++            style = TextStyle(
++                brush = Brush.verticalGradient(listOf(Color.White, Color(0xFFFFD9A3))),
++                fontSize = 58.sp, fontWeight = FontWeight.Black, letterSpacing = (-1).sp),
++            modifier = Modifier.padding(top = 10.dp))
++        Text(if (bias != 0) "TARGET · BIAS ${if (bias > 0) "+" else "−"}${kotlin.math.abs(bias)} W" else "TARGET",
++            fontSize = 11.sp, letterSpacing = 1.sp, color = Forge.Muted)
+ 
+-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
++        Row(Modifier.fillMaxWidth().padding(top = 14.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+             Metric("ACTUAL", "$power W")
+             Metric("CADENCE", "$cadence rpm")
+             Metric("HEART RATE", if (hr > 0) "$hr bpm" else "—")
+         }
+ 
+-        Spacer(Modifier.height(20.dp))
++        Spacer(Modifier.height(14.dp))
+ 
+-        if (askSave) {
+-            SaveSection(
+-                name = w?.name ?: "PaceForge workout",
+-                points = session.toList(),
+-                startMs = startMs.value ?: System.currentTimeMillis(),
+-                apiKey = settings?.apiKey ?: "",
+-                athleteId = settings?.athleteId ?: "0",
+-                onDone = { session.clear(); onExit() }
+-            )
+-        } else {
+-            when (status) {
+-                WorkoutEngine.Status.IDLE, WorkoutEngine.Status.DONE ->
+-                    Button(onClick = { WorkoutEngine.start() }, modifier = Modifier.fillMaxWidth(0.7f)) {
+-                        Text(if (status == WorkoutEngine.Status.DONE) "Done 🎉" else "▶  Start workout")
+-                    }
+-                WorkoutEngine.Status.RUNNING ->
+-                    Button(onClick = { WorkoutEngine.pause() }, modifier = Modifier.fillMaxWidth(0.7f)) { Text("⏸  Pause") }
+-                WorkoutEngine.Status.PAUSED ->
+-                    Button(onClick = { WorkoutEngine.resume() }, modifier = Modifier.fillMaxWidth(0.7f)) { Text("Resume") }
+-            }
+-
+-            Spacer(Modifier.height(12.dp))
+-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+-                OutlinedButton(onClick = { WorkoutEngine.nudgeBias(-10) }) { Text("−10 W") }
+-                OutlinedButton(onClick = { WorkoutEngine.nudgeBias(10) }) { Text("+10 W") }
+-                OutlinedButton(onClick = {
+-                    WorkoutEngine.stop()
+-                    if (session.isEmpty()) onExit() else askSave = true
+-                }) { Text("End") }
++        when (status) {
++            WorkoutEngine.Status.IDLE ->
++                PrimaryButton("▶  Start workout", Modifier.fillMaxWidth()) { WorkoutEngine.start() }
++            WorkoutEngine.Status.DONE ->
++                PrimaryButton("Done 🎉", Modifier.fillMaxWidth()) { onExit() }
++            WorkoutEngine.Status.RUNNING, WorkoutEngine.Status.PAUSED -> {
++                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
++                    ForgeChip("−10 W", Modifier.weight(1f)) { WorkoutEngine.nudgeBias(-10) }
++                    ForgeChip("+10 W", Modifier.weight(1f)) { WorkoutEngine.nudgeBias(10) }
++                    if (status == WorkoutEngine.Status.RUNNING)
++                        ForgeChip("⏸ Pause", Modifier.weight(1f), accent = true) { WorkoutEngine.pause() }
++                    else
++                        ForgeChip("▶ Resume", Modifier.weight(1f), accent = true) { WorkoutEngine.resume() }
++                    ForgeChip("End", Modifier.weight(1f)) { confirmEnd = true }
++                }
++                Text("Bias nudges apply until the end of the interval.",
++                    fontSize = 11.sp, color = Forge.Faint, textAlign = TextAlign.Center,
++                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+             }
+         }
+     }
+@@ -150,53 +208,60 @@
+     startMs: Long,
+     apiKey: String,
+     athleteId: String,
++    autoUpload: Boolean,
+     onDone: () -> Unit
+ ) {
+     var state by remember { mutableStateOf("idle") }   // idle | saving | saved | error
+     var errorMsg by remember { mutableStateOf<String?>(null) }
+     val scope = rememberCoroutineScope()
+ 
++    fun upload() {
++        state = "saving"
++        scope.launch {
++            try {
++                IcuUpload.uploadTcx(apiKey, athleteId, name, startMs, points)
++                state = "saved"
++            } catch (e: Exception) {
++                errorMsg = e.message
++                state = "error"
++            }
++        }
++    }
++
++    // "Auto-upload finished rides": skip the prompt and send it straight away.
++    LaunchedEffect(autoUpload, apiKey) {
++        if (autoUpload && apiKey.isNotBlank() && state == "idle") upload()
++    }
++
+     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+-        Text("Workout complete 🎉", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+-        Text("${points.size} samples · ${points.lastOrNull()?.sec ?: 0}s recorded",
+-            fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
++        Text("Workout complete 🎉", fontSize = 16.sp, fontWeight = FontWeight.ExtraBold)
++        Text(
++            "${String.format(Locale.getDefault(), "%,d", points.size)} samples · " +
++                "${(points.lastOrNull()?.sec ?: 0) / 60} min recorded",
++            fontSize = 11.sp, color = Forge.Muted, modifier = Modifier.padding(top = 4.dp))
+         Spacer(Modifier.height(12.dp))
+ 
+         when (state) {
+             "saving" -> {
+-                CircularProgressIndicator(Modifier.size(28.dp))
+-                Text("Uploading to intervals.icu…", fontSize = 12.sp)
++                CircularProgressIndicator(Modifier.size(28.dp), strokeWidth = 3.dp)
++                Text("Uploading to intervals.icu…", fontSize = 12.sp, color = Forge.Muted,
++                    modifier = Modifier.padding(top = 8.dp))
+             }
+             "saved" -> {
+-                Text("Saved to intervals.icu ✓", color = Color(0xFF57D98A), fontWeight = FontWeight.Bold)
+-                Spacer(Modifier.height(12.dp))
+-                Button(onClick = onDone, modifier = Modifier.fillMaxWidth(0.7f)) { Text("Done") }
++                Text("Saved to intervals.icu ✓", color = Color(0xFF2ECC71),
++                    fontSize = 15.sp, fontWeight = FontWeight.ExtraBold)
++                Text("appears as activity “$name”", fontSize = 11.sp, color = Forge.Faint,
++                    modifier = Modifier.padding(top = 4.dp))
++                PrimaryButton("Done", Modifier.padding(top = 12.dp).widthIn(min = 220.dp), onClick = onDone)
+             }
+             "error" -> {
+-                Text("Upload failed: $errorMsg",
+-                    color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
+-                Spacer(Modifier.height(12.dp))
+-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+-                    OutlinedButton(onClick = { state = "idle" }) { Text("Retry") }
+-                    OutlinedButton(onClick = onDone) { Text("Discard") }
+-                }
++                Text("Upload failed: $errorMsg", color = MaterialTheme.colorScheme.error, fontSize = 12.sp)
++                GhostButton("Retry", Modifier.padding(top = 12.dp).widthIn(min = 220.dp)) { state = "idle" }
++                GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
+             }
+             else -> {
+-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+-                    Button(onClick = {
+-                        state = "saving"
+-                        scope.launch {
+-                            try {
+-                                IcuUpload.uploadTcx(apiKey, athleteId, name, startMs, points)
+-                                state = "saved"
+-                            } catch (e: Exception) {
+-                                errorMsg = e.message
+-                                state = "error"
+-                            }
+-                        }
+-                    }) { Text("Save to intervals.icu") }
+-                    OutlinedButton(onClick = onDone) { Text("Discard") }
+-                }
++                PrimaryButton("Save to intervals.icu", Modifier.widthIn(min = 220.dp)) { upload() }
++                GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
+             }
+         }
+     }
+@@ -206,7 +271,6 @@
+ private fun Metric(label: String, value: String) {
+     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+         Text(value, fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+-        Text(label, fontSize = 10.sp, letterSpacing = 1.sp,
+-            color = MaterialTheme.colorScheme.onSurfaceVariant)
++        Text(label, fontSize = 11.sp, color = Forge.Muted, modifier = Modifier.padding(top = 2.dp))
+     }
+ }
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt b/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 18:07:30.442470835 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-22 18:07:30.445480893 +0000
+@@ -1,24 +1,32 @@
+-@file:OptIn(ExperimentalMaterial3Api::class)
+-
+ package com.paceforge.trainer.ui
+ 
++import androidx.activity.compose.BackHandler
++import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.layout.*
+ import androidx.compose.foundation.lazy.LazyColumn
+ import androidx.compose.foundation.lazy.items
++import androidx.compose.foundation.rememberScrollState
+ import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.foundation.verticalScroll
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
+ import androidx.compose.material3.*
+ import androidx.compose.runtime.*
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.semantics.Role
+ import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.input.PasswordVisualTransformation
++import androidx.compose.ui.text.input.VisualTransformation
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.unit.sp
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+-import com.paceforge.trainer.AppSettings
+ import com.paceforge.trainer.IcuRepository
+ import com.paceforge.trainer.PlannedWorkout
+ import com.paceforge.trainer.SettingsStore
++import com.paceforge.trainer.WeekSummary
+ import com.paceforge.trainer.ble.FtmsCenter
+ import kotlinx.coroutines.launch
+ 
+@@ -27,14 +35,15 @@
+     var screen by remember { mutableStateOf("home") }
+     var selected by remember { mutableStateOf<PlannedWorkout?>(null) }
+ 
+-    Scaffold(topBar = {
+-        TopAppBar(title = { Text("PaceForge", fontWeight = FontWeight.Bold) }, actions = {
+-            TextButton(onClick = { screen = "settings" }) { Text("Settings") }
+-            TextButton(onClick = { screen = "devices" }) { Text("Devices") }
+-        })
+-    }) { pad ->
++    BackHandler(enabled = screen == "settings" || screen == "devices") { screen = "home" }
++
++    // Each screen draws its own header (see prototype); Scaffold only supplies the insets.
++    Scaffold(containerColor = MaterialTheme.colorScheme.background) { pad ->
+         when (screen) {
+-            "home" -> HomeScreen(pad, onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
++            "home" -> HomeScreen(pad,
++                onSettings = { screen = "settings" },
++                onDevices = { screen = "devices" },
++                onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
+             "settings" -> SettingsScreen(pad) { screen = "home" }
+             "devices" -> DevicesScreen(pad) { screen = "home" }
+             "player" -> PlayerScreen(pad, selected, onExit = { screen = "home" })
+@@ -42,108 +51,91 @@
+     }
+ }
+ 
+-/** Small rounded status badge, e.g. "Tacx NEO 2T · connected". */
++// ------------------------------------------------------------------- HOME
++
+ @Composable
+-fun StatusPill(text: String, color: Color) {
+-    Surface(
+-        shape = RoundedCornerShape(50),
+-        color = color.copy(alpha = 0.12f),
+-        border = androidx.compose.foundation.BorderStroke(1.dp, color.copy(alpha = 0.4f))
++private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit) {
++    Row(
++        Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 10.dp),
++        verticalAlignment = Alignment.CenterVertically,
++        horizontalArrangement = Arrangement.SpaceBetween
+     ) {
+-        Row(
+-            Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+-            verticalAlignment = Alignment.CenterVertically,
+-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+-        ) {
+-            androidx.compose.foundation.Canvas(Modifier.size(7.dp)) { drawCircle(color) }
+-            Text(text, fontSize = 11.sp, color = color)
++        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
++            ForgeLogo(34.dp)
++            Text("PaceForge", fontWeight = FontWeight.Bold, fontSize = 15.sp)
++        }
++        Row {
++            LinkText("Settings", onSettings)
++            LinkText("Devices", onDevices)
+         }
+     }
+ }
+ 
+ @Composable
+-fun HomeScreen(pad: PaddingValues, onPlayWorkout: (PlannedWorkout) -> Unit) {
++private fun LinkText(text: String, onClick: () -> Unit) {
++    Text(text, fontSize = 12.sp, color = Forge.Link,
++        modifier = Modifier.clip(RoundedCornerShape(8.dp))
++            .clickable(role = Role.Button, onClick = onClick)
++            .padding(horizontal = 8.dp, vertical = 10.dp))
++}
++
++@Composable
++fun HomeScreen(
++    pad: PaddingValues,
++    onSettings: () -> Unit,
++    onDevices: () -> Unit,
++    onPlayWorkout: (PlannedWorkout) -> Unit
++) {
+     val ctx = androidx.compose.ui.platform.LocalContext.current
+     val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
+     var workouts by remember { mutableStateOf<List<PlannedWorkout>>(emptyList()) }
++    var week by remember { mutableStateOf<WeekSummary?>(null) }
+     var error by remember { mutableStateOf<String?>(null) }
+     var loading by remember { mutableStateOf(false) }
+     var retry by remember { mutableStateOf(0) }
+     val trainer by FtmsCenter.trainerState.collectAsState()
+     val trainerName by FtmsCenter.trainerName.collectAsState()
++    val ergOk by FtmsCenter.ergAvailable.collectAsState()
+ 
+     // Fetch only once the settings are actually loaded from disk, and re-run on Retry.
+     val apiKey = settings?.apiKey.orEmpty()
+     val athleteId = settings?.athleteId ?: "0"
+-    LaunchedEffect(apiKey, retry) {
++    LaunchedEffect(apiKey, athleteId, retry) {
+         if (apiKey.isBlank()) return@LaunchedEffect
+         loading = true; error = null
+         try { workouts = IcuRepository.fetchToday(apiKey, athleteId) }
+         catch (e: Exception) { error = e.message }
+         loading = false
++        if (error == null) week = IcuRepository.fetchWeek(apiKey, athleteId)
+     }
+ 
+-    Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
++    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
++        HomeHeader(onSettings, onDevices)
++        TrainerPill(trainer, trainerName, ergOk)
++
+         val s = settings
+         when {
+-            s == null -> CircularProgressIndicator()   // settings still loading
++            s == null -> CenteredSpinner()
+             s.apiKey.isBlank() -> Text("Set your intervals.icu API key in Settings first.",
+-                color = MaterialTheme.colorScheme.error)
+-            loading -> CircularProgressIndicator()
+-            error != null -> Column {
++                color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 16.dp))
++            loading -> CenteredSpinner()
++            error != null -> Column(Modifier.padding(top = 16.dp)) {
+                 Text("Error: $error", color = MaterialTheme.colorScheme.error)
+                 Spacer(Modifier.height(8.dp))
+-                Button(onClick = { retry++ }) { Text("Retry") }
++                GhostButton("Retry", Modifier.fillMaxWidth()) { retry++ }
+             }
+-            workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.")
+-            else -> {
+-                StatusPill(
+-                    when (trainer) {
+-                        FtmsCenter.ConnState.CONNECTED ->
+-                            (trainerName.ifBlank { "Smart trainer" }) + " · connected"
+-                        FtmsCenter.ConnState.CONNECTING -> "Trainer connecting…"
+-                        FtmsCenter.ConnState.DISCONNECTED -> "No trainer connected"
+-                    },
+-                    when (trainer) {
+-                        FtmsCenter.ConnState.CONNECTED -> Color(0xFF57D98A)
+-                        FtmsCenter.ConnState.CONNECTING -> Color(0xFFFFC24D)
+-                        FtmsCenter.ConnState.DISCONNECTED -> Color(0xFF8A97A3)
+-                    }
+-                )
+-                Spacer(Modifier.height(12.dp))
+-                Text("Today's planned workout${if (workouts.size > 1) "s" else ""}",
+-                    fontSize = 18.sp, fontWeight = FontWeight.Bold)
+-                Spacer(Modifier.height(8.dp))
+-                LazyColumn {
+-                    items(workouts) { w ->
+-                        ElevatedCard(
+-                            Modifier.fillMaxWidth().padding(vertical = 4.dp),
+-                            shape = RoundedCornerShape(16.dp)
+-                        ) {
+-                            Column(Modifier.padding(14.dp)) {
+-                                Text(w.name, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+-                                Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
+-                                    fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+-                                // Miniature power-profile preview
+-                                WorkoutChart(w.segments, w.totalSec, 0, emptyList(),
+-                                    Modifier.fillMaxWidth().height(64.dp).padding(top = 10.dp),
+-                                    compact = true)
+-                                if (w.description.isNotBlank())
+-                                    Text(w.description.take(140), fontSize = 12.sp,
+-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+-                                        maxLines = 3, modifier = Modifier.padding(top = 8.dp))
+-                                Spacer(Modifier.height(10.dp))
+-                                Button(
+-                                    enabled = trainer == FtmsCenter.ConnState.CONNECTED,
+-                                    onClick = { onPlayWorkout(w) },
+-                                    modifier = Modifier.fillMaxWidth()
+-                                ) {
+-                                    Text(if (trainer == FtmsCenter.ConnState.CONNECTED) "▶  Play on trainer"
+-                                         else "Pair a trainer first (Devices)")
+-                                }
+-                            }
+-                        }
+-                    }
++            workouts.isEmpty() -> Text("No planned workout for today. Plan one on intervals.icu.",
++                color = Forge.Muted, modifier = Modifier.padding(top = 16.dp))
++            else -> LazyColumn(contentPadding = PaddingValues(bottom = 16.dp)) {
++                item { SectionTitle("Today's planned workout${if (workouts.size > 1) "s" else ""}") }
++                items(workouts) { w ->
++                    WorkoutCard(w, trainer, onPlayWorkout)
++                    Spacer(Modifier.height(8.dp))
++                }
++                val wk = week
++                if (wk != null && (wk.ctlDelta != null || wk.nextName != null)) {
++                    item { SectionTitle("This week") }
++                    item { WeekCard(wk) }
+                 }
+             }
+         }
+@@ -151,11 +143,78 @@
+ }
+ 
+ @Composable
++private fun CenteredSpinner() {
++    Box(Modifier.fillMaxWidth().padding(top = 32.dp), contentAlignment = Alignment.Center) {
++        CircularProgressIndicator()
++    }
++}
++
++@Composable
++private fun TrainerPill(state: FtmsCenter.ConnState, name: String, ergOk: Boolean) {
++    when (state) {
++        FtmsCenter.ConnState.CONNECTED ->
++            if (ergOk) StatusPill((name.ifBlank { "Smart trainer" }) + " · connected", Forge.Green)
++            else StatusPill((name.ifBlank { "Smart trainer" }) + " · connected (read-only)", Forge.Warn)
++        FtmsCenter.ConnState.CONNECTING -> StatusPill("Trainer connecting…", Forge.Warn)
++        FtmsCenter.ConnState.DISCONNECTED -> StatusPill("No trainer connected", Forge.Muted)
++    }
++}
++
++@Composable
++private fun WorkoutCard(w: PlannedWorkout, trainer: FtmsCenter.ConnState, onPlay: (PlannedWorkout) -> Unit) {
++    val connected = trainer == FtmsCenter.ConnState.CONNECTED
++    ForgeCard {
++        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
++            verticalAlignment = Alignment.CenterVertically) {
++            Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
++            Spacer(Modifier.width(8.dp))
++            if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
++        }
++        Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
++            fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
++        // Miniature power-profile preview
++        WorkoutChart(w.segments, w.totalSec, 0, emptyList(),
++            Modifier.fillMaxWidth().height(96.dp).padding(top = 10.dp), compact = true)
++        if (w.description.isNotBlank())
++            Text(w.description.take(140), fontSize = 12.sp, color = Forge.Faint, maxLines = 3,
++                lineHeight = 17.sp, modifier = Modifier.padding(top = 7.dp))
++        PrimaryButton(
++            if (connected) "▶  Play on trainer" else "Pair a trainer first (Devices)",
++            Modifier.fillMaxWidth().padding(top = 12.dp), enabled = connected
++        ) { onPlay(w) }
++    }
++}
++
++@Composable
++private fun WeekCard(wk: WeekSummary) {
++    ForgeCard {
++        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
++            verticalAlignment = Alignment.CenterVertically) {
++            Column(Modifier.weight(1f)) {
++                wk.ctlDelta?.let {
++                    Text("Fitness (CTL) ${"%+d".format(it)}", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
++                }
++                val next = wk.nextName
++                if (next != null)
++                    Text("Next: $next${wk.nextWhen?.let { " · $it" } ?: ""}",
++                        fontSize = 12.sp, color = Forge.Faint, modifier = Modifier.padding(top = 3.dp))
++            }
++            wk.loadLabel?.let { Spacer(Modifier.width(8.dp)); StatusPill("Load: $it", Forge.Warn) }
++        }
++    }
++}
++
++// --------------------------------------------------------------- SETTINGS
++
++@Composable
+ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
+     val ctx = androidx.compose.ui.platform.LocalContext.current
+     val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
+     var key by remember { mutableStateOf<String?>(null) }
+     var athlete by remember { mutableStateOf<String?>(null) }
++    var autoUpload by remember { mutableStateOf<Boolean?>(null) }
++    var beep by remember { mutableStateOf<Boolean?>(null) }
++    var awake by remember { mutableStateOf<Boolean?>(null) }
+     val scope = rememberCoroutineScope()
+ 
+     // Don't touch the fields until the saved settings are loaded: previously the
+@@ -165,88 +224,157 @@
+     val apiKey = key ?: loaded?.apiKey ?: ""
+     val athleteId = athlete ?: loaded?.athleteId ?: ""
+ 
+-    Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
+-        Text("intervals.icu connection", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+-        Spacer(Modifier.height(12.dp))
++    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp).verticalScroll(rememberScrollState())) {
++        BackHeader("Settings", onBack)
++        SectionTitle("intervals.icu connection")
+         if (loaded == null) {
+-            CircularProgressIndicator()
++            CenteredSpinner()
+         } else {
+-            OutlinedTextField(value = apiKey, onValueChange = { key = it },
+-                label = { Text(if (apiKey.isNotBlank()) "API key (saved)" else "API key") },
+-                modifier = Modifier.fillMaxWidth(), singleLine = true)
+-            Spacer(Modifier.height(8.dp))
+-            OutlinedTextField(value = athleteId, onValueChange = { athlete = it },
+-                label = { Text("Athlete ID (0 = key owner)") },
+-                modifier = Modifier.fillMaxWidth(), singleLine = true)
+-            Spacer(Modifier.height(8.dp))
+-            Text("Create your key on intervals.icu → Settings → Developer settings. " +
+-                "It is stored on this device only.",
+-                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+-            Spacer(Modifier.height(12.dp))
+-            Row {
+-                Button(onClick = {
+-                    scope.launch {
+-                        SettingsStore.save(ctx, apiKey, athleteId)
+-                        onBack()
+-                    }
+-                }) { Text("Save") }
+-                Spacer(Modifier.width(8.dp))
+-                OutlinedButton(onClick = onBack) { Text("Cancel") }
++            FieldLabel(if (loaded.apiKey.isNotBlank()) "API KEY (SAVED)" else "API KEY")
++            ForgeField(apiKey, { key = it }, password = true)
++            Spacer(Modifier.height(10.dp))
++            FieldLabel("ATHLETE ID (0 = KEY OWNER)")
++            ForgeField(athleteId, { athlete = it })
++            Text("Create your key on intervals.icu → Settings → Developer settings. It is stored " +
++                "encrypted on this device only and never leaves it except to call the intervals.icu API.",
++                fontSize = 11.sp, lineHeight = 16.sp, color = Forge.Faint,
++                modifier = Modifier.padding(top = 8.dp))
++
++            SectionTitle("Preferences")
++            ToggleRow("Auto-upload finished rides", "Skip the save prompt",
++                autoUpload ?: loaded.autoUpload) { autoUpload = it }
++            ToggleRow("Beep at interval change", "Audio cue 3 s before",
++                beep ?: loaded.beep) { beep = it }
++            ToggleRow("Keep screen awake", "During workouts",
++                awake ?: loaded.keepAwake) { awake = it }
++
++            PrimaryButton("Save", Modifier.padding(top = 16.dp).widthIn(min = 160.dp)) {
++                scope.launch {
++                    SettingsStore.save(ctx, apiKey, athleteId,
++                        autoUpload ?: loaded.autoUpload, beep ?: loaded.beep, awake ?: loaded.keepAwake)
++                    onBack()
++                }
+             }
+         }
+     }
+ }
+ 
+ @Composable
++private fun FieldLabel(text: String) {
++    Text(text, fontSize = 11.sp, color = Forge.Muted, modifier = Modifier.padding(bottom = 5.dp))
++}
++
++@Composable
++private fun ForgeField(value: String, onChange: (String) -> Unit, password: Boolean = false) {
++    OutlinedTextField(
++        value = value, onValueChange = onChange, singleLine = true,
++        visualTransformation = if (password) PasswordVisualTransformation() else VisualTransformation.None,
++        shape = RoundedCornerShape(10.dp),
++        textStyle = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
++        colors = OutlinedTextFieldDefaults.colors(
++            focusedContainerColor = Forge.Field, unfocusedContainerColor = Forge.Field,
++            focusedBorderColor = MaterialTheme.colorScheme.primary, unfocusedBorderColor = Forge.FieldBorder),
++        modifier = Modifier.fillMaxWidth()
++    )
++}
++
++@Composable
++private fun ToggleRow(title: String, desc: String, on: Boolean, onToggle: (Boolean) -> Unit) {
++    Column {
++        Row(
++            Modifier.fillMaxWidth().clickable(role = Role.Switch) { onToggle(!on) }
++                .padding(horizontal = 2.dp, vertical = 12.dp),
++            horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
++        ) {
++            Column {
++                Text(title, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
++                Text(desc, fontSize = 11.sp, color = Forge.Faint, modifier = Modifier.padding(top = 2.dp))
++            }
++            Text(if (on) "ON" else "OFF", fontSize = 11.sp, fontWeight = FontWeight.ExtraBold,
++                letterSpacing = 0.5.sp, color = if (on) Color(0xFF2ECC71) else Forge.Off)
++        }
++        HorizontalDivider(color = Forge.RowLine)
++    }
++}
++
++// ---------------------------------------------------------------- DEVICES
++
++@Composable
+ fun DevicesScreen(pad: PaddingValues, onBack: () -> Unit) {
+     val trainerState by FtmsCenter.trainerState.collectAsState()
+     val hrState by FtmsCenter.hrState.collectAsState()
+     val trainerName by FtmsCenter.trainerName.collectAsState()
+     val hrName by FtmsCenter.hrName.collectAsState()
+-    var scanning by remember { mutableStateOf(false) }
++    val scanning by FtmsCenter.scanningState.collectAsState()
+     val results by FtmsCenter.scanResults.collectAsState(initial = emptyList())
+ 
+-    Column(Modifier.fillMaxSize().padding(pad).padding(16.dp)) {
+-        Text("Paired devices", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+-        Spacer(Modifier.height(8.dp))
++    // Start scanning on entry (the list is sorted by signal strength), stop on exit.
++    DisposableEffect(Unit) {
++        FtmsCenter.startScan()
++        onDispose { FtmsCenter.stopScan() }
++    }
++
++    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp).verticalScroll(rememberScrollState())) {
++        BackHeader("Devices", onBack)
++        SectionTitle("Paired devices")
+         DeviceRow("Smart trainer", trainerName, trainerState)
+         DeviceRow("Heart rate", hrName, hrState)
+-        Spacer(Modifier.height(16.dp))
+-        Row(verticalAlignment = Alignment.CenterVertically) {
+-            Button(onClick = {
+-                if (!scanning) FtmsCenter.startScan() else FtmsCenter.stopScan()
+-                scanning = !scanning
+-            }) { Text(if (scanning) "Stop scan" else "Scan for devices") }
+-            if (scanning) { Spacer(Modifier.width(10.dp)); CircularProgressIndicator(Modifier.size(18.dp)) }
+-        }
+-        Spacer(Modifier.height(12.dp))
+-        LazyColumn {
+-            items(results, key = { it.device.address }) { hit ->
+-                ListItem(headlineContent = { Text(hit.name) },
+-                    supportingContent = {
+-                        Text((if (hit.isTrainer) "Smart trainer (FTMS/FE-C)" else "Heart rate") + " · ${hit.rssi} dBm") },
+-                    trailingContent = { OutlinedButton(onClick = { FtmsCenter.connect(hit) }) { Text("Connect") } })
+-            }
+-        }
+-        Text("Trainers that don't advertise FTMS (e.g. some Tacx NEO firmware) are detected " +
+-                "via Cycling Power / FE-C and run in read-only mode (no ERG).",
+-            fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
++
++        SectionTitle("Scan")
++        results.forEach { hit ->
++            key(hit.device.address) {
++                val kind = if (hit.isTrainer)
++                    "Smart trainer" + if (hit.protocol.isNotBlank()) " (${hit.protocol})" else ""
++                else "Heart rate"
++                val shape = RoundedCornerShape(12.dp)
++                Row(
++                    Modifier.fillMaxWidth().padding(top = 8.dp)
++                        .clip(shape).background(Forge.ChipBg).border(1.dp, Color(0xFF212C39), shape)
++                        .clickable(role = Role.Button) { FtmsCenter.connect(hit) }
++                        .padding(horizontal = 12.dp, vertical = 10.dp),
++                    horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically
++                ) {
++                    Column(Modifier.weight(1f)) {
++                        Text(hit.name, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
++                        Text("$kind · ${hit.rssi.toString().replace('-', '−')} dBm",
++                            fontSize = 11.sp, color = Forge.Faint, modifier = Modifier.padding(top = 2.dp))
++                    }
++                    Text("CONNECT", fontSize = 11.sp, fontWeight = FontWeight.ExtraBold,
++                        letterSpacing = 0.5.sp, color = Forge.Warn)
++                }
++            }
++        }
++        Text("Tacx trainers that don't advertise FTMS are detected via Cycling Power / FE-C " +
++            "and run in read-only mode (no ERG).",
++            fontSize = 11.sp, lineHeight = 16.sp, color = Forge.Faint, modifier = Modifier.padding(top = 8.dp))
++        GhostButton(if (scanning) "Stop scan" else "Scan for devices",
++            Modifier.fillMaxWidth().padding(top = 12.dp)) {
++            if (scanning) FtmsCenter.stopScan() else FtmsCenter.startScan()
++        }
++        if (scanning) {
++            Box(Modifier.fillMaxWidth().padding(top = 14.dp, bottom = 16.dp), contentAlignment = Alignment.Center) {
++                CircularProgressIndicator(Modifier.size(26.dp), strokeWidth = 3.dp)
++            }
++        }
+     }
+ }
+ 
+ @Composable
+ private fun DeviceRow(label: String, name: String, state: FtmsCenter.ConnState) {
+-    val color = when (state) {
+-        FtmsCenter.ConnState.CONNECTED -> Color(0xFF2ECC71)
+-        FtmsCenter.ConnState.CONNECTING -> Color(0xFFFFC24D)
+-        FtmsCenter.ConnState.DISCONNECTED -> MaterialTheme.colorScheme.error
++    val (text, color) = when (state) {
++        FtmsCenter.ConnState.CONNECTED -> "CONNECTED" to Color(0xFF2ECC71)
++        FtmsCenter.ConnState.CONNECTING -> "CONNECTING" to Forge.Warn
++        FtmsCenter.ConnState.DISCONNECTED -> "NOT CONNECTED" to Forge.Off
+     }
+-    ElevatedCard(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+-        Row(Modifier.padding(14.dp).fillMaxWidth(),
++    Column {
++        Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp, vertical = 12.dp),
+             horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+-            Column { Text(label, fontWeight = FontWeight.SemiBold); Text(name.ifBlank { "—" },
+-                fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+-            Text(state.name, color = color, fontWeight = FontWeight.Bold, fontSize = 11.sp)
++            Column {
++                Text(label, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
++                Text(name.ifBlank { "—" }, fontSize = 11.sp, color = Forge.Faint, modifier = Modifier.padding(top = 2.dp))
++            }
++            Text(text, color = color, fontWeight = FontWeight.ExtraBold, fontSize = 11.sp, letterSpacing = 0.5.sp)
+         }
++        HorizontalDivider(color = Forge.RowLine)
+     }
+ }
+diff -ruN a/android/app/src/main/java/com/paceforge/trainer/ui/Theme.kt b/android/app/src/main/java/com/paceforge/trainer/ui/Theme.kt
+--- a/android/app/src/main/java/com/paceforge/trainer/ui/Theme.kt	2026-10-22 18:07:30.442486653 +0000
++++ b/android/app/src/main/java/com/paceforge/trainer/ui/Theme.kt	2026-10-22 18:07:30.445449486 +0000
+@@ -30,3 +30,28 @@
+ fun Theme(content: @Composable () -> Unit) {
+     MaterialTheme(colorScheme = ForgeColors, content = content)
+ }
++
++/** Extra palette taken from the UI prototype (cards, chips, pills, fields). */
++object Forge {
++    val Card = Color(0xFF151C26)
++    val CardBorder = Color(0xFF232E3B)
++    val Amber = Color(0xFFFFB84D)
++    val Orange = Color(0xFFFF7A00)
++    val Warn = Color(0xFFFFC24D)
++    val Green = Color(0xFF57D98A)
++    val Muted = Color(0xFF8A97A3)
++    val Faint = Color(0xFF6D7B8A)
++    val Off = Color(0xFF5A6A7A)
++    val Link = Color(0xFF8FB7FF)
++    val Header = Color(0xFF9DB1C2)
++    val GhostBorder = Color(0xFF33414F)
++    val GhostText = Color(0xFFC6D2DE)
++    val ChipBg = Color(0xFF141B24)
++    val AccentChipBg = Color(0xFF241A0C)
++    val AccentChipBorder = Color(0xFF7A4A12)
++    val Field = Color(0xFF0E141C)
++    val FieldBorder = Color(0xFF2A3846)
++    val RowLine = Color(0xFF1D2733)
++    val Disabled = Color(0xFF1B232E)
++    val OnPrimary = Color(0xFF1A0E00)
++}
