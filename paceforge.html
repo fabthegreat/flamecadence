@@ -2892,12 +2892,68 @@ function edHtml(){
 }
 // Aperçu mis à jour en direct : toute modification de l'éditeur régénère la séance
 // dans le panneau d'aperçu (nom, sport, description, graphe) sans cliquer « Générer l'aperçu ».
+// ---------- Nom de séance déduit automatiquement ----------
+// Analyse les étapes (en % FTP / allure) et propose un nom du type « Seuil 5×5min », « Sweet Spot 3×10min »,
+// « Endurance 1h30 », « Pyramide Tempo »… Les étapes ≥ 76 % qui se répètent à l'identique forment la série
+// principale ; l'échauffement et le retour au calme (paliers distincts) n'y entrent pas.
+const NAME_ZONES = [[56, "Recovery", "Récupération"], [76, "Endurance", "Endurance"], [88, "Tempo", "Tempo"], [95, "Sweet Spot", "Sweet Spot"],
+  [106, "Threshold", "Seuil"], [131, "VO₂max", "VO₂max"], [151, "Anaerobic", "Anaérobie"], [Infinity, "Sprint", "Sprint"]];
+const nameZone = (p, fr) => { const z = NAME_ZONES.find(z => p < z[0]); return fr ? z[2] : z[1]; };
+function nameDur(s){
+  s = Math.round(s);
+  if(s < 90) return s + "s";
+  if(s < 3600){ const m = Math.floor(s / 60), r = s % 60; return r ? m + "m" + String(r).padStart(2, "0") : m + "min"; }
+  const h = Math.floor(s / 3600), m = Math.round(s % 3600 / 60); return h + "h" + (m ? String(m).padStart(2, "0") : "");
+}
+function inferName(steps, fr){
+  if(!steps || !steps.length) return "";
+  const pc = s => (s.a + s.b) / 2, total = steps.reduce((x, s) => x + s.d, 0);
+  const hard = steps.filter(s => pc(s) >= 76);
+  // série principale : étapes dures identiques (même durée, intensité à 5 % près) les plus nombreuses en temps cumulé
+  const groups = {};
+  hard.forEach(s => { const k = Math.round(s.d) + "@" + Math.round(pc(s) / 5) * 5; (groups[k] = groups[k] || {n: 0, d: s.d, sum: 0, t: 0}); groups[k].n++; groups[k].sum += pc(s); groups[k].t += s.d; });
+  // on privilégie une répétition (≥ 2 fois) ; à défaut, un seul long effort (≥ 10 min)
+  const gl = Object.values(groups), reps = gl.filter(g => g.n >= 2).sort((x, y) => y.t - x.t)[0];
+  const best = reps || gl.filter(g => g.d >= 600).sort((x, y) => y.d - x.d)[0];
+  const avgAll = steps.reduce((x, s) => x + pc(s) * s.d, 0) / total;
+  if(!best){
+    // pas de série identifiable : séance continue (récup / endurance / tempo) ou intervalles variés
+    const lab = nameZone(Math.min(avgAll, 105), fr);
+    if(hard.length >= 3 && hard.reduce((x, s) => x + s.d, 0) >= 600){
+      const hp = hard.reduce((x, s) => x + pc(s) * s.d, 0) / hard.reduce((x, s) => x + s.d, 0);
+      return fr ? "Intervalles " + nameZone(hp, fr) : nameZone(hp, fr) + " intervals";
+    }
+    return lab + " " + nameDur(total);
+  }
+  const lab = nameZone(best.sum / best.n, fr);
+  // pyramide / échelle : durées dures toutes différentes, croissantes (puis décroissantes)
+  const hd = hard.filter(s => s.d >= 30).map(s => Math.round(s.d));
+  if(hd.length >= 4 && new Set(hd).size === hd.length){
+    let k = 0; while(k + 1 < hd.length && hd[k + 1] > hd[k]) k++;
+    const up = k === hd.length - 1, down = k > 0 && hd.slice(k).every((v, i, a) => i === 0 || v < a[i - 1]);
+    if(up) return (fr ? "Échelle " : "Ladder ") + lab;
+    if(down) return (fr ? "Pyramide " : "Pyramid ") + lab;
+  }
+  // over-unders : au moins 3 alternances d'étapes dures consécutives d'intensités différentes (≥ 5 %)
+  let alt = 0; for(let i = 1; i < steps.length; i++) if(pc(steps[i]) >= 76 && pc(steps[i - 1]) >= 76 && Math.abs(pc(steps[i]) - pc(steps[i - 1])) >= 5) alt++;
+  if(alt >= 5) return "Over-Unders";
+  return best.n > 1 ? `${lab} ${best.n}×${nameDur(best.d)}` : `${lab} ${nameDur(best.d)}`;
+}
+let autoName = ""; // dernier nom déduit : remplacé à chaque modification tant que l'utilisateur ne l'a pas retouché
+function edInferred(txt){
+  const n = inferName(parseWorkout(txt, edSp(), curFtp()), lang === "fr");
+  $("edname").placeholder = n || t("edDefName");
+  return n;
+}
 function edLive(){
   const txt = edText();
   if(!txt) return;
   $("sport").value = edSp(); syncUnit();
+  const cur = $("name").value;
+  // nom déduit uniquement quand l'onglet « Éditeur manuel » est affiché (pas depuis l'IA, la bibliothèque, l'import…)
+  const manual = !document.querySelector('[data-block="edit"]').hidden, inferred = manual ? edInferred(txt) : "";
   if($("edname").value.trim()) $("name").value = $("edname").value.trim();
-  else if(!$("name").value) $("name").value = t("edDefName");
+  else if(!cur || (manual && (cur === autoName || cur === t("edDefName")))) $("name").value = autoName = inferred || t("edDefName");
   $("desc").value = txt;
   EXPL = null; selLine = null;
   $("prev").hidden = false;
@@ -2913,8 +2969,10 @@ function edRender(){
 $("edbox").addEventListener("input", e => {
   const el = e.target, h = el.closest("[data-p]"); if(!h || !el.dataset.f) return;
   const {list, i} = edAt(h.dataset.p); list[i][el.dataset.f] = el.value;
-  if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else edSum();
+  if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else { edSum(); edLive(); } // aperçu mis à jour à chaque frappe (durée, intensité, répétitions…)
 });
+// le nom saisi dans l'éditeur se répercute en direct dans l'aperçu ; champ vidé => retour au nom déduit
+$("edname").addEventListener("input", () => { if(!$("edname").value.trim()) $("name").value = ""; edLive(); });
 $("edbox").addEventListener("change", e => {
   const s = e.target.closest("[data-gstd]"); if(!s || s.value === "") return;
   const g = ED[+s.dataset.gstd], p = ED_GSTD[+s.value];
@@ -3030,7 +3088,7 @@ $("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) 
 $("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
 $("edgo").onclick = () => {
   const txt = edText(); if(!txt) return say("edNone", "err");
-  $("sport").value = edSp(); syncUnit(); $("name").value = $("edname").value.trim() || t("edDefName"); $("desc").value = txt;
+  $("sport").value = edSp(); syncUnit(); $("name").value = $("edname").value.trim() || (autoName = edInferred(txt) || t("edDefName")); $("desc").value = txt;
   EXPL = null; selLine = null; $("prev").hidden = false; renderChart(); $("prev").scrollIntoView({behavior: "smooth", block: "start"}); say("edBuilt", "ok");
 };
 $("edsport").value = $("sport").value;
