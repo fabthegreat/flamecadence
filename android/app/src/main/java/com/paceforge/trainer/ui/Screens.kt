@@ -203,13 +203,20 @@ internal fun WorkoutCard(
     onPlay: (PlannedWorkout) -> Unit,
     playable: Boolean = true,
     dayLabel: String? = null,
-    source: String = "from intervals.icu"
+    source: String = "from intervals.icu",
+    starred: Boolean? = null,
+    onStar: (() -> Unit)? = null
 ) {
     val connected = trainer == FtmsCenter.ConnState.CONNECTED
     ForgeCard {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically) {
             Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
+            if (starred != null && onStar != null) {
+                Text(if (starred) "★" else "☆", fontSize = 22.sp,
+                    color = if (starred) Forge.Amber else Forge.Muted,
+                    modifier = Modifier.clickable(role = Role.Button, onClick = onStar).padding(horizontal = 8.dp))
+            }
             Spacer(Modifier.width(8.dp))
             if (!playable) { if (dayLabel != null) StatusPill(dayLabel, Forge.Muted) }
             else if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
@@ -291,8 +298,7 @@ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
 
             SectionTitle("Preferences")
             FieldLabel("FTP (W) — used for library workouts")
-            ForgeField(ftpText ?: loaded.ftp.takeIf { it > 0 }?.toString().orEmpty(),
-                { ftpText = it.filter { c -> c.isDigit() }.take(4) })
+            FtpPicker(loaded.apiKey, loaded.athleteId, ftpText?.toIntOrNull() ?: loaded.ftp) { ftpText = it.toString() }
             Spacer(Modifier.height(6.dp))
             ToggleRow("Auto-upload finished rides", "Skip the save prompt",
                 autoUpload ?: loaded.autoUpload) { autoUpload = it }

@@ -32,6 +32,9 @@ data class PlannedWorkout(
     val totalSec: Int get() = segments.sumOf { it.durationSec }
 }
 
+/** Rider FTPs from the intervals.icu Ride sport settings (0 = unknown). */
+data class IcuFtp(val indoor: Int, val outdoor: Int)
+
 /** Data for the Home "This week" card. Every field is optional: failures just hide it. */
 data class WeekSummary(
     val ctlDelta: Int?,       // fitness (CTL) change over the last 7 days
@@ -145,6 +148,30 @@ object IcuRepository {
 
             WeekSummary(ctlDelta, load, nextName, nextWhen)
         }
+
+    /**
+     * FTP values of the athlete's Ride settings: outdoor = ftp, indoor = indoor_ftp (falls back to ftp),
+     * like the web app. Returns null if nothing usable was found; throws on network/auth errors.
+     */
+    suspend fun fetchFtps(apiKey: String, athleteId: String): IcuFtp? = withContext(Dispatchers.IO) {
+        val base = "https://intervals.icu/api/v1/athlete/$athleteId"
+        fun isRide(o: JSONObject): Boolean {
+            val t = o.optJSONArray("types") ?: return false
+            for (i in 0 until t.length()) if (t.optString(i) == "Ride") return true
+            return false
+        }
+        fun find(arr: JSONArray?): JSONObject? {
+            if (arr == null) return null
+            for (i in 0 until arr.length()) arr.optJSONObject(i)?.let { if (isRide(it)) return it }
+            return null
+        }
+        var ss = find(JSONObject(httpGet(base, apiKey)).optJSONArray("sportSettings"))
+        if (ss == null) ss = try { find(JSONArray(httpGet("$base/sport-settings", apiKey))) } catch (e: Exception) { null }
+        if (ss == null) return@withContext null
+        val out = if (ss.isNull("ftp")) 0 else ss.optInt("ftp", 0)
+        val inn = (if (ss.isNull("indoor_ftp")) 0 else ss.optInt("indoor_ftp", 0)).takeIf { it > 0 } ?: out
+        if (out <= 0 && inn <= 0) null else IcuFtp(inn, out)
+    }
 
     /** Form (TSB = CTL - ATL) as a plain-language label. */
     private fun loadLabel(tsb: Double): String = when {

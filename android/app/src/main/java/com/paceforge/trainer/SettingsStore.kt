@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,7 +22,9 @@ data class AppSettings(
     /** Keep the screen on while the player is open. */
     val keepAwake: Boolean = true,
     /** Rider FTP in watts (0 = not set). Used to turn library workouts (% FTP) into watts. */
-    val ftp: Int = 0
+    val ftp: Int = 0,
+    /** Ids of the starred library workouts. */
+    val stars: Set<String> = emptySet()
 )
 
 object SettingsStore {
@@ -31,6 +34,7 @@ object SettingsStore {
     private val KEY_BEEP = booleanPreferencesKey("beep_interval")
     private val KEY_AWAKE = booleanPreferencesKey("keep_awake")
     private val KEY_FTP = intPreferencesKey("ftp_w")
+    private val KEY_STARS = stringSetPreferencesKey("lib_stars")
 
     /**
      * Emits null until the persisted file has actually been read, so the UI can
@@ -45,12 +49,20 @@ object SettingsStore {
             autoUpload = p[KEY_AUTO_UPLOAD] ?: true,
             beep = p[KEY_BEEP] ?: false,
             keepAwake = p[KEY_AWAKE] ?: true,
-            ftp = p[KEY_FTP] ?: 0
+            ftp = p[KEY_FTP] ?: 0,
+            stars = p[KEY_STARS] ?: emptySet()
         )
     }
 
     suspend fun saveFtp(ctx: Context, ftp: Int) {
         ctx.settings.edit { it[KEY_FTP] = ftp.coerceIn(0, 2000) }
+    }
+
+    suspend fun toggleStar(ctx: Context, id: String) {
+        ctx.settings.edit {
+            val cur = it[KEY_STARS] ?: emptySet()
+            it[KEY_STARS] = if (id in cur) cur - id else cur + id
+        }
     }
 
     suspend fun save(
