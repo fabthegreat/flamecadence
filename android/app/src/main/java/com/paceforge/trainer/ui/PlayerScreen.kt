@@ -1,7 +1,11 @@
 package com.paceforge.trainer.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -10,6 +14,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
@@ -24,6 +29,7 @@ import com.paceforge.trainer.PlannedWorkout
 import com.paceforge.trainer.Segment
 import com.paceforge.trainer.SessionPoint
 import com.paceforge.trainer.SettingsStore
+import com.paceforge.trainer.WorkoutMath
 import com.paceforge.trainer.ble.FtmsCenter
 import com.paceforge.trainer.engine.WorkoutEngine
 import kotlinx.coroutines.launch
@@ -52,6 +58,8 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
     val target by WorkoutEngine.targetW.collectAsState()
     val bias by WorkoutEngine.bias.collectAsState()
     val segIdx by WorkoutEngine.segmentIndex.collectAsState()
+    val rideSec by WorkoutEngine.rideSec.collectAsState()
+    val anchor by WorkoutEngine.stepAnchorRide.collectAsState()
     val power by FtmsCenter.powerW.collectAsState()
     val cadence by FtmsCenter.cadence.collectAsState()
     val hr by FtmsCenter.hrBpm.collectAsState()
@@ -72,10 +80,12 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
 
     // 1 Hz session recording (power + hr + cadence) for the chart and the upload
     val session = remember { mutableStateListOf<SessionPoint>() }
-    LaunchedEffect(elapsed) {
-        if (status == WorkoutEngine.Status.RUNNING) session.add(SessionPoint(elapsed, power, hr, cadence))
+    LaunchedEffect(rideSec) {
+        if (status == WorkoutEngine.Status.RUNNING) session.add(SessionPoint(rideSec, power, hr, cadence, pos = elapsed))
     }
-    val history = remember(session.size) { session.map { it.sec to it.watts } }
+    // Charts use the position in the workout, so they stay aligned after a step jump
+    val history = remember(session.size) { session.map { it.pos to it.watts } }
+    val hrHistory = remember(session.size) { session.filter { it.hr > 0 }.map { it.pos to it.hr } }
 
     // Real session start time (set once, when the workout actually starts running)
     val startMs = remember { mutableStateOf<Long?>(null) }
@@ -96,9 +106,12 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
     val stepStart = w?.segments?.take(segIdx)?.sumOf { it.durationSec } ?: 0
     val stepLeft = ((w?.segments?.getOrNull(segIdx)?.durationSec ?: 0) - (elapsed - stepStart)).coerceAtLeast(0)
     val avgAll = if (session.isEmpty()) null else session.sumOf { it.watts } / session.size
-    val stepPts = session.filter { it.sec > stepStart }
+    val stepEnd = stepStart + (w?.segments?.getOrNull(segIdx)?.durationSec ?: 0)
+    val stepPts = session.filter { it.pos in stepStart until stepEnd && it.sec >= anchor }
     val avgStep = if (stepPts.isEmpty()) null else stepPts.sumOf { it.watts } / stepPts.size
     val upcoming = w?.segments?.drop(segIdx + 1)?.take(2) ?: emptyList()
+    val planStats = remember(w) { w?.let { WorkoutMath.planned(it) } }
+    val refFtp = zoneRefFtp(w?.segments ?: emptyList(), w?.ftp ?: 0.0)
     val active = status == WorkoutEngine.Status.RUNNING || status == WorkoutEngine.Status.PAUSED
 
     fun endWorkout() {
@@ -129,7 +142,8 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
             BackHeader(w?.name ?: "PaceForge workout", onBack = null)
             // elapsed = 0: no cursor / dimming, the whole session is traced in white
             WorkoutChart(w?.segments ?: emptyList(), total, 0, history,
-                Modifier.fillMaxWidth().height(150.dp).padding(top = 4.dp))
+                Modifier.fillMaxWidth().height(150.dp).padding(top = 4.dp),
+                ftp = w?.ftp ?: 0.0, hrHistory = hrHistory)
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 SaveSection(
                     name = w?.name ?: "PaceForge workout",
@@ -146,7 +160,7 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
     }
 
     // ---------------------------------------------------------------- player
-    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp),
+    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp).verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,7 +184,12 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
 
         // Full workout profile + live progression
         WorkoutChart(w?.segments ?: emptyList(), total, elapsed, history,
-            Modifier.fillMaxWidth().height(120.dp).padding(top = 8.dp))
+            Modifier.fillMaxWidth().height(120.dp).padding(top = 8.dp),
+            ftp = w?.ftp ?: 0.0, hrHistory = hrHistory)
+        if (status == WorkoutEngine.Status.IDLE) planStats?.let {
+            Text(it.label(), fontSize = 12.sp, color = Forge.Header, textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 6.dp))
+        }
 
         // Target power — the hero number
         Text("$target W",
@@ -192,16 +211,33 @@ fun PlayerScreen(pad: PaddingValues, workout: PlannedWorkout?, onExit: () -> Uni
             Metric("STEP LEFT", clock(stepLeft))
         }
 
-        // Upcoming steps: when, how long, how hard
+        // Upcoming steps: when, how long, how hard (large, readable while riding)
         if (upcoming.isNotEmpty()) {
             Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
                 Text("NEXT", fontSize = 11.sp, letterSpacing = 1.sp, color = Forge.Muted)
                 upcoming.forEachIndexed { n, sg ->
                     val whenTxt = if (n == 0) "in ${clock(stepLeft)}" else "then"
-                    Text("$whenTxt  ·  ${nextLabel(sg)}" + (if (sg.text.isNotBlank()) "  ·  ${sg.text}" else ""),
-                        fontSize = 13.sp, color = Forge.Header, maxLines = 1,
-                        modifier = Modifier.padding(top = 3.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
+                        Box(Modifier.size(12.dp).clip(CircleShape)
+                            .background(zoneColor((sg.startW + sg.endW) / 2.0, refFtp)))
+                        Spacer(Modifier.width(8.dp))
+                        Text("$whenTxt  ·  ${nextLabel(sg)}",
+                            fontSize = if (n == 0) 22.sp else 18.sp,
+                            fontWeight = if (n == 0) FontWeight.ExtraBold else FontWeight.SemiBold,
+                            color = if (n == 0) Color.White else Forge.Header, maxLines = 1)
+                    }
+                    if (sg.text.isNotBlank())
+                        Text(sg.text, fontSize = 13.sp, color = Forge.Muted, maxLines = 1,
+                            modifier = Modifier.padding(start = 20.dp))
                 }
+            }
+        }
+
+        // Step navigation: previous / restart current, next
+        if (status != WorkoutEngine.Status.DONE && total > 0) {
+            Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                ForgeChip("◀  Prev step", Modifier.weight(1f)) { WorkoutEngine.jumpStep(-1) }
+                ForgeChip("Next step  ▶", Modifier.weight(1f)) { WorkoutEngine.jumpStep(1) }
             }
         }
 
@@ -288,7 +324,11 @@ private fun SaveSection(
                 GhostButton("Retry", Modifier.padding(top = 12.dp).widthIn(min = 220.dp)) { state = "idle" }
                 GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
             }
-            else -> {
+            else -> if (apiKey.isBlank()) {
+                Text("No intervals.icu account connected: this ride can't be saved.",
+                    fontSize = 12.sp, color = Forge.Muted, textAlign = TextAlign.Center)
+                PrimaryButton("Done", Modifier.padding(top = 12.dp).widthIn(min = 220.dp), onClick = onDone)
+            } else {
                 PrimaryButton("Save to intervals.icu", Modifier.widthIn(min = 220.dp)) { upload() }
                 GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
             }

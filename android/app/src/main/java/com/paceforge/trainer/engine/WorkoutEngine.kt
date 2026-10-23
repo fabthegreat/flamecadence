@@ -23,7 +23,9 @@ object WorkoutEngine {
 
     val status = MutableStateFlow(Status.IDLE)
     val workout = MutableStateFlow<PlannedWorkout?>(null)
-    val elapsedSec = MutableStateFlow(0)
+    val elapsedSec = MutableStateFlow(0)       // position in the workout (jumps with step navigation)
+    val rideSec = MutableStateFlow(0)          // real riding time: never jumps, used for recording
+    val stepAnchorRide = MutableStateFlow(0)   // rideSec when the current step was last entered by a jump
     val targetW = MutableStateFlow(0)
     val segmentIndex = MutableStateFlow(0)
     val bias = MutableStateFlow(0)   // manual offset in watts (+/- buttons), cleared at each interval change
@@ -41,6 +43,8 @@ object WorkoutEngine {
         stop()
         workout.value = w
         elapsedSec.value = 0
+        rideSec.value = 0
+        stepAnchorRide.value = 0
         segmentIndex.value = 0
         targetW.value = w.segments.firstOrNull()?.startW?.roundToInt() ?: 0
         bias.value = 0
@@ -55,6 +59,7 @@ object WorkoutEngine {
             while (status.value == Status.RUNNING && elapsedSec.value < w.totalSec) {
                 delay(1000)
                 elapsedSec.value += 1
+                rideSec.value += 1
                 pushTarget()
             }
             if (elapsedSec.value >= w.totalSec) {
@@ -79,10 +84,40 @@ object WorkoutEngine {
         FtmsCenter.setTargetPower(0)
     }
 
+    private fun stepIndexAt(w: PlannedWorkout, t: Int): Int {
+        var acc = 0
+        for (i in w.segments.indices) {
+            acc += w.segments[i].durationSec
+            if (t < acc) return i
+        }
+        return w.segments.lastIndex
+    }
+
+    private fun stepStart(w: PlannedWorkout, idx: Int): Int = w.segments.take(idx).sumOf { it.durationSec }
+
+    /**
+     * Step navigation. delta > 0: start of the next step. delta < 0: restart the current step,
+     * or go to the previous one when less than 4 s into it.
+     */
+    fun jumpStep(delta: Int) {
+        val w = workout.value ?: return
+        if (status.value == Status.DONE || w.segments.isEmpty()) return
+        val cur = stepIndexAt(w, elapsedSec.value)
+        val target = when {
+            delta > 0 -> { if (cur >= w.segments.lastIndex) return; cur + 1 }
+            elapsedSec.value - stepStart(w, cur) > 3 -> cur
+            else -> (cur - 1).coerceAtLeast(0)
+        }
+        elapsedSec.value = stepStart(w, target)
+        stepAnchorRide.value = rideSec.value
+        bias.value = 0
+        pushTarget(send = status.value == Status.RUNNING)   // paused/idle: update the display only
+    }
+
     fun nudgeBias(delta: Int) { bias.value = (bias.value + delta).coerceIn(-100, 100) }
 
     /** Current segment + interpolated target, sent to the trainer. */
-    private fun pushTarget() {
+    private fun pushTarget(send: Boolean = true) {
         val w = workout.value ?: return
         var t = elapsedSec.value
         var idx = 0
@@ -102,6 +137,6 @@ object WorkoutEngine {
         val frac = if (s.durationSec == 0) 1.0 else (t.toDouble() / s.durationSec).coerceIn(0.0, 1.0)
         val watts = (s.startW + (s.endW - s.startW) * frac).roundToInt() + bias.value
         targetW.value = (s.startW + (s.endW - s.startW) * frac).roundToInt()
-        FtmsCenter.setTargetPower(watts.coerceAtLeast(0))
+        if (send) FtmsCenter.setTargetPower(watts.coerceAtLeast(0))
     }
 }

@@ -27,6 +27,7 @@ import com.paceforge.trainer.IcuRepository
 import com.paceforge.trainer.PlannedWorkout
 import com.paceforge.trainer.SettingsStore
 import com.paceforge.trainer.WeekSummary
+import com.paceforge.trainer.WorkoutMath
 import com.paceforge.trainer.ble.FtmsCenter
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,7 @@ fun App(onPlay: () -> Unit) {
     var screen by remember { mutableStateOf("home") }
     var selected by remember { mutableStateOf<PlannedWorkout?>(null) }
 
-    BackHandler(enabled = screen == "settings" || screen == "devices") { screen = "home" }
+    BackHandler(enabled = screen == "settings" || screen == "devices" || screen == "library") { screen = "home" }
 
     // Each screen draws its own header (see prototype); Scaffold only supplies the insets.
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { pad ->
@@ -43,9 +44,14 @@ fun App(onPlay: () -> Unit) {
             "home" -> HomeScreen(pad,
                 onSettings = { screen = "settings" },
                 onDevices = { screen = "devices" },
+                onLibrary = { screen = "library" },
                 onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
             "settings" -> SettingsScreen(pad) { screen = "home" }
             "devices" -> DevicesScreen(pad) { screen = "home" }
+            "library" -> LibraryScreen(pad,
+                onBack = { screen = "home" },
+                onSettings = { screen = "settings" },
+                onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
             "player" -> PlayerScreen(pad, selected, onExit = { screen = "home" })
         }
     }
@@ -54,7 +60,7 @@ fun App(onPlay: () -> Unit) {
 // ------------------------------------------------------------------- HOME
 
 @Composable
-private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit) {
+private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit, onLibrary: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -65,6 +71,7 @@ private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit) {
             Text("PaceForge", fontWeight = FontWeight.Bold, fontSize = 15.sp)
         }
         Row {
+            LinkText("Library", onLibrary)
             LinkText("Settings", onSettings)
             LinkText("Devices", onDevices)
         }
@@ -84,6 +91,7 @@ fun HomeScreen(
     pad: PaddingValues,
     onSettings: () -> Unit,
     onDevices: () -> Unit,
+    onLibrary: () -> Unit,
     onPlayWorkout: (PlannedWorkout) -> Unit
 ) {
     val ctx = androidx.compose.ui.platform.LocalContext.current
@@ -111,7 +119,7 @@ fun HomeScreen(
     }
 
     Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
-        HomeHeader(onSettings, onDevices)
+        HomeHeader(onSettings, onDevices, onLibrary)
         TrainerPill(trainer, trainerName, ergOk)
         if (trainerErr.isNotBlank())
             Text(trainerErr, fontSize = 11.sp, color = Forge.Warn, modifier = Modifier.padding(top = 4.dp))
@@ -119,8 +127,13 @@ fun HomeScreen(
         val s = settings
         when {
             s == null -> CenteredSpinner()
-            s.apiKey.isBlank() -> Text("Set your intervals.icu API key in Settings first.",
-                color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 16.dp))
+            s.apiKey.isBlank() -> Column(Modifier.padding(top = 16.dp)) {
+                Text("No intervals.icu account connected.", color = Forge.Muted)
+                Text("Ride a workout from the built-in library, or connect intervals.icu to get your planned workouts.",
+                    fontSize = 12.sp, color = Forge.Faint, modifier = Modifier.padding(top = 4.dp))
+                PrimaryButton("Browse the workout library", Modifier.fillMaxWidth().padding(top = 12.dp)) { onLibrary() }
+                GhostButton("Connect intervals.icu (Settings)", Modifier.fillMaxWidth().padding(top = 8.dp)) { onSettings() }
+            }
             loading -> CenteredSpinner()
             error != null -> Column(Modifier.padding(top = 16.dp)) {
                 Text("Error: $error", color = MaterialTheme.colorScheme.error)
@@ -184,12 +197,13 @@ private fun dayLabel(date: String): String = try {
 } catch (e: Exception) { date }
 
 @Composable
-private fun WorkoutCard(
+internal fun WorkoutCard(
     w: PlannedWorkout,
     trainer: FtmsCenter.ConnState,
     onPlay: (PlannedWorkout) -> Unit,
     playable: Boolean = true,
-    dayLabel: String? = null
+    dayLabel: String? = null,
+    source: String = "from intervals.icu"
 ) {
     val connected = trainer == FtmsCenter.ConnState.CONNECTED
     ForgeCard {
@@ -197,14 +211,18 @@ private fun WorkoutCard(
             verticalAlignment = Alignment.CenterVertically) {
             Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
             Spacer(Modifier.width(8.dp))
-            if (!playable) StatusPill(dayLabel ?: "", Forge.Muted)
+            if (!playable) { if (dayLabel != null) StatusPill(dayLabel, Forge.Muted) }
             else if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
         }
-        Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
+        Text("${w.totalSec / 60} min · ${w.segments.size} steps · $source",
             fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
-        // Miniature power-profile preview
+        // Miniature power-profile preview, coloured by zone
         WorkoutChart(w.segments, w.totalSec, 0, emptyList(),
-            Modifier.fillMaxWidth().height(96.dp).padding(top = 10.dp), compact = true)
+            Modifier.fillMaxWidth().height(96.dp).padding(top = 10.dp), compact = true, ftp = w.ftp)
+        val stats = remember(w) { WorkoutMath.planned(w) }
+        if (stats != null)
+            Text(stats.label(), fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Forge.Header,
+                modifier = Modifier.padding(top = 8.dp))
         if (w.description.isNotBlank())
             Text(w.description.take(140), fontSize = 12.sp, color = Forge.Faint, maxLines = 3,
                 lineHeight = 17.sp, modifier = Modifier.padding(top = 7.dp))
@@ -245,6 +263,7 @@ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
     var autoUpload by remember { mutableStateOf<Boolean?>(null) }
     var beep by remember { mutableStateOf<Boolean?>(null) }
     var awake by remember { mutableStateOf<Boolean?>(null) }
+    var ftpText by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
 
     // Don't touch the fields until the saved settings are loaded: previously the
@@ -271,6 +290,10 @@ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
                 modifier = Modifier.padding(top = 8.dp))
 
             SectionTitle("Preferences")
+            FieldLabel("FTP (W) — used for library workouts")
+            ForgeField(ftpText ?: loaded.ftp.takeIf { it > 0 }?.toString().orEmpty(),
+                { ftpText = it.filter { c -> c.isDigit() }.take(4) })
+            Spacer(Modifier.height(6.dp))
             ToggleRow("Auto-upload finished rides", "Skip the save prompt",
                 autoUpload ?: loaded.autoUpload) { autoUpload = it }
             ToggleRow("Beep at interval change", "Audio cue 3 s before",
@@ -282,6 +305,7 @@ fun SettingsScreen(pad: PaddingValues, onBack: () -> Unit) {
                 scope.launch {
                     SettingsStore.save(ctx, apiKey, athleteId,
                         autoUpload ?: loaded.autoUpload, beep ?: loaded.beep, awake ?: loaded.keepAwake)
+                    ftpText?.let { SettingsStore.saveFtp(ctx, it.toIntOrNull() ?: 0) }
                     onBack()
                 }
             }

@@ -3,6 +3,7 @@ package com.paceforge.trainer
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,9 @@ data class AppSettings(
     /** Audio cue 3 s before each interval change. */
     val beep: Boolean = false,
     /** Keep the screen on while the player is open. */
-    val keepAwake: Boolean = true
+    val keepAwake: Boolean = true,
+    /** Rider FTP in watts (0 = not set). Used to turn library workouts (% FTP) into watts. */
+    val ftp: Int = 0
 )
 
 object SettingsStore {
@@ -27,6 +30,7 @@ object SettingsStore {
     private val KEY_AUTO_UPLOAD = booleanPreferencesKey("auto_upload")
     private val KEY_BEEP = booleanPreferencesKey("beep_interval")
     private val KEY_AWAKE = booleanPreferencesKey("keep_awake")
+    private val KEY_FTP = intPreferencesKey("ftp_w")
 
     /**
      * Emits null until the persisted file has actually been read, so the UI can
@@ -40,8 +44,13 @@ object SettingsStore {
             athleteId = p[KEY_ATHLETE].let { if (it.isNullOrEmpty()) "0" else it },
             autoUpload = p[KEY_AUTO_UPLOAD] ?: true,
             beep = p[KEY_BEEP] ?: false,
-            keepAwake = p[KEY_AWAKE] ?: true
+            keepAwake = p[KEY_AWAKE] ?: true,
+            ftp = p[KEY_FTP] ?: 0
         )
+    }
+
+    suspend fun saveFtp(ctx: Context, ftp: Int) {
+        ctx.settings.edit { it[KEY_FTP] = ftp.coerceIn(0, 2000) }
     }
 
     suspend fun save(

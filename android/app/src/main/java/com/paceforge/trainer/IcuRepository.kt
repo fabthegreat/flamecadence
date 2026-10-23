@@ -26,7 +26,8 @@ data class PlannedWorkout(
     val name: String,
     val description: String,
     val segments: List<Segment>,
-    val date: String = ""      // yyyy-MM-dd (local)
+    val date: String = "",     // yyyy-MM-dd (local)
+    val ftp: Double = 0.0      // FTP the watts were resolved with (0 = unknown)
 ) {
     val totalSec: Int get() = segments.sumOf { it.durationSec }
 }
@@ -169,7 +170,8 @@ object IcuRepository {
                 name = ev.optString("name", "Workout"),
                 description = doc.optString("description", ""),
                 segments = segs,
-                date = start.take(10)
+                date = start.take(10),
+                ftp = ftp
             ))
         }
         return out

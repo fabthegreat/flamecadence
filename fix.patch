@@ -1,80 +1,1060 @@
 
---- a/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 20:02:40.238843141 +0000
-+++ b/app/src/main/java/com/paceforge/trainer/ble/FtmsManager.kt	2026-10-22 20:02:40.572868640 +0000
-@@ -54,8 +54,8 @@
-     private val CYCLING_POWER   = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb")
-     private val CPS_MEASUREMENT = UUID.fromString("00002a63-0000-1000-8000-00805f9b34fb")
-     private val TACX_FEC        = UUID.fromString("6e40fec1-b5a3-f393-e0a9-e50e24dcca9e")
--    private val FEC_RX          = UUID.fromString("6e40fec2-b5a3-f393-e0a9-e50e24dcca9e") // write (commands)
--    private val FEC_TX          = UUID.fromString("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e") // notify (trainer data)
-+    // The two FE-C characteristics are 6e40fec2 / 6e40fec3. Which one notifies and which one is
-+    // written differs between sources, so they are picked at runtime from their GATT properties.
+--- a/app/src/main/assets/library.json	1970-01-01 00:00:00.000000000 +0000
++++ b/app/src/main/assets/library.json	2026-10-23 04:39:58.072681099 +0000
+@@ -0,0 +1,644 @@
++{
++ "version": 1,
++ "note": "Power values are % of FTP. Steps: duration (s) + power, or start/end for ramps; reps + nested steps for repeats.",
++ "workouts": [
++  {
++   "id": "rec-30",
++   "name": "Recovery spin 30",
++   "category": "Recovery",
++   "description": "Very easy spinning to flush the legs. Keep it conversational.",
++   "steps": [
++    {
++     "duration": 1800,
++     "power": 50,
++     "text": "Easy spin"
++    }
++   ]
++  },
++  {
++   "id": "rec-40",
++   "name": "Recovery with spin-ups",
++   "category": "Recovery",
++   "description": "Easy riding with short high-cadence spin-ups to keep the legs fresh.",
++   "steps": [
++    {
++     "duration": 300,
++     "start": 40,
++     "end": 55,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 5,
++     "steps": [
++      {
++       "duration": 300,
++       "power": 52,
++       "text": "Easy"
++      },
++      {
++       "duration": 60,
++       "power": 60,
++       "text": "Spin-up, high cadence"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 55,
++     "end": 40,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "end-60",
++   "name": "Endurance 60",
++   "category": "Endurance",
++   "description": "Steady aerobic ride. Stay in zone 2, nothing more.",
++   "steps": [
++    {
++     "duration": 300,
++     "start": 45,
++     "end": 65,
++     "text": "Warm-up"
++    },
++    {
++     "duration": 3000,
++     "power": 68,
++     "text": "Endurance"
++    },
++    {
++     "duration": 300,
++     "start": 65,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "end-90",
++   "name": "Endurance 90",
++   "category": "Endurance",
++   "description": "A longer steady aerobic ride to build base fitness.",
++   "steps": [
++    {
++     "duration": 300,
++     "start": 45,
++     "end": 65,
++     "text": "Warm-up"
++    },
++    {
++     "duration": 4800,
++     "power": 70,
++     "text": "Endurance"
++    },
++    {
++     "duration": 300,
++     "start": 65,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "end-120",
++   "name": "Endurance 120",
++   "category": "Endurance",
++   "description": "Two hours of steady zone 2. Fuel and drink regularly.",
++   "steps": [
++    {
++     "duration": 300,
++     "start": 45,
++     "end": 65,
++     "text": "Warm-up"
++    },
++    {
++     "duration": 6600,
++     "power": 68,
++     "text": "Endurance"
++    },
++    {
++     "duration": 300,
++     "start": 65,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "end-surge-75",
++   "name": "Endurance with surges",
++   "category": "Endurance",
++   "description": "Zone 2 riding with short surges to break up the monotony.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 68,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 5,
++     "steps": [
++      {
++       "duration": 600,
++       "power": 68,
++       "text": "Endurance"
++      },
++      {
++       "duration": 30,
++       "power": 110,
++       "text": "Surge"
++      },
++      {
++       "duration": 90,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 65,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "tempo-2x20",
++   "name": "Tempo 2x20",
++   "category": "Tempo",
++   "description": "Two long tempo blocks: comfortably hard, steady and controlled.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 70,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 2,
++     "steps": [
++      {
++       "duration": 1200,
++       "power": 82,
++       "text": "Tempo"
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "tempo-3x12",
++   "name": "Tempo 3x12",
++   "category": "Tempo",
++   "description": "Three tempo blocks with short recoveries.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 70,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 3,
++     "steps": [
++      {
++       "duration": 720,
++       "power": 85,
++       "text": "Tempo"
++      },
++      {
++       "duration": 240,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "ss-3x10",
++   "name": "Sweet spot 3x10",
++   "category": "Sweet Spot",
++   "description": "Three 10-minute blocks just under threshold: efficient fitness gains.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 70,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 3,
++     "steps": [
++      {
++       "duration": 600,
++       "power": 90,
++       "text": "Sweet spot"
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "ss-2x20",
++   "name": "Sweet spot 2x20",
++   "category": "Sweet Spot",
++   "description": "Two 20-minute sweet spot blocks.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 70,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 2,
++     "steps": [
++      {
++       "duration": 1200,
++       "power": 90,
++       "text": "Sweet spot"
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "ss-4x12",
++   "name": "Sweet spot 4x12",
++   "category": "Sweet Spot",
++   "description": "A bigger sweet spot session: four 12-minute blocks.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 70,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 4,
++     "steps": [
++      {
++       "duration": 720,
++       "power": 91,
++       "text": "Sweet spot"
++      },
++      {
++       "duration": 240,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "thr-2x15",
++   "name": "Threshold 2x15",
++   "category": "Threshold",
++   "description": "Two 15-minute efforts at FTP.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 2,
++     "steps": [
++      {
++       "duration": 900,
++       "power": 100,
++       "text": "Threshold"
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "thr-3x10",
++   "name": "Threshold 3x10",
++   "category": "Threshold",
++   "description": "Three 10-minute efforts at FTP.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 3,
++     "steps": [
++      {
++       "duration": 600,
++       "power": 100,
++       "text": "Threshold"
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "thr-overunder",
++   "name": "Over-unders 3x12",
++   "category": "Threshold",
++   "description": "Alternate just under and just over FTP to improve lactate clearance.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 3,
++     "steps": [
++      {
++       "reps": 4,
++       "steps": [
++        {
++         "duration": 120,
++         "power": 95,
++         "text": "Under"
++        },
++        {
++         "duration": 60,
++         "power": 105,
++         "text": "Over"
++        }
++       ]
++      },
++      {
++       "duration": 300,
++       "power": 55,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "vo2-5x3",
++   "name": "VO2max 5x3",
++   "category": "VO2max",
++   "description": "Five 3-minute hard efforts, equal recovery.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 5,
++     "steps": [
++      {
++       "duration": 180,
++       "power": 118,
++       "text": "VO2max"
++      },
++      {
++       "duration": 180,
++       "power": 50,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "vo2-4x4",
++   "name": "VO2max 4x4",
++   "category": "VO2max",
++   "description": "Four 4-minute efforts: the classic VO2max session.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 4,
++     "steps": [
++      {
++       "duration": 240,
++       "power": 115,
++       "text": "VO2max"
++      },
++      {
++       "duration": 240,
++       "power": 50,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "vo2-3030",
++   "name": "30/30 intervals",
++   "category": "VO2max",
++   "description": "Two sets of 8 x (30 s hard / 30 s easy).",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 2,
++     "steps": [
++      {
++       "reps": 8,
++       "steps": [
++        {
++         "duration": 30,
++         "power": 125,
++         "text": "Hard"
++        },
++        {
++         "duration": 30,
++         "power": 50,
++         "text": "Easy"
++        }
++       ]
++      },
++      {
++       "duration": 300,
++       "power": 50,
++       "text": "Set recovery"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "ana-8x20",
++   "name": "Sprints 8x20s",
++   "category": "Anaerobic",
++   "description": "Eight all-out 20-second sprints with full recovery.",
++   "steps": [
++    {
++     "duration": 720,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 8,
++     "steps": [
++      {
++       "duration": 20,
++       "power": 200,
++       "text": "Sprint"
++      },
++      {
++       "duration": 220,
++       "power": 50,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  },
++  {
++   "id": "ana-6x1",
++   "name": "Anaerobic 6x1",
++   "category": "Anaerobic",
++   "description": "Six 1-minute very hard efforts.",
++   "steps": [
++    {
++     "duration": 600,
++     "start": 45,
++     "end": 75,
++     "text": "Warm-up"
++    },
++    {
++     "reps": 6,
++     "steps": [
++      {
++       "duration": 60,
++       "power": 140,
++       "text": "Anaerobic"
++      },
++      {
++       "duration": 240,
++       "power": 50,
++       "text": "Recover"
++      }
++     ]
++    },
++    {
++     "duration": 300,
++     "start": 60,
++     "end": 45,
++     "text": "Cool-down"
++    }
++   ]
++  }
++ ]
++}
+\ No newline at end of file
+
+--- a/app/src/main/java/com/paceforge/trainer/Library.kt	1970-01-01 00:00:00.000000000 +0000
++++ b/app/src/main/java/com/paceforge/trainer/Library.kt	2026-10-23 04:39:58.073390427 +0000
+@@ -0,0 +1,78 @@
++package com.paceforge.trainer
++
++import android.content.Context
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.withContext
++import org.json.JSONArray
++import org.json.JSONObject
++
++/**
++ * A workout of the built-in library. Power is stored as % of FTP, so the same
++ * workout is turned into watts with the rider's own FTP (see [toPlanned]).
++ */
++data class LibWorkout(
++    val id: String,
++    val name: String,
++    val category: String,
++    val description: String,
++    val segments: List<Segment>,   // startW / endW hold % of FTP here
++    val durationSec: Int,
++    val intensityFactor: Double,   // FTP-independent
++    val tss: Int                   // FTP-independent
++) {
++    fun toPlanned(ftp: Double) = PlannedWorkout(
++        id = id.hashCode().toLong(),
++        name = name,
++        description = description,
++        segments = segments.map { it.copy(startW = it.startW * ftp / 100.0, endW = it.endW * ftp / 100.0) },
++        ftp = ftp
++    )
++}
++
++/** Loads assets/library.json. Replace that file to change the library. */
++object Library {
++    suspend fun load(ctx: Context): List<LibWorkout> = withContext(Dispatchers.IO) {
++        val text = ctx.assets.open("library.json").bufferedReader().use { it.readText() }
++        parse(text)
++    }
++
++    fun parse(text: String): List<LibWorkout> {
++        val arr = JSONObject(text).getJSONArray("workouts")
++        val out = ArrayList<LibWorkout>()
++        for (i in 0 until arr.length()) {
++            val o = arr.getJSONObject(i)
++            val segs = ArrayList<Segment>()
++            o.optJSONArray("steps")?.let { flatten(it, segs) }
++            if (segs.isEmpty()) continue
++            val stats = WorkoutMath.stats(WorkoutMath.series(segs), 100.0)
++            out.add(LibWorkout(
++                id = o.getString("id"),
++                name = o.optString("name", "Workout"),
++                category = o.optString("category", "Other"),
++                description = o.optString("description", ""),
++                segments = segs,
++                durationSec = segs.sumOf { it.durationSec },
++                intensityFactor = stats?.intensity ?: 0.0,
++                tss = stats?.tss ?: 0
++            ))
++        }
++        return out
++    }
++
++    private fun flatten(steps: JSONArray, out: MutableList<Segment>) {
++        for (i in 0 until steps.length()) {
++            val s = steps.getJSONObject(i)
++            val children = s.optJSONArray("steps")
++            if (children != null) {
++                repeat(s.optInt("reps", 1)) { flatten(children, out) }
++                continue
++            }
++            val dur = s.optInt("duration", 0)
++            if (dur <= 0) continue
++            val flat = s.optDouble("power", Double.NaN)
++            val a = if (flat.isNaN()) s.optDouble("start", 0.0) else flat
++            val b = if (flat.isNaN()) s.optDouble("end", a) else flat
++            out.add(Segment(dur, a, b, s.optString("text", "")))
++        }
++    }
++}
+
+--- a/app/src/main/java/com/paceforge/trainer/SettingsStore.kt	2026-10-23 04:39:58.034973124 +0000
++++ b/app/src/main/java/com/paceforge/trainer/SettingsStore.kt	2026-10-23 04:40:14.011118166 +0000
+@@ -3,6 +3,7 @@
+ import android.content.Context
+ import androidx.datastore.preferences.core.booleanPreferencesKey
+ import androidx.datastore.preferences.core.edit
++import androidx.datastore.preferences.core.intPreferencesKey
+ import androidx.datastore.preferences.core.stringPreferencesKey
+ import androidx.datastore.preferences.preferencesDataStore
+ import kotlinx.coroutines.flow.Flow
+@@ -18,7 +19,9 @@
+     /** Audio cue 3 s before each interval change. */
+     val beep: Boolean = false,
+     /** Keep the screen on while the player is open. */
+-    val keepAwake: Boolean = true
++    val keepAwake: Boolean = true,
++    /** Rider FTP in watts (0 = not set). Used to turn library workouts (% FTP) into watts. */
++    val ftp: Int = 0
+ )
  
-     // FE-C over BLE carries raw ANT+ messages: A4 | len | msgId | channel | 8 data bytes | xor checksum
-     private const val ANT_SYNC = 0xA4
-@@ -117,6 +117,8 @@
-     private val writeQueue = ConcurrentLinkedQueue<ByteArray>()
-     @Volatile private var writeBusy = false   // a control-point write is in flight
-     @Volatile private var useFec = false        // ERG through Tacx FE-C instead of FTMS
-+    @Volatile private var fecNotifyChar: BluetoothGattCharacteristic? = null   // trainer -> app
-+    @Volatile private var fecWriteChar: BluetoothGattCharacteristic? = null    // app -> trainer
-     private var lastTrainerHit: ScanHit? = null
-     private var connectAttempts = 0
-     private val main = Handler(Looper.getMainLooper())
-@@ -290,12 +292,25 @@
-             val svc = g.getService(FTMS)
-             useFec = false
-             val fec = g.getService(TACX_FEC)
--            val fecTx = fec?.getCharacteristic(FEC_TX)
--            if (svc == null && fec != null && fecTx != null && fec.getCharacteristic(FEC_RX) != null) {
-+            if (svc == null && fec != null) {
-                 // Tacx FE-C over BLE (e.g. Neo 2T without FTMS): power + cadence + ERG.
--                Log.i(TAG, "No FTMS service; using Tacx FE-C over BLE")
-+                val chars = fec.characteristics
-+                val props = chars.joinToString(" ") { "${it.uuid.toString().substring(4, 8)}:0x%02X".format(it.properties) }
-+                Log.i(TAG, "FE-C characteristics: $props")
-+                servicesInfo.value = servicesInfo.value + " [FE-C $props]"
-+                val notifyMask = BluetoothGattCharacteristic.PROPERTY_NOTIFY or BluetoothGattCharacteristic.PROPERTY_INDICATE
-+                val writeMask = BluetoothGattCharacteristic.PROPERTY_WRITE or BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE
-+                val notify = chars.firstOrNull { it.properties and notifyMask != 0 && it.getDescriptor(CCCD) != null }
-+                val write = chars.firstOrNull { it.properties and writeMask != 0 }
-+                if (notify == null || write == null) {
-+                    fallbackToCps(g, "FE-C characteristics unexpected ($props)")
-+                    return
+ object SettingsStore {
+@@ -27,6 +30,7 @@
+     private val KEY_AUTO_UPLOAD = booleanPreferencesKey("auto_upload")
+     private val KEY_BEEP = booleanPreferencesKey("beep_interval")
+     private val KEY_AWAKE = booleanPreferencesKey("keep_awake")
++    private val KEY_FTP = intPreferencesKey("ftp_w")
+ 
+     /**
+      * Emits null until the persisted file has actually been read, so the UI can
+@@ -40,10 +44,15 @@
+             athleteId = p[KEY_ATHLETE].let { if (it.isNullOrEmpty()) "0" else it },
+             autoUpload = p[KEY_AUTO_UPLOAD] ?: true,
+             beep = p[KEY_BEEP] ?: false,
+-            keepAwake = p[KEY_AWAKE] ?: true
++            keepAwake = p[KEY_AWAKE] ?: true,
++            ftp = p[KEY_FTP] ?: 0
+         )
+     }
+ 
++    suspend fun saveFtp(ctx: Context, ftp: Int) {
++        ctx.settings.edit { it[KEY_FTP] = ftp.coerceIn(0, 2000) }
++    }
++
+     suspend fun save(
+         ctx: Context, apiKey: String, athleteId: String,
+         autoUpload: Boolean, beep: Boolean, keepAwake: Boolean
+
+--- a/app/src/main/java/com/paceforge/trainer/ui/LibraryScreen.kt	1970-01-01 00:00:00.000000000 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ui/LibraryScreen.kt	2026-10-23 04:39:58.078643035 +0000
+@@ -0,0 +1,129 @@
++package com.paceforge.trainer.ui
++
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.horizontalScroll
++import androidx.compose.foundation.layout.*
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.foundation.rememberScrollState
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material3.MaterialTheme
++import androidx.compose.material3.Text
++import androidx.compose.runtime.*
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.unit.sp
++import androidx.lifecycle.compose.collectAsStateWithLifecycle
++import com.paceforge.trainer.LibWorkout
++import com.paceforge.trainer.Library
++import com.paceforge.trainer.PlannedWorkout
++import com.paceforge.trainer.SettingsStore
++import com.paceforge.trainer.ble.FtmsCenter
++
++private val DURATIONS = listOf("Any", "≤ 45 min", "45–60", "60–90", "> 90 min")
++private val INTENSITIES = listOf("Any", "Easy", "Moderate", "Hard")
++
++private fun durationOk(w: LibWorkout, i: Int): Boolean {
++    val m = w.durationSec / 60
++    return when (i) { 1 -> m <= 45; 2 -> m in 46..60; 3 -> m in 61..90; 4 -> m > 90; else -> true }
++}
++
++private fun intensityOk(w: LibWorkout, i: Int): Boolean = when (i) {
++    1 -> w.intensityFactor < 0.75
++    2 -> w.intensityFactor >= 0.75 && w.intensityFactor < 0.88
++    3 -> w.intensityFactor >= 0.88
++    else -> true
++}
++
++/** Built-in workout library: lets a rider without an intervals.icu account pick a workout and ride. */
++@Composable
++fun LibraryScreen(
++    pad: PaddingValues,
++    onBack: () -> Unit,
++    onSettings: () -> Unit,
++    onPlayWorkout: (PlannedWorkout) -> Unit
++) {
++    val ctx = androidx.compose.ui.platform.LocalContext.current
++    val settings by SettingsStore.flow(ctx).collectAsStateWithLifecycle(initialValue = null)
++    val trainer by FtmsCenter.trainerState.collectAsState()
++
++    var all by remember { mutableStateOf<List<LibWorkout>>(emptyList()) }
++    var loadError by remember { mutableStateOf<String?>(null) }
++    LaunchedEffect(Unit) {
++        try { all = Library.load(ctx) } catch (e: Exception) { loadError = e.message }
++    }
++
++    var category by remember { mutableStateOf<String?>(null) }
++    var duration by remember { mutableStateOf(0) }
++    var intensity by remember { mutableStateOf(0) }
++
++    val ftpSet = settings?.ftp ?: 0
++    val ftp = if (ftpSet > 0) ftpSet.toDouble() else 200.0   // preview FTP until the rider sets theirs
++    val categories = remember(all) { all.map { it.category }.distinct() }
++    val shown = remember(all, category, duration, intensity) {
++        all.filter { (category == null || it.category == category) && durationOk(it, duration) && intensityOk(it, intensity) }
++    }
++
++    Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
++        BackHeader("Workout library", onBack)
++
++        if (settings != null && ftpSet <= 0) {
++            ForgeCard {
++                Text("Set your FTP to ride these workouts", fontWeight = androidx.compose.ui.text.font.FontWeight.Bold, fontSize = 13.sp)
++                Text("Watts are computed from your FTP. Charts below use 200 W as a preview.",
++                    fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
++                GhostButton("Open Settings", Modifier.fillMaxWidth().padding(top = 10.dp)) { onSettings() }
++            }
++            Spacer(Modifier.height(8.dp))
++        }
++
++        FilterRow(listOf("All") + categories, category ?: "All") { category = if (it == "All") null else it }
++        FilterRow(DURATIONS, DURATIONS[duration]) { duration = DURATIONS.indexOf(it) }
++        FilterRow(INTENSITIES, INTENSITIES[intensity]) { intensity = INTENSITIES.indexOf(it) }
++
++        when {
++            loadError != null -> Text("Could not load the library: $loadError",
++                color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 16.dp))
++            shown.isEmpty() -> Text(if (all.isEmpty()) "Loading…" else "No workout matches these filters.",
++                color = Forge.Muted, modifier = Modifier.padding(top = 16.dp))
++            else -> LazyColumn(contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp)) {
++                items(shown, key = { it.id }) { lw ->
++                    WorkoutCard(
++                        lw.toPlanned(ftp), trainer, onPlayWorkout,
++                        playable = ftpSet > 0,
++                        source = "${lw.category} · TSS ${lw.tss}"
++                    )
++                    Spacer(Modifier.height(8.dp))
 +                }
-+                fecNotifyChar = notify
-+                fecWriteChar = write
-                 useFec = true
--                if (!enableNotify(g, fecTx, indications = false)) fallbackToCps(g, "FE-C subscribe rejected")
-+                val indicate = notify.properties and BluetoothGattCharacteristic.PROPERTY_NOTIFY == 0
-+                if (!enableNotify(g, notify, indications = indicate)) fallbackToCps(g, "FE-C subscribe rejected ($props)")
-                 return
++            }
++        }
++    }
++}
++
++@Composable
++private fun FilterRow(options: List<String>, selected: String, onSelect: (String) -> Unit) {
++    Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(vertical = 4.dp),
++        horizontalArrangement = Arrangement.spacedBy(6.dp)) {
++        options.forEach { FilterPill(it, it == selected) { onSelect(it) } }
++    }
++}
++
++@Composable
++private fun FilterPill(text: String, selected: Boolean, onClick: () -> Unit) {
++    val shape = RoundedCornerShape(20.dp)
++    Box(
++        Modifier.clip(shape)
++            .background(if (selected) Forge.AccentChipBg else Forge.ChipBg)
++            .border(1.dp, if (selected) Forge.AccentChipBorder else Forge.GhostBorder, shape)
++            .clickable(role = Role.Button, onClick = onClick)
++            .padding(horizontal = 14.dp, vertical = 8.dp),
++        contentAlignment = Alignment.Center
++    ) {
++        Text(text, fontSize = 12.sp, color = if (selected) Forge.Amber else Forge.GhostText)
++    }
++}
+
+--- a/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-23 04:39:58.035060085 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ui/PlayerScreen.kt	2026-10-23 04:40:14.012427060 +0000
+@@ -324,7 +324,11 @@
+                 GhostButton("Retry", Modifier.padding(top = 12.dp).widthIn(min = 220.dp)) { state = "idle" }
+                 GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
              }
-             if (svc == null) {
-@@ -321,7 +336,7 @@
+-            else -> {
++            else -> if (apiKey.isBlank()) {
++                Text("No intervals.icu account connected: this ride can't be saved.",
++                    fontSize = 12.sp, color = Forge.Muted, textAlign = TextAlign.Center)
++                PrimaryButton("Done", Modifier.padding(top = 12.dp).widthIn(min = 220.dp), onClick = onDone)
++            } else {
+                 PrimaryButton("Save to intervals.icu", Modifier.widthIn(min = 220.dp)) { upload() }
+                 GhostButton("Discard", Modifier.padding(top = 8.dp).widthIn(min = 220.dp), onClick = onDone)
+             }
+
+--- a/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-23 04:39:58.035136290 +0000
++++ b/app/src/main/java/com/paceforge/trainer/ui/Screens.kt	2026-10-23 04:40:14.011896116 +0000
+@@ -36,7 +36,7 @@
+     var screen by remember { mutableStateOf("home") }
+     var selected by remember { mutableStateOf<PlannedWorkout?>(null) }
  
-         override fun onDescriptorWrite(g: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-             val uuid = descriptor.characteristic?.uuid
--            if (uuid == FEC_TX) {
-+            if (useFec && uuid == fecNotifyChar?.uuid) {
-                 if (status == BluetoothGatt.GATT_SUCCESS) {
-                     lastError.value = ""
-                     trainerState.value = ConnState.CONNECTED
-@@ -347,7 +362,7 @@
-                 INDOOR_BIKE -> parseIndoorBike(value)
-                 CPS_MEASUREMENT -> parseCps(value)
-                 CONTROL_POINT -> onControlPointResponse(value)
--                FEC_TX -> parseFec(value)
-+                else -> if (useFec && ch.uuid == fecNotifyChar?.uuid) parseFec(value)
-             }
+-    BackHandler(enabled = screen == "settings" || screen == "devices") { screen = "home" }
++    BackHandler(enabled = screen == "settings" || screen == "devices" || screen == "library") { screen = "home" }
+ 
+     // Each screen draws its own header (see prototype); Scaffold only supplies the insets.
+     Scaffold(containerColor = MaterialTheme.colorScheme.background) { pad ->
+@@ -44,9 +44,14 @@
+             "home" -> HomeScreen(pad,
+                 onSettings = { screen = "settings" },
+                 onDevices = { screen = "devices" },
++                onLibrary = { screen = "library" },
+                 onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
+             "settings" -> SettingsScreen(pad) { screen = "home" }
+             "devices" -> DevicesScreen(pad) { screen = "home" }
++            "library" -> LibraryScreen(pad,
++                onBack = { screen = "home" },
++                onSettings = { screen = "settings" },
++                onPlayWorkout = { w -> selected = w; onPlay(); screen = "player" })
+             "player" -> PlayerScreen(pad, selected, onExit = { screen = "home" })
          }
+     }
+@@ -55,7 +60,7 @@
+ // ------------------------------------------------------------------- HOME
  
-@@ -444,7 +459,7 @@
-     private fun pump() {
-         if (writeBusy) return
-         val g = trainerGatt ?: return
--        val cp = (if (useFec) g.getService(TACX_FEC)?.getCharacteristic(FEC_RX)
-+        val cp = (if (useFec) fecWriteChar
-                   else g.getService(FTMS)?.getCharacteristic(CONTROL_POINT)) ?: return
-         val next = writeQueue.poll() ?: return
-         writeBusy = true
+ @Composable
+-private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit) {
++private fun HomeHeader(onSettings: () -> Unit, onDevices: () -> Unit, onLibrary: () -> Unit) {
+     Row(
+         Modifier.fillMaxWidth().padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 10.dp),
+         verticalAlignment = Alignment.CenterVertically,
+@@ -66,6 +71,7 @@
+             Text("PaceForge", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+         }
+         Row {
++            LinkText("Library", onLibrary)
+             LinkText("Settings", onSettings)
+             LinkText("Devices", onDevices)
+         }
+@@ -85,6 +91,7 @@
+     pad: PaddingValues,
+     onSettings: () -> Unit,
+     onDevices: () -> Unit,
++    onLibrary: () -> Unit,
+     onPlayWorkout: (PlannedWorkout) -> Unit
+ ) {
+     val ctx = androidx.compose.ui.platform.LocalContext.current
+@@ -112,7 +119,7 @@
+     }
+ 
+     Column(Modifier.fillMaxSize().padding(pad).padding(horizontal = 16.dp)) {
+-        HomeHeader(onSettings, onDevices)
++        HomeHeader(onSettings, onDevices, onLibrary)
+         TrainerPill(trainer, trainerName, ergOk)
+         if (trainerErr.isNotBlank())
+             Text(trainerErr, fontSize = 11.sp, color = Forge.Warn, modifier = Modifier.padding(top = 4.dp))
+@@ -120,8 +127,13 @@
+         val s = settings
+         when {
+             s == null -> CenteredSpinner()
+-            s.apiKey.isBlank() -> Text("Set your intervals.icu API key in Settings first.",
+-                color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 16.dp))
++            s.apiKey.isBlank() -> Column(Modifier.padding(top = 16.dp)) {
++                Text("No intervals.icu account connected.", color = Forge.Muted)
++                Text("Ride a workout from the built-in library, or connect intervals.icu to get your planned workouts.",
++                    fontSize = 12.sp, color = Forge.Faint, modifier = Modifier.padding(top = 4.dp))
++                PrimaryButton("Browse the workout library", Modifier.fillMaxWidth().padding(top = 12.dp)) { onLibrary() }
++                GhostButton("Connect intervals.icu (Settings)", Modifier.fillMaxWidth().padding(top = 8.dp)) { onSettings() }
++            }
+             loading -> CenteredSpinner()
+             error != null -> Column(Modifier.padding(top = 16.dp)) {
+                 Text("Error: $error", color = MaterialTheme.colorScheme.error)
+@@ -185,12 +197,13 @@
+ } catch (e: Exception) { date }
+ 
+ @Composable
+-private fun WorkoutCard(
++internal fun WorkoutCard(
+     w: PlannedWorkout,
+     trainer: FtmsCenter.ConnState,
+     onPlay: (PlannedWorkout) -> Unit,
+     playable: Boolean = true,
+-    dayLabel: String? = null
++    dayLabel: String? = null,
++    source: String = "from intervals.icu"
+ ) {
+     val connected = trainer == FtmsCenter.ConnState.CONNECTED
+     ForgeCard {
+@@ -198,10 +211,10 @@
+             verticalAlignment = Alignment.CenterVertically) {
+             Text(w.name, fontWeight = FontWeight.Bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
+             Spacer(Modifier.width(8.dp))
+-            if (!playable) StatusPill(dayLabel ?: "", Forge.Muted)
++            if (!playable) { if (dayLabel != null) StatusPill(dayLabel, Forge.Muted) }
+             else if (connected) StatusPill("Ready", Forge.Green) else StatusPill("No trainer", Forge.Muted)
+         }
+-        Text("${w.totalSec / 60} min · ${w.segments.size} steps · from intervals.icu",
++        Text("${w.totalSec / 60} min · ${w.segments.size} steps · $source",
+             fontSize = 12.sp, color = Forge.Muted, modifier = Modifier.padding(top = 3.dp))
+         // Miniature power-profile preview, coloured by zone
+         WorkoutChart(w.segments, w.totalSec, 0, emptyList(),
+@@ -250,6 +263,7 @@
+     var autoUpload by remember { mutableStateOf<Boolean?>(null) }
+     var beep by remember { mutableStateOf<Boolean?>(null) }
+     var awake by remember { mutableStateOf<Boolean?>(null) }
++    var ftpText by remember { mutableStateOf<String?>(null) }
+     val scope = rememberCoroutineScope()
+ 
+     // Don't touch the fields until the saved settings are loaded: previously the
+@@ -276,6 +290,10 @@
+                 modifier = Modifier.padding(top = 8.dp))
+ 
+             SectionTitle("Preferences")
++            FieldLabel("FTP (W) — used for library workouts")
++            ForgeField(ftpText ?: loaded.ftp.takeIf { it > 0 }?.toString().orEmpty(),
++                { ftpText = it.filter { c -> c.isDigit() }.take(4) })
++            Spacer(Modifier.height(6.dp))
+             ToggleRow("Auto-upload finished rides", "Skip the save prompt",
+                 autoUpload ?: loaded.autoUpload) { autoUpload = it }
+             ToggleRow("Beep at interval change", "Audio cue 3 s before",
+@@ -287,6 +305,7 @@
+                 scope.launch {
+                     SettingsStore.save(ctx, apiKey, athleteId,
+                         autoUpload ?: loaded.autoUpload, beep ?: loaded.beep, awake ?: loaded.keepAwake)
++                    ftpText?.let { SettingsStore.saveFtp(ctx, it.toIntOrNull() ?: 0) }
+                     onBack()
+                 }
+             }

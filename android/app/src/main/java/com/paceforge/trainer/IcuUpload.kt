@@ -17,7 +17,8 @@ import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 /** One 1 Hz sample of the ride. */
-data class SessionPoint(val sec: Int, val watts: Int, val hr: Int, val cadence: Int)
+/** [sec] = riding time (monotonic, used for the file); [pos] = position in the workout (can jump with step navigation). */
+data class SessionPoint(val sec: Int, val watts: Int, val hr: Int, val cadence: Int, val pos: Int = sec)
 
 /**
  * Uploads a recorded session to intervals.icu as a completed activity.
