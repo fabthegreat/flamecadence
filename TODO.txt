@@ -1,9 +1,2 @@
 Android app:
-* be able to navigate back and forth through the steps
-* add color to the charts so that we can see the hard and easy steps
-* in the preview show the NP and average power and the TSS
-* during the workout, can you show also the heart rate curve in the background of the power chart if available?
-* can you show the next steps with a larger font?
-* do you think that the app will be compatible with Zwift and Elite HT?
-* maybe you can propose in the app it self the same lib (create a lib section with categories and same filter options as the web site) as for the webapp paceforge? SO that a user without intervals.icu account can anyway ride?
-
+* is there a way to create a connection with strava to also upload activities there?
