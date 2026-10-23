@@ -72,6 +72,33 @@ dialog h2{margin-bottom:6px}
 .chart path:hover{opacity:.8}
 .chart path.sel{stroke:var(--ink);stroke-width:2}
 .chart .cap{font-size:.8rem;color:var(--mute);margin-top:4px}
+abbr.gl{text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:2px;cursor:help}
+#gltip{position:fixed;z-index:2147483647;max-width:min(300px,calc(100vw - 16px));background:var(--ink);color:var(--card);padding:8px 10px;border-radius:6px;font-size:.8rem;line-height:1.4;font-weight:400;font-style:normal;letter-spacing:normal;text-transform:none;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:none}
+#gltip b{display:block;margin-bottom:2px}
+.zbar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0 2px;background:var(--bg)}
+.zbar i{display:block;height:100%}
+.zbar.mini{height:4px;margin:2px 0 0;border-radius:2px}
+.zbar i.z1,.zleg i.z1{background:#3a9d8f}.zbar i.z2,.zleg i.z2{background:#5cb85c}.zbar i.z3,.zleg i.z3{background:#e3cf3f}.zbar i.z4,.zleg i.z4{background:#f2a33a}
+.zbar i.z5,.zleg i.z5{background:#ee6c4d}.zbar i.z6,.zleg i.z6{background:#d6336c}.zbar i.z7,.zleg i.z7{background:#8e44ad}
+.zleg{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:.75rem;color:var(--mute)}
+.zleg span{display:inline-flex;align-items:center;gap:4px}
+.zleg i{display:inline-block;width:8px;height:8px;border-radius:2px}
+.fuel{margin-top:8px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.8rem;line-height:1.55;color:var(--mute)}
+details.fold>summary,.fuel>summary{cursor:pointer;list-style:none;user-select:none}
+details.fold>summary::-webkit-details-marker,.fuel>summary::-webkit-details-marker{display:none}
+details.fold>summary::before,.fuel>summary::before{content:"▸";display:inline-block;width:1em;transition:transform .15s}
+details.fold[open]>summary::before,.fuel[open]>summary::before{transform:rotate(90deg)}
+details.fold>summary{font-size:.85rem;color:var(--mute);margin:10px 0 4px}
+details.fold[open]>summary{margin-bottom:6px}
+.fuel>summary b{color:var(--ink)}
+.fuel[open]>summary{margin-bottom:3px}
+.fuel .fn{font-size:.72rem;opacity:.85;margin-top:2px}
+.dgl{position:absolute;left:0;top:0;width:100%;height:64px;pointer-events:none;z-index:4}
+.dgh{position:absolute;pointer-events:auto;touch-action:none;display:flex;align-items:center;justify-content:center}
+.dgh::after{content:"";background:var(--ink);border:1px solid var(--bg);border-radius:3px;opacity:.5;transition:opacity .1s}
+.dgh:hover::after{opacity:1}
+.dgt{width:12px;height:26px;transform:translateY(-50%);cursor:ew-resize}.dgt::after{width:4px;height:100%}
+.dgi{height:12px;transform:translate(-50%,-50%);cursor:ns-resize}.dgi::after{height:4px;width:100%}
 .z1{fill:#3a9d8f}.z2{fill:#5cb85c}.z3{fill:#e3cf3f}.z4{fill:#f2a33a}.z5{fill:#ee6c4d}.z6{fill:#d6336c}.z7{fill:#8e44ad}
 .tip{position:absolute;z-index:5;pointer-events:none;background:var(--ink);color:var(--card);padding:6px 8px;border-radius:6px;font-size:.8rem;line-height:1.35;width:max-content;max-width:260px;white-space:pre-line;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .tip .act{margin-top:6px}
@@ -173,7 +200,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-card p{margin:0 0 10px;font-size:.85rem;color:var(--mute)}
 .lib-preview{display:block;width:100%;height:42px;margin:8px 0 10px;border-radius:6px;background:var(--card);overflow:hidden}
 .lib-preview svg{display:block;width:100%;height:100%}
-.plan-prev{flex:0 0 84px;height:28px;border-radius:4px;background:var(--card);overflow:hidden}
+.plan-prev{flex:0 0 84px;border-radius:4px;overflow:hidden}
+.plan-prev .pps{display:block;height:26px;border-radius:4px;background:var(--card);overflow:hidden}
 .plan-prev svg{display:block;width:100%;height:100%}
 .pwk{display:flex;align-items:flex-end;gap:4px;height:84px;margin:10px 0 4px;padding:6px 6px 0;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
 .pwk>div{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:.65rem;color:var(--mute)}
@@ -450,6 +478,9 @@ h2.ic{display:flex;align-items:center;gap:8px}
 </div>
 <label data-i="pDays" style="margin-top:12px;display:block"></label>
 <div id="pdays" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
+<label data-i="pHard" style="margin-top:12px;display:block"></label>
+<div id="phard" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
+<div class="hint" id="phardwarn" style="color:var(--err)" hidden></div>
 <div class="hint" data-i="pHint"></div>
 <div class="actions"><button id="pgen" type="button" data-i="pGen"></button></div>
 <div id="pbox" style="margin-top:10px"></div>
@@ -508,8 +539,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div style="display:flex;gap:8px"><button class="alt small" id="minus5" type="button" data-i="easier"></button><button class="alt small" id="plus5" type="button" data-i="harder"></button></div></div>
 <div><label>&nbsp;</label><button class="alt small" id="undoBtn" type="button" data-i="undo" hidden></button></div>
 </div>
-<label for="desc" data-i="descLbl"></label>
-<textarea id="desc"></textarea>
+<details class="fold" id="descDet"><summary data-i="descLbl"></summary>
+<textarea id="desc"></textarea></details>
 <div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button>
 <button class="alt small" id="expdl" type="button" data-i="exportBtn"></button></div>
 </section>
@@ -711,7 +742,7 @@ tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder",
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
 pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is lighter. Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est allégée. Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
-pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
+pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
 impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
@@ -1289,15 +1320,46 @@ function parseWorkout(txt, sport, ftp){
 }
 const zoneOf = p => p < 56 ? 1 : p < 76 ? 2 : p < 91 ? 3 : p < 106 ? 4 : p < 121 ? 5 : p < 151 ? 6 : 7;
 const toWatts = (desc, ftp) => desc.split("\n").map(l => l.trim().startsWith("-") ? l.replace(/(\d+(?:\.\d+)?)\s*%/, (m, p) => Math.round(p * ftp / 100) + "w") : l).join("\n");
+// ---------- Temps par zone et guide de ravitaillement ----------
+function zoneTimes(steps){ // secondes par zone (1..7) ; les rampes sont découpées en tranches pour tenir compte des changements de zone
+  const z = [0, 0, 0, 0, 0, 0, 0, 0];
+  for(const s of steps){
+    if(Math.abs(s.a - s.b) < 1){ z[zoneOf((s.a + s.b) / 2)] += s.d; continue; }
+    const N = 24; for(let i = 0; i < N; i++) z[zoneOf(s.a + (s.b - s.a) * (i + 0.5) / N)] += s.d / N;
+  }
+  return z;
+}
+function zoneBar(z, mini){
+  const tot = z.reduce((a, b) => a + b, 0); if(!tot) return "";
+  const ks = [1, 2, 3, 4, 5, 6, 7].filter(k => z[k] > 0.5), pc = k => Math.round(z[k] / tot * 100);
+  const seg = ks.map(k => `<i class="z${k}" style="width:${(z[k] / tot * 100).toFixed(2)}%" title="${esc(t("znTip", k, fmtDur(z[k]), pc(k)))}"></i>`).join("");
+  const leg = mini ? "" : `<div class="zleg">${ks.map(k => `<span><i class="z${k}"></i>Z${k} ${esc(fmtDur(z[k]))} (${pc(k)}%)</span>`).join("")}</div>`;
+  return `<div class="zbar${mini ? " mini" : ""}" role="img" aria-label="${esc(ks.map(k => "Z" + k + " " + pc(k) + "%").join(" · "))}">${seg}</div>${leg}`;
+}
+let FUEL_OPEN = store.get("si_fuelopen") === "1"; // état replié/déplié mémorisé (le bloc est régénéré à chaque rendu du graphe)
+function fuelHtml(totalSec, steps, ftp, pace, iff){
+  if(!(totalSec > 0)) return "";
+  const h = totalSec / 3600, r5 = v => Math.round(v / 5) * 5;
+  const kj = !pace && ftp > 0 ? Math.round(steps.reduce((a, x) => a + x.d * (x.a + x.b) / 2 / 100 * ftp, 0) / 1000) : 0; // 1 kJ de travail ≈ 1 kcal dépensée (rendement ~24 %)
+  const easy = iff < 0.7;
+  const [lo, hi] = h < 0.75 ? [0, 0] : h < 1.25 ? [15, 30] : h < 2 ? (easy ? [30, 45] : [45, 60]) : h < 3 ? (easy ? [45, 60] : [60, 75]) : (easy ? [60, 75] : [75, 90]);
+  const sum = [kj ? "≈ " + kj + " kJ" : "", t("fuelCarb") + " " + (lo ? lo + "–" + hi + " g/h" : t("fuelNoneS"))].filter(Boolean).join(" · ");
+  let o = `<details class="fuel"${FUEL_OPEN ? " open" : ""}><summary><b>${esc(t("fuelT"))}</b> · ${esc(sum)}</summary>`;
+  if(kj) o += `<div>${esc(t("fuelEn"))}: ≈ ${kj} kJ (≈ ${kj} kcal ${esc(t("fuelBurn"))})</div>`;
+  o += `<div>${esc(t("fuelCarb"))}: ` + (lo ? `<span style="color:var(--ink)">${lo}–${hi} g/h</span> · ≈ ${r5(lo * h)}–${r5(hi * h)} g ${esc(t("fuelTot"))}` : esc(t("fuelNone"))) + `</div>`;
+  if(h >= 0.75) o += `<div>${esc(t("fuelFluid"))}: ≈ 500–750 ml/h · ≈ ${Math.round(h * 625 / 250) / 2} ${esc(t("fuelBot"))}</div>`;
+  return o + `<div class="fn">${esc(t("fuelNote"))}</div></details>`;
+}
+let CH_FIX = null; // échelle figée pendant le redimensionnement par poignées {scale, peak}
 function renderChart(ovr){
   const box = $("chart"), sport = $("sport").value, ftp = curFtp();
   const steps = ovr || parseWorkout($("desc").value, sport, ftp);
   if(!steps.length){ box.innerHTML = ""; box._steps = []; $("explain").hidden = true; return; }
-  const total = steps.reduce((s, x) => s + x.d, 0), peak = Math.max(120, ...steps.map(s => Math.max(s.a, s.b)));
+  const total = steps.reduce((s, x) => s + x.d, 0), peak = Math.max(120, ...steps.map(s => Math.max(s.a, s.b)), CH_FIX ? CH_FIX.peak : 0), span = Math.max(total, CH_FIX ? CH_FIX.scale : 0);
   const W = 300, H = 100, meta = [];
   let x = 0, path = "", wsum = 0, t0 = 0;
   for(const s of steps){
-    const w = s.d / total * W, ya = H - s.a / peak * (H - 4), yb = H - s.b / peak * (H - 4);
+    const w = s.d / span * W, ya = H - s.a / peak * (H - 4), yb = H - s.b / peak * (H - 4);
     path += `<path data-n="${meta.length}" class="z${zoneOf((s.a + s.b) / 2)}${s.line === selLine ? " sel" : ""}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
     meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
   }
@@ -1306,8 +1368,10 @@ function renderChart(ovr){
   const cap = dtxt + t("capAvg") + (!pace && ftp > 0 && $("unit").value === "w" ? Math.round(avg * ftp / 100) + " W (" + avg + t("pctFtp") + ")" : avg + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + Math.round(avg * ftp / 100) + " W)" : ""));
   const stt = !pace ? stepsStats(steps) : null;
   const load = stt ? "<div class=\"cap\">IF " + stt.iff.toFixed(2) + " · TSS " + Math.round(stt.tss) + "</div>" : "";
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg><div class="cap">${esc(cap)}</div>${load}<div class="tip" hidden></div>`;
-  box._steps = meta; renderExplain(steps);
+  const zbar = zoneBar(zoneTimes(steps)), fuel = fuelHtml(total, steps, ftp, pace, stt ? stt.iff : avg / 100);
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg>${zbar}<div class="cap">${esc(cap)}</div>${load}${fuel}<div class="tip" hidden></div>`;
+  box._steps = meta; box._span = span; box._peak = peak; renderExplain(steps);
+  if(!ovr){ try{ edHandles(box, meta, span, peak); }catch(err){} }
 }
 function tipText(s, ftp, pace){
   const f = v => Math.round(v), sec = Math.round(s.d);
@@ -2922,15 +2986,16 @@ function edLine(x){
   const i = x.i !== "" && x.i != null ? " " + x.i + (edW() ? "w" : "%") + (edKm() ? "" : " Pace") : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
   return `- ${edDur(x)}${i}${n ? " " + n : ""}`;
 }
+let EDMAP = {}; // n° de ligne du texte généré -> chemin de l'étape de l'éditeur (pour les poignées du graphe)
 function edText(){
-  const out = []; let lastTy = null;
-  ED.forEach(x => {
-    if(x.k === "g"){ if(out.length && out[out.length - 1] !== "") out.push(""); out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); lastTy = null; return; } // ligne vide obligatoire avant la série (sinon intervals.icu ne la reconnaît pas)
+  const out = []; let lastTy = null; EDMAP = {};
+  ED.forEach((x, gi) => {
+    if(x.k === "g"){ if(out.length && out[out.length - 1] !== "") out.push(""); out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`); x.items.forEach((it, j) => { EDMAP[out.length] = gi + "." + j; out.push(edLine(it)); }); out.push(""); lastTy = null; return; } // ligne vide obligatoire avant la série (sinon intervals.icu ne la reconnaît pas)
     if(x.k === "b"){ if(lastTy !== null){ out.push(""); lastTy = null; } return; } // séparateur : force un nouveau titre
     // les étapes consécutives de même type sont regroupées sous un seul titre
     // (utile pour les échauffements / retours au calme multi-paliers)
     if(x.ty !== lastTy){ if(lastTy !== null) out.push(""); out.push(t("tt_" + x.ty)); lastTy = x.ty; }
-    out.push(edLine(x));
+    EDMAP[out.length] = String(gi); out.push(edLine(x));
   });
   return out.join("\n").trim();
 }
@@ -3025,7 +3090,7 @@ function edLive(){
 }
 function edRender(){
   $("edftp").disabled = $("edunit").disabled = !edKm();
-  $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace");
+  $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace") + " " + t("hDrag");
   $("edbox").innerHTML = ED.length ? edHtml() : `<div class="hint">${esc(t("edNone"))}</div>`;
   edSum();
   edLive();
@@ -3061,6 +3126,103 @@ $("edbox").addEventListener("click", e => {
   edRender();
   if(gp !== null){ const nb = $("edbox").querySelector(`[data-p="${gp}"] [data-a="${a}"]`); if(nb) nb.focus(); }
 });
+// ---------- Poignées sur le graphe d'aperçu : ajuster durée (bord droit) et intensité (haut) en glissant ----------
+// Valable quelle que soit l'origine de l'aperçu : depuis l'éditeur manuel on modifie l'étape de l'éditeur,
+// sinon on réécrit directement la ligne correspondante de la description. Pour une série répétée,
+// seule la première répétition porte les poignées (la modification s'applique à toutes les répétitions).
+const edActive = () => { const m = document.querySelector('[data-block="edit"]'); return !!m && !m.hidden && ED.length > 0 && $("desc").value === edText(); };
+function edHandles(box, meta, span, peak){
+  if($("prev").hidden) return;
+  const ed = edActive(), seen = new Set(); let h = "";
+  meta.forEach((s, n) => {
+    if(seen.has(s.line) || s.line == null || !(s.d > 0) || (ed && !EDMAP[s.line])) return; seen.add(s.line);
+    const e = (s.start + s.d) / span * 100, c = (s.start + s.d / 2) / span * 100, wp = s.d / span * 100, y = 100 - (s.a + s.b) / 2 / peak * 96;
+    h += `<div class="dgh dgt" data-k="t" data-n="${n}" style="left:calc(${e.toFixed(2)}% - 6px);top:${(y + (100 - y) / 2).toFixed(2)}%" title="${esc(t("hDur"))}"></div>`;
+    if(wp >= 2) h += `<div class="dgh dgi" data-k="i" data-n="${n}" style="left:${c.toFixed(2)}%;top:${y.toFixed(2)}%;width:max(12px,min(34px,${wp.toFixed(2)}%))" title="${esc(t("hInt"))}"></div>`;
+  });
+  if(h) box.insertAdjacentHTML("afterbegin", `<div class="dgl">${h}</div>`);
+}
+// réécriture d'une ligne de description : durée (en temps, ou distance mise à l'échelle) et intensité (%, W ou zone)
+function lineTime(line, sec, orig){
+  const dash = /^\s*-/.test(line), L = dash ? line : "- " + line.replace(/^\s+/, "");
+  let nl = reTime(L, sec);
+  if(nl === L && reTime(L, sec + 1) === L){ // pas de durée en temps : étape en distance
+    const m = L.match(/(\d+(?:[.,]\d+)?)(\s*)(mtr|km|yrd)/i);
+    if(m){ const v = parseFloat(m[1].replace(",", ".")) * sec / orig; nl = L.slice(0, m.index) + (m[3].toLowerCase() === "km" ? Math.round(v * 10) / 10 : Math.round(v)) + m[2] + m[3] + L.slice(m.index + m[0].length); }
+  }
+  return dash ? nl : nl.replace(/^- /, "");
+}
+function lineInt(line, pct0, pct, ftp){
+  let m = line.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
+  if(m){ // une rampe « 50-70% » est décalée en bloc
+    const d = pct - pct0, a = parseFloat(m[1].replace(",", ".")), b = m[2] ? parseFloat(m[2].replace(",", ".")) : null;
+    return line.slice(0, m.index) + (b == null ? Math.round(a + d) : Math.round(a + d) + "-" + Math.round(b + d)) + "%" + line.slice(m.index + m[0].length);
+  }
+  m = line.match(/(\d+(?:[.,]\d+)?)\s*w\b/i);
+  if(m && ftp > 0) return line.slice(0, m.index) + Math.round(ftp * pct / 100) + "w" + line.slice(m.index + m[0].length);
+  m = line.match(/\bz([1-7])\b/i);
+  if(m) return line.slice(0, m.index) + Math.round(pct) + "%" + line.slice(m.index + m[0].length);
+  return line;
+}
+let edRz = null;
+$("chart").addEventListener("pointerdown", e => {
+  const hd = e.target.closest ? e.target.closest(".dgh") : null; if(!hd || e.button !== 0) return;
+  const box = $("chart"), st = box._steps && box._steps[+hd.dataset.n], svg = box.querySelector("svg"); if(!st || st.line == null || !svg || !(st.d > 0)) return;
+  const ed = edActive() && EDMAP[st.line], lines = ed ? null : $("desc").value.split("\n");
+  let it = null;
+  if(ed){ const q = edAt(EDMAP[st.line]); it = q.list[q.i]; if(!it) return; } else if(lines[st.line] == null) return;
+  e.preventDefault();
+  const r = svg.getBoundingClientRect(), total0 = box._steps.reduce((a, x) => a + x.d, 0);
+  edRz = {k: hd.dataset.k, it, lines, li: st.line, line0: lines ? lines[st.line] : "", pid: e.pointerId, px0: e.clientX, py0: e.clientY, W: Math.max(r.width, 1), Hh: Math.max(r.height, 1),
+    d0: st.d, orig: st.d, v0: it ? it.v : null, cnt: box._steps.filter(x => x.line === st.line).length, total0, scale: box._span || total0, peak: box._peak || 120, pct0: (st.a + st.b) / 2, pctOrig: (st.a + st.b) / 2};
+  CH_FIX = {scale: edRz.scale, peak: edRz.peak};
+  try{ box.setPointerCapture(e.pointerId); }catch(err){}
+});
+function edRzApply(s, e){
+  const box = $("chart"), f = curFtp();
+  let nt = null; // ligne de description réécrite (source hors éditeur)
+  if(s.k === "t"){
+    const dur = Math.max(5, Math.round((s.d0 + (e.clientX - s.px0) / s.W * s.scale) / 5) * 5), tot = s.total0 + (dur - s.orig) * s.cnt;
+    if(tot > s.scale){ s.scale = tot; s.px0 = e.clientX; s.d0 = dur; CH_FIX.scale = tot; } // l'échelle suit si la séance s'allonge
+    if(s.it){
+      if(s.it.mode === "d"){ const v0 = parseFloat(String(s.v0).replace(",", ".")) || 0, nv = v0 * dur / s.orig; s.it.v = String(edKm() ? Math.round(nv * 10) / 10 : Math.round(nv / 10) * 10); }
+      else s.it.v = Math.floor(dur / 60) + ":" + String(dur % 60).padStart(2, "0");
+    }else nt = lineTime(s.line0, dur, s.orig);
+    s.label = fmtDur(dur);
+  }else{
+    const pct = Math.max(10, Math.min(300, Math.round(s.pct0 - (e.clientY - s.py0) / s.Hh * 100 / 96 * s.peak)));
+    if(pct > s.peak){ s.peak = pct; s.py0 = e.clientY; s.pct0 = pct; CH_FIX.peak = pct; }
+    if(s.it) s.it.i = String(edW() && f ? Math.round(f * pct / 100) : pct);
+    else nt = lineInt(s.line0, s.pctOrig, pct, f);
+    s.label = pct + (/Run|Swim/.test($("sport").value) ? t("pctPace") : t("pctFtp")) + (f > 0 && isBike($("sport").value) ? " · " + Math.round(f * pct / 100) + " W" : "");
+  }
+  if(s.it) edRender();
+  else{
+    if(!s.pu){ s.pu = true; pushUndo(); } // un seul point d'annulation par glissement
+    s.lines[s.li] = nt; $("desc").value = s.lines.join("\n"); selLine = null; renderChart();
+  }
+  const tip = box.querySelector(".tip");
+  if(tip){
+    const r = box.getBoundingClientRect(); tip.textContent = s.label; tip.hidden = false;
+    tip.style.left = Math.max(0, Math.min(e.clientX - r.left - tip.offsetWidth / 2, r.width - tip.offsetWidth)) + "px";
+    tip.style.top = Math.max(0, e.clientY - r.top - tip.offsetHeight - 14) + "px";
+  }
+}
+$("chart").addEventListener("pointermove", e => {
+  const s = edRz; if(!s || e.pointerId !== s.pid) return;
+  s.ev = e; if(s.raf) return;
+  s.raf = requestAnimationFrame(() => { s.raf = 0; if(edRz === s) edRzApply(s, s.ev); });
+});
+const edRzEnd = e => {
+  const s = edRz; if(!s || e.pointerId !== s.pid) return;
+  if(s.raf){ cancelAnimationFrame(s.raf); s.raf = 0; if(e.type === "pointerup") edRzApply(s, e); }
+  edRz = null; CH_FIX = null;
+  try{ $("chart").releasePointerCapture(e.pointerId); }catch(err){}
+  if(s.it) edRender(); else renderChart();
+};
+["pointerup", "pointercancel"].forEach(ev => $("chart").addEventListener(ev, edRzEnd));
+$("chart").addEventListener("toggle", e => { if(e.target.classList && e.target.classList.contains("fuel")){ FUEL_OPEN = e.target.open; store.set("si_fuelopen", FUEL_OPEN ? "1" : "0"); } }, true);
+{ const dd = $("descDet"); dd.open = store.get("si_descopen") === "1"; dd.addEventListener("toggle", () => store.set("si_descopen", dd.open ? "1" : "0")); }
 // Glisser-déposer pour réordonner : étapes individuelles (⠿) et blocs entiers (⠿ du titre)
 let edDrag = null;
 $("edbox").addEventListener("mousedown", e => {
@@ -3192,14 +3354,24 @@ function planBuild(){
   const days = [...document.querySelectorAll("#pdays input:checked")].map(i => +i.value).sort((a, b) => (a + 6) % 7 - (b + 6) % 7); // lundi d'abord
   if(!days.length) return say("pNone", "err");
   const n = Math.min(days.length, Math.max(1, +$("psess").value || 3));
-  const use = n >= days.length ? days : n === 1 ? [days[days.length - 1]] : Array.from({length: n}, (_, i) => days[Math.round(i * (days.length - 1) / (n - 1))]);
+  const wo = d => (d + 6) % 7, spread = (a, k) => k <= 0 ? [] : k >= a.length ? a : k === 1 ? [a[a.length - 1]] : Array.from({length: k}, (_, i) => a[Math.round(i * (a.length - 1) / (k - 1))]);
+  const hardSel = [...document.querySelectorAll("#phard input:checked")].map(i => +i.value).filter(d => days.includes(d)).sort((a, b) => wo(a) - wo(b));
+  let use, roleArr;
+  if(!hardSel.length){ // automatique
+    use = spread(days, n); roleArr = [...PROLES[use.length]];
+  } else { // jours durs choisis : qualité (K puis J en alternance) sur eux, endurance ailleurs, sortie longue le dernier jour non dur
+    const hs = hardSel.slice(0, n), rest = days.filter(d => !hs.includes(d));
+    use = hs.concat(spread(rest, n - hs.length)).sort((a, b) => wo(a) - wo(b));
+    const easy = use.filter(d => !hs.includes(d)), lastEasy = easy[easy.length - 1];
+    roleArr = use.map(d => hs.includes(d) ? (hs.indexOf(d) % 2 ? "J" : "K") : d === lastEasy ? "L" : "E");
+  }
   const start = new Date(($("pstart").value || iso(new Date())) + "T12:00:00"), mon = new Date(start); mon.setDate(mon.getDate() - (start.getDay() + 6) % 7);
-  const used = new Set(), roles = PROLES[n], items = [];
+  const used = new Set(), items = [];
   for(let w = 0; w < weeks; w++){
     const rec = w % 4 === 3 || (weeks >= 6 && w === weeks - 1), q = rec ? 0.1 : Math.min(0.95, 0.2 + 0.7 * w / Math.max(weeks - 1, 1)), key = w < weeks / 2 ? goal[0] : goal[1];
     use.forEach((d, i) => {
       const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + (d + 6) % 7); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return;
-      const r = roles[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
+      const r = roleArr[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
         : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : q, maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
       if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss, cat: PCATS[pk.w.category], rec});
     });
@@ -3217,7 +3389,7 @@ function planRender(){
   box.innerHTML = chartHtml + Object.keys(wk).map(k => {
     const a = wk[k], h = a.reduce((s, [x]) => s + x.mins, 0) / 60, tss = a.reduce((s, [x]) => s + x.tss, 0);
     return `<div style="margin:10px 0 2px"><b>${esc(t("pWeek", k))}</b> <span class="badge">${h.toFixed(1)} h · TSS ${Math.round(tss)}</span></div>` + a.map(([x, i]) =>
-      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" aria-hidden="true">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon" data-pswap="${i}" type="button" aria-label="${esc(t("pSwap"))}" title="${esc(t("pSwap"))}">⟳</button><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div>`).join("");
+      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" aria-hidden="true"><span class="pps">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span>${zoneBar(zoneTimes(parseWorkout(x.w.desc_en, $("psport").value, curFtp())), true)}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon" data-pswap="${i}" type="button" aria-label="${esc(t("pSwap"))}" title="${esc(t("pSwap"))}">⟳</button><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div>`).join("");
   }).join("");
   $("psum").textContent = t("pSum", L.length, (L.reduce((s, x) => s + x.mins, 0) / 60).toFixed(1), Math.round(L.reduce((s, x) => s + x.tss, 0)));
 }
@@ -3237,11 +3409,24 @@ function planSwap(i){
   x.w = n.w; x.mins = n.mins; x.tss = n.tss; planRender();
 }
 function planDays(){
-  const box = $("pdays"); if(!box) return;
-  const on = box.children.length ? new Set([...box.querySelectorAll("input:checked")].map(i => +i.value)) : new Set([2, 4, 0]);
+  const box = $("pdays"), hb = $("phard"); if(!box || !hb) return;
+  const first = !box.children.length;
+  const on = first ? new Set([2, 4, 0]) : new Set([...box.querySelectorAll("input:checked")].map(i => +i.value));
+  const hard = first ? new Set() : new Set([...hb.querySelectorAll("input:checked")].map(i => +i.value));
   const f = new Intl.DateTimeFormat(lang, {weekday: "short"});
-  box.innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="checkbox" value="${d}" style="width:auto;margin:0"${on.has(d) ? " checked" : ""}>${esc(f.format(new Date(2024, 0, 7 + d)))}</label>`).join("");
+  const row = (set, acc) => [1, 2, 3, 4, 5, 6, 0].map(d => `<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="checkbox" value="${d}" style="width:auto;margin:0;accent-color:${acc}"${set.has(d) ? " checked" : ""}>${esc(f.format(new Date(2024, 0, 7 + d)))}</label>`).join("");
+  box.innerHTML = row(on, "var(--acc)"); hb.innerHTML = row(hard, "#ee6c4d"); planHardWarn();
 }
+function planHardWarn(){
+  const h = [...$("phard").querySelectorAll("input:checked")].map(i => +i.value), adj = h.some(d => h.includes((d + 1) % 7));
+  $("phardwarn").hidden = !adj; if(adj) $("phardwarn").textContent = t("pHardAdj");
+}
+$("pdays").addEventListener("change", e => { // un jour décoché ne peut plus être un jour dur
+  const i = e.target; if(i.checked) return; const h = $("phard").querySelector(`input[value="${i.value}"]`); if(h) h.checked = false; planHardWarn();
+});
+$("phard").addEventListener("change", e => { // un jour dur est forcément un jour d'entraînement
+  const i = e.target; if(i.checked){ const d = $("pdays").querySelector(`input[value="${i.value}"]`); if(d) d.checked = true; } planHardWarn();
+});
 const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; return $("punit").value === "w" && curFtp() > 0 ? toWatts(d, curFtp()) : d; }; // % de FTP ou watts (FTP choisie)
 $("pgen").onclick = planBuild;
 $("pbox").addEventListener("click", e => {
@@ -3342,6 +3527,96 @@ loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value; $("pftp").value = $("ftpsel").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
+// ---------- Glossaire : info-bulle sur chaque terme technique affiché ----------
+// Un MutationObserver enveloppe les termes (FTP, TSS, IF, zones…) dans <abbr class="gl"> partout dans l'interface,
+// y compris dans les contenus générés dynamiquement. Le texte de l'info-bulle suit la langue courante.
+const GL = {
+  ftp: ["FTP · Functional Threshold Power", "FTP · Puissance seuil fonctionnelle", "The highest average power you can hold for about an hour. Workout intensities in % FTP are relative to it.", "Puissance moyenne maximale que tu peux tenir environ une heure. Les intensités des séances en % FTP s'y rapportent."],
+  tss: ["TSS · Training Stress Score", "TSS · Training Stress Score", "The load of a session, combining its duration and intensity. One hour at FTP equals 100 TSS.", "La charge d'une séance, qui combine durée et intensité. Une heure à la FTP vaut 100 TSS."],
+  if: ["IF · Intensity Factor", "IF · Facteur d'intensité", "Normalized power divided by FTP. 1.00 means the session averaged a threshold effort; 0.70 is an easy ride.", "Puissance normalisée divisée par la FTP. 1,00 = effort moyen au seuil ; 0,70 = sortie facile."],
+  np: ["NP · Normalized Power", "NP · Puissance normalisée", "A weighted average of power that reflects the real physiological cost of a variable effort better than the plain average.", "Moyenne pondérée de la puissance qui reflète mieux le coût physiologique d'un effort irrégulier que la moyenne simple."],
+  ef: ["EF · Efficiency Factor", "EF · Facteur d'efficacité", "Normalized power divided by average heart rate. At a similar effort, a rising EF suggests better aerobic fitness.", "Puissance normalisée divisée par la fréquence cardiaque moyenne. À effort comparable, un EF qui monte suggère une meilleure forme aérobie."],
+  ctl: ["CTL · Chronic Training Load", "CTL · Charge chronique", "Your \"fitness\": an exponentially weighted average of daily training load over roughly 42 days.", "Ta « forme de fond » (fitness) : moyenne pondérée de la charge quotidienne sur environ 42 jours."],
+  atl: ["ATL · Acute Training Load", "ATL · Charge aiguë", "Your \"fatigue\": an exponentially weighted average of daily training load over roughly 7 days.", "Ta « fatigue » : moyenne pondérée de la charge quotidienne sur environ 7 jours."],
+  tsb: ["TSB · Training Stress Balance", "TSB · Équilibre de charge", "Your \"form\": CTL minus ATL. Negative means you are carrying fatigue, positive means you are fresh.", "Ta « fraîcheur » : CTL moins ATL. Négatif = fatigue accumulée, positif = frais."],
+  hr: ["HR · Heart rate", "FC · Fréquence cardiaque", "Heartbeats per minute (bpm), a measure of how hard your body is working.", "Battements du cœur par minute (bpm), indicateur de l'effort que fournit ton corps."],
+  wkg: ["W/kg · Power-to-weight", "W/kg · Rapport poids/puissance", "Watts per kilogram of body weight: the key figure for climbing.", "Watts par kilo de poids de corps : le chiffre clé en montée."],
+  vo2max: ["VO₂max", "VO₂max", "Maximal oxygen uptake. VO₂max intervals are hard efforts of about 3 to 8 minutes at roughly 106 to 120% of FTP.", "Consommation maximale d'oxygène. Les intervalles VO₂max sont des efforts durs d'environ 3 à 8 min à 106–120 % de la FTP."],
+  sweetspot: ["Sweet Spot", "Sweet Spot", "Roughly 88 to 94% of FTP: hard but sustainable, a time-efficient way to raise FTP.", "Environ 88 à 94 % de la FTP : dur mais soutenable, un moyen efficace de progresser en peu de temps."],
+  threshold: ["Threshold", "Seuil", "Efforts around FTP (about 91 to 105%): the highest intensity you can sustain for long blocks.", "Efforts autour de la FTP (environ 91 à 105 %) : l'intensité maximale tenable sur de longs blocs."],
+  tempo: ["Tempo", "Tempo", "A steady, moderately hard effort at about 76 to 90% of FTP (zone 3).", "Effort régulier et modérément dur, à environ 76–90 % de la FTP (zone 3)."],
+  overunder: ["Over-Under", "Over-Under", "Intervals alternating just below and just above threshold power (for example 95% / 105% FTP) to train riding and recovering around threshold.", "Intervalles alternant juste sous puis juste au-dessus de la puissance seuil (ex. 95 % / 105 % FTP) pour s'entraîner à rouler et récupérer autour du seuil."],
+  anaerobic: ["Anaerobic", "Anaérobie", "Very hard efforts above about 120% of FTP, lasting from seconds to around two minutes.", "Efforts très durs au-dessus d'environ 120 % de la FTP, de quelques secondes à environ deux minutes."],
+  cp: ["CP · Critical Power", "CP · Puissance critique", "The boundary between sustainable and unsustainable effort, estimated from maximal tests such as 3 and 12 minutes all-out.", "Frontière entre effort soutenable et non soutenable, estimée par des tests maximaux (par ex. 3 et 12 minutes)."],
+  taper: ["Taper", "Affûtage", "Reducing training volume before an event to shed fatigue while keeping fitness.", "Réduction du volume d'entraînement avant une échéance pour évacuer la fatigue sans perdre la forme."],
+  kj: ["kJ · Kilojoules", "kJ · Kilojoules", "Mechanical work done on the pedals. On the bike, kilojoules of work are roughly equal to kilocalories burned (about 1 kJ ≈ 1 kcal), because the body is around 24% efficient.", "Travail mécanique produit sur les pédales. À vélo, les kilojoules de travail valent à peu près les kilocalories dépensées (1 kJ ≈ 1 kcal), car le rendement du corps est d'environ 24 %."],
+  rpm: ["rpm", "rpm", "Revolutions per minute: pedalling cadence.", "Tours par minute : cadence de pédalage."],
+  z1: ["Zone 1 · Active recovery", "Zone 1 · Récupération active", "Below 56% of FTP: very easy spinning.", "Moins de 56 % de la FTP : très facile."],
+  z2: ["Zone 2 · Endurance", "Zone 2 · Endurance", "56 to 75% of FTP: comfortable, conversational pace that builds the aerobic base.", "56 à 75 % de la FTP : allure confortable, en discutant, qui construit la base aérobie."],
+  z3: ["Zone 3 · Tempo", "Zone 3 · Tempo", "76 to 90% of FTP: steady and moderately hard.", "76 à 90 % de la FTP : régulier et modérément dur."],
+  z4: ["Zone 4 · Threshold", "Zone 4 · Seuil", "91 to 105% of FTP: hard, sustainable for long intervals.", "91 à 105 % de la FTP : dur, tenable sur de longs intervalles."],
+  z5: ["Zone 5 · VO₂max", "Zone 5 · VO₂max", "106 to 120% of FTP: very hard efforts of a few minutes.", "106 à 120 % de la FTP : efforts très durs de quelques minutes."],
+  z6: ["Zone 6 · Anaerobic", "Zone 6 · Anaérobie", "121 to 150% of FTP: short, intense efforts of 30 s to 2 min.", "121 à 150 % de la FTP : efforts courts et intenses de 30 s à 2 min."],
+  z7: ["Zone 7 · Neuromuscular", "Zone 7 · Neuromusculaire", "Above 150% of FTP: all-out sprints of a few seconds.", "Plus de 150 % de la FTP : sprints maximaux de quelques secondes."]
+};
+const GL_ALIAS = {"seuil": "threshold", "anaérobie": "anaerobic", "affûtage": "taper", "vo₂max": "vo2max", "over-under": "overunder", "over-unders": "overunder", "fc": "hr", "w/kg": "wkg", "sweetspot": "sweetspot"};
+const GL_RE = /(?<![\p{L}\p{N}_/])(?:[Ss]weet [Ss]pot|[Oo]ver-[Uu]nders?|[Tt]hreshold|[Ss]euil|[Tt]empo|[Aa]naerobic|[Aa]naérobie|[Tt]aper|[Aa]ffûtage|VO₂max|VO2max|W\/kg|FTP|TSS|CTL|ATL|TSB|IF|NP|EF|HR|FC|CP|Z[1-7]|rpm|kJ)(?![\p{L}\p{N}_])/gu;
+const GL_SKIP = "script,style,textarea,input,select,option,button,svg,noscript,code,pre,title,abbr.gl,#gltip,.tip,[data-nogl]";
+const glKey = m => { const k = m.toLowerCase().replace(/\s+/g, ""); return GL_ALIAS[k] || k; };
+function glWrap(node){
+  const txt = node.nodeValue; GL_RE.lastIndex = 0; if(!txt || !GL_RE.test(txt)) return;
+  GL_RE.lastIndex = 0;
+  const fr = document.createDocumentFragment(); let last = 0, m, any = false;
+  while((m = GL_RE.exec(txt))){
+    const k = glKey(m[0]); if(!GL[k]) continue; any = true;
+    if(m.index > last) fr.appendChild(document.createTextNode(txt.slice(last, m.index)));
+    const a = document.createElement("abbr"); a.className = "gl"; a.dataset.gl = k; a.textContent = m[0]; fr.appendChild(a); last = m.index + m[0].length;
+  }
+  if(!any) return;
+  if(last < txt.length) fr.appendChild(document.createTextNode(txt.slice(last)));
+  node.replaceWith(fr);
+}
+function glScan(root){
+  if(!root || (root.nodeType === 1 && root.matches && root.closest(GL_SKIP))) return;
+  if(root.nodeType === 3){ if(root.parentElement && !root.parentElement.closest(GL_SKIP)) glWrap(root); return; }
+  if(root.nodeType !== 1) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n => n.parentElement && !n.parentElement.closest(GL_SKIP) && n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT}), list = [];
+  while(w.nextNode()) list.push(w.currentNode);
+  list.forEach(glWrap);
+}
+{
+  const gt = document.createElement("div"); gt.id = "gltip"; gt.setAttribute("role", "tooltip"); gt.hidden = true; document.body.appendChild(gt);
+  let pend = new Set(), raf = 0, cur = null, hideT = 0;
+  const flush = () => { raf = 0; const l = [...pend]; pend = new Set(); l.forEach(n => { if(n.isConnected) glScan(n); }); obs.takeRecords(); };
+  const obs = new MutationObserver(recs => {
+    for(const r of recs){
+      if(r.type === "characterData") pend.add(r.target);
+      else r.addedNodes.forEach(n => { if(n.nodeType === 1 || n.nodeType === 3) pend.add(n); });
+    }
+    if(pend.size && !raf) raf = requestAnimationFrame(flush);
+  });
+  obs.observe(document.body, {childList: true, subtree: true, characterData: true});
+  glScan(document.body);
+  const hide = () => { clearTimeout(hideT); gt.hidden = true; cur = null; };
+  const show = a => {
+    const d = GL[a.dataset.gl]; if(!d) return;
+    const fr = lang === "fr" ? 1 : 0; clearTimeout(hideT); cur = a;
+    gt.innerHTML = `<b>${esc(d[fr])}</b>${esc(d[2 + fr])}`;
+    (a.closest("dialog[open]") || document.body).appendChild(gt); // reste visible au-dessus d'une boîte de dialogue modale
+    gt.hidden = false; gt.style.left = "0px"; gt.style.top = "0px";
+    const r = a.getBoundingClientRect(), w = gt.offsetWidth, h = gt.offsetHeight;
+    gt.style.left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 8)) + "px";
+    gt.style.top = (r.top - h - 8 >= 8 ? r.top - h - 8 : Math.min(r.bottom + 8, innerHeight - h - 8)) + "px";
+  };
+  document.addEventListener("pointerover", e => {
+    const a = e.target.closest ? e.target.closest("abbr.gl") : null;
+    if(a){ show(a); if(e.pointerType === "touch"){ clearTimeout(hideT); hideT = setTimeout(hide, 4000); } }
+    else if(cur) hide();
+  });
+  document.addEventListener("pointerdown", e => { if(cur && !(e.target.closest && e.target.closest("abbr.gl"))) hide(); }, true);
+  window.addEventListener("scroll", () => { if(cur) hide(); }, true);
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && cur) hide(); });
+}
 loadAll();
 </script>
 </body>
