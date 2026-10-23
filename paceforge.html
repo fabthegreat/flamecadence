@@ -244,7 +244,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-theme>summary:before{content:"＋";display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--acc);color:var(--on);font-size:16px;line-height:1}
 .lib-theme[open]>summary:before{content:"−"}
 .lib-theme .theme-count{margin-left:auto;color:var(--mute);font-size:.8rem;font-weight:400}
-.lib-theme-body{padding:12px}
+.lib-theme-body{padding:12px;max-height:min(70vh,640px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch} /* seule la catégorie défile, pas toute la page */
 .lib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
@@ -2143,6 +2143,11 @@ $("libsearch").addEventListener("input", renderLibrary);
 $("libdur").addEventListener("change", renderLibrary);
 $("libstar").addEventListener("change", renderLibrary);
 function renderLibraryKeepOpen(){ const c = $("libContainer"); const open = [...c.querySelectorAll("details.lib-theme")].map(d => d.open); renderLibrary(); c.querySelectorAll("details.lib-theme").forEach((d, i) => { d.open = !!open[i]; }); }
+// à l'ouverture d'une catégorie, on la ramène à l'écran pour que sa zone défilante soit entièrement visible
+$("libContainer").addEventListener("click", e => {
+  const sm = e.target.closest ? e.target.closest(".lib-theme>summary") : null; if(!sm) return;
+  const d = sm.parentElement; setTimeout(() => { if(d.open) d.scrollIntoView({block: "nearest", behavior: "smooth"}); }, 0);
+});
 $("libContainer").onclick = e => {
   const sb = e.target.closest("[data-star]");
   if(sb){ toggleStar(sb.dataset.star); if($("libstar").checked) renderLibraryKeepOpen(); else { const st = stars().includes(sb.dataset.star); sb.textContent = st ? "★" : "☆"; sb.setAttribute("aria-pressed", String(st)); } return; }
