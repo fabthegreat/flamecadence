@@ -155,6 +155,13 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .mode button{flex:1;min-width:0;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem;white-space:nowrap}
 .mode button span{overflow:hidden;text-overflow:ellipsis}
 .mode button svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.more{position:relative}.more summary{list-style:none;display:inline-block;cursor:pointer}.more summary::-webkit-details-marker{display:none}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:200px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:flex;flex-direction:column}
+.menu a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:.9rem}.menu a:hover{background:var(--line)}
+.menu a svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.menu a svg.fill{fill:currentColor;stroke:none}
+.mode:not(.cfg-tabs) button:not([aria-selected="true"]){flex:0 0 auto;padding:9px 12px}.mode:not(.cfg-tabs) button:not([aria-selected="true"]) span{display:none}
+.mode:not(.cfg-tabs) button[aria-selected="true"]{flex:1 1 auto}
+@media (max-width:560px){.mode:not(.cfg-tabs) button[aria-selected="true"]{gap:6px}.mode:not(.cfg-tabs) button[aria-selected="true"] span{display:inline}}
 @media (max-width:560px){.mode button{gap:0;padding:9px 4px}.mode button span{display:none}}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .stp{display:inline-flex;align-items:center;gap:4px}
@@ -166,6 +173,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-card p{margin:0 0 10px;font-size:.85rem;color:var(--mute)}
 .lib-preview{display:block;width:100%;height:42px;margin:8px 0 10px;border-radius:6px;background:var(--card);overflow:hidden}
 .lib-preview svg{display:block;width:100%;height:100%}
+.plan-prev{flex:0 0 84px;height:28px;border-radius:4px;background:var(--card);overflow:hidden}
+.plan-prev svg{display:block;width:100%;height:100%}
 .lib-stats{margin:0 0 8px;font-size:.8rem;color:var(--mute)}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.75rem}
 .cal-h{text-align:center;color:var(--mute);padding:2px 0;font-size:.7rem}
@@ -226,9 +235,11 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="tools">
 <button class="alt small icon" id="theme" type="button" data-ia="title:thAuto;aria-label:thAuto">🌓</button>
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
-<a class="alt small icon" id="mail" data-ia="title:contact;aria-label:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg></a>
-<a class="alt small icon" id="gh" data-ia="title:github;aria-label:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
-<a class="alt small icon" id="coffeeTop" data-ia="title:coffee;aria-label:coffee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M7 3v3M11 3v3"/></svg></a>
+<details class="more" id="more"><summary class="alt small icon" data-ia="title:more;aria-label:more"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></summary><div class="menu">
+<a class="mi" id="mail" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
+<a class="mi" id="gh" data-ia="title:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span data-i="github"></span></a>
+<a class="mi" id="coffeeTop" data-ia="title:coffee"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h12v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10h2a2.5 2.5 0 0 1 0 5h-2M7 3v3M11 3v3"/></svg><span data-i="coffee"></span></a>
+</div></details>
 <button class="alt small" id="open" type="button" data-i="settings"></button>
 </div>
 </header>
@@ -349,6 +360,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
 <button type="button" role="tab" data-m="imp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="tabImp"></span></button>
 <button type="button" role="tab" data-m="act"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="tabAct"></span></button>
+<button type="button" role="tab" data-m="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="tabPlan"></span></button>
 </div>
 
 <section data-block="req">
@@ -410,6 +422,34 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
+</section>
+
+<!-- Section Constructeur de plan -->
+<section data-block="plan" hidden>
+<div class="phead"><h2 data-i="planT"></h2></div>
+<div class="row">
+<div><label for="pgoal" data-i="pGoal"></label><select id="pgoal"><option value="base" data-i="pgBase"></option><option value="ftp" data-i="pgFtp"></option><option value="vo2" data-i="pgVo2"></option><option value="sprint" data-i="pgSprint"></option><option value="start" data-i="pgStart"></option></select></div>
+<div><label for="pweeks" data-i="pWeeks"></label><input id="pweeks" type="number" min="1" max="24" value="8"></div>
+</div>
+<div class="row">
+<div><label for="psess" data-i="pSess"></label><input id="psess" type="number" min="1" max="7" value="3"></div>
+<div><label for="pmax" data-i="pMax"></label><select id="pmax"><option value="45">45 min</option><option value="60">60 min</option><option value="90" selected>90 min</option><option value="120">2 h</option><option value="180">3 h</option><option value="300">5 h</option></select></div>
+</div>
+<div class="row">
+<div><label data-i="pStart"></label><input type="hidden" id="pstart"><button type="button" class="alt" id="pstartbtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
+<div><label for="psport" data-i="sportLbl"></label><select id="psport"><option value="VirtualRide" data-i="sVirt"></option><option value="Ride" data-i="sRide"></option></select></div>
+</div>
+<div class="row">
+<div><label for="pftp" data-i="ftpLbl"></label><select id="pftp"><option value="in"></option><option value="out"></option></select></div>
+<div><label for="punit" data-i="unitLbl"></label><select id="punit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<label data-i="pDays" style="margin-top:12px;display:block"></label>
+<div id="pdays" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
+<div class="hint" data-i="pHint"></div>
+<div class="actions"><button id="pgen" type="button" data-i="pGen"></button></div>
+<div id="pbox" style="margin-top:10px"></div>
+<div class="hint" id="psum"></div>
+<button id="psend" type="button" hidden data-i="pSend"></button>
 </section>
 
 <!-- Section Import .zwo / .fit -->
@@ -485,6 +525,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 
 <section data-block="fit">
 <div class="phead"><h2 data-i="fitT"></h2>
+<button class="alt small icon" id="rfit" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
 <a class="alt small icon ext" id="lkFit" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a>
 <select id="fper" data-ia="aria-label:fitPer"><option value="30" data-i="p1m"></option><option value="60" data-i="p2m" selected></option><option value="90" data-i="p3m"></option><option value="180" data-i="p6m"></option><option value="365" data-i="p1y"></option></select></div>
 <div id="fitbox"></div>
@@ -495,6 +536,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
 <button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
 <button class="alt small" id="lastai" type="button" data-i="lastAi"></button>
+<button class="alt small icon" id="rlast" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
 <a class="alt small icon ext" id="lkLast" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="lastbox"></div>
 </section>
@@ -510,6 +552,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 <div class="phead"><h2 data-i="best"></h2>
 <select id="bkind"><option value="VirtualRide" data-i="indoor"></option><option value="Ride" data-i="outdoor"></option></select>
 <select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select>
+<button class="alt small icon" id="rbest" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
 <a class="alt small icon ext" id="lkBest" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="bestbox" class="tbl"></div>
 </section>
@@ -552,7 +595,7 @@ docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta procha
 title:["PaceForge","PaceForge"],
 subtitle:["Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.","Forge ta prochaine séance : décris-la, laisse l'IA la construire, puis envoie-la directement dans intervals.icu."],
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
-contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
+more:["More","Plus"], contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
 provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
 secAI:["AI provider","Fournisseur d'IA"], secIcu:["intervals.icu connection","Connexion intervals.icu"], secWidgets:["Sidebar widgets","Widgets de la barre latérale"],
 gKey:["Gemini API key","Clé API Gemini"], gModel:["Gemini model","Modèle Gemini"],
@@ -659,6 +702,11 @@ exportBtn:["Export","Exporter"], expTitle:["Export the workout","Exporter la sé
 exZwo:["Zwift — .zwo","Zwift — .zwo"], exFit:["Garmin — .fit","Garmin — .fit"], exErg:["Smart trainer, watts — .erg","Home trainer, watts — .erg"], exMrc:["Smart trainer, % FTP — .mrc","Home trainer, % FTP — .mrc"], exJson:["Backup / share — .json","Sauvegarde / partage — .json"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
+tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
+pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
+pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
+pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is lighter. Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est allégée. Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
+pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
 impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
@@ -903,7 +951,7 @@ function updateIcuLinks(){
 }
 function fillFtp(){
   const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
-  [$("ftpsel"), $("edftp"), $("libftp"), $("actftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
+  [$("ftpsel"), $("edftp"), $("libftp"), $("actftp"), $("pftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
 }
 function profText(){
   if(!$("prof")) return;
@@ -1133,11 +1181,11 @@ async function analyzeLast(){
 }
 $("lastai").onclick = analyzeLast;
 $("closeAi").onclick = () => $("aiDlg").close();
-async function loadLoad(){
+async function loadLoad(idx){
   const rng = `oldest=${daysAgo(13)}&newest=${daysAgo(0)}`;
   const [acts, well, plan] = await Promise.all([icu(`/activities?${rng}`), icu(`/wellness?${rng}`).catch(() => []), icu(`/events?${rng}&category=WORKOUT`).catch(() => [])]);
   LAST.acts = acts; LAST.well = well; LAST.plan = plan;
-  renderLoad(); loadLast();
+  renderLoad(); loadLast(idx);
 }
 
 // --- meilleurs efforts ---
@@ -1167,6 +1215,11 @@ async function loadAll(){
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
 }
 $("rload").onclick = loadAll;
+// boutons ↻ des autres widgets (même principe que celui du calendrier) : rechargent uniquement leur widget
+const refreshBtn = (id, fn) => { $(id).onclick = async () => { const b = $(id); if(b.disabled || !KEY()) return; b.disabled = true; try{ await fn(); }catch(e){} finally{ b.disabled = false; } }; };
+refreshBtn("rfit", () => loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }));
+refreshBtn("rlast", () => loadLoad(LAST.li || 0).catch(() => {}));
+refreshBtn("rbest", () => loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }));
 $("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkind").value); loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }); };
 $("ftpsel").onchange = () => { store.set("si_ftpsel", $("ftpsel").value); renderChart(); renderBest(); };
 
@@ -2743,9 +2796,12 @@ $("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
 $("rcal").onclick = () => loadCal().catch(() => {});
 setupCalBox($("calbox"), () => CAL.ev, () => loadCal().catch(() => {}), null);
 // sélecteur de date (popup)
+let DT = "date"; // champ ciblé par le popup calendrier : "date" (séance) ou "pstart" (début du plan)
 function refreshDateBtn(){
-  const v = $("date").value;
-  $("datebtn").textContent = v ? new Date(v + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short", year: "numeric"}) : t("pickDate");
+  [["date", "datebtn"], ["pstart", "pstartbtn"]].forEach(([f, b]) => {
+    const v = $(f).value;
+    $(b).textContent = v ? new Date(v + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short", year: "numeric"}) : t("pickDate");
+  });
 }
 async function loadDCal(){
   if(KEY()){ const [a, b] = calRange(CAL.pm);
@@ -2760,21 +2816,24 @@ async function loadDCal(){
 }
 function renderDCal(){
   calLabel($("dcalmonth"), CAL.pm);
-  const r = calHtml(CAL.pm, CAL.pev, true, $("date").value, CAL.dacts || []);
+  const r = calHtml(CAL.pm, CAL.pev, true, $(DT).value, CAL.dacts || []);
   $("dcalbox").innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
   bindCalChips($("dcalbox"));
   bindCalTips($("dcalbox"), () => (CAL.pev || []).concat(CAL.dacts || []));
 }
-$("datebtn").onclick = () => {
-  const cur = $("date").value || iso(new Date()), d = new Date(cur + "T12:00:00"), now = new Date();
+function openDateDlg(field){
+  DT = field;
+  const cur = $(DT).value || iso(new Date()), d = new Date(cur + "T12:00:00"), now = new Date();
   CAL.pm = (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth();
   $("dateDlg").showModal(); loadDCal().catch(() => {});
-};
+}
+$("datebtn").onclick = () => openDateDlg("date");
+$("pstartbtn").onclick = () => openDateDlg("pstart");
 $("closeDateCal").onclick = () => $("dateDlg").close();
 $("dcalprev").onclick = () => { CAL.pm--; loadDCal().catch(() => {}); };
 $("dcalnext").onclick = () => { CAL.pm++; loadDCal().catch(() => {}); };
 $("dcalnow").onclick = () => { CAL.pm = 0; loadDCal().catch(() => {}); };
-setupCalBox($("dcalbox"), () => CAL.pev, () => { loadDCal().catch(() => {}); loadCal().catch(() => {}); }, k => { $("date").value = k; refreshDateBtn(); $("dateDlg").close(); });
+setupCalBox($("dcalbox"), () => CAL.pev, () => { loadDCal().catch(() => {}); loadCal().catch(() => {}); }, k => { $(DT).value = k; refreshDateBtn(); $("dateDlg").close(); });
 
 // ---------- Graphe fitness ----------
 const fitDays = () => +$("fper").value || 60;
@@ -3092,11 +3151,98 @@ $("edgo").onclick = () => {
   EXPL = null; selLine = null; $("prev").hidden = false; renderChart(); $("prev").scrollIntoView({behavior: "smooth", block: "start"}); say("edBuilt", "ok");
 };
 $("edsport").value = $("sport").value;
-[["ftpsel", "edftp"], ["unit", "edunit"]].forEach(([a, b]) => {
+[["ftpsel", "edftp"], ["unit", "edunit"], ["ftpsel", "pftp"], ["unit", "punit"]].forEach(([a, b]) => {
   $(b).onchange = () => { $(a).value = $(b).value; $(a).dispatchEvent(new Event("change")); };
   $(a).addEventListener("change", () => { $(b).value = $(a).value; });
 });
 
+// ---------- Constructeur de plan d'entraînement ----------
+// Génère un plan à partir de la bibliothèque : jours + séances/semaine + durée + objectif + date de début,
+// puis envoie chaque séance dans le calendrier intervals.icu (une requête par séance, comme « Envoyer »).
+const PCATS = {beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint"};
+// [catégorie clé 1re moitié, catégorie clé 2e moitié, 2e séance de qualité]
+const PGOAL = {base: ["endurance", "tempo", "endurance"], ftp: ["tempo", "threshold", "tempo"], vo2: ["threshold", "vo2max", "tempo"], sprint: ["tempo", "sprint", "endurance"], start: ["beginner", "beginner", "endurance"]};
+const PROLES = {1: "L", 2: "KL", 3: "KEL", 4: "KEJL", 5: "KEJRL", 6: "KEJERL", 7: "KEJRERL"}; // K clé, J 2e qualité, E endurance, R récup, L sortie longue
+const PLAN = {items: []}; let PPOOL = null;
+function planPool(){
+  if(PPOOL) return PPOOL; PPOOL = {};
+  LIBRARY.forEach(w => {
+    const c = PCATS[w.category]; if(!c) return;
+    const st = parseWorkout(w.desc_en, "Ride", 0), stt = stepsStats(st); if(!stt) return;
+    (PPOOL[c] = PPOOL[c] || []).push({w, mins: st.reduce((s, x) => s + x.d, 0) / 60, tss: stt.tss});
+  });
+  return PPOOL;
+}
+function planPick(cat, q, maxMin, by, used){
+  let a = (planPool()[cat] || []).filter(x => x.mins <= maxMin);
+  if(!a.length) a = (planPool()[cat] || []).slice().sort((x, y) => x.mins - y.mins).slice(0, 3); // rien ne rentre : les plus courtes
+  if(!a.length) return null;
+  a = a.slice().sort((x, y) => x[by] - y[by]);
+  const k = Math.round(q * (a.length - 1)); let best = null;
+  for(let d = 0; d < a.length && !best; d++) for(const i of [k - d, k + d]) if(a[i] && !used.has(a[i].w.id)){ best = a[i]; break; }
+  best = best || a[k]; used.add(best.w.id); return best;
+}
+function planBuild(){
+  const weeks = Math.min(24, Math.max(1, +$("pweeks").value || 8)), goal = PGOAL[$("pgoal").value], maxMin = +$("pmax").value || 90;
+  const days = [...document.querySelectorAll("#pdays input:checked")].map(i => +i.value).sort((a, b) => (a + 6) % 7 - (b + 6) % 7); // lundi d'abord
+  if(!days.length) return say("pNone", "err");
+  const n = Math.min(days.length, Math.max(1, +$("psess").value || 3));
+  const use = n >= days.length ? days : n === 1 ? [days[days.length - 1]] : Array.from({length: n}, (_, i) => days[Math.round(i * (days.length - 1) / (n - 1))]);
+  const start = new Date(($("pstart").value || iso(new Date())) + "T12:00:00"), mon = new Date(start); mon.setDate(mon.getDate() - (start.getDay() + 6) % 7);
+  const used = new Set(), roles = PROLES[n], items = [];
+  for(let w = 0; w < weeks; w++){
+    const rec = w % 4 === 3 || (weeks >= 6 && w === weeks - 1), q = rec ? 0.1 : Math.min(0.95, 0.2 + 0.7 * w / Math.max(weeks - 1, 1)), key = w < weeks / 2 ? goal[0] : goal[1];
+    use.forEach((d, i) => {
+      const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + (d + 6) % 7); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return;
+      const r = roles[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
+        : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : q, maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
+      if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss});
+    });
+  }
+  PLAN.items = items; planRender();
+}
+function planRender(){
+  const L = PLAN.items, box = $("pbox"); if(!box) return;
+  $("psend").hidden = !L.length;
+  if(!L.length){ box.innerHTML = ""; $("psum").textContent = ""; return; }
+  const fmt = new Intl.DateTimeFormat(lang, {weekday: "short", day: "numeric", month: "short"}), wk = {};
+  L.forEach((x, i) => (wk[x.week] = wk[x.week] || []).push([x, i]));
+  box.innerHTML = Object.keys(wk).map(k => {
+    const a = wk[k], h = a.reduce((s, [x]) => s + x.mins, 0) / 60, tss = a.reduce((s, [x]) => s + x.tss, 0);
+    return `<div style="margin:10px 0 2px"><b>${esc(t("pWeek", k))}</b> <span class="badge">${h.toFixed(1)} h · TSS ${Math.round(tss)}</span></div>` + a.map(([x, i]) =>
+      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" aria-hidden="true">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div>`).join("");
+  }).join("");
+  $("psum").textContent = t("pSum", L.length, (L.reduce((s, x) => s + x.mins, 0) / 60).toFixed(1), Math.round(L.reduce((s, x) => s + x.tss, 0)));
+}
+function planDays(){
+  const box = $("pdays"); if(!box) return;
+  const on = box.children.length ? new Set([...box.querySelectorAll("input:checked")].map(i => +i.value)) : new Set([2, 4, 0]);
+  const f = new Intl.DateTimeFormat(lang, {weekday: "short"});
+  box.innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => `<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="checkbox" value="${d}" style="width:auto;margin:0"${on.has(d) ? " checked" : ""}>${esc(f.format(new Date(2024, 0, 7 + d)))}</label>`).join("");
+}
+const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; return $("punit").value === "w" && curFtp() > 0 ? toWatts(d, curFtp()) : d; }; // % de FTP ou watts (FTP choisie)
+$("pgen").onclick = planBuild;
+$("pbox").addEventListener("click", e => { const b = e.target.closest("[data-pdel]"); if(!b) return; PLAN.items.splice(+b.dataset.pdel, 1); planRender(); });
+$("psend").onclick = async () => {
+  if(!KEY()) return say("needI", "err");
+  const b = $("psend"), L = PLAN.items.slice(); let ok = 0; b.disabled = true;
+  try{
+    for(const x of L){
+      b.textContent = ok + " / " + L.length;
+      const r = await fetch(icuUrl("/events"), {method: "POST", headers: {"Content-Type": "application/json", ...icuAuth()},
+        body: JSON.stringify({category: "WORKOUT", start_date_local: x.date + "T00:00:00", type: $("psport").value, name: "W" + x.week + " · " + (lang === "fr" ? x.w.name_fr : x.w.name_en), description: planDesc(x.w)})});
+      if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
+      ok++;
+    }
+    PLAN.items = []; planRender(); say("pDone", "ok", ok); loadCal().catch(() => {});
+  }catch(e){ PLAN.items = L.slice(ok); planRender(); say("errI", "err", errText(e)); loadCal().catch(() => {}); }
+  b.textContent = t("pSend"); b.disabled = false;
+};
+{ const d = new Date(); d.setDate(d.getDate() + (8 - d.getDay()) % 7 || 7); $("pstart").value = iso(d); refreshDateBtn(); } // prochain lundi
+
+// menu « Plus » (contact, GitHub, café) : se ferme au clic extérieur, sur un lien ou avec Échap
+document.addEventListener("click", e => { const m = $("more"); if(m.open && (!m.contains(e.target) || e.target.closest(".menu a"))) m.open = false; });
+document.addEventListener("keydown", e => { if(e.key === "Escape") $("more").open = false; });
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
 function applyMode(){
@@ -3105,12 +3251,13 @@ function applyMode(){
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
-  document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
+  document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
+  document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
 }
 document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
   b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); if(mode === "act" && ACTS.list === null) loadActs().catch(() => {}); };
   b.onkeydown = e => {
-    const modes = ["lib", "edit", "ai", "imp", "act"]; let idx = modes.indexOf(mode);
+    const modes = ["lib", "edit", "ai", "imp", "act", "plan"]; let idx = modes.indexOf(mode);
     if(e.key === "ArrowLeft") idx = (idx - 1 + modes.length) % modes.length;
     else if(e.key === "ArrowRight") idx = (idx + 1) % modes.length;
     else return;
@@ -3133,14 +3280,14 @@ function applyWidgets(){
   WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
 }
 function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
-let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act"); }catch(e){}
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act" && k !== "plan"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
     const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
@@ -3160,7 +3307,7 @@ function applyLang(){
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme();
-  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
@@ -3168,7 +3315,7 @@ $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
-$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value;
+$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value; $("pftp").value = $("ftpsel").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 loadAll();
 </script>
