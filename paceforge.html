@@ -175,6 +175,11 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .lib-preview svg{display:block;width:100%;height:100%}
 .plan-prev{flex:0 0 84px;height:28px;border-radius:4px;background:var(--card);overflow:hidden}
 .plan-prev svg{display:block;width:100%;height:100%}
+.pwk{display:flex;align-items:flex-end;gap:4px;height:84px;margin:10px 0 4px;padding:6px 6px 0;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.pwk>div{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:.65rem;color:var(--mute)}
+.pwk i{display:block;width:100%;max-width:34px;min-height:2px;border-radius:3px 3px 0 0;background:var(--acc)}
+.pwk .rec i{opacity:.4}
+.pwk span{line-height:1.6}
 .lib-stats{margin:0 0 8px;font-size:.8rem;color:var(--mute)}
 .cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;font-size:.75rem}
 .cal-h{text-align:center;color:var(--mute);padding:2px 0;font-size:.7rem}
@@ -706,7 +711,7 @@ tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder",
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
 pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is lighter. Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est allégée. Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
-pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
+pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
 impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
@@ -3196,10 +3201,10 @@ function planBuild(){
       const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + (d + 6) % 7); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return;
       const r = roles[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
         : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : q, maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
-      if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss});
+      if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss, cat: PCATS[pk.w.category], rec});
     });
   }
-  PLAN.items = items; planRender();
+  PLAN.items = items; PLAN.maxMin = maxMin; planRender();
 }
 function planRender(){
   const L = PLAN.items, box = $("pbox"); if(!box) return;
@@ -3207,12 +3212,29 @@ function planRender(){
   if(!L.length){ box.innerHTML = ""; $("psum").textContent = ""; return; }
   const fmt = new Intl.DateTimeFormat(lang, {weekday: "short", day: "numeric", month: "short"}), wk = {};
   L.forEach((x, i) => (wk[x.week] = wk[x.week] || []).push([x, i]));
-  box.innerHTML = Object.keys(wk).map(k => {
+  const wkTss = Object.keys(wk).map(k => ({k, tss: wk[k].reduce((s, [x]) => s + x.tss, 0), h: wk[k].reduce((s, [x]) => s + x.mins, 0) / 60, rec: !!wk[k][0][0].rec})), mxT = Math.max(1, ...wkTss.map(o => o.tss));
+  const chartHtml = `<div class="pwk" role="img" aria-label="${esc(t("pChartT"))}">` + wkTss.map(o => `<div${o.rec ? ' class="rec"' : ""} title="${esc(t("pWeek", o.k) + " · " + o.h.toFixed(1) + " h · TSS " + Math.round(o.tss) + (o.rec ? " (" + t("pRecW") + ")" : ""))}"><i style="height:${(o.tss / mxT * 100).toFixed(1)}%"></i><span>${o.k}</span></div>`).join("") + "</div>";
+  box.innerHTML = chartHtml + Object.keys(wk).map(k => {
     const a = wk[k], h = a.reduce((s, [x]) => s + x.mins, 0) / 60, tss = a.reduce((s, [x]) => s + x.tss, 0);
     return `<div style="margin:10px 0 2px"><b>${esc(t("pWeek", k))}</b> <span class="badge">${h.toFixed(1)} h · TSS ${Math.round(tss)}</span></div>` + a.map(([x, i]) =>
-      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" aria-hidden="true">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div>`).join("");
+      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" aria-hidden="true">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon" data-pswap="${i}" type="button" aria-label="${esc(t("pSwap"))}" title="${esc(t("pSwap"))}">⟳</button><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}">✕</button></div>`).join("");
   }).join("");
   $("psum").textContent = t("pSum", L.length, (L.reduce((s, x) => s + x.mins, 0) / 60).toFixed(1), Math.round(L.reduce((s, x) => s + x.tss, 0)));
+}
+function planSwap(i){
+  const x = PLAN.items[i]; if(!x) return;
+  const pool = planPool()[x.cat] || [], inPlan = new Set(PLAN.items.map(y => y.w.id)), lim = PLAN.maxMin || 90;
+  let c = pool.filter(p => p.w.id !== x.w.id && p.mins <= lim);
+  if(!c.length) c = pool.filter(p => p.w.id !== x.w.id);
+  if(!c.length) return;
+  x.tried = x.tried || [x.w.id];
+  let f = c.filter(p => !inPlan.has(p.w.id) && !x.tried.includes(p.w.id));
+  if(!f.length){ x.tried = [x.w.id]; f = c.filter(p => !inPlan.has(p.w.id)); }
+  if(!f.length) f = c;
+  const near = p => Math.abs(p.tss - x.tss) + Math.abs(p.mins - x.mins) * 0.5; // plus proche en charge et en durée
+  f.sort((a, b) => near(a) - near(b));
+  const n = f[0]; x.tried.push(n.w.id);
+  x.w = n.w; x.mins = n.mins; x.tss = n.tss; planRender();
 }
 function planDays(){
   const box = $("pdays"); if(!box) return;
@@ -3222,7 +3244,10 @@ function planDays(){
 }
 const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; return $("punit").value === "w" && curFtp() > 0 ? toWatts(d, curFtp()) : d; }; // % de FTP ou watts (FTP choisie)
 $("pgen").onclick = planBuild;
-$("pbox").addEventListener("click", e => { const b = e.target.closest("[data-pdel]"); if(!b) return; PLAN.items.splice(+b.dataset.pdel, 1); planRender(); });
+$("pbox").addEventListener("click", e => {
+  const sw = e.target.closest("[data-pswap]"); if(sw){ planSwap(+sw.dataset.pswap); return; }
+  const b = e.target.closest("[data-pdel]"); if(!b) return; PLAN.items.splice(+b.dataset.pdel, 1); planRender();
+});
 $("psend").onclick = async () => {
   if(!KEY()) return say("needI", "err");
   const b = $("psend"), L = PLAN.items.slice(); let ok = 0; b.disabled = true;
