@@ -2861,7 +2861,7 @@ function edLine(x){
 function edText(){
   const out = []; let lastTy = null;
   ED.forEach(x => {
-    if(x.k === "g"){ out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); lastTy = null; return; }
+    if(x.k === "g"){ if(out.length && out[out.length - 1] !== "") out.push(""); out.push(`${t("tMain")} ${parseInt(x.r, 10) || 1}x`, ...x.items.map(edLine), ""); lastTy = null; return; } // ligne vide obligatoire avant la série (sinon intervals.icu ne la reconnaît pas)
     if(x.k === "b"){ if(lastTy !== null){ out.push(""); lastTy = null; } return; } // séparateur : force un nouveau titre
     // les étapes consécutives de même type sont regroupées sous un seul titre
     // (utile pour les échauffements / retours au calme multi-paliers)

@@ -1,2 +1,2 @@
-Android app:
-* is there a way to create a connection with strava to also upload activities there?
+Webapp:
+* in manual activity it seems that the main set is missing a CR before (in some cases) so that the work out is not rendering well in intervals.icu.
