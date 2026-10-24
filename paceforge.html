@@ -11,7 +11,18 @@
 :root[data-theme="dark"]{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:radial-gradient(1100px 480px at 50% 115%,rgba(255,157,0,.16),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,77,0,.09),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(15,110,110,.08),transparent 60%),linear-gradient(180deg,#f8fafc 0%,var(--bg) 45%,#f4efe9 100%);background-attachment:fixed;color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+body{margin:0;min-height:100vh;background:radial-gradient(1100px 480px at 50% 115%,rgba(255,157,0,.16),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,77,0,.09),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(15,110,110,.08),transparent 60%),linear-gradient(180deg,#f8fafc 0%,var(--bg) 45%,#f4efe9 100%);background-attachment:fixed;color:var(--ink);font:16px/1.5 var(--ff,"IBM Plex Sans",system-ui,sans-serif)}
+:root[data-font="system"]{--ff:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+:root[data-font="inter"]{--ff:"Inter",system-ui,sans-serif}
+:root[data-font="roboto"]{--ff:"Roboto",system-ui,sans-serif}
+:root[data-font="opensans"]{--ff:"Open Sans",system-ui,sans-serif}
+:root[data-font="nunito"]{--ff:"Nunito",system-ui,sans-serif}
+:root[data-font="lexend"]{--ff:"Lexend",system-ui,sans-serif}
+:root[data-font="atkinson"]{--ff:"Atkinson Hyperlegible",system-ui,sans-serif}
+:root[data-font="lora"]{--ff:"Lora",Georgia,serif}
+:root[data-font="jbmono"]{--ff:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+#caledbar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:0 0 10px;padding:8px 10px;border:1px solid var(--acc);border-radius:6px;background:var(--bg)}#caledbar[hidden]{display:none}
+.cal-ev:not(.done){cursor:pointer}
 :root[data-theme="dark"] body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}}
 main{max-width:1240px;margin:0 auto;padding:20px 16px 24px}
@@ -215,7 +226,22 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .cal-d.empty{border:0;background:transparent;min-height:0}
 .cal-d.today{border-color:var(--acc)}
 .cal-max .mv{display:none}
-aside.col .phead{flex-wrap:wrap}.hctl{display:inline-flex;align-items:center;gap:4px;flex:none}.hctl .icon{padding:5px 6px!important}.hctl .mv svg{width:16px;height:16px}.hctl .tgl{min-width:0}
+aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
+.hctl{display:inline-flex;align-items:center;gap:6px;flex:none}
+/* uniform header controls: same height, same icon size, joined pairs */
+.phead .icon,.phead .small{height:26px;min-width:26px;display:inline-flex;align-items:center;justify-content:center;line-height:1!important;font-size:.8rem!important;border-radius:6px}
+.phead .icon{padding:0 5px!important}
+.phead .small:not(.icon){padding:0 10px!important}
+.phead .icon svg{width:14px;height:14px;stroke-width:2.2}
+.phead .ext svg{width:14px;height:14px}
+.phead select{height:26px;padding:0 24px 0 8px;font-size:.8rem;border-radius:6px}
+.seg{display:inline-flex}
+.seg>button{margin:0!important;border-radius:0;min-width:24px}
+.seg>button:first-child{border-radius:6px 0 0 6px!important}
+.seg>button:last-child{border-radius:0 6px 6px 0!important;margin-left:-1px!important}
+.tgl svg{transition:transform .15s}
+.tgl[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.alt.icon:disabled{opacity:.4}
 #calbox .cal-d:not(.empty){cursor:pointer}#calbox .cal-d:not(.empty):hover{border-color:var(--acc)}#calbox .cal-ev{cursor:grab}
 .cal-d.over{outline:2px dashed var(--acc);outline-offset:-2px}
 .cal-n{color:var(--mute);font-size:.7rem;padding-left:3px}
@@ -274,7 +300,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;}catch(e){}</script>
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;}catch(e){}</script>
 </head>
 <body>
 <main>
@@ -310,6 +336,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <button type="button" role="tab" data-cfg="ai" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
 <button type="button" role="tab" data-cfg="icu" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span></button>
 <button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
+<button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
 </div>
 <div class="cfg-sec" data-cfgp="ai">
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
@@ -364,6 +391,12 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 </div>
 <div class="hint" id="jnote" role="status" hidden></div>
 </div>
+<div class="cfg-sec" data-cfgp="look" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></h3>
+<label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
+<div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
+<div class="hint" data-i="fontHint"></div>
+</div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
 <button class="alt" id="impjson" type="button" data-i="jsonImp"></button>
@@ -392,7 +425,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <dialog id="dateDlg" aria-labelledby="dateDlgT">
 <h2 id="dateDlgT" data-i="pickDate"></h2>
-<div class="phead" style="margin:6px 0 12px"><button class="alt small icon" id="dcalprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button><span id="dcalmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span><button class="alt small icon" id="dcalnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button><button class="alt small" id="dcalnow" type="button" data-i="today"></button></div>
+<div class="phead" style="margin:6px 0 12px"><button class="alt small icon" id="dcalprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span id="dcalmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span><button class="alt small icon" id="dcalnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button><button class="alt small" id="dcalnow" type="button" data-i="today"></button></div>
 <div id="dcalbox"></div>
 <div class="actions"><button class="alt" id="closeDateCal" type="button" data-i="close"></button></div>
 </dialog>
@@ -444,6 +477,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <section data-block="edit" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="edT"></span></h2></div>
+<div id="caledbar" class="hint" hidden><span id="caledtxt"></span><button class="alt small" id="caledx" type="button" data-i="calEdCancel"></button></div>
 <div class="row">
 <div><label for="edname" data-i="name"></label><input id="edname"></div>
 <div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option></select></div>
@@ -486,7 +520,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <section data-block="plan" hidden>
 <div class="phead"><h2 data-i="planT"></h2></div>
 <div class="row">
-<div><label for="pgoal" data-i="pGoal"></label><select id="pgoal"><option value="base" data-i="pgBase"></option><option value="ftp" data-i="pgFtp"></option><option value="vo2" data-i="pgVo2"></option><option value="sprint" data-i="pgSprint"></option><option value="start" data-i="pgStart"></option></select></div>
+<div><label for="pgoal" data-i="pGoal"></label><select id="pgoal"><option value="base" data-i="pgBase"></option><option value="ftp" data-i="pgFtp"></option><option value="vo2" data-i="pgVo2"></option><option value="sprint" data-i="pgSprint"></option><option value="start" data-i="pgStart"></option><option value="sweet" data-i="pgSweet"></option><option value="thr" data-i="pgThr"></option><option value="pol" data-i="pgPol"></option><option value="gran" data-i="pgGran"></option><option value="climb" data-i="pgClimb"></option><option value="crit" data-i="pgCrit"></option><option value="maint" data-i="pgMaint"></option><option value="ret" data-i="pgReturn"></option></select></div>
 <div><label for="pweeks" data-i="pWeeks"></label><input id="pweeks" type="number" min="1" max="24" value="8"></div>
 </div>
 <div class="row">
@@ -527,7 +561,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <section data-block="act" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="actLbl"></span></h2>
 <select id="actper" data-ia="aria-label:actW"><option value="14" data-i="w2"></option><option value="28" data-i="w4"></option><option value="56" data-i="w8"></option></select>
-<button class="alt small" id="ract" type="button" data-ia="title:refresh;aria-label:refresh">↻</button></div>
+<button class="alt small icon" id="ract" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
 <p class="hint" data-i="actDesc"></p>
 <div class="row">
 <div><label for="actout" data-i="actOutLbl"></label><select id="actout"><option value="w" data-i="actOutW"></option><option value="pct" data-i="actOutP"></option></select></div>
@@ -576,10 +610,10 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <section data-block="cal">
 <div class="phead"><h2 data-i="calT"></h2>
-<button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
+<button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
 <span id="calmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
-<button class="alt small icon" id="calnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
-<button class="alt small icon" id="rcal" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<button class="alt small icon" id="calnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+<button class="alt small icon" id="rcal" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <button class="alt small icon" id="calmax" type="button" aria-pressed="false" data-ia="title:calMax;aria-label:calMax"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 <a class="alt small icon ext" id="lkCal" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="calbox"></div>
@@ -587,7 +621,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <section data-block="fit">
 <div class="phead"><h2 data-i="fitT"></h2>
-<button class="alt small icon" id="rfit" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<button class="alt small icon" id="rfit" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <a class="alt small icon ext" id="lkFit" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a>
 <select id="fper" data-ia="aria-label:fitPer"><option value="30" data-i="p1m"></option><option value="60" data-i="p2m" selected></option><option value="90" data-i="p3m"></option><option value="180" data-i="p6m"></option><option value="365" data-i="p1y"></option></select></div>
 <div id="fitbox"></div>
@@ -595,16 +629,15 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <section data-block="last">
 <div class="phead"><h2 data-i="lastW"></h2>
-<button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev">‹</button>
-<button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext">›</button>
+<span class="seg"><button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></span>
 <button class="alt small" id="lastai" type="button" data-i="lastAi"></button>
-<button class="alt small icon" id="rlast" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<button class="alt small icon" id="rlast" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <a class="alt small icon ext" id="lkLast" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="lastbox"></div>
 </section>
 
 <section data-block="load">
-<div class="phead"><h2 data-i="load2"></h2><button class="alt small" id="rload" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<div class="phead"><h2 data-i="load2"></h2><button class="alt small icon" id="rload" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <a class="alt small icon ext" id="lkLoad" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="loadbox"></div>
 <div id="loadcap" class="hint"></div>
@@ -614,7 +647,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <div class="phead"><h2 data-i="best"></h2>
 <select id="bkind"><option value="VirtualRide" data-i="indoor"></option><option value="Ride" data-i="outdoor"></option></select>
 <select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select>
-<button class="alt small icon" id="rbest" type="button" data-ia="title:refresh;aria-label:refresh">↻</button>
+<button class="alt small icon" id="rbest" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <a class="alt small icon ext" id="lkBest" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="bestbox" class="tbl"></div>
 </section>
@@ -651,8 +684,40 @@ function applyTheme(){
   }
 }
 
+// ---------- Police du site ----------
+// [clé, libellé, famille Google Fonts (vide = déjà chargée / police système), nom CSS pour le préchargement]
+const FONTS = [["plex", "IBM Plex Sans", "", ""], ["system", "", "", ""], ["inter", "Inter", "Inter:wght@400;600", "Inter"], ["roboto", "Roboto", "Roboto:wght@400;700", "Roboto"],
+  ["opensans", "Open Sans", "Open+Sans:wght@400;600", "Open Sans"], ["nunito", "Nunito", "Nunito:wght@400;600", "Nunito"], ["lexend", "Lexend", "Lexend:wght@400;600", "Lexend"],
+  ["atkinson", "Atkinson Hyperlegible", "Atkinson+Hyperlegible:wght@400;700", "Atkinson Hyperlegible"], ["lora", "Lora (serif)", "Lora:wght@400;600", "Lora"], ["jbmono", "JetBrains Mono", "JetBrains+Mono:wght@400;600", "JetBrains Mono"]];
+let font = store.get("si_font"); if(!FONTS.some(f => f[0] === font)) font = "plex";
+function applyFont(){
+  const root = document.documentElement, f = FONTS.find(x => x[0] === font);
+  if(font === "plex") delete root.dataset.font; else root.dataset.font = font;
+  if(f[2] && !document.getElementById("fl-" + font)){ // la police n'est téléchargée que si on la choisit
+    const l = document.createElement("link"); l.id = "fl-" + font; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + f[2] + "&display=swap";
+    l.onload = () => { if(document.fonts && document.fonts.load) document.fonts.load('16px "' + f[3] + '"').then(() => { if($("cfg").open) sizeCfg(); }).catch(() => {}); };
+    document.head.appendChild(l);
+  }
+  if($("cfg") && $("cfg").open) sizeCfg();
+}
+function fontUI(){
+  const s = $("fontsel"); if(!s) return;
+  s.innerHTML = FONTS.map(f => `<option value="${f[0]}">${f[0] === "system" ? t("fontSys") : f[1]}</option>`).join("");
+  s.value = font; applyFont();
+}
+
 // ---------- Traductions ----------
 const T = {
+calEdBanner:["Editing “{0}” ({1}). Saving replaces it in the calendar.","Modification de « {0} » ({1}). L'enregistrement la remplace dans le calendrier."], calEdCancel:["Cancel editing","Annuler la modification"],
+calEdSave:["Save changes to calendar","Enregistrer les modifications"], calEdSaved:["Workout updated in the calendar.","Séance mise à jour dans le calendrier."],
+calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éditeur manuel."], calEdRamp:["Loaded. Ramps were flattened to their average intensity; check the steps before saving.","Chargée. Les rampes ont été aplaties à leur intensité moyenne ; vérifie les étapes avant d'enregistrer."],
+calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
+calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
+calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
+secLook:["Appearance","Apparence"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
+fontSample:["Forge your next workout","Forge ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
+pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
+pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
 docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
 title:["PaceForge","PaceForge"],
 subtitle:["Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.","Forge ta prochaine séance : décris-la, laisse l'IA la construire, puis envoie-la directement dans intervals.icu."],
@@ -889,6 +954,7 @@ $("impjsonin").onchange = () => {
     if(Array.isArray(j.oaModels) && j.oaModels.length){ oaList = j.oaModels; $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
     if(Array.isArray(j.starred)){ setStars(j.starred.filter(x => typeof x === "string")); n++; renderLibraryKeepOpen(); }
     if(Array.isArray(j.widgetOrder)){ WORDER = sanitizeOrder(j.widgetOrder); store.set("si_worder", JSON.stringify(WORDER)); applyOrder(); n++; }
+    if(typeof j.font === "string" && FONTS.some(f => f[0] === j.font)){ font = j.font; store.set("si_font", font); fontUI(); n++; }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
     jnote("jsonImpOk", "ok", f.name);
@@ -898,6 +964,7 @@ $("expjson").onclick = () => {
   const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
   const stArr = stars(); if(stArr.length) o.starred = stArr;
   o.widgetOrder = WORDER.slice(); // ordre des widgets de la colonne de droite
+  o.font = font;
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
   if(hfList.length) o.hfModels = hfList;
@@ -1274,7 +1341,7 @@ async function loadAll(){
   if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
-  loadCal().catch(e => { $("calbox").textContent = t("errI", errText(e)); });
+  loadCal(true).catch(e => { $("calbox").textContent = t("errI", errText(e)); });
   loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
 }
@@ -1468,7 +1535,7 @@ window.addEventListener("pointercancel", () => { chartDrag = null; });
 $("desc").addEventListener("input", () => { selLine = null; renderChart(); });
 const syncUnit = () => { $("unit").disabled = !isBike($("sport").value); };
 $("sport").onchange = () => { syncUnit(); renderChart(); };
-$("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; UNDO = null; $("undoBtn").hidden = true; $("prev").hidden = true; renderChart(); say("previewDeleted", "ok"); };
+$("trash").onclick = () => { $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; UNDO = null; $("undoBtn").hidden = true; $("prev").hidden = true; renderChart(); CALEDIT = null; calEdUI(); say("previewDeleted", "ok"); };
 
 // ---------- Réduction à durée cible (shrink) ----------
 function fmtDur(sec){
@@ -2250,6 +2317,7 @@ function addHist(h){
 }
 $("hist").onchange = () => {
   const h = hist()[+$("hist").value]; if(!h) return;
+  CALEDIT = null; calEdUI();
   $("date").value = h.date; refreshDateBtn(); $("sport").value = h.sport; $("name").value = h.name; $("desc").value = h.desc; EXPL = h.ex || null;
   syncUnit(); selLine = null; $("prev").hidden = false; renderChart();
 };
@@ -2260,19 +2328,23 @@ $("hdel").onclick = async () => {
     try{ await icuFetch(icuUrl("/events/" + h.id), {method: "DELETE"}); }
     catch(e){ if(!/404/.test(e.message)) return say("errI", "err", errText(e)); }
   }
-  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); loadCal().catch(() => {}); say("workoutDeleted", "ok");
+  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); loadCal(true).catch(() => {}); say("workoutDeleted", "ok");
 };
+let CALEDIT = null, EDSAVED = ""; // séance planifiée du calendrier en cours de modification dans l'éditeur manuel
 $("send").onclick = async () => {
   if(!KEY()) return say("needI", "err");
   $("send").disabled = true; say("sending");
   try{
-    const r = await fetch(icuUrl("/events"), {method: "POST", headers: {"Content-Type": "application/json", ...icuAuth()},
-      body: JSON.stringify({category: "WORKOUT", start_date_local: $("date").value + "T00:00:00", type: $("sport").value, name: $("name").value.trim(), description: $("desc").value})});
+    const ed = CALEDIT, o = ed ? (ed.ev.start_date_local || "") : "";
+    const body = {category: "WORKOUT", start_date_local: $("date").value + (o.length > 10 ? o.slice(10) : "T00:00:00"), type: $("sport").value, name: $("name").value.trim(), description: $("desc").value};
+    // modification : PUT sur la séance existante (elle est remplacée, pas dupliquée)
+    const r = await fetch(icuUrl(ed ? "/events/" + ed.ev.id : "/events"), {method: ed ? "PUT" : "POST", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
     if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
     const ev = await r.json().catch(() => ({}));
-    addHist({id: ev.id, date: $("date").value, sport: $("sport").value, name: $("name").value.trim(), desc: $("desc").value, ex: EXPL});
-    loadCal().catch(() => {});
-    say("sentOk", "ok", $("date").value);
+    addHist({id: ev.id || (ed && ed.ev.id), date: $("date").value, sport: $("sport").value, name: $("name").value.trim(), desc: $("desc").value, ex: EXPL});
+    loadCal(true).catch(() => {});
+    if(ed){ CALEDIT = null; EDSAVED = edText(); calEdUI(); say("calEdSaved", "ok"); }
+    else say("sentOk", "ok", $("date").value);
   }catch(e){ say("errI", "err", errText(e)); }
   $("send").disabled = false;
 };
@@ -2967,15 +3039,41 @@ function mergeCal(evs, acts){
     return k >= today && !doneDays.has(k);
   });
 }
-async function loadCal(){
-  if(!KEY()) return;
-  const [a, b] = calRange(CAL.m);
-  [CAL.ev, CAL.acts] = await Promise.all([
-    icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => []),
-    icu(`/activities?oldest=${a}&newest=${b}`).catch(() => [])
+// Cache par mois + préchargement des mois voisins (liste + streams des activités) pour que la navigation soit instantanée
+const CAL_CACHE = {}; let CAL_CACHE_KEY = "";
+const calSig = (ev, acts) => JSON.stringify([(ev || []).map(e => [e.id, e.start_date_local, e.name]), (acts || []).map(a => [a.id, a.start_date_local, a.name])]);
+async function calFetch(m){
+  const [a, b] = calRange(m); let fail = false;
+  const [ev, acts] = await Promise.all([
+    icu(`/events?oldest=${a}&newest=${b}&category=WORKOUT`).catch(() => { fail = true; return []; }),
+    icu(`/activities?oldest=${a}&newest=${b}`).catch(() => { fail = true; return []; })
   ]);
-  CAL.ev = mergeCal(CAL.ev, CAL.acts);
-  renderCal();
+  const r = {ev, acts};
+  if(!fail && CAL_CACHE_KEY === KEY()) CAL_CACHE[m] = r; // un échec n'est jamais mémorisé
+  return r;
+}
+async function loadCal(fresh){
+  if(!KEY()) return;
+  if(fresh || CAL_CACHE_KEY !== KEY()){ Object.keys(CAL_CACHE).forEach(k => delete CAL_CACHE[k]); CAL_CACHE_KEY = KEY(); }
+  const m = CAL.m, c = CAL_CACHE[m]; let sig = "";
+  if(c){ CAL.ev = mergeCal(c.ev, c.acts); CAL.acts = c.acts; sig = calSig(CAL.ev, CAL.acts); renderCal(); } // affichage immédiat depuis le cache
+  const r = await calFetch(m);
+  if(CAL.m !== m) return; // l'utilisateur a déjà changé de mois
+  const ev = mergeCal(r.ev, r.acts);
+  if(!c || calSig(ev, r.acts) !== sig){ CAL.ev = ev; CAL.acts = r.acts; renderCal(); }
+  calPrefetch(m);
+}
+async function calPrefetch(m){
+  const tok = CAL.pfTok = (CAL.pfTok || 0) + 1, live = () => tok === CAL.pfTok && !!KEY();
+  for(const mm of [m - 1, m + 1]){ if(!live()) return; if(!CAL_CACHE[mm]) await calFetch(mm).catch(() => {}); }
+  if(!live() || (navigator.connection && navigator.connection.saveData)) return;
+  // streams : mois courant d'abord, puis précédent, puis suivant ; 2 requêtes max en parallèle pour laisser de la place à l'affichage
+  const ids = [m, m - 1, m + 1].flatMap(k => ((CAL_CACHE[k] || {}).acts || []).slice().sort((x, y) => (y.start_date_local || "") < (x.start_date_local || "") ? -1 : 1).map(a => String(a.id)))
+    .filter((id, i, arr) => id && arr.indexOf(id) === i && STREAM_CACHE[id] === undefined);
+  let i = 0;
+  const idle = async () => { while(STREAM_ACTIVE > 1 || STREAM_Q.length){ if(!live()) return; await new Promise(r => setTimeout(r, 300)); } };
+  const worker = async () => { while(i < ids.length && live()){ await idle(); if(!live()) return; const id = ids[i++]; if(STREAM_CACHE[id] === undefined) await actStreams(id).catch(() => {}); } };
+  await Promise.all([worker(), worker()]);
 }
 function renderCal(){
   const box = $("calbox"); if(!box) return;
@@ -2990,7 +3088,7 @@ function renderCal(){
 }
 $("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
 $("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
-$("rcal").onclick = () => loadCal().catch(() => {});
+$("rcal").onclick = () => loadCal(true).catch(() => {});
 const CAL_ICON = {
   max: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
   min: '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>'
@@ -3010,7 +3108,7 @@ function setCalMax(on){
 $("calmax").onclick = () => setCalMax(!CAL.big);
 document.addEventListener("keydown", e => { if(e.key === "Escape" && CAL.big && !document.querySelector("dialog[open]")) setCalMax(false); });
 // clic sur un jour vide : ouvre l'éditeur manuel avec cette date
-setupCalBox($("calbox"), () => CAL.ev, () => loadCal().catch(() => {}), k => {
+setupCalBox($("calbox"), () => CAL.ev, () => loadCal(true).catch(() => {}), k => {
   if(CAL.big) setCalMax(false);
   mode = "edit"; store.set("si_mode", mode); applyMode();
   $("date").value = k; refreshDateBtn();
@@ -3055,7 +3153,7 @@ $("closeDateCal").onclick = () => $("dateDlg").close();
 $("dcalprev").onclick = () => { CAL.pm--; loadDCal().catch(() => {}); };
 $("dcalnext").onclick = () => { CAL.pm++; loadDCal().catch(() => {}); };
 $("dcalnow").onclick = () => { CAL.pm = 0; loadDCal().catch(() => {}); };
-setupCalBox($("dcalbox"), () => CAL.pev, () => { loadDCal().catch(() => {}); loadCal().catch(() => {}); }, k => { $(DT).value = k; refreshDateBtn(); $("dateDlg").close(); });
+setupCalBox($("dcalbox"), () => CAL.pev, () => { loadDCal().catch(() => {}); loadCal(true).catch(() => {}); }, k => { $(DT).value = k; refreshDateBtn(); $("dateDlg").close(); });
 
 // ---------- Graphe fitness ----------
 const fitDays = () => +$("fper").value || 60;
@@ -3463,7 +3561,7 @@ document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const t
     ED.push(edDef(ty));
   }
   edRender(); });
-$("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); edRender(); say("edResetOk", "ok"); };
+$("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); CALEDIT = null; calEdUI(); edRender(); say("edResetOk", "ok"); };
 $("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
 $("edgo").onclick = () => {
   const txt = edText(); if(!txt) return say("edNone", "err");
@@ -3476,12 +3574,114 @@ $("edsport").value = $("sport").value;
   $(a).addEventListener("change", () => { $(b).value = $(a).value; });
 });
 
+// ---------- Modifier une séance planifiée du calendrier dans l'éditeur manuel ----------
+// Texte intervals.icu -> étapes de l'éditeur. Les rampes sont aplaties (moyenne), les lignes illisibles ignorées (comptées).
+function edFromText(txt){
+  const f = curFtp(), wMode = edW(), list = [], num = x => parseFloat(String(x).replace(",", "."));
+  let skipped = 0, ramps = 0, group = null, secTy = null, seenWork = false;
+  const durS = str => {
+    let tt = 0, m; const re = /(\d+(?:[.,]\d+)?)\s*(h|min|m|s)(?![a-z])|(\d+):(\d{2})(?::(\d{2}))?/gi;
+    while((m = re.exec(str))){
+      if(m[3] != null){ tt += m[5] != null ? (+m[3]) * 3600 + (+m[4]) * 60 + (+m[5]) : (+m[3]) * 60 + (+m[4]); continue; }
+      const v = num(m[1]), u = m[2].toLowerCase(); tt += u === "h" ? v * 3600 : u === "s" ? v : v * 60;
+      const rest = str.slice(re.lastIndex).match(/^\s*(\d{1,2})(?![^\s])/); if(rest && u !== "s") tt += u === "h" ? (+rest[1]) * 60 : +rest[1];
+    }
+    return tt;
+  };
+  const distM = str => { const m = str.match(/(\d+(?:[.,]\d+)?)\s*(mtr|km|yrd)/i); if(!m) return 0; const v = num(m[1]), u = m[2].toLowerCase(); return u === "km" ? v * 1000 : u === "yrd" ? v * 0.9144 : v; };
+  const inten = body => {
+    let m = body.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
+    if(m){
+      const a = num(m[1]); let b = m[2] ? num(m[2]) : a, end = m.index + m[0].length;
+      const m2 = !m[2] && body.slice(end).match(/^\s*-\s*(\d+(?:[.,]\d+)?)\s*%/); if(m2){ b = num(m2[1]); end += m2[0].length; }
+      return {p: (a + b) / 2, ramp: a !== b, idx: m.index, end};
+    }
+    m = body.match(/(\d+(?:[.,]\d+)?)\s*w\b/i); if(m) return {w: num(m[1]), idx: m.index, end: m.index + m[0].length};
+    m = body.match(/\bz([1-7])\b/i); if(m) return {p: [50, 65, 82, 97, 112, 135, 160][m[1] - 1], idx: m.index, end: m.index + m[0].length};
+    return null;
+  };
+  const pctOf = it => it.p != null ? it.p : f > 0 ? it.w / f * 100 : 100;
+  const toEd = it => {
+    if(!it) return "";
+    if(wMode) return it.w != null ? String(Math.round(it.w)) : f > 0 ? String(Math.round(it.p * f / 100)) : String(+it.p.toFixed(1));
+    return it.p != null ? String(+it.p.toFixed(1)) : f > 0 ? String(Math.round(it.w / f * 100)) : "";
+  };
+  const clean = x => x.replace(/\bramp\b/gi, "").replace(/\s+/g, " ").trim();
+  const strip = x => x.replace(/\d+(?:[.,]\d+)?\s*(?:h|min|m|s)(?![a-z])(?:\s*\d{1,2}(?=\s|$))?|\d+:\d{2}(?::\d{2})?|\d+(?:[.,]\d+)?\s*(?:mtr|km|yrd)/gi, " ");
+  const recNames = T.tt_rec.map(x => x.toLowerCase());
+  const mk = (ty, d, dm, it, pre, post) => {
+    let n = [clean(strip(pre)), clean(post)].filter(Boolean).join(" "); if(recNames.includes(n.toLowerCase())) n = "";
+    return {k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, uid: ++edUid};
+  };
+  const headerTy = l => /cool|retour|warm\s?down/i.test(l) ? "cool" : /warm|échauff|echauff/i.test(l) ? "warm" : /recov|récup|recup|\brest\b|repos/i.test(l) ? "rec" : "work";
+  for(const raw of String(txt || "").split("\n")){
+    const line = raw.trim();
+    if(!line){ group = null; continue; }
+    const dashed = line.startsWith("-"); let body = dashed ? line.slice(1).trim() : line, rep = 0;
+    const rm = dashed && body.match(/^(\d+)\s*x\s+(.+)$/i); if(rm){ rep = Math.min(50, +rm[1]); body = rm[2]; }
+    const it = inten(body), pre = it ? body.slice(0, it.idx) : body, post = it ? body.slice(it.end) : "";
+    const d = durS(pre), dm = d ? 0 : distM(pre);
+    if((it || dashed) && (d || dm)){
+      if(it && it.ramp) ramps++;
+      const pv = it ? pctOf(it) : 0;
+      const ty = group ? (pv && pv < 65 ? "rec" : "work") : secTy ? secTy : (pv >= 76 || !pv ? "work" : seenWork ? "rec" : "warm");
+      if(ty === "work") seenWork = true;
+      const st = mk(ty, d, dm, it, pre, post);
+      if(rep){ group = null; list.push({k: "g", r: rep, items: [st]}); }
+      else if(group) group.items.push(st); else list.push(st);
+    }else if(it || dashed){ skipped++; }
+    else{
+      group = null;
+      const r = line.match(/(\d+)\s*x\s*$/i);
+      if(r){ group = {k: "g", r: Math.min(50, +r[1]), items: []}; list.push(group); secTy = null; }
+      else{ secTy = headerTy(line); const l = list[list.length - 1]; if(l && l.k === "s" && l.ty === secTy) list.push({k: "b"}); }
+    }
+  }
+  return {list: list.filter(x => x.k !== "g" || x.items.length), skipped, ramps};
+}
+function calEdUI(){
+  const b = $("caledbar"); if(!b) return;
+  b.hidden = !CALEDIT;
+  if(CALEDIT){
+    const d = (CALEDIT.ev.start_date_local || "").slice(0, 10);
+    $("caledtxt").textContent = t("calEdBanner", CALEDIT.ev.name || "—", d ? new Date(d + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"}) : "");
+  }
+  $("send").textContent = CALEDIT ? t("calEdSave") : t("send");
+}
+async function calEdit(ev){
+  const ty = ev.type || "Ride";
+  if(ty !== "Ride" && ty !== "VirtualRide") return say("calEdSport", "err");
+  const {list, skipped, ramps} = edFromText(ev.description || "");
+  if(!list.some(x => x.k === "s" || x.k === "g")) return say("calEdEmpty", "err");
+  if(ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // du travail non enregistré dans l'éditeur
+  ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
+  CALEDIT = {ev};
+  if(CAL.big) setCalMax(false);
+  $("edsport").value = ty; $("edname").value = ev.name || "";
+  $("date").value = (ev.start_date_local || "").slice(0, 10) || iso(new Date()); refreshDateBtn();
+  mode = "edit"; store.set("si_mode", mode); applyMode();
+  edRender(); EDSAVED = edText(); calEdUI();
+  const sec = document.querySelector('[data-block="edit"]'); if(sec) sec.scrollIntoView({behavior: "smooth", block: "start"});
+  if(ramps) say("calEdRamp", "info"); else if(skipped) say("calEdSkip", "info", skipped); else say("calEdLoaded", "ok");
+}
+$("caledx").onclick = () => { CALEDIT = null; calEdUI(); };
+// clic sur une séance planifiée du calendrier : ouverture dans l'éditeur manuel
+$("calbox").addEventListener("click", e => {
+  if(e.target.closest(".cal-x")) return;
+  const el = e.target.closest(".cal-ev:not(.done)"); if(!el) return;
+  const ev = (CAL.ev || []).find(v => String(v.id) === el.dataset.eid); if(ev) calEdit(ev);
+});
+
 // ---------- Constructeur de plan d'entraînement ----------
 // Génère un plan à partir de la bibliothèque : jours + séances/semaine + durée + objectif + date de début,
 // puis envoie chaque séance dans le calendrier intervals.icu (une requête par séance, comme « Envoyer »).
 const PCATS = {beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint"};
 // [catégorie clé 1re moitié, catégorie clé 2e moitié, 2e séance de qualité]
-const PGOAL = {base: ["endurance", "tempo", "endurance"], ftp: ["tempo", "threshold", "tempo"], vo2: ["threshold", "vo2max", "tempo"], sprint: ["tempo", "sprint", "endurance"], start: ["beginner", "beginner", "endurance"]};
+const PGOAL = {base: ["endurance", "tempo", "endurance"], ftp: ["tempo", "threshold", "tempo"], vo2: ["threshold", "vo2max", "tempo"], sprint: ["tempo", "sprint", "endurance"], start: ["beginner", "beginner", "endurance"],
+  sweet: ["tempo", "tempo", "endurance"], thr: ["threshold", "threshold", "tempo"], pol: ["vo2max", "vo2max", "endurance"],
+  gran: ["endurance", "tempo", "endurance", 0.6], climb: ["tempo", "threshold", "threshold", 0.4], crit: ["vo2max", "sprint", "threshold"],
+  maint: ["endurance", "tempo", "endurance", 0, 0.5], ret: ["endurance", "endurance", "recovery", 0, 0.55]};
+// goal = [clé 1re moitié, clé 2e moitié, 2e qualité, biais sortie longue (0-1), plafond de charge (0-1)]
 const PROLES = {1: "L", 2: "KL", 3: "KEL", 4: "KEJL", 5: "KEJRL", 6: "KEJERL", 7: "KEJRERL"}; // K clé, J 2e qualité, E endurance, R récup, L sortie longue
 const PLAN = {items: []}; let PPOOL = null;
 function planPool(){
@@ -3519,13 +3719,13 @@ function planBuild(){
     roleArr = use.map(d => hs.includes(d) ? (hs.indexOf(d) % 2 ? "J" : "K") : d === lastEasy ? "L" : "E");
   }
   const start = new Date(($("pstart").value || iso(new Date())) + "T12:00:00"), mon = new Date(start); mon.setDate(mon.getDate() - (start.getDay() + 6) % 7);
-  const used = new Set(), items = [];
+  const used = new Set(), items = [], lb = goal[3] || 0, qcap = goal[4] || 0.95;
   for(let w = 0; w < weeks; w++){
-    const rec = w % 4 === 3 || (weeks >= 6 && w === weeks - 1), q = rec ? 0.1 : Math.min(0.95, 0.2 + 0.7 * w / Math.max(weeks - 1, 1)), key = w < weeks / 2 ? goal[0] : goal[1];
+    const rec = w % 4 === 3 || (weeks >= 6 && w === weeks - 1), q = rec ? 0.1 : Math.min(qcap, 0.2 + 0.7 * w / Math.max(weeks - 1, 1)), key = w < weeks / 2 ? goal[0] : goal[1];
     use.forEach((d, i) => {
       const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + (d + 6) % 7); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return;
       const r = roleArr[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
-        : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : q, maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
+        : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : Math.max(q, lb), maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
       if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss, cat: PCATS[pk.w.category], rec});
     });
   }
@@ -3597,8 +3797,8 @@ $("psend").onclick = async () => {
       if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
       ok++;
     }
-    PLAN.items = []; planRender(); say("pDone", "ok", ok); loadCal().catch(() => {});
-  }catch(e){ PLAN.items = L.slice(ok); planRender(); say("errI", "err", errText(e)); loadCal().catch(() => {}); }
+    PLAN.items = []; planRender(); say("pDone", "ok", ok); loadCal(true).catch(() => {});
+  }catch(e){ PLAN.items = L.slice(ok); planRender(); say("errI", "err", errText(e)); loadCal(true).catch(() => {}); }
   b.textContent = t("pSend"); b.disabled = false;
 };
 { const d = new Date(); d.setDate(d.getDate() + (8 - d.getDay()) % 7 || 7); $("pstart").value = iso(d); refreshDateBtn(); } // prochain lundi
@@ -3609,6 +3809,7 @@ document.addEventListener("keydown", e => { if(e.key === "Escape") $("more").ope
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
 function applyMode(){
+  if(mode !== "edit" && CALEDIT){ CALEDIT = null; calEdUI(); } // quitter l'éditeur manuel met fin à la modification d'une séance du calendrier
   document.querySelector('[data-block="req"]').hidden = mode !== "ai";
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
@@ -3681,23 +3882,23 @@ let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).f
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
-    const b = sec.querySelector(".tgl"); if(b){ b.textContent = closed ? "▸" : "▾"; b.setAttribute("aria-expanded", String(!closed)); }
+    const b = sec.querySelector(".tgl"); if(b) b.setAttribute("aria-expanded", String(!closed));
   });
 }
 document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]) > .phead').forEach(h => {
   const b = document.createElement("button");
-  b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
+  b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
-  const grp = document.createElement("span"); grp.className = "hctl"; // monter / descendre / réduire : restent groupés quand l'en-tête passe à la ligne
+  const grp = document.createElement("span"), seg = document.createElement("span"); grp.className = "hctl"; seg.className = "seg"; // monter / descendre / réduire : restent groupés quand l'en-tête passe à la ligne
   ["up", "dn"].forEach(d => {
     const m = document.createElement("button");
     m.type = "button"; m.className = "alt small icon mv"; m.dataset.dir = d;
     m.dataset.ia = d === "up" ? "title:mvUp;aria-label:mvUp" : "title:mvDn;aria-label:mvDn";
     m.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d === "up" ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}"/></svg>`;
     m.onclick = () => moveWidget(h.parentNode.dataset.block, d === "up" ? -1 : 1);
-    grp.appendChild(m);
+    seg.appendChild(m);
   });
-  grp.appendChild(b); h.appendChild(grp);
+  grp.appendChild(seg); grp.appendChild(b); h.appendChild(grp);
 });
 function setLinks(){
   $("mail").href = LINKS.mail;
@@ -3712,11 +3913,12 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  applyTheme();
+  applyTheme(); fontUI(); calEdUI();
   setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
+$("fontsel").onchange = e => { font = e.target.value; store.set("si_font", font); applyFont(); };
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
