@@ -4075,7 +4075,7 @@ document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { const t
     ED.push(edDef(ty));
   }
   edRender(); });
-$("edreset").onclick = async () => { if(!ED.length || !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); CALEDIT = null; calEdUI(); edRender(); say("edResetOk", "ok"); };
+$("edreset").onclick = async () => { if(!ED.length && !$("edname").value.trim()) return; if(ED.length && !(await ask("cfmReset"))) return; ED.length = 0; edCollapsed.clear(); CALEDIT = null; $("edname").value = ""; $("name").value = ""; calEdUI(); edRender(); say("edResetOk", "ok"); }; // le nom est effacé ; sport, FTP et unité sont conservés
 $("edsport").onchange = edRender; $("unit").addEventListener("change", edRender);
 $("edgo").onclick = () => {
   const txt = edText(); if(!txt) return say("edNone", "err");
