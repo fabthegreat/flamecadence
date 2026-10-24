@@ -1,2 +1,0 @@
-Webapp:
-* in the calendar widget, I would like to maximize it, and once expanded I can can a chart overview of each activity/planned workout. 
