@@ -331,10 +331,20 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 #cmptable tfoot td{font-weight:600}
 .cmp-row a{flex:none;text-decoration:none;color:var(--mute)}
 #cmpchart{margin-top:12px}
-.cmp-ch{margin-bottom:10px}
-.cmp-ch .cht{font-size:.75rem;color:var(--mute);margin:0 0 2px;display:flex;justify-content:space-between}
-.cmp-ch svg{display:block;width:100%;height:110px;border-radius:6px;background:var(--bg)}
-.cmp-ch path{fill:none;stroke-width:1.3;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+/* barre de progression du scan (À partir d'une activité + Comparer) */
+.scanlbl{font-size:.8rem;color:var(--mute);margin-top:4px}
+.pb.ind i{width:30%;transition:none;animation:scanind 1.1s ease-in-out infinite alternate}
+@keyframes scanind{from{margin-left:0}to{margin-left:70%}}
+/* progression puissance / FC d'une activité */
+#cmpnav{flex-wrap:wrap;align-items:center}
+#cmpnav select{width:auto;padding:6px 8px;font-size:.85rem}
+.cmp-pr{position:relative;padding:0 12px 0 40px}
+.cmp-pr svg{display:block;width:100%;height:220px;border-radius:6px;background:var(--bg)}
+.cmp-pr path{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
+.cmp-pr .yt{position:absolute;width:36px;font-size:.7rem;line-height:1;transform:translateY(-50%);pointer-events:none}
+.cmp-pr .yl{left:0;text-align:right;color:#3b82c9}
+.cmp-xa{position:relative;height:1.1rem;margin:3px 12px 0 40px;font-size:.7rem;color:var(--mute)}
+.cmp-xa span{position:absolute;white-space:nowrap}
 .cmp-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--mute);margin-top:6px}
 .cmp-leg span{display:inline-flex;align-items:center;gap:5px}
 .cmp-leg i{display:inline-block;width:10px;height:10px;border-radius:2px}
@@ -660,7 +670,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 
 <input id="cmpname" type="search" style="display:none;margin-top:12px" data-ia="placeholder:cmpNamePh;aria-label:cmpNamePh">
 <div id="cmptable"></div>
-<div id="cmpnav" style="display:none;gap:6px;margin-top:12px"><button type="button" class="alt small icon" id="cmppl" data-ia="title:cmpPanL;aria-label:cmpPanL">‹</button><button type="button" class="alt small icon" id="cmpzo" data-ia="title:cmpZout;aria-label:cmpZout">−</button><button type="button" class="alt small icon" id="cmpzi" data-ia="title:cmpZin;aria-label:cmpZin">+</button><button type="button" class="alt small icon" id="cmppr" data-ia="title:cmpPanR;aria-label:cmpPanR">›</button></div>
+<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="3" selected></option><option value="5"></option><option value="7"></option><option value="10"></option></select></div>
 <div id="cmptip" style="display:none"></div>
 <div id="cmpchart"></div>
 <div class="hint" id="cmpinfo" role="status"></div>
@@ -928,7 +938,7 @@ widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
-pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is lighter. Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est allégée. Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
+pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is a recovery week (about half the load). Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est une semaine de récupération (environ moitié moins de charge). Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
 pGen:["Build plan","Générer le plan"], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
 impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
@@ -963,6 +973,10 @@ cmpNres:["{0} sessions roughly matching this shape — top ones are pre-selected
 cmpPerRep:["Overlay rep by rep (one work+recovery cycle = full width)","Superposer répétition par répétition (un cycle effort+récupération = toute la largeur)"],
 cmpW:["Power","Puissance"], cmpH:["Heart rate","Fréquence cardiaque"], cmpC:["Cadence","Cadence"],
 cmpMax:["max {0}","max {0}"],
+cmpMa:["Moving average over","Moyenne mobile sur"], cmpMaN:["{0} sessions","{0} séances"],
+cmpEfY:["W/HR (avg power ÷ avg heart rate over the efforts)","W/FC (puissance moy. ÷ FC moy. sur les efforts)"], cmpEfMa:["moving average ({0} sessions)","moyenne mobile ({0} séances)"],
+cmpEfInfo:["{0} sessions · average W/HR {1} · latest moving average {2}","{0} séances · W/FC moyen {1} · dernière moyenne mobile {2}"],
+cmpNoHr:["No heart rate data in the selected sessions.","Aucune donnée de fréquence cardiaque dans les séances sélectionnées."],
 cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
 cmpPlace:["Location","Lieu"], cmpPAny:["Indoor & outdoor","Intérieur et extérieur"],
 cmpPanL:["Move left","Décaler vers la gauche"], cmpPanR:["Move right","Décaler vers la droite"], cmpZin:["Zoom in","Zoom avant"], cmpZout:["Zoom out","Zoom arrière"],
@@ -2894,6 +2908,20 @@ async function buildFromAct(a, btn){
 }
 // Recherche d'activités : même moteur que le comparateur (forme, type, nom, intérieur/extérieur) ;
 // sans forme ni type, simple filtre sur les métadonnées (aucun flux à télécharger)
+// Barre de progression du scan (« À partir d'une activité » et « Comparer ») : remplace le simple compteur texte.
+// total inconnu (0) → barre indéterminée ; le texte final (bilan) écrase la barre via textContent.
+function scanProg(el, done, total){
+  let bar = el.querySelector(".pb");
+  if(!bar){
+    el.innerHTML = '<div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i></i></div><div class="scanlbl"></div>';
+    bar = el.querySelector(".pb");
+  }
+  const known = total > 0, pct = known ? Math.min(100, Math.round(done / total * 100)) : 0;
+  bar.classList.toggle("ind", !known);
+  if(known) bar.setAttribute("aria-valuenow", pct); else bar.removeAttribute("aria-valuenow");
+  bar.firstChild.style.width = known ? pct + "%" : "";
+  el.querySelector(".scanlbl").textContent = t("cmpScan", done, known ? total : "?");
+}
 ACTS.busy = false; ACTS.stop = false; ACTS.searched = false;
 async function actSearch(){
   if(ACTS.busy){ ACTS.stop = true; return; }
@@ -2903,7 +2931,7 @@ async function actSearch(){
   const scan = !!pat || type !== "any";
   ACTS.busy = true; ACTS.stop = false; $("sact").textContent = t("stopGen"); say(null);
   const box = $("actbox"), stat = $("actstat");
-  box.innerHTML = ""; stat.textContent = t("cmpScan", 0, "?");
+  box.innerHTML = ""; scanProg(stat, 0, 0);
   let nAct = 0, nPow = 0, nBad = 0, lastErr = "";
   try{
     const days = parseInt($("actper").value, 10) || 14;
@@ -2915,7 +2943,7 @@ async function actSearch(){
     const hits = [];
     if(!scan) hits.push(...Q.slice(0, 200));
     else{
-      let done = 0;
+      let done = 0; scanProg(stat, 0, nAct);
       const worker = async () => {
         while(Q.length && !ACTS.stop){
           const a = Q.shift();
@@ -2932,7 +2960,7 @@ async function actSearch(){
               }
             }
           }catch(e){ nBad++; lastErr = String(e.message || e); }
-          stat.textContent = t("cmpScan", ++done, nAct);
+          scanProg(stat, ++done, nAct);
         }
       };
       await Promise.all([worker(), worker(), worker()]);
@@ -3149,7 +3177,7 @@ async function cmpSearch(){
   if(!KEY()) return say("needI", "err");
   CMP.busy = true; CMP.stop = false; $("rcmp").textContent = t("stopGen");
   CMP.view = {a: 0, b: 1}; $("cmpnav").style.display = "none"; CMP.pat = pat; CMP.hits = []; CMP.sel = new Set();
-  $("cmpbox").innerHTML = ""; $("cmpstat").textContent = t("cmpScan", 0, "?"); $("cmpchart").innerHTML = ""; $("cmptable").innerHTML = ""; $("cmpinfo").textContent = "";
+  $("cmpbox").innerHTML = ""; scanProg($("cmpstat"), 0, 0); $("cmpchart").innerHTML = ""; $("cmptable").innerHTML = ""; $("cmpinfo").textContent = "";
   let nAct = 0, nPow = 0, nBad = 0, lastErr = "";
   try{
     const days = parseInt($("cmpper").value, 10) || 180, type = $("cmptype").value, place = $("cmpplace").value;
@@ -3157,7 +3185,7 @@ async function cmpSearch(){
     const nq = QR.words;
     const Q = acts.filter(a => nq.every(w => cmpNorm(a.name).includes(w))).filter(a => place === "any" || (place === "in") === cmpIndoor(a)).filter(a => a.moving_time >= (pat ? pat.wMin * (pat.repMin === 1 ? 1 : 2) : 60) && (a.icu_average_watts || a.average_watts))
       .sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 1200);
-    nAct = Q.length; let done = 0;
+    nAct = Q.length; let done = 0; scanProg($("cmpstat"), 0, nAct);
     const worker = async () => {
       while(Q.length && !CMP.stop){
         const a = Q.shift();
@@ -3174,7 +3202,7 @@ async function cmpSearch(){
             }
           }
         }catch(e){ nBad++; lastErr = String(e.message || e); }
-        $("cmpstat").textContent = t("cmpScan", ++done, nAct);
+        scanProg($("cmpstat"), ++done, nAct);
       }
     };
     await Promise.all([worker(), worker(), worker()]);
@@ -3207,14 +3235,6 @@ function cmpBin(arr, a, b, N, z){
   }
   return o;
 }
-// courbes d'une séance : série entière (recentrée sur la 1re rep) / une courbe par rep / répétition moyenne
-function cmpCurves(h, arr, z){
-  const w0 = h.win[0].start;
-  if(CMP.mode === "series"){ const sp = h.win[h.win.length - 1].end + 1 - w0, V = CMP.view; return [cmpBin(arr, w0 + V.a * sp, w0 + V.b * sp, 240, z)]; }
-  const cyc = Math.round(h.mw + h.mr), reps = h.win.map(g => cmpBin(arr, g.start, g.start + cyc, 160, z));
-  if(CMP.mode === "reps") return reps;
-  return [reps[0].map((_, k) => { const v = reps.map(r => r[k]).filter(x => x != null); return v.length ? cmpAvg(v) : null; })];
-}
 const cmpIndoor = a => a.trainer === true || a.type === "VirtualRide" || /virtual|trainer|indoor|zwift/i.test(a.sub_type || "");
 const cmpNorm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const cmpNameOk = h => { const n = cmpNorm(h.a.name || h.a.type); return cmpNorm($("cmpname").value).split(/\s+/).filter(Boolean).every(w => n.includes(w)); };
@@ -3234,42 +3254,47 @@ function cmpTable(){
   box.querySelectorAll("tbody input").forEach(c => c.onchange = () => { const h = CMP.hits[+c.dataset.h]; if(c.checked) CMP.sel.add(h.a.id); else CMP.sel.delete(h.a.id); cmpChart(); });
   const all = $("cmpall"); if(all) all.onchange = () => { CMP.hits.filter(cmpNameOk).forEach(h => { if(all.checked) CMP.sel.add(h.a.id); else CMP.sel.delete(h.a.id); }); cmpChart(); };
 }
+// --- Progression dans le temps : un point par séance sélectionnée (date → W/FC), moyenne mobile en surimpression ---
+// W/FC = puissance moyenne des efforts ÷ FC moyenne des efforts (même valeur que la colonne du tableau).
+const CMP_PW = "#3b82c9", CMP_HR = "#d6336c";
 function cmpChart(){
   cmpTable();
   const box = $("cmpchart"), H = CMP.hits.filter(h => CMP.sel.has(h.a.id) && cmpNameOk(h));
   $("cmpnav").style.display = H.length ? "flex" : "none";
   if(!H.length){ box.innerHTML = ""; $("cmpinfo").textContent = ""; return; }
-  const met = [{key: "cmpW", get: h => h.s.w, u: "W", z: true}, {key: "cmpH", get: h => h.s.hr, u: "bpm"}, {key: "cmpC", get: h => h.s.cad, u: "rpm"}].filter(m => H.some(h => m.get(h)));
-  box.innerHTML = met.map(m => `<div class="cmp-ch" data-mk="${m.key}"><div class="cht"><span>${esc(t(m.key))}</span><span class="ymax"></span></div><svg viewBox="0 0 800 110" preserveAspectRatio="none"></svg></div>`).join("") +
-    `<div class="cmp-leg">${H.map(h => `<span><i style="background:${h.col}"></i>${esc((h.a.start_date_local || "").slice(0, 10))} \u2014 ${esc(h.a.name || h.a.type || "")}</span>`).join("")}</div>`;
-  const cycX = CMP.mode === "series" ? null : cmpAvg(H.map(h => h.mw / (h.mw + h.mr))) * 800;
-  for(const m of met){
-    const svg = box.querySelector(`.cmp-ch[data-mk="${m.key}"] svg`), cur = H.map(h => m.get(h) ? cmpCurves(h, m.get(h), m.z) : []);
-    let max = 1; cur.forEach(cs => cs.forEach(c => c.forEach(v => { if(v != null && v > max) max = v; })));
-    box.querySelector(`.cmp-ch[data-mk="${m.key}"] .ymax`).textContent = t("cmpMax", Math.round(max) + " " + m.u);
-    let out = `<line class="grid" x1="0" y1="106" x2="800" y2="106"/><line class="grid" x1="0" y1="56" x2="800" y2="56" stroke-dasharray="4 4"/>` +
-      (cycX ? `<line class="grid" x1="${cycX.toFixed(1)}" y1="0" x2="${cycX.toFixed(1)}" y2="106" stroke-dasharray="2 4"/>` : "");
-    H.forEach((h, i) => cur[i].forEach(c => {
-      let d = "", pen = false;
-      c.forEach((v, k) => { if(v == null){ pen = false; return; } d += (pen ? "L" : "M") + (k / (c.length - 1) * 800).toFixed(1) + " " + (106 - Math.min(1, v / max) * 100).toFixed(1); pen = true; });
-      if(d) out += `<path d="${d}" stroke="${h.col}"${CMP.mode === "reps" ? ' stroke-opacity=".4"' : ""}/>`;
-    }));
-    svg.innerHTML = out + `<line class="cmp-cur" x1="0" x2="0" y1="0" y2="106" stroke="#888" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>`;
-  }
+  const k = parseInt($("cmpma").value, 10) || 3;
+  [...$("cmpma").options].forEach(o => o.textContent = t("cmpMaN", o.value));
+  const P = H.map(h => { const hr = h.s.hr ? winMean(h, "hr") : 0; return hr ? {h, tm: new Date(h.a.start_date_local).getTime(), ef: h.avgP / hr, hr} : null; })
+    .filter(x => x && isFinite(x.tm)).sort((x, y) => x.tm - y.tm);
+  if(!P.length){ box.innerHTML = `<p class="hint">${esc(t("cmpNoHr"))}</p>`; $("cmpinfo").textContent = ""; return; }
+  P.forEach((x, i) => { x.ma = cmpAvg(P.slice(Math.max(0, i - k + 1), i + 1).map(y => y.ef)); }); // moyenne mobile « arrière » sur k séances
+  const t0 = P[0].tm, span = Math.max(P[P.length - 1].tm - t0, 864e5), xOf = tm => P.length === 1 ? 400 : (.03 + .94 * (tm - t0) / span) * 800;
+  const vals = P.flatMap(x => [x.ef, x.ma]), mn = Math.min(...vals), mx = Math.max(...vals);
+  const lo = Math.floor((mn - .02) / .05) * .05, st = Math.max(.05, Math.ceil((mx - lo) / 4 / .05 - 1e-9) * .05), hi = lo + 4 * st;
+  const yOf = v => 214 - Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 208;
+  let svg = "";
+  for(let i = 0; i <= 4; i++){ const y = (214 - i / 4 * 208).toFixed(1); svg += `<line x1="0" x2="800" y1="${y}" y2="${y}" style="stroke:var(--line)" vector-effect="non-scaling-stroke"${i && i < 4 ? ' stroke-dasharray="4 4"' : ""}/>`; }
+  if(P.length > 1) svg += `<path d="${P.map((x, i) => (i ? "L" : "M") + xOf(x.tm).toFixed(1) + " " + yOf(x.ma).toFixed(1)).join("")}" stroke="${CMP_HR}" stroke-width="2.5"/>`;
+  svg += P.map(x => `<path d="M${xOf(x.tm).toFixed(1)} ${yOf(x.ef).toFixed(1)}h.01" stroke="${CMP_PW}" stroke-width="9" stroke-opacity=".8"/>`).join("");
+  if(P.length === 1) svg += `<path d="M400 ${yOf(P[0].ma).toFixed(1)}h.01" stroke="${CMP_HR}" stroke-width="5"/>`;
+  svg += `<line class="cmp-cur" x1="0" x2="0" y1="0" y2="220" stroke="#888" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>`;
+  const dfmt = tm => new Date(tm).toLocaleDateString(loc(), {day: "numeric", month: "short", year: span > 300 * 864e5 ? "2-digit" : undefined});
+  const ticks = [0, 1, 2, 3, 4].map(i => `<span class="yt yl" style="top:${((214 - i / 4 * 208) / 220 * 100).toFixed(1)}%">${(lo + st * i).toFixed(2)}</span>`).join("");
+  const xl = P.length === 1 ? `<span style="left:50%;transform:translateX(-50%)">${dfmt(t0)}</span>` : [0, .25, .5, .75, 1].map(f => `<span style="left:${f * 100}%;transform:translateX(${-f * 100}%)">${dfmt(t0 + f * span)}</span>`).join("");
+  box.innerHTML = `<div class="cmp-pr">${ticks}<svg viewBox="0 0 800 220" preserveAspectRatio="none">${svg}</svg></div><div class="cmp-xa">${xl}</div>` +
+    `<div class="cmp-leg"><span><i style="background:${CMP_PW};border-radius:50%"></i>${esc(t("cmpEfY"))}</span><span><i style="background:${CMP_HR};height:3px"></i>${esc(t("cmpEfMa", k))}</span></div>`;
+  $("cmpinfo").textContent = t("cmpEfInfo", P.length, cmpAvg(P.map(x => x.ef)).toFixed(2), P[P.length - 1].ma.toFixed(2));
   box.onpointermove = e => {
     const sv = e.target.closest ? e.target.closest("svg") : null, tip = $("cmptip");
     if(!sv){ box.onpointerleave(); return; }
-    const r = sv.getBoundingClientRect(), V = CMP.view, x = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)), fr = V.a + x * (V.b - V.a), h0 = H[0];
-    let html = `<div style="color:var(--mute)">${mmss(fr * (h0.win[h0.win.length - 1].end - h0.win[0].start))}</div>`;
-    for(const h of H){
-      const idx = Math.round(h.win[0].start + fr * (h.win[h.win.length - 1].end - h.win[0].start)), at = a => { const v = a && a[Math.min(a.length - 1, idx)]; return typeof v === "number" && !isNaN(v) ? v : null; };
-      const w = at(h.s.w), hr = at(h.s.hr), cad = at(h.s.cad), v = [w != null ? Math.round(w) + " W" : "", hr ? Math.round(hr) + " bpm" : "", cad ? Math.round(cad) + " rpm" : ""].filter(Boolean).join(" \u00b7 ");
-      html += `<div><i style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:${h.col}"></i>${esc((h.a.start_date_local || "").slice(5, 10))} <b>${esc(v)}</b></div>`;
-    }
-    tip.innerHTML = html; tip.style.display = "block";
+    const r = sv.getBoundingClientRect(), px = e.clientX - r.left;
+    let best = null, bd = 1e9; P.forEach(x => { const d = Math.abs(xOf(x.tm) / 800 * r.width - px); if(d < bd){ bd = d; best = x; } });
+    if(!best || bd > 22){ box.onpointerleave(); return; }
+    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${best.ef.toFixed(2)}</b> W/HR \u00b7 <span style="color:var(--mute)">${esc(t("cmpMaN", k))}: ${best.ma.toFixed(2)}</span></div><div style="color:var(--mute)">${Math.round(best.h.avgP)} W \u00b7 ${Math.round(best.hr)} bpm</div>`;
+    tip.style.display = "block";
     const tx = e.clientX + 16 + tip.offsetWidth > window.innerWidth ? e.clientX - 16 - tip.offsetWidth : e.clientX + 16;
     tip.style.left = Math.max(4, tx) + "px"; tip.style.top = Math.max(4, Math.min(e.clientY + 12, window.innerHeight - tip.offsetHeight - 4)) + "px";
-    box.querySelectorAll(".cmp-cur").forEach(l => { l.setAttribute("x1", x * 800); l.setAttribute("x2", x * 800); l.style.display = ""; });
+    box.querySelectorAll(".cmp-cur").forEach(l => { const xx = xOf(best.tm); l.setAttribute("x1", xx); l.setAttribute("x2", xx); l.style.display = ""; });
   };
   box.onpointerleave = () => { $("cmptip").style.display = "none"; box.querySelectorAll(".cmp-cur").forEach(l => l.style.display = "none"); };
 }
@@ -3278,16 +3303,14 @@ $("cmpplace").onchange = () => store.set("si_cmpplace", $("cmpplace").value);
 $("cmpper").onchange = () => store.set("si_cmpper", $("cmpper").value);
 $("cmptype").onchange = () => store.set("si_cmptype", $("cmptype").value);
 $("cmpq").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); if(!CMP.busy) $("rcmp").click(); } };
-const cmpZoom = f => { const V = CMP.view, sp = Math.max(.04, Math.min(1, (V.b - V.a) * f)), a = Math.max(0, Math.min(1 - sp, (V.a + V.b) / 2 - sp / 2)); CMP.view = {a, b: a + sp}; cmpChart(); };
-const cmpPan = d => { const V = CMP.view, sp = V.b - V.a, a = Math.max(0, Math.min(1 - sp, V.a + d * sp * .5)); CMP.view = {a, b: a + sp}; cmpChart(); };
 $("cmpname").oninput = () => cmpChart();
-$("cmpzi").onclick = () => cmpZoom(.5); $("cmpzo").onclick = () => cmpZoom(2);
-$("cmppl").onclick = () => cmpPan(-1); $("cmppr").onclick = () => cmpPan(1);
+$("cmpma").onchange = () => { store.set("si_cmpma", $("cmpma").value); cmpChart(); };
 { // préférences sauvegardées
   const p = store.get("si_cmpper"); if(p) $("cmpper").value = p;
   const ty = store.get("si_cmptype"); if(ty && $("cmptype").querySelector(`option[value="${ty}"]`)) $("cmptype").value = ty;
   const pl = store.get("si_cmpplace"); if(pl === "in" || pl === "out") $("cmpplace").value = pl;
   const q = store.get("si_cmpq"); if(q) $("cmpq").value = q;
+  const mw = store.get("si_cmpma"); if(mw && $("cmpma").querySelector(`option[value="${mw}"]`)) $("cmpma").value = mw;
   $("cmpq").addEventListener("change", () => store.set("si_cmpq", $("cmpq").value));
 }
 
@@ -4236,12 +4259,29 @@ function planBuild(){
   const used = new Set(), items = [], lb = goal[3] || 0, qcap = goal[4] || 0.95;
   for(let w = 0; w < weeks; w++){
     const rec = w % 4 === 3 || (weeks >= 6 && w === weeks - 1), q = rec ? 0.1 : Math.min(qcap, 0.2 + 0.7 * w / Math.max(weeks - 1, 1)), key = w < weeks / 2 ? goal[0] : goal[1];
+    // semaine de récupération : plus aucune séance dure (clé → endurance, 2e qualité / endurance → récup), durées plafonnées
+    const lightMax = Math.max(30, Math.round(maxMin * 0.6)), longMax = Math.max(45, Math.round(maxMin * 0.65));
     use.forEach((d, i) => {
       const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + (d + 6) % 7); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return;
-      const r = roleArr[i], pk = r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
-        : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", rec ? 0.3 : Math.max(q, lb), maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
+      const r = roleArr[i], pk = rec
+        ? (r === "K" ? planPick("endurance", 0.15, lightMax, "tss", used) : r === "L" ? planPick("endurance", 0.2, longMax, "mins", used) : planPick("recovery", r === "J" ? 0.5 : 0.3, lightMax, "tss", used))
+        : r === "K" ? planPick(key, q, maxMin, "tss", used) : r === "J" ? planPick(goal[2], q, maxMin, "tss", used)
+        : r === "R" ? planPick("recovery", q, maxMin, "tss", used) : r === "L" ? planPick("endurance", Math.max(q, lb), maxMin, "mins", used) : planPick("endurance", q, maxMin, "tss", used);
       if(pk) items.push({date: iso(date), week: w + 1, w: pk.w, mins: pk.mins, tss: pk.tss, cat: PCATS[pk.w.category], rec});
     });
+    if(rec){ // la charge de la semaine doit tomber à ~65 % de la moyenne des semaines de charge précédentes : on allège la séance la plus lourde tant que nécessaire
+      const wt = k => items.filter(x => x.week === k).reduce((a, x) => a + x.tss, 0), prev = [];
+      for(let k = w; k >= 1 && prev.length < 3; k--) if(!items.some(x => x.week === k && x.rec) && wt(k) > 0) prev.push(wt(k));
+      const cur = items.filter(x => x.week === w + 1);
+      if(prev.length && cur.length){
+        const target = 0.65 * prev.reduce((a, x) => a + x, 0) / prev.length; let tot = wt(w + 1);
+        for(let g = 0; tot > target && g < 12; g++){
+          const hv = cur.reduce((b, x) => x.tss > b.tss ? x : b, cur[0]), alt = planPick("recovery", 0, lightMax, "tss", used);
+          if(!alt || alt.tss >= hv.tss) break;
+          tot -= hv.tss - alt.tss; Object.assign(hv, {w: alt.w, mins: alt.mins, tss: alt.tss, cat: PCATS[alt.w.category]});
+        }
+      }
+    }
   }
   PLAN.items = items; PLAN.maxMin = maxMin; planRender();
 }
@@ -4349,7 +4389,7 @@ function planDays(){
   const hard = first ? new Set() : new Set([...hb.querySelectorAll("input:checked")].map(i => +i.value));
   const f = new Intl.DateTimeFormat(lang, {weekday: "short"});
   const row = (set, acc) => [1, 2, 3, 4, 5, 6, 0].map(d => `<label style="display:flex;align-items:center;gap:5px;margin:0;cursor:pointer"><input type="checkbox" value="${d}" style="width:auto;margin:0;accent-color:${acc}"${set.has(d) ? " checked" : ""}>${esc(f.format(new Date(2024, 0, 7 + d)))}</label>`).join("");
-  box.innerHTML = row(on, "var(--acc)"); hb.innerHTML = row(hard, "#ee6c4d"); planHardWarn();
+  box.innerHTML = row(on, "var(--acc)"); hb.innerHTML = row(hard, "#ee6c4d"); planHardWarn(); if(first) planSyncDays();
 }
 function planHardWarn(){
   const h = [...$("phard").querySelectorAll("input:checked")].map(i => +i.value), adj = h.some(d => h.includes((d + 1) % 7));
@@ -4364,7 +4404,9 @@ function planAutoDays(n){
   const setDays = (box, list) => box.querySelectorAll("input").forEach(i => { i.checked = list.includes(+i.value); });
   setDays($("pdays"), wo.map(val)); setDays($("phard"), hard.map(val)); planHardWarn();
 }
-$("psess").addEventListener("input", e => { const v = e.target.value; if(/^[1-7]$/.test(v)) planAutoDays(+v); });
+// jours d'entraînement (et jours durs) déduits du nombre de séances par semaine
+function planSyncDays(){ const v = $("psess").value; if(/^[1-7]$/.test(v)) planAutoDays(+v); }
+["input", "change"].forEach(ev => $("psess").addEventListener(ev, planSyncDays));
 $("pdays").addEventListener("change", e => { // un jour décoché ne peut plus être un jour dur
   const i = e.target; if(i.checked) return; const h = $("phard").querySelector(`input[value="${i.value}"]`); if(h) h.checked = false; planHardWarn();
 });
@@ -4408,6 +4450,8 @@ function applyMode(){
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
+  if(mode === "plan" && applyMode._prev !== "plan") planSyncDays();
+  applyMode._prev = mode;
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
 }
 document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
