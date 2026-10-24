@@ -311,6 +311,9 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 /* comparateur de séances passées */
+html.m-cmp #prev{display:none!important}
+#lsvg{cursor:pointer}
+.ftpnote[hidden]{display:none}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
 .cmp-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;cursor:pointer}
 .cmp-row input{width:auto;padding:0;margin:0;flex:none}
@@ -522,9 +525,6 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <button id="gen" type="button" data-i="gen"></button>
 <button class="alt" id="rand" type="button" data-i="rand"></button>
 </div>
-<label for="hist" data-i="history"></label>
-<div class="pw"><select id="hist"></select>
-<button class="alt small icon danger" id="hdel" type="button" data-ia="title:del;aria-label:del"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button></div>
 </section>
 
 <section data-block="edit" hidden>
@@ -664,13 +664,13 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 <div style="margin-top:12px"><label for="cmpper" data-i="actW"></label><select id="cmpper" data-ia="aria-label:actW"><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
 <div style="margin-top:12px"><label for="cmpq" data-i="cmpQ"></label><input id="cmpq" data-ia="placeholder:cmpPh"></div>
 <p class="hint" data-i="cmpFmt"></p>
-<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button></div>
+<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button></div>
 <div class="hint" id="cmpstat" role="status"></div>
 <div id="cmpbox"></div>
 
 <input id="cmpname" type="search" style="display:none;margin-top:12px" data-ia="placeholder:cmpNamePh;aria-label:cmpNamePh">
 <div id="cmptable"></div>
-<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="3" selected></option><option value="5"></option><option value="7"></option><option value="10"></option></select></div>
+<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpplot" class="hint" style="margin:0" data-i="cmpPlot"></label><select id="cmpplot"><option value="ef" data-i="cmpPlEf"></option><option value="pw" data-i="cmpPlPw"></option><option value="hr" data-i="cmpPlHr"></option></select><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="3" selected></option><option value="5"></option><option value="7"></option><option value="10"></option></select></div>
 <div id="cmptip" style="display:none"></div>
 <div id="cmpchart"></div>
 <div class="hint" id="cmpinfo" role="status"></div>
@@ -976,6 +976,12 @@ cmpMax:["max {0}","max {0}"],
 cmpMa:["Moving average over","Moyenne mobile sur"], cmpMaN:["{0} sessions","{0} séances"],
 cmpEfY:["W/HR (avg power ÷ avg heart rate over the efforts)","W/FC (puissance moy. ÷ FC moy. sur les efforts)"], cmpEfMa:["moving average ({0} sessions)","moyenne mobile ({0} séances)"],
 cmpEfInfo:["{0} sessions · average W/HR {1} · latest moving average {2}","{0} séances · W/FC moyen {1} · dernière moyenne mobile {2}"],
+ftpInfoTip:["Information only in % FTP mode: intervals.icu applies its own FTP. Choose W to use this one.","Indicatif en mode % FTP : intervals.icu applique sa propre FTP. Choisis W pour utiliser celle-ci."],
+cmpPlot:["Plot","Graphique"], cmpPlEf:["Efficiency (W/HR) vs date","Efficacité (W/FC) vs date"], cmpPlPw:["Average power vs date","Puissance moyenne vs date"], cmpPlHr:["Average HR vs date","FC moyenne vs date"],
+cmpPwY:["Average power over the efforts (W)","Puissance moyenne sur les efforts (W)"], cmpHrY:["Average heart rate over the efforts (bpm)","FC moyenne sur les efforts (bpm)"],
+cmpInfoG:["{0} sessions · average {1} · latest moving average {2}","{0} séances · moyenne {1} · dernière moyenne mobile {2}"],
+cmpSkip:["{0} skipped (steady ride)","{0} ignorées (sortie régulière)"], cmpCached:["{0} from cache","{0} depuis le cache"], cacheClr:["Clear stream cache","Vider le cache des flux"], cacheCleared:["Stream cache cleared.","Cache des flux vidé."],
+lCast:["Click to rebuild this ride as an editable workout","Cliquer pour reconstruire cette sortie en séance modifiable"],
 cmpNoHr:["No heart rate data in the selected sessions.","Aucune donnée de fréquence cardiaque dans les séances sélectionnées."],
 cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
 cmpPlace:["Location","Lieu"], cmpPAny:["Indoor & outdoor","Intérieur et extérieur"],
@@ -1304,7 +1310,7 @@ function streamsSvg(){
   const w = ds(LAST.sw, 240), h = ds(LAST.sh, 240), n = Math.max(w.length, h.length);
   if(!n) return `<div class="hint">${esc(t("noStreams"))}</div>`;
   const X = i => (i / Math.max(1, n - 1) * 300).toFixed(1);
-  let svg = `<svg id="lsvg" viewBox="0 0 300 90" preserveAspectRatio="none">`;
+  let svg = `<svg id="lsvg" viewBox="0 0 300 90" preserveAspectRatio="none"><title>${esc(t("lCast"))}</title>`;
   if(w.length){ const m = Math.max(...w, 1); svg += `<path class="lp" d="M0 90${w.map((v, i) => `L${X(i)} ${(88 - v / m * 84).toFixed(1)}`).join("")}L300 90Z"/>`; }
   const hv = h.filter(v => v > 0);
   if(hv.length){ const lo = Math.min(...hv), hi = Math.max(...hv); svg += `<polyline class="lh" points="${h.map((v, i) => X(i) + "," + (88 - (Math.max(v, lo) - lo) / Math.max(1, hi - lo) * 80).toFixed(1)).join(" ")}"/>`; }
@@ -1342,6 +1348,22 @@ $("lastbox").addEventListener("pointermove", e => {
   const at = arr => arr && arr.length ? Math.round(ds(arr, 240)[Math.round(fr * (ds(arr, 240).length - 1))]) : null;
   const p = at(LAST.sw), h = at(LAST.sh);
   $("linfo").textContent = [mmss(fr * (LAST.last.moving_time || 0)), p ? p + " W" : "", h ? h + " bpm" : ""].filter(Boolean).join(" · ");
+});
+// Clic sur le graphe de la dernière séance : reconstruction dans l'aperçu ET ouverture dans l'éditeur manuel (vélo uniquement)
+$("lastbox").addEventListener("click", async e => {
+  if(!(e.target.closest && e.target.closest("#lsvg")) || !LAST.last) return;
+  const a = LAST.last, bike = isBike(a.type);
+  if(bike && ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // travail non enregistré dans l'éditeur
+  if(mode === "cmp"){ mode = "act"; store.set("si_mode", mode); applyMode(); } // l'aperçu est masqué dans le comparateur
+  if(!(await buildFromAct(a, {disabled: false})) || !bike) return;
+  const {list} = edFromText($("desc").value);
+  if(!list.some(x => x.k === "s" || x.k === "g")) return;
+  ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
+  CALEDIT = null; calEdUI();
+  $("edsport").value = $("sport").value; $("edname").value = $("name").value;
+  mode = "edit"; store.set("si_mode", mode); applyMode();
+  edRender(); EDSAVED = edText();
+  $("prev").scrollIntoView({behavior: "smooth", block: "start"});
 });
 async function loadLast(idx){
   const done = (LAST.acts || []).filter(a => a.moving_time).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
@@ -2424,7 +2446,36 @@ LIBRARY.push(
  extraWorkout("force", "Force — Big-Gear Starts 8×12s", "Force — Départs en gros braquet 8×12 s", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 8x\n- 12s 160% cadence 50rpm from low speed in a big gear\n- 3m48 50%\n\nCooldown\n- 10m 50%", "Explosive pushes from low speed in a big gear: maximal force with long, full recoveries.", "Poussées explosives à faible vitesse en gros braquet : force maximale avec de longues récupérations complètes."),
  extraWorkout("force", "Force — Cadence Contrast Sets", "Force — Séries contraste de cadence", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 4x\n- 3m 85% cadence 55rpm\n- 3m 85% cadence 100rpm\n- 4m 55%\n\nCooldown\n- 10m 50%", "Alternates heavy low-cadence work and fast spinning at the same power, building strength and pedalling fluidity together.", "Alterne travail lourd à basse cadence et pédalage rapide à la même puissance, pour développer force et fluidité ensemble."),
  extraWorkout("force", "Force — Big-Gear Threshold 2×15'", "Force — Seuil en gros braquet 2×15'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 2x\n- 15m 95% cadence 65rpm\n- 8m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Long threshold efforts at 65 rpm, like a sustained climb at race pace. A demanding strength-endurance session.", "Longs efforts au seuil à 65 tr/min, comme une montée soutenue à allure de course. Séance exigeante de force-endurance."),
- extraWorkout("force", "Force — Endurance Strength (2 h)", "Force — Endurance de force (2 h)", "Warmup\n- 15m 55%\n\nMain set 3x\n- 20m 70% cadence 65rpm\n- 10m 62% cadence 90rpm\n\nCooldown\n- 10m 50%", "A long aerobic ride with big-gear blocks to build muscular endurance over distance. Fuel and hydrate well.", "Longue sortie aérobie avec blocs en gros braquet pour développer l'endurance musculaire sur la durée. Pense à bien t'alimenter et t'hydrater.")
+ extraWorkout("force", "Force — Endurance Strength (2 h)", "Force — Endurance de force (2 h)", "Warmup\n- 15m 55%\n\nMain set 3x\n- 20m 70% cadence 65rpm\n- 10m 62% cadence 90rpm\n\nCooldown\n- 10m 50%", "A long aerobic ride with big-gear blocks to build muscular endurance over distance. Fuel and hydrate well.", "Longue sortie aérobie avec blocs en gros braquet pour développer l'endurance musculaire sur la durée. Pense à bien t'alimenter et t'hydrater."),
+ extraWorkout("force", "Force — Pedal Stroke Primer", "Force — Amorce du coup de pédale", "Warmup\n- 6m 50%\n- 3m 60%\n\nMain set 4x\n- 3m 70% cadence 70rpm\n- 2m 55% cadence 95rpm\n\nCooldown\n- 5m 50%", "A gentle first contact with low-cadence work at 70 rpm. Focus on a round, smooth pedal stroke.", "Un premier contact doux avec le travail à basse cadence, à 70 tr/min. Concentre-toi sur un coup de pédale rond et fluide."),
+ extraWorkout("force", "Force — Short Strength Lunch (32 min)", "Force — Force express midi (32 min)", "Warmup\n- 6m 50%\n- 3m 60%\n\nMain set 3x\n- 4m 78% cadence 60rpm\n- 2m 55% cadence 90rpm\n\nCooldown\n- 5m 50%", "A compact strength session for tight schedules: three heavy blocks in a big gear.", "Une séance de force compacte pour les emplois du temps serrés : trois blocs lourds en gros braquet."),
+ extraWorkout("force", "Force — 70 rpm Tempo 3×8'", "Force — Tempo à 70 tr/min 3×8'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 8m 78% cadence 70rpm\n- 4m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Tempo power at a moderately low cadence: a comfortable step up from the intro sessions.", "Une puissance tempo à cadence modérément basse : une marche confortable après les séances d'initiation."),
+ extraWorkout("force", "Force — 60 rpm Endurance 4×10'", "Force — Endurance à 60 tr/min 4×10'", "Warmup\n- 15m 55%\n\nMain set 4x\n- 10m 68% cadence 60rpm\n- 5m 58% cadence 90rpm\n\nCooldown\n- 10m 50%", "Aerobic-zone power at 60 rpm to build muscular endurance with low cardiovascular stress.", "Une puissance en zone aérobie à 60 tr/min pour développer l'endurance musculaire avec peu de stress cardiovasculaire."),
+ extraWorkout("force", "Force — Descending Cadence Blocks", "Force — Blocs à cadence décroissante", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 5m 80% cadence 70rpm\n- 5m 80% cadence 60rpm\n- 5m 80% cadence 50rpm\n- 5m 55% cadence 95rpm\n\nCooldown\n- 10m 50%", "Same tempo power while the cadence drops by 10 rpm every 5 minutes. Stay seated and keep your hips still.", "Même puissance tempo pendant que la cadence baisse de 10 tr/min toutes les 5 minutes. Reste assis et garde le bassin stable."),
+ extraWorkout("force", "Force — Sweet Spot 2×20' at 65 rpm", "Force — Sweet spot 2×20' à 65 tr/min", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 2x\n- 20m 88% cadence 65rpm\n- 8m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Two long sweet-spot blocks in a big gear: a classic strength-endurance builder.", "Deux longs blocs sweet spot en gros braquet : un classique pour la force-endurance."),
+ extraWorkout("force", "Force — Over-Gear Intervals 5×6'", "Force — Intervalles en gros braquet 5×6'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 5x\n- 6m 85% cadence 55rpm\n- 4m 52% cadence 90rpm\n\nCooldown\n- 10m 50%", "Heavy six-minute efforts at 55 rpm with solid recoveries. Choose a gear that never makes you rock.", "Efforts lourds de six minutes à 55 tr/min avec de vraies récupérations. Choisis un braquet qui ne te fait jamais balancer."),
+ extraWorkout("force", "Force — Seated and Standing Torque 6×3'", "Force — Couple assis et debout 6×3'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 6x\n- 2m 88% cadence 60rpm seated\n- 1m 88% cadence 55rpm standing\n- 3m 52% cadence 90rpm\n\nCooldown\n- 10m 50%", "Each effort starts seated and finishes standing, like a climb that steepens. Ride standing smoothly, without throwing the bike.", "Chaque effort commence assis et finit debout, comme une côte qui se raidit. Reste fluide en danseuse, sans balancer le vélo."),
+ extraWorkout("force", "Force — Slow Grind 5×5' at 50 rpm", "Force — Meule lente 5×5' à 50 tr/min", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 5x\n- 5m 75% cadence 50rpm\n- 4m 52% cadence 95rpm\n\nCooldown\n- 10m 50%", "Very low cadence at moderate power for maximum muscular load. Stop if you feel any knee discomfort.", "Cadence très basse à puissance modérée pour une charge musculaire maximale. Arrête en cas de gêne au genou."),
+ extraWorkout("force", "Force — Hill Simulation 3×12'", "Force — Simulation de côte 3×12'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 12m 85% cadence 60rpm\n- 6m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Twelve-minute climbs simulated on the trainer or a steady road. Keep the torque constant to the end.", "Des montées de douze minutes simulées sur home trainer ou route régulière. Garde un couple constant jusqu'au bout."),
+ extraWorkout("force", "Force — Short Torque Bursts 8×30s", "Force — Rafales de couple 8×30 s", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 8x\n- 30s 125% cadence 60rpm\n- 1m30 50% cadence 90rpm\n\nCooldown\n- 10m 50%", "Short, heavy bursts for force and neuromuscular recruitment, with long easy recoveries.", "Rafales courtes et lourdes pour la force et le recrutement neuromusculaire, avec de longues récupérations faciles."),
+ extraWorkout("force", "Force — Seated Low-Speed Sprints 6×15s", "Force — Sprints assis à faible vitesse 6×15 s", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 6x\n- 15s 170% cadence 60rpm\n- 3m45 50%\n\nCooldown\n- 10m 50%", "Maximal seated pushes from low speed in a big gear. Full recovery between each so every sprint stays explosive.", "Poussées maximales assis depuis une faible vitesse en gros braquet. Récupération complète entre chaque pour garder des sprints explosifs."),
+ extraWorkout("force", "Force — Aerobic Strength (1h45)", "Force — Force aérobie (1h45)", "Warmup\n- 15m 55%\n\nMain set 4x\n- 15m 68% cadence 70rpm\n- 5m 60% cadence 90rpm\n\nCooldown\n- 10m 50%", "A long aerobic ride with steady low-cadence blocks. Good for base-phase riders who want strength without intensity.", "Une longue sortie aérobie avec des blocs réguliers à basse cadence. Idéal en période de base pour travailler la force sans intensité."),
+ extraWorkout("force", "Force — Long Ride with Torque Blocks (2h15)", "Force — Longue sortie avec blocs de couple (2h15)", "Warmup\n- 15m 55%\n\nMain set 4x\n- 20m 68% cadence 65rpm\n- 8m 60% cadence 90rpm\n\nCooldown\n- 10m 50%", "Four 20-minute torque blocks inside a long endurance ride. Fuel and hydrate well.", "Quatre blocs de couple de 20 minutes dans une longue sortie d'endurance. Pense à bien t'alimenter et t'hydrater."),
+ extraWorkout("force", "Force — Torque Pyramid 2-4-6-4-2", "Force — Pyramide de couple 2-4-6-4-2", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set\n- 2m 90% cadence 60rpm\n- 2m 55% cadence 90rpm\n- 4m 90% cadence 60rpm\n- 3m 55% cadence 90rpm\n- 6m 90% cadence 60rpm\n- 4m 55% cadence 90rpm\n- 4m 90% cadence 60rpm\n- 3m 55% cadence 90rpm\n- 2m 90% cadence 60rpm\n\nCooldown\n- 10m 50%", "Near-threshold torque efforts that grow then shrink. Recoveries lengthen with the effort.", "Des efforts de couple proches du seuil qui s'allongent puis raccourcissent. Les récupérations suivent la durée de l'effort."),
+ extraWorkout("force", "Force — Sweet Spot Cadence Steps 3×15'", "Force — Sweet spot par paliers de cadence 3×15'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 5m 88% cadence 80rpm\n- 5m 88% cadence 70rpm\n- 5m 88% cadence 60rpm\n- 5m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Sweet-spot power with the cadence stepping down every five minutes: the load rises without extra watts.", "Une puissance sweet spot avec une cadence qui baisse toutes les cinq minutes : la charge augmente sans watts en plus."),
+ extraWorkout("force", "Force — Over/Under at Low Cadence 3×12'", "Force — Over/under à basse cadence 3×12'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 3m 88% cadence 65rpm\n- 1m 100% cadence 60rpm\n- 3m 88% cadence 65rpm\n- 1m 100% cadence 60rpm\n- 4m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Alternates sweet spot and threshold while staying at low cadence. Teaches the legs to surge under load.", "Alterne sweet spot et seuil en restant à basse cadence. Apprend aux jambes à relancer sous charge."),
+ extraWorkout("force", "Force — Strength Endurance 2×25'", "Force — Force-endurance 2×25'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 2x\n- 25m 75% cadence 65rpm\n- 8m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Two long tempo blocks at 65 rpm. A demanding session for muscular endurance.", "Deux longs blocs tempo à 65 tr/min. Une séance exigeante pour l'endurance musculaire."),
+ extraWorkout("force", "Force — Threshold Ladder 5-8-10'", "Force — Échelle de seuil 5-8-10'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set\n- 5m 95% cadence 70rpm\n- 4m 55% cadence 90rpm\n- 8m 95% cadence 65rpm\n- 5m 55% cadence 90rpm\n- 10m 95% cadence 60rpm\n\nCooldown\n- 10m 50%", "Three threshold efforts of growing length while the cadence drops. Finish the last block with a steady, even stroke.", "Trois efforts au seuil de plus en plus longs pendant que la cadence baisse. Termine le dernier bloc avec un pédalage régulier."),
+ extraWorkout("force", "Force — VO₂ Torque 5×3'", "Force — Couple VO₂ 5×3'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 5x\n- 3m 110% cadence 70rpm\n- 3m 50% cadence 90rpm\n\nCooldown\n- 10m 50%", "VO₂-level power at a lower cadence for a high-load aerobic stimulus. Hard: keep the first efforts controlled.", "Une puissance de niveau VO₂ à cadence réduite pour un stimulus aérobie à forte charge. Difficile : reste maîtrisé sur les premiers efforts."),
+ extraWorkout("force", "Force — Seated Climbing Repeats 4×5'", "Force — Répétitions de côte assis 4×5'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 4x\n- 5m 100% cadence 65rpm\n- 5m 50% cadence 90rpm\n\nCooldown\n- 10m 50%", "Threshold climbing repeats seated at 65 rpm, as on a steady mountain pass.", "Répétitions de montée au seuil, assis à 65 tr/min, comme dans un col régulier."),
+ extraWorkout("force", "Force — Alternating 60/90 rpm Endurance (90 min)", "Force — Endurance alternée 60/90 tr/min (90 min)", "Warmup\n- 15m 55%\n\nMain set 4x\n- 8m 68% cadence 60rpm\n- 8m 68% cadence 90rpm\n\nCooldown\n- 10m 50%", "Same aerobic power with the cadence alternating between heavy and light every eight minutes.", "Même puissance aérobie avec une cadence qui alterne entre lourde et légère toutes les huit minutes."),
+ extraWorkout("force", "Force — Rising Power, Falling Cadence", "Force — Puissance croissante, cadence décroissante", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set\n- 6m 70% cadence 80rpm\n- 6m 78% cadence 70rpm\n- 6m 86% cadence 60rpm\n- 6m 94% cadence 55rpm\n- 5m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Each block is harder in power and heavier in gear. A progressive session that ends close to threshold.", "Chaque bloc est plus fort en puissance et plus lourd en braquet. Une séance progressive qui finit proche du seuil."),
+ extraWorkout("force", "Force — Seated Threshold 3×10'", "Force — Seuil assis en gros braquet 3×10'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 3x\n- 10m 92% cadence 60rpm\n- 6m 52% cadence 90rpm\n\nCooldown\n- 10m 50%", "Ten-minute threshold blocks in a big gear: a tough strength-endurance session.", "Blocs de seuil de dix minutes en gros braquet : une séance dure de force-endurance."),
+ extraWorkout("force", "Force — Race Simulation Strength (2h05)", "Force — Simulation de course force (2 h 05)", "Warmup\n- 15m 55%\n\nMain set\n- 20m 70% cadence 70rpm\n- 10m 85% cadence 60rpm\n- 5m 55% cadence 90rpm\n- 15m 70% cadence 70rpm\n- 10m 85% cadence 60rpm\n- 5m 55% cadence 90rpm\n- 20m 70% cadence 70rpm\n- 10m 90% cadence 60rpm\n- 5m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "A rolling-course simulation: steady aerobic riding broken by heavy climbs at 60 rpm.", "Une simulation de parcours vallonné : roulage aérobie régulier entrecoupé de montées lourdes à 60 tr/min."),
+ extraWorkout("force", "Force — Muscular Endurance Ladder 4-6-8-6-4", "Force — Échelle d'endurance musculaire 4-6-8-6-4", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set\n- 4m 88% cadence 65rpm\n- 3m 55% cadence 90rpm\n- 6m 88% cadence 65rpm\n- 3m 55% cadence 90rpm\n- 8m 88% cadence 60rpm\n- 3m 55% cadence 90rpm\n- 6m 88% cadence 65rpm\n- 3m 55% cadence 90rpm\n- 4m 88% cadence 65rpm\n\nCooldown\n- 10m 50%", "A sweet-spot ladder up and down at low cadence. Keep the same torque across every block.", "Une échelle sweet spot montante puis descendante à basse cadence. Garde le même couple sur tous les blocs."),
+ extraWorkout("force", "Force — Explosive Torque Intervals 6×1'", "Force — Intervalles de couple explosifs 6×1'", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 6x\n- 1m 130% cadence 65rpm\n- 4m 50% cadence 90rpm\n\nCooldown\n- 10m 50%", "One-minute maximal-effort torque intervals with generous recoveries. Stay seated and push through the whole stroke.", "Intervalles de couple d'une minute à effort maximal avec de larges récupérations. Reste assis et pousse sur tout le cycle."),
+ extraWorkout("force", "Force — Rolling Terrain Strength (80 min)", "Force — Force en terrain vallonné (80 min)", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 4x\n- 8m 75% cadence 65rpm\n- 2m 90% cadence 60rpm\n- 3m 60% cadence 90rpm\n\nCooldown\n- 10m 50%", "Steady tempo broken by short harder surges, like rolling terrain: strength and pacing together.", "Un tempo régulier entrecoupé de courtes relances plus dures, comme en terrain vallonné : force et gestion de l'effort ensemble."),
+ extraWorkout("force", "Force — Threshold + Torque Finisher", "Force — Seuil + finisseur de couple", "Warmup\n- 10m 50%\n- 5m 65%\n- 1m 70% cadence 100rpm\n- 2m 50%\n\nMain set 2x\n- 12m 92%\n- 5m 55%\n\nRepeat 3x\n- 3m 85% cadence 55rpm\n- 2m 55% cadence 90rpm\n\nCooldown\n- 10m 50%", "Normal-cadence threshold blocks followed by heavy low-cadence finishers when the legs are already tired.", "Des blocs au seuil à cadence normale suivis de finisseurs lourds à basse cadence quand les jambes sont déjà fatiguées.")
 );
 { const seen = {}; LIBRARY.forEach(w => { const b = w.name_en; seen[b] = (seen[b] || 0) + 1; w.id = seen[b] === 1 ? b : b + " #" + seen[b]; }); }
 
@@ -2452,33 +2503,7 @@ const stars = () => starList;
 function setStars(a){ starList = Array.isArray(a) ? a.slice() : []; store.set("si_stars", JSON.stringify(starList)); }
 function toggleStar(id){ const a = stars().slice(); const i = a.indexOf(id); if(i >= 0) a.splice(i, 1); else a.push(id); setStars(a); }
 
-// ---------- Historique et envoi ----------
-const hist = () => { try{ return JSON.parse(store.get("si_hist") || "[]"); }catch(e){ return []; } };
-function renderHist(){
-  const cur = $("hist").value;
-  $("hist").innerHTML = `<option value="">${esc(t("histPick"))}</option>` + hist().map((h, i) => `<option value="${i}">${esc(h.date)} · ${esc(h.name)}</option>`).join("");
-  $("hist").value = cur;
-}
-function addHist(h){
-  const l = hist();
-  if(l.some(x => x.date === h.date && x.sport === h.sport && x.name === h.name && x.desc === h.desc)) return;
-  l.unshift(h); store.set("si_hist", JSON.stringify(l.slice(0, 60))); renderHist();
-}
-$("hist").onchange = () => {
-  const h = hist()[+$("hist").value]; if(!h) return;
-  CALEDIT = null; calEdUI();
-  $("date").value = h.date; refreshDateBtn(); $("sport").value = h.sport; $("name").value = h.name; $("desc").value = h.desc; EXPL = h.ex || null;
-  syncUnit(); selLine = null; $("prev").hidden = false; renderChart();
-};
-$("hdel").onclick = async () => {
-  const l = hist(), i = +$("hist").value, h = l[i];
-  if($("hist").value === "" || !h || !(await ask("cfmDel"))) return;
-  if(h.id){
-    try{ await icuFetch(icuUrl("/events/" + h.id), {method: "DELETE"}); }
-    catch(e){ if(!/404/.test(e.message)) return say("errI", "err", errText(e)); }
-  }
-  l.splice(i, 1); store.set("si_hist", JSON.stringify(l)); $("hist").value = ""; renderHist(); loadCal(true).catch(() => {}); say("workoutDeleted", "ok");
-};
+// ---------- Envoi ----------
 let CALEDIT = null, EDSAVED = ""; // séance planifiée du calendrier en cours de modification dans l'éditeur manuel
 $("send").onclick = async () => {
   if(!KEY()) return say("needI", "err");
@@ -2490,7 +2515,6 @@ $("send").onclick = async () => {
     const r = await fetch(icuUrl(ed ? "/events/" + ed.ev.id : "/events"), {method: ed ? "PUT" : "POST", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
     if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
     const ev = await r.json().catch(() => ({}));
-    addHist({id: ev.id || (ed && ed.ev.id), date: $("date").value, sport: $("sport").value, name: $("name").value.trim(), desc: $("desc").value, ex: EXPL});
     loadCal(true).catch(() => {});
     if(ed){ CALEDIT = null; EDSAVED = edText(); calEdUI(); say("calEdSaved", "ok"); }
     else say("sentOk", "ok", $("date").value);
@@ -2901,10 +2925,11 @@ async function buildFromAct(a, btn){
     $("prev").hidden = false; selLine = null; EXPL = null;
     renderChart(); say("actOk", "ok", a.name || a.type || "");
     $("prev").scrollIntoView({behavior: "smooth", block: "start"});
+    btn.disabled = false; return true;
   }catch(e){
     say("err", "err", errText(e));
   }
-  btn.disabled = false;
+  btn.disabled = false; return false;
 }
 // Recherche d'activités : même moteur que le comparateur (forme, type, nom, intérieur/extérieur) ;
 // sans forme ni type, simple filtre sur les métadonnées (aucun flux à télécharger)
@@ -2932,13 +2957,13 @@ async function actSearch(){
   ACTS.busy = true; ACTS.stop = false; $("sact").textContent = t("stopGen"); say(null);
   const box = $("actbox"), stat = $("actstat");
   box.innerHTML = ""; scanProg(stat, 0, 0);
-  let nAct = 0, nPow = 0, nBad = 0, lastErr = "";
+  let nAct = 0, nPow = 0, nBad = 0, nSkip = 0, lastErr = ""; SC.hits = 0;
   try{
     const days = parseInt($("actper").value, 10) || 14;
     const acts = await icu(`/activities?oldest=${daysAgo(days)}&newest=${daysAgo(0)}`);
     const Q = acts.filter(a => nq.every(w => cmpNorm(a.name).includes(w))).filter(a => place === "any" || (place === "in") === cmpIndoor(a))
       .filter(a => a.moving_time >= (pat ? pat.wMin * (pat.repMin === 1 ? 1 : 2) : 60) && (a.icu_average_watts || a.average_watts))
-      .sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 1200);
+      .filter(a => !cmpSteady(a, pat) || (nSkip++, false)).sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 1200);
     nAct = Q.length;
     const hits = [];
     if(!scan) hits.push(...Q.slice(0, 200));
@@ -2948,7 +2973,7 @@ async function actSearch(){
         while(Q.length && !ACTS.stop){
           const a = Q.shift();
           try{
-            const s = await cmpStreams(a.id);
+            const s = await cmpStreams(a.id, a);
             if(!s.w) nBad++;
             else{
               nPow++;
@@ -2969,7 +2994,7 @@ async function actSearch(){
     ACTS.list = hits; ACTS.searched = true; renderActs();
     if(hits.length) say("actNres", "ok", hits.length);
   }catch(e){ ACTS.list = ACTS.list || []; renderActs(); say("errI", "err", errText(e)); }
-  stat.textContent = scan ? t("cmpDiag", nAct, nPow, nBad, lastErr ? " (" + lastErr + ")" : "") : "";
+  stat.textContent = scan ? t("cmpDiag", nAct, nPow, nBad, cmpExtra(nSkip, lastErr)) : "";
   $("sact").textContent = t("cmpSearch"); ACTS.busy = false;
 }
 $("sact").onclick = () => { store.set("si_actper", $("actper").value); store.set("si_acttype", $("acttype").value); store.set("si_actplace", $("actplace").value); store.set("si_actq", $("actq").value); actSearch(); };
@@ -3025,8 +3050,43 @@ function cmpParse(q){
   return {repMin, repMax, wMin: w[0], wMax: w[1], rMin: r ? r[0] : null, rMax: r ? r[1] : null};
 }
 // flux d'une activité : types valides côté API = watts, heartrate, cadence ("cad" était refusé → toutes les activités sautées en silence)
-async function cmpStreams(id){
+// --- Cache persistant des flux (IndexedDB) : une activité passée ne change pas, on ne la télécharge qu'une fois.
+// Stockage compact en entiers typés à 1 Hz (puissance Int16, FC/cadence Uint8) : la détection des efforts courts reste exacte.
+const SC = {p: null, hits: 0};
+function scDb(){
+  if(SC.p) return SC.p;
+  return SC.p = new Promise(res => {
+    try{ const r = indexedDB.open("paceforge_streams", 1); r.onupgradeneeded = () => r.result.createObjectStore("s"); r.onsuccess = () => res(r.result); r.onerror = r.onblocked = () => res(null); }
+    catch(e){ res(null); }
+  });
+}
+async function scOp(mode, fn){
+  const db = await scDb(); if(!db) return null;
+  return new Promise(res => { try{ const q = fn(db.transaction("s", mode).objectStore("s")); q.onsuccess = () => res(q.result === undefined ? true : q.result); q.onerror = () => res(null); }catch(e){ res(null); } });
+}
+const scGet = id => scOp("readonly", st => st.get(String(id)));
+const scPut = (id, v) => scOp("readwrite", st => st.put(v, String(id)));
+const scClear = () => scOp("readwrite", st => st.clear());
+const scPack = r => ({
+  w: r.w ? Int16Array.from(r.w, v => { v = +v; return v > 0 ? v : 0; }) : null,
+  hr: r.hr ? Uint8Array.from(r.hr, v => { v = +v; return v > 0 ? Math.min(255, v) : 0; }) : null,
+  cad: r.cad ? Uint8Array.from(r.cad, v => { v = +v; return v > 0 ? Math.min(255, v) : 0; }) : null
+});
+const scUnpack = c => ({w: c.w ? Array.from(c.w) : null, hr: c.hr ? Array.from(c.hr) : null, cad: c.cad ? Array.from(c.cad) : null});
+const scFresh = a => !!(a && a.start_date_local && Date.now() - new Date(a.start_date_local).getTime() < 2 * 864e5); // trop récente : peut encore être retraitée
+// Filtre souple : une sortie très régulière (indice de variabilité ≈ 1) ne contient pas de blocs d'intervalles.
+// Appliqué uniquement aux formes avec répétitions ou récupération ; sans données de puissance, on ne l'écarte pas.
+function cmpSteady(a, pat){
+  if(!pat || !(pat.rMin != null || pat.repMin >= 2)) return false;
+  const np = a.icu_weighted_avg_watts, ap = a.icu_average_watts || a.average_watts;
+  const vi = a.icu_variability_index || (np && ap ? np / ap : 0);
+  return vi > 0 && vi < 1.03;
+}
+const cmpExtra = (nSkip, err) => (nSkip ? " · " + t("cmpSkip", nSkip) : "") + (SC.hits ? " · " + t("cmpCached", SC.hits) : "") + (err ? " (" + err + ")" : "");
+async function cmpStreams(id, a){
   if(CMP.streams[id]) return CMP.streams[id];
+  const c = await scGet(id);
+  if(c && c !== true && (c.w || c.hr || c.cad || c.none)){ SC.hits++; return CMP.streams[id] = scUnpack(c); }
   let list = null, err = null;
   for(const u of [`https://intervals.icu/api/v1/activity/${id}/streams?types=watts,heartrate,cadence`, `https://intervals.icu/api/v1/activity/${id}/streams`]){
     for(let n = 0; n < 3 && !list; n++){
@@ -3038,7 +3098,10 @@ async function cmpStreams(id){
   if(!list) throw err || new Error("no streams");
   list = Array.isArray(list) ? list : list.streams || [];
   const get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
-  return CMP.streams[id] = {w: get("watts", "power", "watts_calc"), hr: get("heartrate", "heart_rate", "hr"), cad: get("cadence", "cad")};
+  const pk = scPack({w: get("watts", "power", "watts_calc"), hr: get("heartrate", "heart_rate", "hr"), cad: get("cadence", "cad")});
+  pk.none = !(pk.w || pk.hr || pk.cad);
+  if(!scFresh(a)) scPut(id, pk);
+  return CMP.streams[id] = scUnpack(pk);
 }
 // --- détection : lissage centré, seuil LOCAL (milieu entre p10 et p95 d'une fenêtre glissante) → insensible à l'échauffement,
 // à la FTP et à la durée de la sortie ; la fenêtre est dimensionnée sur le cycle demandé (+ 2 échelles de repli).
@@ -3178,19 +3241,19 @@ async function cmpSearch(){
   CMP.busy = true; CMP.stop = false; $("rcmp").textContent = t("stopGen");
   CMP.view = {a: 0, b: 1}; $("cmpnav").style.display = "none"; CMP.pat = pat; CMP.hits = []; CMP.sel = new Set();
   $("cmpbox").innerHTML = ""; scanProg($("cmpstat"), 0, 0); $("cmpchart").innerHTML = ""; $("cmptable").innerHTML = ""; $("cmpinfo").textContent = "";
-  let nAct = 0, nPow = 0, nBad = 0, lastErr = "";
+  let nAct = 0, nPow = 0, nBad = 0, nSkip = 0, lastErr = ""; SC.hits = 0;
   try{
     const days = parseInt($("cmpper").value, 10) || 180, type = $("cmptype").value, place = $("cmpplace").value;
     const acts = await icu(`/activities?oldest=${daysAgo(days)}&newest=${daysAgo(0)}`);
     const nq = QR.words;
     const Q = acts.filter(a => nq.every(w => cmpNorm(a.name).includes(w))).filter(a => place === "any" || (place === "in") === cmpIndoor(a)).filter(a => a.moving_time >= (pat ? pat.wMin * (pat.repMin === 1 ? 1 : 2) : 60) && (a.icu_average_watts || a.average_watts))
-      .sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 1200);
+      .filter(a => !cmpSteady(a, pat) || (nSkip++, false)).sort((x, y) => x.start_date_local < y.start_date_local ? 1 : -1).slice(0, 1200);
     nAct = Q.length; let done = 0; scanProg($("cmpstat"), 0, nAct);
     const worker = async () => {
       while(Q.length && !CMP.stop){
         const a = Q.shift();
         try{
-          const s = await cmpStreams(a.id);
+          const s = await cmpStreams(a.id, a);
           if(!s.w) nBad++;
           else{
             nPow++;
@@ -3211,7 +3274,7 @@ async function cmpSearch(){
     if(!CMP.hits.length) say("cmpNone", "info"); else say("cmpNres", "ok", CMP.hits.length);
     cmpRender();
   }catch(e){ say("errI", "err", errText(e)); }
-  $("cmpstat").textContent = t("cmpDiag", nAct, nPow, nBad, lastErr ? " (" + lastErr + ")" : "");
+  $("cmpstat").textContent = t("cmpDiag", nAct, nPow, nBad, cmpExtra(nSkip, lastErr));
   $("rcmp").textContent = t("cmpSearch"); CMP.busy = false;
 }
 function winMean(h, key){
@@ -3257,40 +3320,51 @@ function cmpTable(){
 // --- Progression dans le temps : un point par séance sélectionnée (date → W/FC), moyenne mobile en surimpression ---
 // W/FC = puissance moyenne des efforts ÷ FC moyenne des efforts (même valeur que la colonne du tableau).
 const CMP_PW = "#3b82c9", CMP_HR = "#d6336c";
+const CMP_NICE = [1, 2, 5, 10, 20, 25, 50, 100];
 function cmpChart(){
   cmpTable();
   const box = $("cmpchart"), H = CMP.hits.filter(h => CMP.sel.has(h.a.id) && cmpNameOk(h));
   $("cmpnav").style.display = H.length ? "flex" : "none";
   if(!H.length){ box.innerHTML = ""; $("cmpinfo").textContent = ""; return; }
-  const k = parseInt($("cmpma").value, 10) || 3;
+  const k = parseInt($("cmpma").value, 10) || 3, met = $("cmpplot").value || "ef";
   [...$("cmpma").options].forEach(o => o.textContent = t("cmpMaN", o.value));
-  const P = H.map(h => { const hr = h.s.hr ? winMean(h, "hr") : 0; return hr ? {h, tm: new Date(h.a.start_date_local).getTime(), ef: h.avgP / hr, hr} : null; })
-    .filter(x => x && isFinite(x.tm)).sort((x, y) => x.tm - y.tm);
+  const M = {ef: {u: "W/HR", y: "cmpEfY", f: v => v.toFixed(2), get: x => x.hr ? x.pw / x.hr : 0},
+    pw: {u: "W", y: "cmpPwY", f: v => String(Math.round(v)), get: x => x.pw},
+    hr: {u: "bpm", y: "cmpHrY", f: v => String(Math.round(v)), get: x => x.hr}}[met] || null;
+  const P = H.map(h => { const hr = h.s.hr ? winMean(h, "hr") : 0; const x = {h, tm: new Date(h.a.start_date_local).getTime(), pw: h.avgP, hr}; x.m = M.get(x); return x; })
+    .filter(x => x.m > 0 && isFinite(x.tm)).sort((x, y) => x.tm - y.tm);
   if(!P.length){ box.innerHTML = `<p class="hint">${esc(t("cmpNoHr"))}</p>`; $("cmpinfo").textContent = ""; return; }
-  P.forEach((x, i) => { x.ma = cmpAvg(P.slice(Math.max(0, i - k + 1), i + 1).map(y => y.ef)); }); // moyenne mobile « arrière » sur k séances
+  P.forEach((x, i) => { x.ma = cmpAvg(P.slice(Math.max(0, i - k + 1), i + 1).map(y => y.m)); }); // moyenne mobile « arrière » sur k séances
   const t0 = P[0].tm, span = Math.max(P[P.length - 1].tm - t0, 864e5), xOf = tm => P.length === 1 ? 400 : (.03 + .94 * (tm - t0) / span) * 800;
-  const vals = P.flatMap(x => [x.ef, x.ma]), mn = Math.min(...vals), mx = Math.max(...vals);
-  const lo = Math.floor((mn - .02) / .05) * .05, st = Math.max(.05, Math.ceil((mx - lo) / 4 / .05 - 1e-9) * .05), hi = lo + 4 * st;
+  const vals = P.flatMap(x => [x.m, x.ma]), mn = Math.min(...vals), mx = Math.max(...vals);
+  let lo, st;
+  if(met === "ef"){ lo = Math.floor((mn - .02) / .05) * .05; st = Math.max(.05, Math.ceil((mx - lo) / 4 / .05 - 1e-9) * .05); }
+  else{
+    const pad = Math.max((mx - mn) * .1, 2);
+    st = CMP_NICE.find(n => n >= (mx - mn + 2 * pad) / 4) || 100; lo = Math.floor((mn - pad) / st) * st;
+    while(lo + 4 * st < mx + pad / 2){ const i = CMP_NICE.indexOf(st); st = i >= 0 && CMP_NICE[i + 1] ? CMP_NICE[i + 1] : st * 2; lo = Math.floor((mn - pad) / st) * st; }
+  }
+  const hi = lo + 4 * st;
   const yOf = v => 214 - Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 208;
   let svg = "";
   for(let i = 0; i <= 4; i++){ const y = (214 - i / 4 * 208).toFixed(1); svg += `<line x1="0" x2="800" y1="${y}" y2="${y}" style="stroke:var(--line)" vector-effect="non-scaling-stroke"${i && i < 4 ? ' stroke-dasharray="4 4"' : ""}/>`; }
   if(P.length > 1) svg += `<path d="${P.map((x, i) => (i ? "L" : "M") + xOf(x.tm).toFixed(1) + " " + yOf(x.ma).toFixed(1)).join("")}" stroke="${CMP_HR}" stroke-width="2.5"/>`;
-  svg += P.map(x => `<path d="M${xOf(x.tm).toFixed(1)} ${yOf(x.ef).toFixed(1)}h.01" stroke="${CMP_PW}" stroke-width="9" stroke-opacity=".8"/>`).join("");
+  svg += P.map(x => `<path d="M${xOf(x.tm).toFixed(1)} ${yOf(x.m).toFixed(1)}h.01" stroke="${CMP_PW}" stroke-width="9" stroke-opacity=".8"/>`).join("");
   if(P.length === 1) svg += `<path d="M400 ${yOf(P[0].ma).toFixed(1)}h.01" stroke="${CMP_HR}" stroke-width="5"/>`;
   svg += `<line class="cmp-cur" x1="0" x2="0" y1="0" y2="220" stroke="#888" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>`;
   const dfmt = tm => new Date(tm).toLocaleDateString(loc(), {day: "numeric", month: "short", year: span > 300 * 864e5 ? "2-digit" : undefined});
-  const ticks = [0, 1, 2, 3, 4].map(i => `<span class="yt yl" style="top:${((214 - i / 4 * 208) / 220 * 100).toFixed(1)}%">${(lo + st * i).toFixed(2)}</span>`).join("");
+  const ticks = [0, 1, 2, 3, 4].map(i => `<span class="yt yl" style="top:${((214 - i / 4 * 208) / 220 * 100).toFixed(1)}%">${M.f(lo + st * i)}</span>`).join("");
   const xl = P.length === 1 ? `<span style="left:50%;transform:translateX(-50%)">${dfmt(t0)}</span>` : [0, .25, .5, .75, 1].map(f => `<span style="left:${f * 100}%;transform:translateX(${-f * 100}%)">${dfmt(t0 + f * span)}</span>`).join("");
   box.innerHTML = `<div class="cmp-pr">${ticks}<svg viewBox="0 0 800 220" preserveAspectRatio="none">${svg}</svg></div><div class="cmp-xa">${xl}</div>` +
-    `<div class="cmp-leg"><span><i style="background:${CMP_PW};border-radius:50%"></i>${esc(t("cmpEfY"))}</span><span><i style="background:${CMP_HR};height:3px"></i>${esc(t("cmpEfMa", k))}</span></div>`;
-  $("cmpinfo").textContent = t("cmpEfInfo", P.length, cmpAvg(P.map(x => x.ef)).toFixed(2), P[P.length - 1].ma.toFixed(2));
+    `<div class="cmp-leg"><span><i style="background:${CMP_PW};border-radius:50%"></i>${esc(t(M.y))}</span><span><i style="background:${CMP_HR};height:3px"></i>${esc(t("cmpEfMa", k))}</span></div>`;
+  $("cmpinfo").textContent = t("cmpInfoG", P.length, M.f(cmpAvg(P.map(x => x.m))) + " " + M.u, M.f(P[P.length - 1].ma) + " " + M.u);
   box.onpointermove = e => {
     const sv = e.target.closest ? e.target.closest("svg") : null, tip = $("cmptip");
     if(!sv){ box.onpointerleave(); return; }
     const r = sv.getBoundingClientRect(), px = e.clientX - r.left;
     let best = null, bd = 1e9; P.forEach(x => { const d = Math.abs(xOf(x.tm) / 800 * r.width - px); if(d < bd){ bd = d; best = x; } });
     if(!best || bd > 22){ box.onpointerleave(); return; }
-    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${best.ef.toFixed(2)}</b> W/HR \u00b7 <span style="color:var(--mute)">${esc(t("cmpMaN", k))}: ${best.ma.toFixed(2)}</span></div><div style="color:var(--mute)">${Math.round(best.h.avgP)} W \u00b7 ${Math.round(best.hr)} bpm</div>`;
+    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${M.f(best.m)}</b> ${M.u} \u00b7 <span style="color:var(--mute)">${esc(t("cmpMaN", k))}: ${M.f(best.ma)}</span></div><div style="color:var(--mute)">${Math.round(best.pw)} W \u00b7 ${best.hr ? Math.round(best.hr) + " bpm" : "\u2013"}</div>`;
     tip.style.display = "block";
     const tx = e.clientX + 16 + tip.offsetWidth > window.innerWidth ? e.clientX - 16 - tip.offsetWidth : e.clientX + 16;
     tip.style.left = Math.max(4, tx) + "px"; tip.style.top = Math.max(4, Math.min(e.clientY + 12, window.innerHeight - tip.offsetHeight - 4)) + "px";
@@ -3298,6 +3372,9 @@ function cmpChart(){
   };
   box.onpointerleave = () => { $("cmptip").style.display = "none"; box.querySelectorAll(".cmp-cur").forEach(l => l.style.display = "none"); };
 }
+$("cmpplot").onchange = () => { store.set("si_cmpplot", $("cmpplot").value); cmpChart(); };
+{ const pv = store.get("si_cmpplot"); if(pv && $("cmpplot").querySelector(`option[value="${pv}"]`)) $("cmpplot").value = pv; }
+$("cmpclr").onclick = async () => { await scClear(); CMP.streams = {}; Object.keys(STREAM_CACHE).forEach(k => delete STREAM_CACHE[k]); say("cacheCleared", "ok"); };
 $("rcmp").onclick = () => { store.set("si_cmpper", $("cmpper").value); store.set("si_cmptype", $("cmptype").value); store.set("si_cmpplace", $("cmpplace").value); cmpSearch(); };
 $("cmpplace").onchange = () => store.set("si_cmpplace", $("cmpplace").value);
 $("cmpper").onchange = () => store.set("si_cmpper", $("cmpper").value);
@@ -3451,16 +3528,24 @@ function actStreams(id){
     }
     return {ok: false};
   };
+  // cache persistant (IndexedDB) : les profils du calendrier ne servent qu'à de petites vignettes → 120 points suffisent
+  const calKey = "cal:" + id;
+  const calUnpack = c => { const g = x => x && x.length ? Array.from(x) : null; return {w: g(c.w), h: g(c.h), s: g(c.s), a: g(c.a)}; };
+  const calSave = (v, neg) => { const f = x => x && x.length ? Float32Array.from(ds(x, 120)) : null; scPut(calKey, {v: 1, ts: Date.now(), neg: !!neg, w: f(v.w), h: f(v.h), s: f(v.s), a: f(v.a)}); };
   const p = (async () => {
+    const c = await scGet(calKey);
+    // entrée valide ; une absence de données n'est retenue qu'un jour (l'activité peut être en cours de traitement)
+    if(c && c !== true && c.v === 1 && (!c.neg || Date.now() - c.ts < 864e5)) return calUnpack(c);
     await streamSlot();
     try{
       let transient = false;
       // sans filtre de types : certains noms (p.ex. "speed") ne sont pas acceptés par le paramètre types
       for(const u of [`https://intervals.icu/api/v1/activity/${id}/streams`, `https://intervals.icu/api/v1/activity/${id}/streams?types=watts,heartrate`]){
         const r = await attempt(u);
-        if(r.ok && (r.v.w || r.v.h || r.v.s)) return r.v;
+        if(r.ok && (r.v.w || r.v.h || r.v.s)){ calSave(r.v, false); return calUnpack({w: ds(r.v.w, 120), h: ds(r.v.h, 120), s: ds(r.v.s, 120), a: ds(r.v.a, 120)}); }
         if(!r.ok && !r.fatal) transient = true;
       }
+      if(!transient) calSave({}, true);
       return {w: null, h: null, s: null, a: null, transient};
     }finally{ streamFree(); }
   })().then(r => { if(r.transient) delete STREAM_CACHE[id]; return r; }); // un échec transitoire n'est pas mémorisé
@@ -4110,6 +4195,18 @@ $("edsport").value = $("sport").value;
   $(b).onchange = () => { $(a).value = $(b).value; $(a).dispatchEvent(new Event("change")); };
   $(a).addEventListener("change", () => { $(b).value = $(a).value; });
 });
+// Note sous les sélecteurs de FTP : en mode % FTP, la FTP choisie n'est qu'indicative (affichage en watts) ;
+// intervals.icu applique sa propre FTP à la séance envoyée.
+function updateFtpTip(){
+  const on = $("unit").value === "pct" && !$("unit").disabled;
+  ["ftpsel", "edftp", "libftp", "pftp"].forEach(id => {
+    const el = $(id); if(!el) return;
+    let n = el.parentNode.querySelector(".ftpnote");
+    if(!n){ n = document.createElement("div"); n.className = "hint ftpnote"; el.parentNode.appendChild(n); }
+    n.textContent = t("ftpInfoTip"); n.hidden = !on;
+  });
+}
+["unit", "edunit", "punit", "libunit", "sport"].forEach(id => { const el = $(id); if(el) el.addEventListener("change", () => setTimeout(updateFtpTip)); });
 
 // ---------- Modifier une séance planifiée du calendrier dans l'éditeur manuel ----------
 // Texte intervals.icu -> étapes de l'éditeur. Les rampes sont aplaties (moyenne), les lignes illisibles ignorées (comptées).
@@ -4452,6 +4549,7 @@ function applyMode(){
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
   if(mode === "plan" && applyMode._prev !== "plan") planSyncDays();
   applyMode._prev = mode;
+  document.documentElement.classList.toggle("m-cmp", mode === "cmp");
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
 }
 document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
@@ -4526,7 +4624,7 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
   b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
   const grp = document.createElement("span"), seg = document.createElement("span"); grp.className = "hctl"; seg.className = "seg"; // monter / descendre / réduire : restent groupés quand l'en-tête passe à la ligne
-  ["up", "dn"].forEach(d => {
+  (WIDGETS.includes(h.parentNode.dataset.block) ? ["up", "dn"] : []).forEach(d => {
     const m = document.createElement("button");
     m.type = "button"; m.className = "alt small icon mv"; m.dataset.dir = d;
     m.dataset.ia = d === "up" ? "title:mvUp;aria-label:mvUp" : "title:mvDn;aria-label:mvDn";
@@ -4550,7 +4648,7 @@ function applyLang(){
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI();
-  setLinks(); fillFtp(); profText(); badges(); renderHist(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  setLinks(); fillFtp(); updateFtpTip(); profText(); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
