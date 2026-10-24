@@ -1,2 +1,2 @@
 Webapp:
-* in manual activity it seems that the main set is missing a CR before (in some cases) so that the work out is not rendering well in intervals.icu.
+* in the calendar widget, I would like to maximize it, and once expanded I can can a chart overview of each activity/planned workout. 
