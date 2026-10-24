@@ -214,6 +214,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .cal-d{min-height:54px;border:1px solid var(--line);border-radius:5px;padding:2px;background:var(--bg);display:flex;flex-direction:column;gap:2px;overflow:hidden}
 .cal-d.empty{border:0;background:transparent;min-height:0}
 .cal-d.today{border-color:var(--acc)}
+.cal-max .mv{display:none}
+aside.col .phead{flex-wrap:wrap}.hctl{display:inline-flex;align-items:center;gap:4px;flex:none}.hctl .icon{padding:5px 6px!important}.hctl .mv svg{width:16px;height:16px}.hctl .tgl{min-width:0}
 #calbox .cal-d:not(.empty){cursor:pointer}#calbox .cal-d:not(.empty):hover{border-color:var(--acc)}#calbox .cal-ev{cursor:grab}
 .cal-d.over{outline:2px dashed var(--acc);outline-offset:-2px}
 .cal-n{color:var(--mute);font-size:.7rem;padding-left:3px}
@@ -690,7 +692,7 @@ descLbl:["Description (intervals.icu format)","Description (format intervals.icu
 lastW:["Last workout","Dernière séance"],
 lastAi:["AI analysis","Analyse IA"], aiTitle:["Workout analysis","Analyse de la séance"], aiNone:["No workout to analyze.","Aucune séance à analyser."],
 lPrev:["Earlier workout","Séance précédente"], lNext:["Newer workout","Séance suivante"], load2:["Last two weeks","Deux dernières semaines"], best:["Best efforts","Meilleurs efforts"],
-per6:["6 weeks","6 semaines"], per12:["12 weeks","12 semaines"], per1y:["1 year","1 an"], collapse:["Collapse or expand the block","Réduire ou afficher le bloc"],
+per6:["6 weeks","6 semaines"], per12:["12 weeks","12 semaines"], per1y:["1 year","1 an"], collapse:["Collapse or expand the block","Réduire ou afficher le bloc"], mvUp:["Move up","Monter"], mvDn:["Move down","Descendre"],
 lDur:["Duration","Durée"], lDist:["Distance","Distance"], lElev:["Elevation","Dénivelé"], lLoad:["Load","Charge"], lIF:["IF","IF"], lNP:["NP","NP"],
 lAvgP:["Avg power","Puissance moy."], lHR:["Avg HR","FC moy."], lMaxHR:["Max HR","FC max"], lCad:["Cadence","Cadence"], lEF:["EF","EF"],
 noWorkout:["No workout found in the last two weeks.","Aucune séance trouvée sur les deux dernières semaines."],
@@ -886,6 +888,7 @@ $("impjsonin").onchange = () => {
     if(Array.isArray(j.hfModels) && j.hfModels.length){ hfList = j.hfModels; $("hfl").innerHTML = hfList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
     if(Array.isArray(j.oaModels) && j.oaModels.length){ oaList = j.oaModels; $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
     if(Array.isArray(j.starred)){ setStars(j.starred.filter(x => typeof x === "string")); n++; renderLibraryKeepOpen(); }
+    if(Array.isArray(j.widgetOrder)){ WORDER = sanitizeOrder(j.widgetOrder); store.set("si_worder", JSON.stringify(WORDER)); applyOrder(); n++; }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
     jnote("jsonImpOk", "ok", f.name);
@@ -894,6 +897,7 @@ $("impjsonin").onchange = () => {
 $("expjson").onclick = () => {
   const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
   const stArr = stars(); if(stArr.length) o.starred = stArr;
+  o.widgetOrder = WORDER.slice(); // ordre des widgets de la colonne de droite
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
   if(hfList.length) o.hfModels = hfList;
@@ -3637,8 +3641,42 @@ function loadWidgets(){
 function applyWidgets(){
   WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
   WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
+  updateMoveBtns();
 }
 function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
+// --- Ordre des widgets de la colonne de droite (monter / descendre), mémorisé dans le navigateur et dans l'export des réglages ---
+let WORDER = WIDGETS.slice();
+function sanitizeOrder(v){
+  const a = Array.isArray(v) ? v.filter((x, i) => WIDGETS.includes(x) && v.indexOf(x) === i) : [];
+  return [...a, ...WIDGETS.filter(k => !a.includes(k))]; // les clés manquantes sont ajoutées à la fin
+}
+function loadOrder(){ let v = null; try{ const r = store.get("si_worder"); v = r ? JSON.parse(r) : null; }catch(e){ v = null; } WORDER = sanitizeOrder(v); }
+function updateMoveBtns(){
+  const vis = WORDER.filter(x => widgets.includes(x));
+  WORDER.forEach(k => {
+    const sec = document.querySelector(`[data-block="${k}"]`); if(!sec) return;
+    sec.querySelectorAll(".mv").forEach(m => { m.disabled = m.dataset.dir === "up" ? vis[0] === k : vis[vis.length - 1] === k; });
+  });
+}
+function applyOrder(){
+  const aside = document.querySelector("aside.col"), grid = document.querySelector(".wgrid");
+  WORDER.forEach(k => {
+    const sec = document.querySelector(`[data-block="${k}"]`); if(sec && aside) aside.appendChild(sec);
+    const c = $("w_" + k), l = c && c.closest("label"); if(l && grid) grid.appendChild(l); // même ordre dans la liste des réglages
+  });
+  updateMoveBtns();
+}
+function moveWidget(k, dir){
+  const vis = WORDER.filter(x => widgets.includes(x)), i = vis.indexOf(k), j = i + dir;
+  if(i < 0 || j < 0 || j >= vis.length) return;
+  const a = WORDER.indexOf(k), b = WORDER.indexOf(vis[j]);
+  [WORDER[a], WORDER[b]] = [WORDER[b], WORDER[a]]; // échange avec le widget visible voisin
+  store.set("si_worder", JSON.stringify(WORDER));
+  applyOrder();
+  const sec = document.querySelector(`[data-block="${k}"]`);
+  const pref = sec && (sec.querySelector(`.mv[data-dir="${dir < 0 ? "up" : "dn"}"]:not(:disabled)`) || sec.querySelector(".mv:not(:disabled)"));
+  if(pref) pref.focus(); // le déplacement du nœud fait perdre le focus clavier : on le rend
+}
 let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act" && k !== "plan"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
@@ -3650,7 +3688,16 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
-  h.appendChild(b);
+  const grp = document.createElement("span"); grp.className = "hctl"; // monter / descendre / réduire : restent groupés quand l'en-tête passe à la ligne
+  ["up", "dn"].forEach(d => {
+    const m = document.createElement("button");
+    m.type = "button"; m.className = "alt small icon mv"; m.dataset.dir = d;
+    m.dataset.ia = d === "up" ? "title:mvUp;aria-label:mvUp" : "title:mvDn;aria-label:mvDn";
+    m.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d === "up" ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}"/></svg>`;
+    m.onclick = () => moveWidget(h.parentNode.dataset.block, d === "up" ? -1 : 1);
+    grp.appendChild(m);
+  });
+  grp.appendChild(b); h.appendChild(grp);
 });
 function setLinks(){
   $("mail").href = LINKS.mail;
@@ -3672,7 +3719,7 @@ function applyLang(){
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
-loadWidgets(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
+loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
 $("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value; $("pftp").value = $("ftpsel").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();

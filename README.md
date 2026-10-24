@@ -46,7 +46,7 @@ The interface is available in **English and French** and follows your system **l
 
 ### 📊 Dashboard widgets (intervals.icu)
 
-Each widget can be shown or hidden from the settings and has a shortcut to the matching intervals.icu page.
+Each widget can be shown or hidden from the settings and has a shortcut to the matching intervals.icu page. Use the ▲ / ▼ buttons in a widget's header to **move it up or down**; the order is remembered in your browser and included in the exported settings JSON.
 
 * **Calendar:** planned and completed sessions for the month. Hover a session for a preview chart (planned power profile, or the real power / speed / heart-rate curve of a completed activity). **Drag and drop** to move a planned workout to another day, **✕** to delete it, and **click an empty day** to open the manual editor with that date already set. Expand it to full screen for a chart on every session.
 * **Fitness:** CTL, ATL and form (TSB) over a selectable period.
@@ -57,7 +57,7 @@ Each widget can be shown or hidden from the settings and has a shortcut to the m
 ### ⚙️ Settings and privacy
 
 * **No backend, no account:** everything runs in your browser from `paceforge.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
-* API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings can be exported / imported as JSON.
+* API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings (including the widget order) can be exported / imported as JSON.
 * Built-in help dialog and keyboard-friendly tabs and controls.
 
 ---
