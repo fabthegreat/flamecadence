@@ -197,6 +197,8 @@ details.fold[open]>summary{margin-bottom:6px}
 .d .bar.h1{background:#5cb85c}.d .bar.h2{background:#f2a33a}.d .bar.h3{background:#d6336c}
 .d.now span{color:var(--ink);font-weight:600}
 #zonbox,#heatbox{position:relative}
+.vo2n{font-size:2rem;font-weight:700;line-height:1.1}
+.vo2u{color:var(--mute);font-size:.85rem;margin-left:4px}
 .calsum{display:flex;flex-wrap:wrap;gap:2px 16px;margin-top:8px;font-size:.8rem;color:var(--mute)}
 .calsum b{color:var(--ink);font-weight:600}
 .cal-max .hid{display:none}
@@ -332,6 +334,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .cal-d.empty{border:0;background:transparent;min-height:0}
 .cal-d.today{border-color:var(--acc)}
 .cal-max .mv{display:none}
+.wtabs{display:flex;gap:4px;padding:4px;margin-bottom:16px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+.wtabs[hidden],.wtabs button[hidden]{display:none}
+.wtabs button{flex:1;min-width:0;margin:0;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 6px;border-radius:7px;background:transparent;color:var(--ink);font-size:.85rem;white-space:nowrap}
+.wtabs button span{overflow:hidden;text-overflow:ellipsis}
+.wtabs button svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.wtabs button[aria-selected="true"]{background:var(--acc);color:var(--on)}
+.wtabs button:not([aria-selected="true"]):hover,.wtabs button:not([aria-selected="true"]):focus-visible{background:var(--bg);color:var(--acc)}
+section.wtabhid{display:none!important}
 aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .hctl{display:inline-flex;align-items:center;gap:6px;flex:none}
 /* uniform header controls: same height, same icon size, joined pairs */
@@ -557,6 +567,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <label><input type="checkbox" id="w_wx"><span data-i="wxT"></span></label>
 <label><input type="checkbox" id="w_zon"><span data-i="zonT"></span></label>
 <label><input type="checkbox" id="w_heat"><span data-i="heatT"></span></label>
+<label><input type="checkbox" id="w_vo2"><span data-i="vo2T"></span></label>
 </div>
 <div class="hint" id="jnote" role="status" hidden></div>
 </div>
@@ -837,6 +848,12 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 </div>
 <aside class="col">
 
+<div class="wtabs" id="wtabs" role="tablist" data-ia="aria-label:widgetsLbl" hidden>
+<button type="button" role="tab" data-wt="agenda" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="wtAgenda"></span></button>
+<button type="button" role="tab" data-wt="form" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="wtForm"></span></button>
+<button type="button" role="tab" data-wt="ana" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span data-i="wtAna"></span></button>
+</div>
+
 <section data-block="cal">
 <div class="phead"><h2 data-i="calT"></h2>
 <button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
@@ -910,6 +927,14 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <button class="alt small icon" id="rheat" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
 <div id="heatbox"></div>
 <div id="heatcap" class="hint"></div>
+</section>
+
+<section data-block="vo2">
+<div class="phead"><h2 data-i="vo2T"></h2>
+<select id="vo2per" data-ia="aria-label:vo2Per"><option value="7" data-i="vo2P7"></option><option value="14" data-i="vo2P14"></option><option value="42" data-i="per6"></option></select>
+<button class="alt small icon" id="rvo2" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="vo2box"></div>
+<div id="vo2cap" class="hint"></div>
 </section>
 
 </aside>
@@ -1137,7 +1162,25 @@ rdrForm:["form {0}","forme {0}"], rdrHrv:["HRV {0} % below usual","VFC {0} % sou
 rdHrv:["HRV {0} ms (usual {1})","VFC {0} ms (normale {1})"], rdRhr:["Resting HR {0} (usual {1})","FC repos {0} (normale {1})"], rdSleep:["Sleep {0}","Sommeil {0}"],
 calDone:["Done","Réalisé"], calLeft:["Still planned","Reste à faire"], calSess1:["1 session","1 séance"], calSessN:["{0} sessions","{0} séances"],
 wHide:["Hide this widget (show it again in Settings)","Masquer ce widget (à réafficher dans les réglages)"], wHidden:["Widget hidden. You can show it again in Settings → Sidebar widgets.","Widget masqué. Tu peux le réafficher dans Réglages → Widgets de la barre latérale."],
+vo2T:["VO₂max estimate","Estimation de VO₂max"], vo2U:["ml/kg/min","ml/kg/min"],
+vo2NoRide:["No recent ride with power data.","Aucune sortie récente avec données de puissance."], vo2NoW:["Add your weight in intervals.icu to get a VO₂max estimate.","Renseigne ton poids dans intervals.icu pour obtenir une estimation de VO₂max."],
+vo2Max:["Based on your best 5-minute effort over {0}.","Basé sur ton meilleur effort de 5 minutes sur {0}."],
+vo2Low:["Lower bound: no maximal 5-minute effort over {0} (best 5 min {1} W, {2} % of your 12-week best).","Valeur plancher : aucun effort maximal de 5 minutes sur {0} (meilleur 5 min {1} W, soit {2} % de ton meilleur sur 12 semaines)."],
+vo2Unk:["Based on your best 5 minutes over {0}; it can't be checked whether that was a maximal effort.","Basé sur tes 5 meilleures minutes sur {0} ; impossible de vérifier si l'effort était maximal."],
+vo2Ride:["Best 5 min {0} W ({1} W/kg)","Meilleur 5 min {0} W ({1} W/kg)"], vo2Dev:["Device VO₂max: {0} ml/kg/min ({1})","VO₂max de l'appareil : {0} ml/kg/min ({1})"],
+vo2Hr:["HR-based estimate: {0} ml/kg/min ({1} steady segments, last 14 days)","Estimation par la FC : {0} ml/kg/min ({1} segments stables, 14 derniers jours)"],
+vo2HrNone:["HR-based estimate: not enough steady segments with power and heart rate over the last 14 days.","Estimation par la FC : pas assez de segments stables avec puissance et FC sur les 14 derniers jours."],
+vo2HrMiss:["HR-based estimate needs your max and resting heart rate in intervals.icu.","L'estimation par la FC nécessite ta FC max et ta FC de repos dans intervals.icu."],
+vo2HrLow:["No maximal effort recently, so the heart-rate estimate leads; your best power effort is only a floor.","Pas d'effort maximal récent : l'estimation par la FC prime, ton meilleur effort en puissance n'est qu'un plancher."],
+vo2CapHr:["HR-based: heart-rate reserve is treated as VO₂ reserve on steady 10-minute segments (at least 70 % of max HR) and extrapolated to maximum. Sensitive to heat, fatigue and drift.","FC : la réserve de FC est assimilée à la réserve de VO₂ sur des segments stables de 10 min (au moins 70 % de la FC max), extrapolée au maximum. Sensible à la chaleur, à la fatigue et à la dérive."],
+vo2Per:["VO₂max window","Période VO₂max"], vo2P7:["7 days","7 jours"], vo2P14:["14 days","14 jours"],
+vo2W7:["the last 7 days","les 7 derniers jours"], vo2W14:["the last 14 days","les 14 derniers jours"], vo2W42:["the last 6 weeks","les 6 dernières semaines"],
+vo2Fall:["No maximal 5-minute effort over {0}: showing your best of the last 6 weeks instead.","Aucun effort maximal de 5 minutes sur {0} : on affiche ton meilleur des 6 dernières semaines."],
+vo2Trend:["Best 5 min over the last…","Meilleur 5 min sur les derniers…"],
+vo2Cap:["Rough estimate (about ±10 %): ACSM cycling equation, 10.8 × W/kg + 7, applied to the best 5 minutes.","Estimation grossière (environ ±10 %) : équation ACSM pour le vélo, 10,8 × W/kg + 7, appliquée aux 5 meilleures minutes."],
+tr12T:["VO₂max estimate","Estimation de VO₂max"], tr12:["Estimates your VO₂max from your best 5 minutes over the last 7 days (or 14 days, or 6 weeks, your choice), adds a second estimate from your heart rate on steady segments of recent rides, shows your device's value if intervals.icu has one, and compares the best 5 minutes over 6 weeks, 12 weeks and a year.","Estime ta VO₂max à partir de tes 5 meilleures minutes des 7 derniers jours (ou 14 jours, ou 6 semaines, au choix), ajoute une seconde estimation à partir de ta fréquence cardiaque sur des segments stables de tes sorties récentes, affiche la valeur de ton appareil si intervals.icu en a une, et compare le meilleur 5 min sur 6 semaines, 12 semaines et un an."],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
+wtAgenda:["Agenda","Agenda"], wtForm:["Fitness","Forme"], wtAna:["Analysis","Analyse"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
@@ -1846,13 +1889,14 @@ async function loadBest(){
 }
 async function loadAll(){
   loadWx().catch(() => {});
-  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox", "nextbox", "zonbox", "heatbox", "zoncap", "heatcap"].forEach(id => $(id).textContent = ""); YR.acts = null; YR.p = null; NEXT.ev = null; NEXT.loaded = false; $("loadbox").textContent = t("needI"); renderCal(); return; }
+  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox", "nextbox", "zonbox", "heatbox", "zoncap", "heatcap", "vo2box", "vo2cap"].forEach(id => $(id).textContent = ""); VO2.loaded = false; YR.acts = null; YR.p = null; NEXT.ev = null; NEXT.loaded = false; $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
   loadCal(true).catch(e => { $("calbox").textContent = t("errI", errText(e)); });
   loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
   if(widgets.includes("zon") || widgets.includes("heat")) loadYr(!!YR.t && Date.now() - YR.t > 30000);
+  if(widgets.includes("vo2")) loadVo2().catch(() => {});
 }
 $("rload").onclick = loadAll;
 // boutons ↻ des autres widgets (même principe que celui du calendrier) : rechargent uniquement leur widget
@@ -1860,6 +1904,138 @@ const refreshBtn = (id, fn) => { $(id).onclick = async () => { const b = $(id); 
 refreshBtn("rfit", () => loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }));
 refreshBtn("rlast", () => loadLoad(LAST.li || 0).catch(() => {}));
 refreshBtn("rbest", () => loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }));
+
+// --- Widget « Estimation de VO₂max » (vélo) : meilleure puissance sur 5 min × équation ACSM ; valeur de l'appareil si intervals.icu en a une ---
+const VO2 = {loaded: false, busy: false, d: null};
+const vo2Est = (w, kg) => 10.8 * w / kg + 7; // ml/kg/min (équation ACSM du cyclisme, P en watts)
+function best5(w){ // meilleure puissance moyenne sur 300 s (flux à 1 Hz)
+  const n = 300; if(!w || w.length < n) return 0;
+  let s = 0; for(let i = 0; i < n; i++) s += w[i] || 0;
+  let b = s; for(let i = n; i < w.length; i++){ s += (w[i] || 0) - (w[i - n] || 0); if(s > b) b = s; }
+  return b / n;
+}
+function to1Hz(w, tm){ // ré-échantillonne à 1 Hz si le flux « time » montre un pas plus grand
+  if(!tm || tm.length !== w.length || tm.length < 2) return w;
+  const span = tm[tm.length - 1] - tm[0]; if(span <= (w.length - 1) * 1.5) return w;
+  const out = new Array(Math.floor(span) + 1); let k = 0;
+  for(let i = 0; i < out.length; i++){ while(k + 1 < tm.length && tm[k + 1] - tm[0] <= i) k++; out[i] = w[k]; }
+  return out;
+}
+function curve5(c){ // puissance moyenne maximale sur 5 min d'une courbe de puissance intervals.icu
+  const secs = (c && c.secs) || [], vals = (c && (c.watts || c.values)) || []; let i = secs.indexOf(300); if(i < 0) i = secs.findIndex(x => x >= 300);
+  return i >= 0 && vals[i] > 0 ? vals[i] : 0;
+}
+const vo2Per = () => { const e = $("vo2per"), v = e && e.value; return v === "14" ? 14 : v === "42" ? 42 : 7; };
+async function rideB5(a){ // meilleur 5 min d'une sortie, d'après son flux de puissance (mis en cache)
+  VO2.c = VO2.c || {}; if(VO2.c[a.id] !== undefined) return VO2.c[a.id];
+  let j = null, b = 0;
+  for(const u of [`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts,time`, `https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`]){
+    try{ j = await icuFetch(u); if(j) break; }catch(e){}
+  }
+  const list = Array.isArray(j) ? j : (j && j.streams) || [], get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
+  const w = get("watts", "power", "watts_calc"); if(w) b = best5(to1Hz(w, get("time")));
+  return VO2.c[a.id] = b;
+}
+async function vo2Peak(per){ // meilleur 5 min sur les `per` derniers jours : courbe de puissance, sinon calcul sur les sorties de la période
+  const d = VO2.d; if(d.cur[per] > 0) return d.cur[per];
+  const from = daysAgo(per); let b = 0;
+  for(const a of d.rides.filter(a => (a.start_date_local || "").slice(0, 10) >= from).slice(0, 8)) b = Math.max(b, await rideB5(a));
+  return b;
+}
+const med = a => { const v = [...a].sort((x, y) => x - y), m = v.length >> 1; return v.length ? (v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2) : 0; };
+async function rideHr(a){ // flux puissance + FC à 1 Hz d'une sortie (mis en cache)
+  VO2.h = VO2.h || {}; if(VO2.h[a.id]) return VO2.h[a.id];
+  let j = null;
+  for(const u of [`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts,heartrate,time`, `https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts,heartrate`]){
+    try{ j = await icuFetch(u); if(j) break; }catch(e){}
+  }
+  const list = Array.isArray(j) ? j : (j && j.streams) || [], get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
+  const w = get("watts", "power", "watts_calc"), h = get("heartrate", "hr"), tm = get("time");
+  return VO2.h[a.id] = w && h && w.length === h.length ? {w: to1Hz(w, tm), h: to1Hz(h, tm)} : {w: [], h: []};
+}
+function hrSegs(w, h, kg, hrMax, hrRest){ // segments stables de 10 min : réserve de FC ≈ réserve de VO₂ (Swain), VO₂ de la puissance par l'équation ACSM, extrapolé à 100 %
+  const out = [], n = Math.min(w.length, h.length), N = 600;
+  for(let s = 600; s + N <= n; s += 300){ // les 10 premières minutes sont ignorées (la FC suit avec retard)
+    const bp = [], bh = [];
+    for(let b = 0; b < 10; b++){ let sp = 0, sh = 0; for(let i = s + b * 60; i < s + b * 60 + 60; i++){ sp += w[i] || 0; sh += h[i] || 0; } bp.push(sp / 60); bh.push(sh / 60); }
+    const P = bp.reduce((x, y) => x + y, 0) / 10, H = bh.reduce((x, y) => x + y, 0) / 10; if(P < 50 || H < 0.7 * hrMax) continue;
+    const cv = (v, m) => Math.sqrt(v.reduce((x, y) => x + (y - m) * (y - m), 0) / 10) / m;
+    if(cv(bp, P) > 0.12 || cv(bh, H) > 0.04) continue; // puissance et FC stables
+    const hrr = (H - hrRest) / (hrMax - hrRest); if(hrr < 0.5 || hrr > 1.05) continue;
+    out.push(3.5 + (vo2Est(P, kg) - 3.5) / Math.min(hrr, 1));
+  }
+  return out;
+}
+async function vo2Hr(){
+  const d = VO2.d; if(!d || !d.kg) return;
+  if(!(d.hrMax > 100 && d.hrRest > 25 && d.hrMax - d.hrRest > 40)){ d.hr = {miss: true}; return renderVo2(); }
+  const from = daysAgo(14), all = [];
+  for(const a of d.rides.filter(a => a.average_heartrate > 0 && (a.start_date_local || "").slice(0, 10) >= from).slice(0, 8)){
+    try{ const x = await rideHr(a); all.push(...hrSegs(x.w, x.h, d.kg, d.hrMax, d.hrRest)); }catch(e){}
+  }
+  if(VO2.d !== d) return; // la fiche a été rechargée entre-temps
+  const v = all.filter(x => x > 20 && x < 90);
+  d.hr = {est: v.length >= 2 ? med(v) : 0, n: v.length};
+  renderVo2();
+}
+async function loadVo2(){
+  if(VO2.busy) return; VO2.busy = true;
+  try{
+    const today = daysAgo(0), per = vo2Per();
+    const [acts, well, a1, a2, b1, b2] = await Promise.all([
+      icu(`/activities?oldest=${daysAgo(42)}&newest=${today}`).catch(() => []),
+      icu(`/wellness?oldest=${daysAgo(90)}&newest=${today}`).catch(() => []),
+      icu(`/power-curves?type=Ride&curves=42d,84d,1y`).catch(() => null),
+      icu(`/power-curves?type=VirtualRide&curves=42d,84d,1y`).catch(() => null),
+      icu(`/power-curves?type=Ride&curves=7d,14d`).catch(() => null),
+      icu(`/power-curves?type=VirtualRide&curves=7d,14d`).catch(() => null)
+    ]);
+    const W = (Array.isArray(well) ? well : []).filter(x => x && x.id).sort((a, b) => a.id < b.id ? -1 : 1);
+    const lastW = k => { for(let i = W.length - 1; i >= 0; i--) if(W[i][k] > 0) return W[i]; return null; };
+    const kg = ICU.weight || (lastW("weight") || {}).weight || 0, dv = lastW("vo2max");
+    const L = c => c ? (c.list || [c]) : [], pk = (x, y, i) => Math.max(curve5(L(x)[i]), curve5(L(y)[i])); // meilleur 5 min : Ride et VirtualRide
+    const win = [0, 1, 2].map(i => pk(a1, a2, i)); // 6 semaines, 12 semaines, 1 an
+    const cur = {7: pk(b1, b2, 0), 14: pk(b1, b2, 1), 42: win[0]};
+    const rides = (Array.isArray(acts) ? acts : []).filter(a => /Ride/.test(a.type || "") && a.moving_time >= 300 && (a.icu_average_watts > 0 || a.average_watts > 0 || a.icu_weighted_avg_watts > 0))
+      .sort((a, b) => a.start_date_local < b.start_date_local ? 1 : -1);
+    const hrRest = med(W.map(x => x.restingHR).filter(v => v > 0).slice(-14)), hrMax = ICU.maxHr || Math.max(0, ...rides.map(a => a.max_heartrate || 0));
+    VO2.d = {kg, dv, win, cur, rides, per, w: 0, hrMax, hrRest, hr: null};
+    VO2.d.w = await vo2Peak(per); VO2.loaded = true;
+  }finally{ VO2.busy = false; }
+  renderVo2();
+  vo2Hr().catch(() => {}); // seconde estimation, par la FC : calculée après l'affichage (elle télécharge les flux des sorties récentes)
+}
+function renderVo2(){
+  const box = $("vo2box"), cap = $("vo2cap"); if(!box || !VO2.d) return;
+  const {kg, dv, win, per, w} = VO2.d, n0 = v => Math.round(v), ph = t("vo2W" + per);
+  let h = "";
+  if(!kg) h += `<div class="hint">${esc(t("vo2NoW"))}</div>`;
+  else{
+    const ref = win[1], maxed = w && ref ? w >= ref * 0.95 : null;
+    let b = w, lower = false, why = "";
+    if(w && maxed !== false) why = t(maxed ? "vo2Max" : "vo2Unk", ph); // effort quasi maximal (ou impossible à vérifier)
+    else if(per < 42 && win[0] && ref && win[0] >= ref * 0.95){ b = win[0]; why = t("vo2Fall", ph); } // rien de maximal sur la période : on prend le meilleur des 6 semaines
+    else{ if(!w) b = win[0]; lower = true; why = b ? t("vo2Low", w ? ph : t("vo2W42"), n0(b), ref ? n0(b / ref * 100) : "–") : ""; }
+    if(!b) h += `<div class="hint">${esc(t("vo2NoRide"))}</div>`;
+    else{
+      const hr = VO2.d.hr, bnd = vo2Est(b, kg), hrLead = lower && hr && hr.est >= bnd && hr.est > 0; // sans effort maximal récent, la FC prend la main (jamais en dessous de ce que la puissance a déjà démontré)
+      h += `<div><span class="vo2n">${hrLead ? n0(hr.est) : (lower ? "≥ " : "") + n0(bnd)}</span><span class="vo2u">${esc(t("vo2U"))}</span></div><div class="hint">${esc(hrLead ? t("vo2HrLow") : why)}</div>` +
+        (hrLead ? `<div class="hint">${esc(why)}</div>` : "") + `<div class="hint">${esc(t("vo2Ride", n0(b), (b / kg).toFixed(2)))}</div>`;
+      if(hr){ // estimation par la FC
+        if(hr.miss) h += `<div class="hint">${esc(t("vo2HrMiss"))}</div>`;
+        else if(hr.est) h += `<div class="hint"><b>${esc(t("vo2Hr", n0(hr.est), hr.n))}</b></div>`;
+        else h += `<div class="hint">${esc(t("vo2HrNone"))}</div>`;
+      }
+    }
+  }
+  if(dv) h += `<div class="hint">${esc(t("vo2Dev", n0(dv.vo2max), new Date(dv.id + "T12:00:00").toLocaleDateString(loc(), {day: "numeric", month: "short"})))}</div>`;
+  if(kg && win.some(v => v > 0)){
+    h += `<div class="hint" style="margin-top:8px">${esc(t("vo2Trend"))}</div><div class="kv">` + [["per6", 0], ["per12", 1], ["per1y", 2]].map(([k, i]) => `<div>${esc(t(k))}<b>${win[i] ? n0(vo2Est(win[i], kg)) : "–"}</b></div>`).join("") + `</div>`;
+  }
+  box.innerHTML = h; cap.textContent = t("vo2Cap") + (VO2.d.hr && VO2.d.hr.est ? " " + t("vo2CapHr") : "");
+}
+refreshBtn("rvo2", async () => { VO2.loaded = false; await loadVo2(); });
+$("vo2per").onchange = async () => { store.set("si_vo2per", String(vo2Per())); if(!VO2.d || VO2.busy) return; VO2.d.per = vo2Per(); VO2.d.w = await vo2Peak(VO2.d.per); renderVo2(); };
 
 // --- Widgets « Temps par zone » et « Carte de chaleur annuelle » : une seule requête /activities (53 semaines) partagée par les deux ---
 const YR = {acts: null, p: null, t: 0};
@@ -5499,7 +5675,7 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
 // --- Widgets visibles de la colonne de droite (réglages) ---
-const WIDGETS = ["cal", "next", "fit", "last", "load", "best", "wx", "zon", "heat"], WDEF = ["cal", "next", "fit", "last", "wx"];
+const WIDGETS = ["cal", "next", "fit", "last", "load", "best", "wx", "zon", "heat", "vo2"], WDEF = ["cal", "next", "fit", "last", "wx"];
 let widgets = [];
 function loadWidgets(){
   const raw = store.get("si_widgets");
@@ -5510,15 +5686,36 @@ function loadWidgets(){
   const zhNew = !store.get("si_zhinit"), zh = k => zhNew && (k === "zon" || k === "heat"); // « temps par zone » et « carte de chaleur » : activés une fois pour les utilisateurs existants
   widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) || (k === "next" && nxNew) || zh(k) : WDEF.includes(k) || zh(k));
   if(zhNew){ store.set("si_widgets", JSON.stringify(widgets)); store.set("si_zhinit", "1"); }
+  if(!store.get("si_vo2init")){ if(!widgets.includes("vo2")) widgets.push("vo2"); store.set("si_widgets", JSON.stringify(widgets)); store.set("si_vo2init", "1"); } // « VO₂max » : activé une fois pour les utilisateurs existants
   if(wxNew || nxNew){ if(v) store.set("si_widgets", JSON.stringify(widgets)); store.set("si_wxinit", "1"); store.set("si_nxinit", "1"); }
 }
 function applyWidgets(){
   WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
   WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
-  updateMoveBtns();
+  updateMoveBtns(); applyWTabs();
   if(KEY() && (widgets.includes("zon") || widgets.includes("heat"))) loadYr();
+  if(KEY() && ICU.loaded && widgets.includes("vo2") && !VO2.loaded && !VO2.busy) loadVo2().catch(() => {});
 }
-function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
+function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); if(widgets.includes(k)){ wtab = grpOf(k); store.set("si_wtab", wtab); } applyWidgets(); }
+// --- Onglets de la colonne de droite : les widgets sont regroupés (agenda / forme / analyse), un seul groupe est affiché à la fois ---
+const WGROUPS = {agenda: ["cal", "next", "wx"], form: ["fit", "load", "vo2"], ana: ["last", "best", "zon", "heat"]};
+const grpOf = k => Object.keys(WGROUPS).find(g => WGROUPS[g].includes(k));
+let wtab = WGROUPS[store.get("si_wtab")] ? store.get("si_wtab") : "agenda";
+function applyWTabs(){
+  const has = g => WGROUPS[g].some(k => widgets.includes(k)), gs = Object.keys(WGROUPS).filter(has);
+  if(!gs.includes(wtab)) wtab = gs[0] || "agenda";
+  const bar = $("wtabs"); bar.hidden = gs.length < 2;
+  bar.querySelectorAll("[data-wt]").forEach(b => { const on = b.dataset.wt === wtab; b.hidden = !has(b.dataset.wt); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
+  WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.classList.toggle("wtabhid", gs.length > 1 && grpOf(k) !== wtab); });
+}
+function setWTab(g, persist){ if(!WGROUPS[g]) return; wtab = g; if(persist !== false) store.set("si_wtab", g); applyWTabs(); }
+$("wtabs").querySelectorAll("[data-wt]").forEach(b => b.onclick = () => setWTab(b.dataset.wt));
+$("wtabs").addEventListener("keydown", e => {
+  if(e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+  const bs = [...$("wtabs").querySelectorAll("[data-wt]")].filter(b => !b.hidden), i = bs.findIndex(b => b.dataset.wt === wtab);
+  if(i < 0) return; e.preventDefault();
+  const n = bs[(i + (e.key === "ArrowRight" ? 1 : bs.length - 1)) % bs.length]; setWTab(n.dataset.wt); n.focus();
+});
 // --- Ordre des widgets de la colonne de droite (monter / descendre), mémorisé dans le navigateur et dans l'export des réglages ---
 let WORDER = WIDGETS.slice();
 function sanitizeOrder(v){
@@ -5534,7 +5731,8 @@ function updateMoveBtns(){
   const vis = WORDER.filter(x => widgets.includes(x));
   WORDER.forEach(k => {
     const sec = document.querySelector(`[data-block="${k}"]`); if(!sec) return;
-    sec.querySelectorAll(".mv").forEach(m => { m.disabled = m.dataset.dir === "up" ? vis[0] === k : vis[vis.length - 1] === k; });
+    const gv = vis.filter(x => grpOf(x) === grpOf(k)); // monter / descendre : à l'intérieur de l'onglet
+    sec.querySelectorAll(".mv").forEach(m => { m.disabled = m.dataset.dir === "up" ? gv[0] === k : gv[gv.length - 1] === k; });
   });
 }
 function applyOrder(){
@@ -5546,7 +5744,7 @@ function applyOrder(){
   updateMoveBtns();
 }
 function moveWidget(k, dir){
-  const vis = WORDER.filter(x => widgets.includes(x)), i = vis.indexOf(k), j = i + dir;
+  const vis = WORDER.filter(x => widgets.includes(x) && grpOf(x) === grpOf(k)), i = vis.indexOf(k), j = i + dir;
   if(i < 0 || j < 0 || j >= vis.length) return;
   const a = WORDER.indexOf(k), b = WORDER.indexOf(vis[j]);
   [WORDER[a], WORDER[b]] = [WORDER[b], WORDER[a]]; // échange avec le widget visible voisin
@@ -5601,7 +5799,7 @@ function applyLang(){
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI();
-  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderVo2(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
@@ -5610,7 +5808,7 @@ $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftpbox").hidden = $("actout").value !== "pct";
-$("fper").value = store.get("si_fper") || "60"; $("zper").value = ["4", "8", "12"].includes(store.get("si_zper")) ? store.get("si_zper") : "8"; $("zbas").value = store.get("si_zbas") === "hr" ? "hr" : "power"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
+$("fper").value = store.get("si_fper") || "60"; $("vo2per").value = ["7", "14", "42"].includes(store.get("si_vo2per")) ? store.get("si_vo2per") : "7"; $("zper").value = ["4", "8", "12"].includes(store.get("si_zper")) ? store.get("si_zper") : "8"; $("zbas").value = store.get("si_zbas") === "hr" ? "hr" : "power"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 
 // ---------- Visite guidée : surbrillance d'un élément + bulle explicative, étape par étape ----------
@@ -5626,6 +5824,7 @@ const TOUR_STEPS = [
   {k: 8, w: ["next"]},
   {k: 9, w: ["fit", "last", "load"]},
   {k: 10, w: ["zon", "heat"]},
+  {k: 12, w: ["vo2"]},
   {k: 11, sel: ["#open"]}
 ];
 const TOUR = {on: false, i: 0, list: [], mode0: null, y0: 0, hl: null, bub: null, ov: null};
@@ -5661,6 +5860,7 @@ function tourShow(i, dir){
   const L = TOUR.list;
   while(i >= 0 && i < L.length){ // saute les étapes dont l'élément n'est pas visible (widget masqué)
     const st = L[i]; tourSetMode(st.mode);
+    if(st.w){ const wk = st.w.find(x => widgets.includes(x)); if(wk) setWTab(grpOf(wk), false); } // affiche l'onglet du widget présenté
     if(st.k === 0 || tourEl(st)) break;
     i += dir || 1;
   }
@@ -5678,7 +5878,7 @@ function tourEnd(){
   TOUR.on = false;
   [TOUR.ov, TOUR.hl, TOUR.bub].forEach(e => e && e.remove());
   document.removeEventListener("keydown", tourKey, true); removeEventListener("resize", tourPlace); removeEventListener("scroll", tourPlace, true);
-  tourSetMode(TOUR.mode0); window.scrollTo(0, TOUR.y0);
+  tourSetMode(TOUR.mode0); setWTab(TOUR.wtab0, false); window.scrollTo(0, TOUR.y0);
   $("tourbtn").focus({preventScroll: true});
 }
 function tourKey(e){
@@ -5695,7 +5895,7 @@ function tourKey(e){
 function tourStart(){
   if(TOUR.on) return;
   const more = $("more"); if(more) more.open = false;
-  TOUR.on = true; TOUR.mode0 = mode; TOUR.y0 = scrollY;
+  TOUR.on = true; TOUR.mode0 = mode; TOUR.y0 = scrollY; TOUR.wtab0 = wtab;
   // les étapes dont le widget est masqué sont retirées d'avance, pour que le compteur « n / N » soit juste
   TOUR.list = TOUR_STEPS.filter(st => !st.w || st.w.some(k => widgets.includes(k)));
   const ov = document.createElement("div"), hl = document.createElement("div"), bub = document.createElement("div");
