@@ -105,6 +105,15 @@ dialog h2{margin-bottom:6px}
 .chart path:hover{opacity:.8}
 .chart path.sel{stroke:var(--ink);stroke-width:2}
 .chart .cap{font-size:.8rem;color:var(--mute);margin-top:4px}
+#nextbox .chart{margin:8px 0 4px}
+#nextbox .chart svg{height:76px}
+#nextbox .chart path{cursor:default}
+.prog{max-height:260px;overflow:auto;color:var(--ink);font-variant-numeric:tabular-nums}
+.prog div{padding:0 4px;border-radius:3px;white-space:pre-wrap}
+.prog .hd{font-weight:600;margin-top:4px}
+.prog .sp{height:6px;padding:0}
+.prog .hl{background:var(--line)}
+.prog .w{color:var(--mute)}
 abbr.gl{text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:2px;cursor:help}
 #gltip{position:fixed;z-index:2147483647;max-width:min(300px,calc(100vw - 16px));background:var(--ink);color:var(--card);padding:8px 10px;border-radius:6px;font-size:.8rem;line-height:1.4;font-weight:400;font-style:normal;letter-spacing:normal;text-transform:none;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,.3);pointer-events:none}
 #gltip b{display:block;margin-bottom:2px}
@@ -506,6 +515,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></h3>
 <div class="wgrid">
 <label><input type="checkbox" id="w_cal"><span data-i="calT"></span></label>
+<label><input type="checkbox" id="w_next"><span data-i="nextT"></span></label>
 <label><input type="checkbox" id="w_fit"><span data-i="fitT"></span></label>
 <label><input type="checkbox" id="w_last"><span data-i="lastW"></span></label>
 <label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
@@ -802,6 +812,14 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <div id="calbox"></div>
 </section>
 
+<section data-block="next">
+<div class="phead"><h2 data-i="nextT"></h2>
+<button class="alt small" id="nextedit" type="button" data-i="nextEdit" hidden></button>
+<button class="alt small icon" id="rnext" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkNext" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="nextbox"></div>
+</section>
+
 <section data-block="fit">
 <div class="phead"><h2 data-i="fitT"></h2>
 <button class="alt small icon" id="rfit" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
@@ -958,6 +976,8 @@ history:["History","Historique"], histPick:["Choose a workout…","Choisir une s
 preview:["Preview (editable)","Aperçu (modifiable)"], delPrev:["Delete the preview","Supprimer l'aperçu"], name:["Name","Nom"], date:["Date","Date"],
 descLbl:["Description (intervals.icu format)","Description (format intervals.icu)"], send:["Add to calendar","Ajouter au calendrier"],
 lastW:["Last workout","Dernière séance"],
+nextT:["Next planned workout","Prochaine séance planifiée"], nextEdit:["Edit","Modifier"], noNext:["No planned workout in the next 60 days.","Aucune séance planifiée dans les 60 prochains jours."],
+nextToday:["Today","Aujourd'hui"], nextTomorrow:["Tomorrow","Demain"], nextIn:["In {0} days","Dans {0} jours"], nextProg:["intervals.icu program","Programme intervals.icu"], nextSteps:["{0} steps","{0} étapes"],
 lastAi:["AI analysis","Analyse IA"], aiTitle:["Workout analysis","Analyse de la séance"], aiNone:["No workout to analyze.","Aucune séance à analyser."],
 lPrev:["Earlier workout","Séance précédente"], lNext:["Newer workout","Séance suivante"], load2:["Last two weeks","Deux dernières semaines"], best:["Best efforts","Meilleurs efforts"],
 per6:["6 weeks","6 semaines"], per12:["12 weeks","12 semaines"], per1y:["1 year","1 an"], collapse:["Collapse or expand the block","Réduire ou afficher le bloc"], mvUp:["Move up","Monter"], mvDn:["Move down","Descendre"],
@@ -1291,7 +1311,7 @@ $("oaurl").onchange = () => { oaList = []; };
 
 // ---------- intervals.icu ----------
 const KEY = () => store.get("si_ikey"), AID = () => store.get("si_aid") || "0";
-const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null, name: "", city: "", country: "", lthr: 0, maxHr: 0, loaded: false}, LAST = {};
+const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null, name: "", city: "", country: "", lthr: 0, maxHr: 0, loaded: false}, LAST = {}, NEXT = {ev: null, loaded: false, tok: 0};
 const icuAuth = () => ({Authorization: "Basic " + btoa("API_KEY:" + KEY())});
 const icuUrl = path => `https://intervals.icu/api/v1/athlete/${encodeURIComponent(AID())}${path}`;
 async function icuFetch(url, opt){
@@ -1315,7 +1335,7 @@ function curFtp(){ return ftpFor($("sport").value); }
 const icuAthlete = () => ICU.id || AID();
 const icuPage = path => `https://intervals.icu/athlete/${icuAthlete()}${path || ""}`;
 function updateIcuLinks(){
-  if(!KEY() || !icuAthlete()){ ["lkCal","lkFit","lkLoad","lkBest","lkLast"].forEach(id => $(id).href = "https://intervals.icu"); return; }
+  if(!KEY() || !icuAthlete()){ ["lkCal","lkFit","lkLoad","lkBest","lkLast","lkNext"].forEach(id => $(id).href = "https://intervals.icu"); return; }
   // semaine affichée dans le bloc calendrier (lundi de la semaine courante ou du 1er du mois visionné)
   const ref = CAL.m ? calFirst(CAL.m) : new Date();
   const mon = new Date(ref); mon.setDate(ref.getDate() - ((ref.getDay() + 6) % 7));
@@ -1323,6 +1343,9 @@ function updateIcuLinks(){
   $("lkFit").href = "https://intervals.icu/fitness";
   $("lkLoad").href = icuPage("");
   $("lkBest").href = "https://intervals.icu/power";
+  const nd = NEXT.ev ? (NEXT.ev.start_date_local || "").slice(0, 10) : "";
+  if(nd){ const d = new Date(nd + "T12:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); $("lkNext").href = "https://intervals.icu/?w=" + iso(d); }
+  else $("lkNext").href = "https://intervals.icu";
   $("lkLast").href = LAST.last && LAST.last.id ? icuPage("/activities/" + LAST.last.id) : icuPage("/activities");
 }
 // Libellés des sélecteurs de type de sortie : « Vélo indoor (FTP 240 W) » / « Vélo extérieur (FTP 250 W) »
@@ -1730,7 +1753,7 @@ async function loadBest(){
 }
 async function loadAll(){
   loadWx().catch(() => {});
-  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); renderCal(); return; }
+  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox", "nextbox"].forEach(id => $(id).textContent = ""); NEXT.ev = null; NEXT.loaded = false; $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
   loadCal(true).catch(e => { $("calbox").textContent = t("errI", errText(e)); });
@@ -1743,6 +1766,125 @@ const refreshBtn = (id, fn) => { $(id).onclick = async () => { const b = $(id); 
 refreshBtn("rfit", () => loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }));
 refreshBtn("rlast", () => loadLoad(LAST.li || 0).catch(() => {}));
 refreshBtn("rbest", () => loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }));
+
+// --- Widget « Prochaine séance planifiée » : graphe des étapes (infobulle au survol) + programme intervals.icu repliable ---
+let NEXT_OPEN = store.get("si_nextopen") === "1";
+async function loadNext(){
+  if(!KEY()) return;
+  const tok = ++NEXT.tok, today = iso(new Date());
+  const [evs, acts] = await Promise.all([
+    icu(`/events?oldest=${today}&newest=${daysAgo(-60)}&category=WORKOUT`),
+    icu(`/activities?oldest=${today}&newest=${today}`).catch(() => [])
+  ]);
+  if(tok !== NEXT.tok) return; // une réponse plus récente est déjà arrivée
+  // même règle que le calendrier : on ignore les séances d'un jour déjà réalisé, et celles déjà liées à une activité
+  NEXT.ev = mergeCal(evs, acts).filter(e => !e.paired_activity_id).sort((x, y) => (x.start_date_local || "").localeCompare(y.start_date_local || ""))[0] || null;
+  NEXT.loaded = true; renderNext(); updateIcuLinks();
+}
+refreshBtn("rnext", () => loadNext().catch(e => { $("nextbox").textContent = t("errI", errText(e)); }));
+$("nextedit").onclick = () => { if(NEXT.ev) calEdit(NEXT.ev); };
+// Infos par étape pour l'infobulle : début, intitulé de la section du programme (« Main set ») et numéro de répétition (3/10)
+function nextMeta(e, steps){
+  const hdr = [], rx = /\d(?:[.,]\d+)?\s*%|\d(?:[.,]\d+)?\s*w\b|\bz[1-7]\b/i;
+  let cur = "";
+  (e.description || "").split("\n").forEach((raw, i) => {
+    const l = raw.trim();
+    if(!l){ cur = ""; return; }
+    if(l.startsWith("-") || rx.test(l)){ hdr[i] = cur; return; }
+    cur = l;
+  });
+  const seen = {}, tot = {};
+  steps.forEach(s => { if(s.line != null) tot[s.line] = (tot[s.line] || 0) + 1; });
+  let t0 = 0;
+  return steps.map(s => {
+    const has = s.line != null, k = has ? (seen[s.line] = (seen[s.line] || 0) + 1) : 0, n = has ? tot[s.line] : 0;
+    const name = (has ? (hdr[s.line] || "").replace(/\s*\d+\s*x\s*$/i, "") : (s.text || "")).trim();
+    const m = {d: s.d, a: s.a, b: s.b, start: t0, line: s.line, label: [name, n > 1 ? k + "/" + n : ""].filter(Boolean).join(" · ")};
+    t0 += s.d; return m;
+  });
+}
+function nextChartSvg(meta, label){
+  const total = meta.reduce((s, m) => s + m.d, 0), peak = Math.max(120, ...meta.map(m => Math.max(m.a, m.b)));
+  const W = 300, H = 100; let x = 0, path = "";
+  meta.forEach((m, i) => {
+    const w = m.d / total * W, ya = H - m.a / peak * (H - 4), yb = H - m.b / peak * (H - 4);
+    path += `<path data-n="${i}" class="z${zoneOf((m.a + m.b) / 2)}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
+    x += w;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(label)}">${path}</svg>`;
+}
+// Programme au format intervals.icu (texte de la séance), avec l'équivalent en watts à côté des % ; sans texte : reconstruit depuis les étapes
+function nextProgHtml(e, steps, ftp, pace){
+  const ann = l => {
+    if(pace || !(ftp > 0)) return "";
+    const m = l.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/); if(!m) return "";
+    const a = parseFloat(m[1].replace(",", ".")), b = m[2] ? parseFloat(m[2].replace(",", ".")) : a, W = v => Math.round(v * ftp / 100);
+    return `<span class="w"> · ${a === b ? W(a) : W(a) + "–" + W(b)} W</span>`;
+  };
+  const dt = sec => { sec = Math.round(sec); const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60; return (h ? h + "h" : "") + (m ? m + "m" : "") + (s ? s + "s" : "") || "0s"; };
+  const rx = /\d(?:[.,]\d+)?\s*%|\d(?:[.,]\d+)?\s*w\b|\bz[1-7]\b/i, txt = e.description || "";
+  if(txt.trim()) return txt.split("\n").map((raw, i) => {
+    const l = raw.trim();
+    return !l ? `<div class="sp"></div>` : `<div data-l="${i}"${!l.startsWith("-") && !rx.test(l) ? ' class="hd"' : ""}>${esc(l)}${ann(l)}</div>`;
+  }).join("");
+  return steps.map(s => { const r = Math.abs(s.a - s.b) > 0.5, l = `- ${dt(s.d)} ${r ? Math.round(s.a) + "-" + Math.round(s.b) : Math.round(s.a)}%`; return `<div>${esc(l)}${ann(l)}</div>`; }).join("");
+}
+function renderNext(){
+  const box = $("nextbox"), e = NEXT.ev, eb = $("nextedit");
+  eb.hidden = true;
+  if(!NEXT.loaded){ box.textContent = ""; return; }
+  if(!e){ box.textContent = t("noNext"); return; }
+  const sport = e.type || "Ride", pace = /Run|Swim/.test(sport), ftp = ftpFor(sport);
+  const steps = plannedSteps(e, ftp), est = steps.length === 1 && !!steps[0].est, real = steps.length && !est;
+  const meta = nextMeta(e, steps);
+  const day = (e.start_date_local || "").slice(0, 10), d0 = new Date(day + "T12:00:00");
+  const diff = Math.round((d0 - new Date(iso(new Date()) + "T12:00:00")) / 864e5);
+  const rel = diff <= 0 ? t("nextToday") : diff === 1 ? t("nextTomorrow") : t("nextIn", diff);
+  const hh = (e.start_date_local || "").slice(11, 16);
+  const when = d0.toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "short"}) + (hh && hh !== "00:00" ? " · " + hh : "");
+  const st = real ? stepsStats(steps) : null, kv = [];
+  const total = st ? st.total : (e.moving_time || e.icu_training_time || 0);
+  if(total) kv.push([t("lDur"), hm(total)]);
+  if(st && !pace){
+    kv.push([t("lAvgP"), ftp > 0 ? Math.round(st.avgPct * ftp / 100) + " W" : Math.round(st.avgPct) + " %"]);
+    if(ftp > 0) kv.push([t("lNP"), Math.round(st.npPct * ftp / 100) + " W"]);
+    kv.push([t("lIF"), st.iff.toFixed(2)]);
+  }
+  const load = e.icu_training_load > 0 ? e.icu_training_load : (st && !pace ? st.tss : 0);
+  if(load) kv.push([t("lLoad"), Math.round(load)]);
+  const prog = ((e.description || "").trim() || real) ? nextProgHtml(e, steps, ftp, pace) : "";
+  box.innerHTML = `<div class="lt">${esc(e.name || actT(sport))}</div><div class="hint">${esc(rel)} · ${esc(when)} · ${esc(actT(sport))}</div>` +
+    (steps.length ? `<div class="chart">${nextChartSvg(meta, (e.name || "") + " " + hm(total))}<div class="tip" hidden></div></div>` : "") +
+    (real && !pace ? zoneBar(zoneTimes(steps)) : "") +
+    (kv.length ? `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>` : "") +
+    (prog ? `<details class="fuel" id="nextprog"${NEXT_OPEN ? " open" : ""}><summary><b>${esc(t("nextProg"))}</b>${real ? " · " + esc(t("nextSteps", steps.length)) : ""}</summary><div class="prog">${prog}</div></details>` : "");
+  const c = box.querySelector(".chart"); if(c){ c._steps = meta; c._ftp = ftp; c._pace = pace; }
+  eb.hidden = !(isBike(sport) && (e.description || "").trim());
+}
+// Survol du graphe : infobulle (intitulé, durée, puissance, zone, début) et mise en évidence de la ligne correspondante du programme
+(() => {
+  const box = $("nextbox");
+  const clearHl = () => box.querySelectorAll(".prog .hl").forEach(x => x.classList.remove("hl"));
+  const hide = () => { const tip = box.querySelector(".chart .tip"); if(tip){ tip.hidden = true; delete tip.dataset.n; } clearHl(); };
+  const over = ev => {
+    const c = box.querySelector(".chart"), tip = c && c.querySelector(".tip"); if(!tip) return;
+    const p = ev.target.closest ? ev.target.closest("path[data-n]") : null, m = p && c._steps ? c._steps[+p.dataset.n] : null;
+    if(!m){ hide(); return; }
+    if(tip.dataset.n !== p.dataset.n){
+      tip.dataset.n = p.dataset.n;
+      tip.textContent = (m.label ? m.label + "\n" : "") + tipText(m, c._ftp, c._pace);
+      clearHl();
+      if(m.line != null){ const row = box.querySelector(`.prog [data-l="${m.line}"]`); if(row) row.classList.add("hl"); }
+    }
+    tip.hidden = false;
+    const r = c.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(ev.clientX - r.left - tip.offsetWidth / 2, r.width - tip.offsetWidth)) + "px";
+    tip.style.top = (ev.clientY - r.top - tip.offsetHeight - 12) + "px";
+  };
+  ["pointermove", "pointerdown"].forEach(n => box.addEventListener(n, over));
+  box.addEventListener("pointerleave", hide);
+  box.addEventListener("toggle", ev => { if(ev.target.id === "nextprog"){ NEXT_OPEN = ev.target.open; store.set("si_nextopen", NEXT_OPEN ? "1" : "0"); } }, true); // état replié/déplié mémorisé
+})();
 $("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkind").value); loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }); };
 
 // ---------- Graphe de la séance ----------
@@ -3769,7 +3911,7 @@ function plannedSteps(e, ftp){
         let a = pct(pw, "a"), b = pct(pw, "b");
         if(a == null){ a = b = 60; }
         if(b == null) b = a;
-        if(d > 0) out.push({d, a, b});
+        if(d > 0) out.push({d, a, b, text: st.text || ""});
       }
     };
     steps = []; walk(doc.steps, steps);
@@ -4016,6 +4158,7 @@ async function calFetch(m){
 async function loadCal(fresh){
   if(!KEY()) return;
   if(fresh || CAL_CACHE_KEY !== KEY()){ Object.keys(CAL_CACHE).forEach(k => delete CAL_CACHE[k]); CAL_CACHE_KEY = KEY(); }
+  if(fresh && widgets.includes("next")) loadNext().catch(e => { $("nextbox").textContent = t("errI", errText(e)); });
   const m = CAL.m, c = CAL_CACHE[m]; let sig = "";
   if(c){ CAL.ev = mergeCal(c.ev, c.acts); CAL.acts = c.acts; sig = calSig(CAL.ev, CAL.acts); renderCal(); } // affichage immédiat depuis le cache
   const r = await calFetch(m);
@@ -5071,16 +5214,16 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
 // --- Widgets visibles de la colonne de droite (réglages) ---
-const WIDGETS = ["cal", "fit", "last", "load", "best", "wx"];
+const WIDGETS = ["cal", "next", "fit", "last", "load", "best", "wx"], WDEF = ["cal", "next", "fit", "last", "wx"];
 let widgets = [];
 function loadWidgets(){
   const raw = store.get("si_widgets");
   let v = null;
   try{ v = raw ? JSON.parse(raw) : null; }catch(e){ v = null; }
   // la météo (ajoutée ensuite) est activée une fois pour les utilisateurs existants ; ils peuvent la masquer dans les réglages
-  const wxNew = !store.get("si_wxinit");
-  widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) : WIDGETS.indexOf(k) < 3 || k === "wx");
-  if(wxNew){ if(v) store.set("si_widgets", JSON.stringify(widgets)); store.set("si_wxinit", "1"); }
+  const wxNew = !store.get("si_wxinit"), nxNew = !store.get("si_nxinit"); // « prochaine séance » : activée une fois pour les utilisateurs existants
+  widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) || (k === "next" && nxNew) : WDEF.includes(k));
+  if(wxNew || nxNew){ if(v) store.set("si_widgets", JSON.stringify(widgets)); store.set("si_wxinit", "1"); store.set("si_nxinit", "1"); }
 }
 function applyWidgets(){
   WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
@@ -5094,7 +5237,11 @@ function sanitizeOrder(v){
   const a = Array.isArray(v) ? v.filter((x, i) => WIDGETS.includes(x) && v.indexOf(x) === i) : [];
   return [...a, ...WIDGETS.filter(k => !a.includes(k))]; // les clés manquantes sont ajoutées à la fin
 }
-function loadOrder(){ let v = null; try{ const r = store.get("si_worder"); v = r ? JSON.parse(r) : null; }catch(e){ v = null; } WORDER = sanitizeOrder(v); }
+function loadOrder(){
+  let v = null; try{ const r = store.get("si_worder"); v = r ? JSON.parse(r) : null; }catch(e){ v = null; }
+  WORDER = sanitizeOrder(v);
+  if(Array.isArray(v) && !v.includes("next")){ WORDER = WORDER.filter(k => k !== "next"); WORDER.splice(WORDER.indexOf("cal") + 1, 0, "next"); store.set("si_worder", JSON.stringify(WORDER)); } // placé sous le calendrier la première fois
+}
 function updateMoveBtns(){
   const vis = WORDER.filter(x => widgets.includes(x));
   WORDER.forEach(k => {
@@ -5157,7 +5304,7 @@ function applyLang(){
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI();
-  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
