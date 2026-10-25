@@ -197,6 +197,9 @@ details.fold[open]>summary{margin-bottom:6px}
 .d .bar.h1{background:#5cb85c}.d .bar.h2{background:#f2a33a}.d .bar.h3{background:#d6336c}
 .d.now span{color:var(--ink);font-weight:600}
 #zonbox,#heatbox{position:relative}
+.rdy{padding:8px 10px;margin:8px 0;border-left:5px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;line-height:1.4}
+.rdy.ok{border-left-color:var(--ok)}.rdy.mid{border-left-color:#f2a33a}.rdy.low{border-left-color:var(--err)}
+.rdy small{display:block;margin-top:3px;color:var(--mute);font-size:.78rem}
 #tourov{position:fixed;inset:0;z-index:1500;background:transparent}
 #tourhl{position:fixed;z-index:1501;border-radius:10px;pointer-events:none;box-shadow:0 0 0 9999px rgba(8,14,20,.62),0 0 0 2px var(--acc);transition:top .2s,left .2s,width .2s,height .2s}
 #tourhl.none{box-shadow:0 0 0 9999px rgba(8,14,20,.62)}
@@ -785,7 +788,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 
 <input id="cmpname" type="search" style="display:none;margin-top:12px" data-ia="placeholder:cmpNamePh;aria-label:cmpNamePh">
 <div id="cmptable"></div>
-<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpplot" class="hint" style="margin:0" data-i="cmpPlot"></label><select id="cmpplot"><option value="ef" data-i="cmpPlEf"></option><option value="pw" data-i="cmpPlPw"></option><option value="hr" data-i="cmpPlHr"></option></select><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="3" selected></option><option value="5"></option><option value="7"></option><option value="10"></option></select></div>
+<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpplot" class="hint" style="margin:0" data-i="cmpPlot"></label><select id="cmpplot"><option value="ef" data-i="cmpPlEf"></option><option value="pw" data-i="cmpPlPw"></option><option value="hr" data-i="cmpPlHr"></option></select><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="auto" data-i="cmpFtAuto" selected></option><option value="1" data-i="cmpFt1"></option><option value="2" data-i="cmpFt2"></option><option value="3" data-i="cmpFt3"></option></select></div>
 <div id="cmptip" style="display:none"></div>
 <div id="cmpchart"></div>
 <div class="hint" id="cmpinfo" role="status"></div>
@@ -987,7 +990,7 @@ pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissa
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
 docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
 title:["PaceForge","PaceForge"],
-subtitle:["Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.","Forge ta prochaine séance : décris-la, laisse l'IA la construire, puis envoie-la directement dans intervals.icu."],
+subtitle:["Forge your next session from the library, the editor or AI, then send it straight to intervals.icu.","Forge ta prochaine séance avec la bibliothèque, l'éditeur ou l'IA, puis envoie-la directement dans intervals.icu."],
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
 more:["More","Plus"], contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
 provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
@@ -1116,10 +1119,18 @@ tr4T:["Manual editor","Éditeur manuel"], tr4:["Write or tweak a workout step by
 tr5T:["Plan builder","Plan d'entraînement"], tr5:["Build a multi-week plan for a goal such as base, FTP or VO₂max. Sessions come from the library and are spread over the days you choose.","Construis un plan sur plusieurs semaines pour un objectif (base, FTP, VO₂max…). Les séances viennent de la bibliothèque et sont réparties sur les jours choisis."],
 tr6T:["Compare past sessions","Comparer des séances passées"], tr6:["Describe a shape such as 10x1'/1' and PaceForge finds matching sessions in your history and overlays watts, heart rate and cadence.","Décris une forme comme 10x1'/1' : PaceForge retrouve les séances correspondantes dans ton historique et superpose puissance, fréquence cardiaque et cadence."],
 tr7T:["Calendar","Calendrier"], tr7:["Your intervals.icu calendar: planned and completed sessions. Click a day to see details or edit a planned workout.","Ton calendrier intervals.icu : séances prévues et réalisées. Clique sur un jour pour voir le détail ou modifier une séance prévue."],
-tr8T:["Next planned workout","Prochaine séance planifiée"], tr8:["The next session on your calendar, with its steps charted and the full programme one click away.","La prochaine séance de ton calendrier, avec ses étapes en graphique et le programme complet à portée de clic."],
+tr8T:["Next planned workout","Prochaine séance planifiée"], tr8:["The next session on your calendar, with its steps charted and the full programme one click away. When it is planned for today, a readiness hint compares it with your form, HRV, resting HR and sleep.","La prochaine séance de ton calendrier, avec ses étapes en graphique et le programme complet à portée de clic. Quand elle est prévue aujourd'hui, un conseil de récupération la compare à ta forme, ta VFC, ta FC de repos et ton sommeil."],
 tr9T:["Fitness and training load","Forme et charge"], tr9:["Fitness, fatigue and form over time, your last workout with its power and heart-rate curves, and the last two weeks of load.","Forme, fatigue et fraîcheur dans le temps, ta dernière séance avec ses courbes de puissance et de FC, et la charge des deux dernières semaines."],
 tr10T:["Zones and year view","Zones et vue annuelle"], tr10:["Time in each zone over recent weeks, and a heatmap of your daily load over the last year to spot gaps and consistency.","Le temps passé dans chaque zone ces dernières semaines, et une carte de chaleur de ta charge quotidienne sur un an pour repérer les trous et la régularité."],
 tr11T:["Settings","Réglages"], tr11:["Add your AI provider and intervals.icu keys here, and choose which sidebar widgets to show. You can also move widgets up or down from their headers.","Renseigne ici ton fournisseur d'IA et tes clés intervals.icu, et choisis les widgets à afficher. Tu peux aussi les monter ou descendre depuis leur en-tête."],
+rdHL:["Hard session planned, but readiness looks low ({0}). Consider easing it or moving it.","Séance dure prévue, mais la récupération semble basse ({0}). Pense à l'alléger ou à la décaler."],
+rdHM:["Hard session planned and one readiness signal is off ({0}). Warm up well and adjust if it feels heavy.","Séance dure prévue et un signal de récupération est au rouge ({0}). Échauffe-toi bien et adapte si tu as les jambes lourdes."],
+rdHO:["Hard session planned and readiness looks good: go for it.","Séance dure prévue et la récupération semble bonne : fonce."],
+rdOL:["Readiness looks low ({0}): an easy session or a rest day would suit today better.","La récupération semble basse ({0}) : une séance facile ou du repos conviendrait mieux aujourd'hui."],
+rdOM:["One readiness signal is off ({0}). Listen to how you feel.","Un signal de récupération est au rouge ({0}). Écoute tes sensations."],
+rdOO:["Readiness looks good for today's session.","La récupération semble bonne pour la séance du jour."],
+rdrForm:["form {0}","forme {0}"], rdrHrv:["HRV {0} % below usual","VFC {0} % sous la normale"], rdrRhr:["resting HR {0} bpm above usual","FC repos {0} bpm au-dessus de la normale"], rdrSleep:["only {0} of sleep","seulement {0} de sommeil"],
+rdHrv:["HRV {0} ms (usual {1})","VFC {0} ms (normale {1})"], rdRhr:["Resting HR {0} (usual {1})","FC repos {0} (normale {1})"], rdSleep:["Sleep {0}","Sommeil {0}"],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
@@ -1162,7 +1173,9 @@ cmpNres:["{0} sessions roughly matching this shape — top ones are pre-selected
 cmpPerRep:["Overlay rep by rep (one work+recovery cycle = full width)","Superposer répétition par répétition (un cycle effort+récupération = toute la largeur)"],
 cmpW:["Power","Puissance"], cmpH:["Heart rate","Fréquence cardiaque"], cmpC:["Cadence","Cadence"],
 cmpMax:["max {0}","max {0}"],
-cmpMa:["Moving average over","Moyenne mobile sur"], cmpMaN:["{0} sessions","{0} séances"],
+cmpMa:["Trend line","Courbe de tendance"], cmpFtAuto:["Best fit (auto)","Meilleur ajustement (auto)"], cmpFt1:["Linear","Linéaire"], cmpFt2:["Quadratic","Quadratique"], cmpFt3:["Cubic","Cubique"],
+cmpDg0:["constant","constante"], cmpDg1:["linear","linéaire"], cmpDg2:["quadratic","quadratique"], cmpDg3:["cubic","cubique"], cmpFitLeg:["polynomial fit: {0}","ajustement polynomial : {0}"], cmpFitV:["fit","ajustement"],
+cmpInfoF:["{0} sessions · average {1} · {2} fit (R² {3}) · fitted change over the period {4}","{0} séances · moyenne {1} · ajustement {2} (R² {3}) · évolution ajustée sur la période {4}"], cmpInfoN:["{0} sessions · average {1} · not enough sessions for a trend line","{0} séances · moyenne {1} · pas assez de séances pour une courbe de tendance"],
 cmpEfY:["W/HR (avg power ÷ avg heart rate over the efforts)","W/FC (puissance moy. ÷ FC moy. sur les efforts)"], cmpEfMa:["moving average ({0} sessions)","moyenne mobile ({0} séances)"],
 cmpEfInfo:["{0} sessions · average W/HR {1} · latest moving average {2}","{0} séances · W/FC moyen {1} · dernière moyenne mobile {2}"],
 ftpInfoTip:["Information only in % FTP mode: intervals.icu applies its own FTP. Choose W to use this one.","Indicatif en mode % FTP : intervals.icu applique sa propre FTP. Choisis W pour utiliser celle-ci."],
@@ -1927,14 +1940,15 @@ let NEXT_OPEN = store.get("si_nextopen") === "1";
 async function loadNext(){
   if(!KEY()) return;
   const tok = ++NEXT.tok, today = iso(new Date());
-  const [evs, acts] = await Promise.all([
+  const [evs, acts, well] = await Promise.all([
     icu(`/events?oldest=${today}&newest=${daysAgo(-60)}&category=WORKOUT`),
-    icu(`/activities?oldest=${today}&newest=${today}`).catch(() => [])
+    icu(`/activities?oldest=${today}&newest=${today}`).catch(() => []),
+    icu(`/wellness?oldest=${daysAgo(8)}&newest=${today}`).catch(() => []) // pour le conseil de récupération
   ]);
   if(tok !== NEXT.tok) return; // une réponse plus récente est déjà arrivée
   // même règle que le calendrier : on ignore les séances d'un jour déjà réalisé, et celles déjà liées à une activité
   NEXT.ev = mergeCal(evs, acts).filter(e => !e.paired_activity_id).sort((x, y) => (x.start_date_local || "").localeCompare(y.start_date_local || ""))[0] || null;
-  NEXT.loaded = true; renderNext(); updateIcuLinks();
+  NEXT.well = Array.isArray(well) ? well : []; NEXT.loaded = true; renderNext(); updateIcuLinks();
 }
 refreshBtn("rnext", () => loadNext().catch(e => { $("nextbox").textContent = t("errI", errText(e)); }));
 $("nextedit").onclick = () => { if(NEXT.ev) calEdit(NEXT.ev); };
@@ -1984,6 +1998,24 @@ function nextProgHtml(e, steps, ftp, pace){
   }).join("");
   return steps.map(s => { const r = Math.abs(s.a - s.b) > 0.5, l = `- ${dt(s.d)} ${r ? Math.round(s.a) + "-" + Math.round(s.b) : Math.round(s.a)}%`; return `<div>${esc(l)}${ann(l)}</div>`; }).join("");
 }
+// Conseil de récupération (séance du jour) : forme (CTL − ATL), VFC, FC de repos et sommeil d'aujourd'hui comparés aux 7 jours précédents
+function readinessHtml(hard){
+  const W = (NEXT.well || []).filter(w => w && w.id), today = iso(new Date()), td = W.find(w => w.id === today);
+  if(!td) return "";
+  const base = key => { const v = W.filter(w => w.id < today && w[key] > 0).map(w => w[key]); return v.length >= 3 ? v.reduce((a, b) => a + b, 0) / v.length : 0; };
+  const why = [], det = [];
+  const fw = W.filter(w => w.ctl != null).sort((a, b) => a.id < b.id ? -1 : 1).pop();
+  if(fw){ const f = Math.round(fw.ctl - (fw.atl || 0)); det.push(t("fForm") + " " + (f > 0 ? "+" : "") + f); if(f <= -25) why.push(t("rdrForm", f)); }
+  const h = td.hrv > 0 ? td.hrv : 0, hb = base("hrv");
+  if(h){ det.push(t("rdHrv", Math.round(h), hb ? Math.round(hb) : "–")); if(hb && h <= hb * 0.9) why.push(t("rdrHrv", Math.round((1 - h / hb) * 100))); }
+  const r = td.restingHR > 0 ? td.restingHR : 0, rb = base("restingHR");
+  if(r){ det.push(t("rdRhr", Math.round(r), rb ? Math.round(rb) : "–")); if(rb && r >= rb * 1.05) why.push(t("rdrRhr", Math.round(r - rb))); }
+  const sl = td.sleepSecs > 0 ? td.sleepSecs : 0;
+  if(sl){ det.push(t("rdSleep", hm(sl))); if(sl < 6 * 3600) why.push(t("rdrSleep", hm(sl))); }
+  if(!det.length) return "";
+  const lvl = why.length >= 2 ? "low" : why.length === 1 ? "mid" : "ok", key = "rd" + (hard ? "H" : "O") + (lvl === "low" ? "L" : lvl === "mid" ? "M" : "O");
+  return `<div class="rdy ${lvl}">${esc(t(key, why.join(", ")))}<small>${esc(det.join(" · "))}</small></div>`;
+}
 function renderNext(){
   const box = $("nextbox"), e = NEXT.ev, eb = $("nextedit");
   eb.hidden = true;
@@ -2008,7 +2040,10 @@ function renderNext(){
   const load = e.icu_training_load > 0 ? e.icu_training_load : (st && !pace ? st.tss : 0);
   if(load) kv.push([t("lLoad"), Math.round(load)]);
   const prog = ((e.description || "").trim() || real) ? nextProgHtml(e, steps, ftp, pace) : "";
+  // séance « dure » : IF ≥ 0,85 d'après les étapes, sinon charge ≥ 70 par heure
+  const hard = st && !pace ? st.iff >= 0.85 : !!(load && total && load / (total / 3600) >= 70);
   box.innerHTML = `<div class="lt">${esc(e.name || actT(sport))}</div><div class="hint">${esc(rel)} · ${esc(when)} · ${esc(actT(sport))}</div>` +
+    (diff <= 0 ? readinessHtml(hard) : "") +
     (steps.length ? `<div class="chart">${nextChartSvg(meta, (e.name || "") + " " + hm(total))}<div class="tip" hidden></div></div>` : "") +
     (real && !pace ? zoneBar(zoneTimes(steps)) : "") +
     (kv.length ? `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>` : "") +
@@ -3946,26 +3981,60 @@ function cmpMiniLoad(box){
   const io = CMP.io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ io.unobserve(en.target); fill(en.target); } }), {rootMargin: "200px"});
   els.forEach(el => io.observe(el));
 }
-// --- Progression dans le temps : un point par séance sélectionnée (date → W/FC), moyenne mobile en surimpression ---
+// --- Progression dans le temps : un point par séance sélectionnée (date → W/FC), courbe de tendance polynomiale en surimpression ---
 // W/FC = puissance moyenne des efforts ÷ FC moyenne des efforts (même valeur que la colonne du tableau).
 const CMP_PW = "#3b82c9", CMP_HR = "#d6336c";
 const CMP_NICE = [1, 2, 5, 10, 20, 25, 50, 100];
+// Régression polynomiale par moindres carrés (x normalisé sur [0,1]) ; le degré « auto » minimise le critère AICc, qui pénalise le surajustement
+function cmpPolyFit(xs, ys, d){
+  const m = d + 1, A = Array.from({length: m}, () => new Array(m + 1).fill(0));
+  for(let i = 0; i < xs.length; i++){
+    const pw = [1]; for(let j = 1; j <= 2 * d; j++) pw[j] = pw[j - 1] * xs[i];
+    for(let r = 0; r < m; r++){ for(let c = 0; c < m; c++) A[r][c] += pw[r + c]; A[r][m] += pw[r] * ys[i]; }
+  }
+  for(let c = 0; c < m; c++){ // élimination de Gauss avec pivot partiel
+    let q = c; for(let r = c + 1; r < m; r++) if(Math.abs(A[r][c]) > Math.abs(A[q][c])) q = r;
+    [A[c], A[q]] = [A[q], A[c]]; if(Math.abs(A[c][c]) < 1e-12) return null;
+    for(let r = c + 1; r < m; r++){ const f = A[r][c] / A[c][c]; for(let k = c; k <= m; k++) A[r][k] -= f * A[c][k]; }
+  }
+  const b = new Array(m);
+  for(let r = m - 1; r >= 0; r--){ let v = A[r][m]; for(let k = r + 1; k < m; k++) v -= A[r][k] * b[k]; b[r] = v / A[r][r]; }
+  return b;
+}
+const cmpPoly = (b, u) => b.reduceRight((a, c) => a * u + c, 0);
+function cmpFit(P, span, mode){
+  const n = P.length, xs = P.map(x => (x.tm - P[0].tm) / span), ys = P.map(x => x.m);
+  const distinct = new Set(xs.map(v => v.toFixed(6))).size; if(n < 2 || distinct < 2) return null;
+  const my = cmpAvg(ys), tss = ys.reduce((a, y) => a + (y - my) ** 2, 0);
+  const run = d => {
+    if(d > distinct - 1) return null;
+    const b = d === 0 ? [my] : cmpPolyFit(xs, ys, d); if(!b) return null;
+    const rss = ys.reduce((a, y, i) => a + (y - cmpPoly(b, xs[i])) ** 2, 0), k = d + 1, rr = Math.max(rss, tss * 1e-6, 1e-12);
+    return {b, d, r2: tss > 0 ? Math.max(0, 1 - rss / tss) : 0, aic: n - k - 1 > 0 ? n * Math.log(rr / n) + 2 * k + 2 * k * (k + 1) / (n - k - 1) : Infinity};
+  };
+  let best = null;
+  if(mode === "auto"){
+    for(let d = n >= 5 ? 0 : 1; d <= 3; d++){ const f = run(d); if(f && f.aic < Infinity && (!best || f.aic < best.aic)) best = f; }
+    if(!best) best = run(1); // trop peu de séances pour comparer les modèles : droite
+  } else best = run(Math.min(+mode || 1, Math.max(1, n - 2)));
+  if(!best) best = run(1);
+  return best && {...best, auto: mode === "auto", at: tm => cmpPoly(best.b, (tm - P[0].tm) / span)};
+}
 function cmpChart(){
   cmpTable();
   const box = $("cmpchart"), H = CMP.hits.filter(h => CMP.sel.has(h.a.id) && cmpNameOk(h));
   $("cmpnav").style.display = H.length ? "flex" : "none";
   if(!H.length){ box.innerHTML = ""; $("cmpinfo").textContent = ""; return; }
-  const k = parseInt($("cmpma").value, 10) || 3, met = $("cmpplot").value || "ef";
-  [...$("cmpma").options].forEach(o => o.textContent = t("cmpMaN", o.value));
+  const fm = $("cmpma").value || "auto", met = $("cmpplot").value || "ef";
   const M = {ef: {u: "W/HR", y: "cmpEfY", f: v => v.toFixed(2), get: x => x.hr ? x.pw / x.hr : 0},
     pw: {u: "W", y: "cmpPwY", f: v => String(Math.round(v)), get: x => x.pw},
     hr: {u: "bpm", y: "cmpHrY", f: v => String(Math.round(v)), get: x => x.hr}}[met] || null;
   const P = H.map(h => { const hr = h.s.hr ? winMean(h, "hr") : 0; const x = {h, tm: new Date(h.a.start_date_local).getTime(), pw: h.avgP, hr}; x.m = M.get(x); return x; })
     .filter(x => x.m > 0 && isFinite(x.tm)).sort((x, y) => x.tm - y.tm);
   if(!P.length){ box.innerHTML = `<p class="hint">${esc(t("cmpNoHr"))}</p>`; $("cmpinfo").textContent = ""; return; }
-  P.forEach((x, i) => { x.ma = cmpAvg(P.slice(Math.max(0, i - k + 1), i + 1).map(y => y.m)); }); // moyenne mobile « arrière » sur k séances
   const t0 = P[0].tm, span = Math.max(P[P.length - 1].tm - t0, 864e5), xOf = tm => P.length === 1 ? 400 : (.03 + .94 * (tm - t0) / span) * 800;
-  const vals = P.flatMap(x => [x.m, x.ma]), mn = Math.min(...vals), mx = Math.max(...vals);
+  const FIT = cmpFit(P, span, fm), curve = FIT ? Array.from({length: 81}, (_, i) => ({tm: t0 + span * i / 80, v: FIT.at(t0 + span * i / 80)})) : [];
+  const vals = [...P.map(x => x.m), ...curve.map(c => c.v)], mn = Math.min(...vals), mx = Math.max(...vals);
   let lo, st;
   if(met === "ef"){ lo = Math.floor((mn - .02) / .05) * .05; st = Math.max(.05, Math.ceil((mx - lo) / 4 / .05 - 1e-9) * .05); }
   else{
@@ -3977,23 +4046,23 @@ function cmpChart(){
   const yOf = v => 214 - Math.max(0, Math.min(1, (v - lo) / (hi - lo))) * 208;
   let svg = "";
   for(let i = 0; i <= 4; i++){ const y = (214 - i / 4 * 208).toFixed(1); svg += `<line x1="0" x2="800" y1="${y}" y2="${y}" style="stroke:var(--line)" vector-effect="non-scaling-stroke"${i && i < 4 ? ' stroke-dasharray="4 4"' : ""}/>`; }
-  if(P.length > 1) svg += `<path d="${P.map((x, i) => (i ? "L" : "M") + xOf(x.tm).toFixed(1) + " " + yOf(x.ma).toFixed(1)).join("")}" stroke="${CMP_HR}" stroke-width="2.5"/>`;
+  if(curve.length) svg += `<path d="${curve.map((c, i) => (i ? "L" : "M") + xOf(c.tm).toFixed(1) + " " + yOf(c.v).toFixed(1)).join("")}" stroke="${CMP_HR}" stroke-width="2.5" fill="none"/>`;
   svg += P.map(x => `<path d="M${xOf(x.tm).toFixed(1)} ${yOf(x.m).toFixed(1)}h.01" stroke="${CMP_PW}" stroke-width="9" stroke-opacity=".8"/>`).join("");
-  if(P.length === 1) svg += `<path d="M400 ${yOf(P[0].ma).toFixed(1)}h.01" stroke="${CMP_HR}" stroke-width="5"/>`;
   svg += `<line class="cmp-cur" x1="0" x2="0" y1="0" y2="220" stroke="#888" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>`;
   const dfmt = tm => new Date(tm).toLocaleDateString(loc(), {day: "numeric", month: "short", year: span > 300 * 864e5 ? "2-digit" : undefined});
   const ticks = [0, 1, 2, 3, 4].map(i => `<span class="yt yl" style="top:${((214 - i / 4 * 208) / 220 * 100).toFixed(1)}%">${M.f(lo + st * i)}</span>`).join("");
   const xl = P.length === 1 ? `<span style="left:50%;transform:translateX(-50%)">${dfmt(t0)}</span>` : [0, .25, .5, .75, 1].map(f => `<span style="left:${f * 100}%;transform:translateX(${-f * 100}%)">${dfmt(t0 + f * span)}</span>`).join("");
   box.innerHTML = `<div class="cmp-pr">${ticks}<svg viewBox="0 0 800 220" preserveAspectRatio="none">${svg}</svg></div><div class="cmp-xa">${xl}</div>` +
-    `<div class="cmp-leg"><span><i style="background:${CMP_PW};border-radius:50%"></i>${esc(t(M.y))}</span><span><i style="background:${CMP_HR};height:3px"></i>${esc(t("cmpEfMa", k))}</span></div>`;
-  $("cmpinfo").textContent = t("cmpInfoG", P.length, M.f(cmpAvg(P.map(x => x.m))) + " " + M.u, M.f(P[P.length - 1].ma) + " " + M.u);
+    `<div class="cmp-leg"><span><i style="background:${CMP_PW};border-radius:50%"></i>${esc(t(M.y))}</span>${FIT ? `<span><i style="background:${CMP_HR};height:3px"></i>${esc(t("cmpFitLeg", t("cmpDg" + FIT.d) + (FIT.auto ? " (auto)" : "")))}</span>` : ""}</div>`;
+  const avgTxt = M.f(cmpAvg(P.map(x => x.m))) + " " + M.u, dlt = FIT ? FIT.at(t0 + span) - FIT.at(t0) : 0;
+  $("cmpinfo").textContent = FIT ? t("cmpInfoF", P.length, avgTxt, t("cmpDg" + FIT.d), FIT.r2.toFixed(2), (dlt > 0 ? "+" : dlt < 0 ? "\u2212" : "") + M.f(Math.abs(dlt)) + " " + M.u) : t("cmpInfoN", P.length, avgTxt);
   box.onpointermove = e => {
     const sv = e.target.closest ? e.target.closest("svg") : null, tip = $("cmptip");
     if(!sv){ box.onpointerleave(); return; }
     const r = sv.getBoundingClientRect(), px = e.clientX - r.left;
     let best = null, bd = 1e9; P.forEach(x => { const d = Math.abs(xOf(x.tm) / 800 * r.width - px); if(d < bd){ bd = d; best = x; } });
     if(!best || bd > 22){ box.onpointerleave(); return; }
-    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${M.f(best.m)}</b> ${M.u} \u00b7 <span style="color:var(--mute)">${esc(t("cmpMaN", k))}: ${M.f(best.ma)}</span></div><div style="color:var(--mute)">${Math.round(best.pw)} W \u00b7 ${best.hr ? Math.round(best.hr) + " bpm" : "\u2013"}</div>`;
+    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${M.f(best.m)}</b> ${M.u} \u00b7 ${FIT ? `<span style="color:var(--mute)">${esc(t("cmpFitV"))}: ${M.f(FIT.at(best.tm))}</span>` : ""}</div><div style="color:var(--mute)">${Math.round(best.pw)} W \u00b7 ${best.hr ? Math.round(best.hr) + " bpm" : "\u2013"}</div>`;
     tip.style.display = "block";
     const tx = e.clientX + 16 + tip.offsetWidth > window.innerWidth ? e.clientX - 16 - tip.offsetWidth : e.clientX + 16;
     tip.style.left = Math.max(4, tx) + "px"; tip.style.top = Math.max(4, Math.min(e.clientY + 12, window.innerHeight - tip.offsetHeight - 4)) + "px";
@@ -4010,13 +4079,13 @@ $("cmpper").onchange = () => store.set("si_cmpper", $("cmpper").value);
 $("cmptype").onchange = () => store.set("si_cmptype", $("cmptype").value);
 $("cmpq").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); if(!CMP.busy) $("rcmp").click(); } };
 $("cmpname").oninput = () => cmpChart();
-$("cmpma").onchange = () => { store.set("si_cmpma", $("cmpma").value); cmpChart(); };
+$("cmpma").onchange = () => { store.set("si_cmpfit", $("cmpma").value); cmpChart(); };
 { // préférences sauvegardées
   const p = store.get("si_cmpper"); if(p) $("cmpper").value = p;
   const ty = store.get("si_cmptype"); if(ty && $("cmptype").querySelector(`option[value="${ty}"]`)) $("cmptype").value = ty;
   const pl = store.get("si_cmpplace"); if(pl === "in" || pl === "out") $("cmpplace").value = pl;
   const q = store.get("si_cmpq"); if(q) $("cmpq").value = q;
-  const mw = store.get("si_cmpma"); if(mw && $("cmpma").querySelector(`option[value="${mw}"]`)) $("cmpma").value = mw;
+  const mw = store.get("si_cmpfit"); if(mw && $("cmpma").querySelector(`option[value="${mw}"]`)) $("cmpma").value = mw;
   $("cmpq").addEventListener("change", () => store.set("si_cmpq", $("cmpq").value));
 }
 
