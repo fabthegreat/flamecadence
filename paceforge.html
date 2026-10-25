@@ -230,6 +230,10 @@ h2.ic{display:flex;align-items:center;gap:8px}
 @media (max-width:560px){.mode:not(.cfg-tabs) button[aria-selected="true"]{gap:6px}.mode:not(.cfg-tabs) button[aria-selected="true"] span{display:inline}}
 @media (max-width:560px){.mode button{gap:0;padding:9px 4px}.mode button span{display:none}}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
+/* survol / focus clavier d'un onglet non actif : l'icône est mise en valeur (couleur d'accent, plus grande, trait plus épais) */
+.mode button svg{transition:transform .15s,stroke-width .15s}
+.mode button:not([aria-selected="true"]):hover,.mode button:not([aria-selected="true"]):focus-visible{background:var(--bg);color:var(--acc)}
+.mode button:not([aria-selected="true"]):hover svg,.mode button:not([aria-selected="true"]):focus-visible svg{transform:scale(1.18);stroke-width:2.4}
 .stp{display:inline-flex;align-items:center;gap:4px}
 .stp input{width:64px;padding:7px 4px;text-align:center;-moz-appearance:textfield;appearance:textfield}
 .stp input::-webkit-outer-spin-button,.stp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
@@ -249,6 +253,31 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .plan-prev{flex:0 0 84px;border-radius:4px;overflow:hidden}
 .plan-prev .pps{display:block;height:26px;border-radius:4px;background:var(--card);overflow:hidden}
 .plan-prev svg{display:block;width:100%;height:100%}
+/* ---- présentation du plan ---- */
+.pl-sum{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
+.pl-sum>div{flex:1 1 80px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);text-align:center}
+.pl-sum b{display:block;font-size:1.3rem;line-height:1.2;color:var(--acc)}
+.pl-sum span{font-size:.7rem;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.pl-ct{margin:12px 0 0;font-size:.72rem;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.06em}
+.pl-week{margin:14px 0;border:1px solid var(--line);border-radius:12px;background:var(--card);overflow:hidden}
+.pl-week.rec{border-style:dashed}
+.pl-wh{display:flex;align-items:center;justify-content:space-between;gap:6px 10px;flex-wrap:wrap;padding:9px 14px;background:var(--bg);border-left:4px solid var(--acc)}
+.pl-week.rec .pl-wh{border-left-color:var(--ok)}
+.pl-wn{font-weight:700;font-size:1rem}
+.pl-bs{display:flex;gap:6px;flex-wrap:wrap}
+.pl-b{display:inline-block;padding:2px 9px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:.74rem;color:var(--mute);white-space:nowrap}
+.pl-b.rec{color:var(--ok);border-color:var(--ok)}
+.pl-row{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:9px 14px;border-top:1px solid var(--line)}
+.pl-row:hover{background:var(--bg)}
+.pl-date{flex:0 0 46px;text-align:center;line-height:1.1}
+.pl-date small{display:block;font-size:.62rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.pl-date b{display:block;font-size:1.3rem;color:var(--ink)}
+.pl-main{flex:1 1 160px;min-width:0}
+.pl-name{font-weight:600;font-size:.92rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-meta{margin-top:2px;font-size:.76rem;color:var(--mute)}
+.pl-row .plan-prev{flex:0 0 110px}
+.pl-act{display:flex;gap:4px;flex:none}
+@media (max-width:560px){.pl-row .plan-prev{flex:1 1 90px}.pl-act{margin-left:auto}}
 .pwk{display:flex;align-items:flex-end;gap:4px;height:84px;margin:10px 0 4px;padding:6px 6px 0;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
 .pwk>div{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:.65rem;color:var(--mute)}
 .pwk i{display:block;width:100%;max-width:34px;min-height:2px;border-radius:3px 3px 0 0;background:var(--acc)}
@@ -629,8 +658,17 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <label data-i="pHard" style="margin-top:12px;display:block"></label>
 <div id="phard" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
 <div class="hint" id="phardwarn" style="color:var(--err)" hidden></div>
-<div class="hint" data-i="pHint"></div>
+<div class="row one">
+<div><label for="pengine" data-i="pEngine"></label><select id="pengine"><option value="algo" data-i="pEngAlgo"></option><option value="ai" data-i="pEngAi"></option></select></div>
+</div>
+<div id="paibox" hidden>
+<label for="pnotes" data-i="pAiNotes" style="margin-top:8px;display:block"></label>
+<textarea id="pnotes" rows="3" maxlength="800" data-ia="placeholder:pAiPh"></textarea>
+<div class="hint" data-i="pAiHint"></div>
+</div>
+<div class="hint" id="phint" data-i="pHint"></div>
 <div class="actions"><button id="pgen" type="button" data-i="pGen"></button></div>
+<div class="hint" id="paisum" hidden></div>
 <div id="pbox" style="margin-top:10px"></div>
 <div class="hint" id="psum"></div>
 <button id="psend" type="button" hidden data-i="pSend"></button>
@@ -998,7 +1036,9 @@ tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder",
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
 pHint:["Workouts come from the library (in % of FTP). Load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is a recovery week (about half the load). Sessions are spread over the selected days, the longest ride on the last one.","Les séances viennent de la bibliothèque (en % de la FTP). La charge monte semaine après semaine ; une semaine sur 4, et la dernière des plans de 6 semaines ou plus, est une semaine de récupération (environ moitié moins de charge). Les séances sont réparties sur les jours choisis, la plus longue sur le dernier."],
-pGen:["Build plan","Générer le plan"], pEdit:["Edit this session","Modifier cette séance"], pEdBanner:["Editing plan session “{0}” ({1}). “Update the plan” applies your changes to it.","Modification de la séance du plan « {0} » ({1}). « Mettre à jour le plan » y applique tes changements."], pEdCancel:["Cancel editing","Annuler la modification"], pEdSave:["Update the plan","Mettre à jour le plan"], pEdDone:["Session updated in the plan.","Séance mise à jour dans le plan."], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
+pGen:["Build plan","Générer le plan"], pEngine:["Plan engine","Moteur du plan"], pEngAlgo:["Built-in algorithm","Algorithme intégré"], pEngAi:["AI coach (uses your AI settings)","Coach IA (utilise tes réglages IA)"], pAiNotes:["Notes for the AI coach (optional)","Notes pour le coach IA (optionnel)"], pAiPh:["e.g. race on May 18, knee tender: no big-gear work, keep Sundays easy…","ex. course le 18 mai, genou sensible : pas de gros braquet, dimanches faciles…"],
+pAiHint:["The AI coach picks sessions from the same workout library, following your days, sessions per week, purpose and hard days. You can still preview, edit, swap or delete any session before uploading. Uses the provider and key from the AI settings.","Le coach IA choisit les séances dans la même bibliothèque, en respectant tes jours, le nombre de séances, l'objectif et les jours durs. Tu peux toujours prévisualiser, modifier, remplacer ou supprimer une séance avant l'envoi. Utilise le fournisseur et la clé des réglages IA."],
+pAiBuilding:["The AI coach is building your plan…","Le coach IA construit ton plan…"], pAiDone:["Plan built by the AI coach: {0} sessions in {1} s.","Plan construit par le coach IA : {0} séances en {1} s."], pAiPartial:["AI plan built with {0} valid sessions ({1} ignored: unknown workout, invalid date or too many in a week).","Plan IA construit avec {0} séances valides ({1} ignorées : séance inconnue, date invalide ou trop de séances dans la semaine)."], pAiBad:["The AI coach returned no usable session. Your current plan was kept: try again or use the built-in algorithm.","Le coach IA n'a renvoyé aucune séance exploitable. Ton plan actuel est conservé : réessaie ou utilise l'algorithme intégré."], pAiNote:["Coach's note: {0}","Note du coach : {0}"], pSumS:["sessions","séances"], pSumH:["hours","heures"], pSumW:["weeks","semaines"], pEdit:["Edit this session","Modifier cette séance"], pEdBanner:["Editing plan session “{0}” ({1}). “Update the plan” applies your changes to it.","Modification de la séance du plan « {0} » ({1}). « Mettre à jour le plan » y applique tes changements."], pEdCancel:["Cancel editing","Annuler la modification"], pEdSave:["Update the plan","Mettre à jour le plan"], pEdDone:["Session updated in the plan.","Séance mise à jour dans le plan."], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
 impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
@@ -4678,24 +4718,33 @@ function planBuild(){
       }
     }
   }
-  PLAN.items = items; PLAN.maxMin = maxMin; planRender();
+  PLAN.items = items; PLAN.maxMin = maxMin; $("paisum").hidden = true; planRender();
 }
 function planRender(){
   ppHide();
   if(PLAN.edit && !PLAN.items.includes(PLAN.edit)){ planEdEnd(); } // la séance éditée a disparu (suppression, nouveau plan)
   const L = PLAN.items, box = $("pbox"); if(!box) return;
   $("psend").hidden = !L.length;
-  if(!L.length){ box.innerHTML = ""; $("psum").textContent = ""; return; }
+  if(!L.length){ box.innerHTML = ""; $("psum").textContent = ""; $("paisum").hidden = true; return; }
   const fmt = new Intl.DateTimeFormat(lang, {weekday: "short", day: "numeric", month: "short"}), wk = {};
   L.forEach((x, i) => (wk[x.week] = wk[x.week] || []).push([x, i]));
   const wkTss = Object.keys(wk).map(k => ({k, tss: wk[k].reduce((s, [x]) => s + x.tss, 0), h: wk[k].reduce((s, [x]) => s + x.mins, 0) / 60, rec: !!wk[k][0][0].rec})), mxT = Math.max(1, ...wkTss.map(o => o.tss));
   const chartHtml = `<div class="pwk" role="img" aria-label="${esc(t("pChartT"))}">` + wkTss.map(o => `<div${o.rec ? ' class="rec"' : ""} title="${esc(t("pWeek", o.k) + " · " + o.h.toFixed(1) + " h · TSS " + Math.round(o.tss) + (o.rec ? " (" + t("pRecW") + ")" : ""))}"><i style="height:${(o.tss / mxT * 100).toFixed(1)}%"></i><span>${o.k}</span></div>`).join("") + "</div>";
-  box.innerHTML = chartHtml + Object.keys(wk).map(k => {
-    const a = wk[k], h = a.reduce((s, [x]) => s + x.mins, 0) / 60, tss = a.reduce((s, [x]) => s + x.tss, 0);
-    return `<div style="margin:10px 0 2px"><b>${esc(t("pWeek", k))}</b> <span class="badge">${h.toFixed(1)} h · TSS ${Math.round(tss)}</span></div>` + a.map(([x, i]) =>
-      `<div class="hint" style="display:flex;gap:8px;align-items:center;margin:3px 0"><span style="min-width:100px">${esc(fmt.format(new Date(x.date + "T12:00:00")))}</span><span style="flex:1">${esc(lang === "fr" ? x.w.name_fr : x.w.name_en)}</span><span class="plan-prev" data-pi="${i}" aria-hidden="true"><span class="pps">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span>${zoneBar(zoneTimes(parseWorkout(x.w.desc_en, $("psport").value, curFtp())), true)}</span><span>${Math.round(x.mins)}′ · ${Math.round(x.tss)}</span><button class="alt small icon" data-pedit="${i}" type="button" aria-label="${esc(t("pEdit"))}" title="${esc(t("pEdit"))}"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button><button class="alt small icon" data-pswap="${i}" type="button" aria-label="${esc(t("pSwap"))}" title="${esc(t("pSwap"))}"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><path d="M4 8h16M16 4l4 4-4 4M20 16H4M8 12l-4 4 4 4"/></svg></button><button class="alt small icon danger" data-pdel="${i}" type="button" aria-label="${esc(t("del"))}" title="${esc(t("del"))}"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button></div>`).join("");
+  const tot = {n: L.length, h: L.reduce((q, x) => q + x.mins, 0) / 60, tss: Math.round(L.reduce((q, x) => q + x.tss, 0))};
+  const fWd = new Intl.DateTimeFormat(lang, {weekday: "short"}), fMo = new Intl.DateTimeFormat(lang, {month: "short"});
+  const ico = (path, cls, key, attr) => `<button class="alt small icon${cls}" ${attr} type="button" aria-label="${esc(t(key))}" title="${esc(t(key))}"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:16px;height:16px">${path}</svg></button>`;
+  const sumHtml = `<div class="pl-sum"><div><b>${tot.n}</b><span>${esc(t("pSumS"))}</span></div><div><b>${tot.h.toFixed(1)}</b><span>${esc(t("pSumH"))}</span></div><div><b>${tot.tss}</b><span>TSS</span></div><div><b>${Object.keys(wk).length}</b><span>${esc(t("pSumW"))}</span></div></div>`;
+  box.innerHTML = sumHtml + `<div class="pl-ct">${esc(t("pChartT"))}</div>` + chartHtml + Object.keys(wk).map(k => {
+    const a = wk[k], h = a.reduce((q, [x]) => q + x.mins, 0) / 60, tss = a.reduce((q, [x]) => q + x.tss, 0), rec = !!a[0][0].rec;
+    return `<section class="pl-week${rec ? " rec" : ""}"><header class="pl-wh"><span class="pl-wn">${esc(t("pWeek", k))}</span><span class="pl-bs"><span class="pl-b">${h.toFixed(1)} h</span><span class="pl-b">TSS ${Math.round(tss)}</span>${rec ? `<span class="pl-b rec">${esc(t("pRecW"))}</span>` : ""}</span></header>` + a.map(([x, i]) => {
+      const d = new Date(x.date + "T12:00:00"), nm = lang === "fr" ? x.w.name_fr : x.w.name_en;
+      return `<div class="pl-row"><div class="pl-date"><small>${esc(fWd.format(d))}</small><b>${d.getDate()}</b><small>${esc(fMo.format(d))}</small></div><div class="pl-main"><div class="pl-name" title="${esc(nm)}">${esc(nm)}</div><div class="pl-meta">${Math.round(x.mins)}′ · TSS ${Math.round(x.tss)}</div></div><span class="plan-prev" data-pi="${i}" aria-hidden="true"><span class="pps">${workoutPreviewSvg(x.w.desc_en, $("psport").value, curFtp())}</span>${zoneBar(zoneTimes(parseWorkout(x.w.desc_en, $("psport").value, curFtp())), true)}</span><div class="pl-act">`
+        + ico('<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>', "", "pEdit", `data-pedit="${i}"`)
+        + ico('<path d="M4 8h16M16 4l4 4-4 4M20 16H4M8 12l-4 4 4 4"/>', "", "pSwap", `data-pswap="${i}"`)
+        + ico('<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/>', " danger", "del", `data-pdel="${i}"`) + `</div></div>`;
+    }).join("") + `</section>`;
   }).join("");
-  $("psum").textContent = t("pSum", L.length, (L.reduce((s, x) => s + x.mins, 0) / 60).toFixed(1), Math.round(L.reduce((s, x) => s + x.tss, 0)));
+  $("psum").textContent = "";
 }
 // ---- Agrandissement du mini-graphique au survol : blocs détaillés (durée, puissance, consigne) ----
 var PPOP = null, PPT = 0, PPM = null;
@@ -4833,8 +4882,11 @@ function planHardWarn(){
 // et jours durs limités aux séances de qualité (1 jusqu'à 3 séances, 2 au-delà), jamais le jour de la sortie longue.
 function planAutoDays(n){
   n = Math.min(7, Math.max(1, Math.round(n))); const g = 7 / n;
-  const wo = Array.from({length: n}, (_, i) => 6 - Math.min(6, Math.ceil(i * g - 1e-9))).sort((x, y) => x - y); // 0 = lundi … 6 = dimanche
-  const role = PROLES[n], hard = wo.filter((_, i) => role[i] === "K" || role[i] === "J"), val = w => (w + 1) % 7;
+  let wo = Array.from({length: n}, (_, i) => 6 - Math.min(6, Math.ceil(i * g - 1e-9))).sort((x, y) => x - y); // 0 = lundi … 6 = dimanche
+  const role = PROLES[n], val = w => (w + 1) % 7;
+  let hard = wo.filter((_, i) => role[i] === "K" || role[i] === "J");
+  // 4 séances : habitude de planification → séances dures mardi et jeudi, endurance le samedi, sortie longue le dimanche
+  if(n === 4){ wo = [1, 3, 5, 6]; hard = [1, 3]; }
   const setDays = (box, list) => box.querySelectorAll("input").forEach(i => { i.checked = list.includes(+i.value); });
   setDays($("pdays"), wo.map(val)); setDays($("phard"), hard.map(val)); planHardWarn();
 }
@@ -4848,7 +4900,120 @@ $("phard").addEventListener("change", e => { // un jour dur est forcément un jo
   const i = e.target; if(i.checked){ const d = $("pdays").querySelector(`input[value="${i.value}"]`); if(d) d.checked = true; } planHardWarn();
 });
 const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; const f = ftpFor($("psport").value); return $("punit").value === "w" && f > 0 ? toWatts(d, f) : d; }; // % de FTP ou watts (FTP du type de sortie)
-$("pgen").onclick = planBuild;
+
+// ---------- Plan construit par le coach IA (option) : mêmes fournisseurs/clés que la génération de séance ----------
+// L'IA ne crée pas de séances : elle choisit dans la bibliothèque (ids courts) et place les séances sur les dates autorisées.
+// Le résultat est validé (id connu, date autorisée, 1 séance/jour, max n par semaine) puis passe dans le même PLAN.items que l'algorithme.
+const PAI_SYSTEM = `You are an expert cycling coach. You build a multi-week training plan by choosing sessions from a fixed catalogue.
+Rules:
+- Use ONLY workouts from the catalogue, referenced by their id (e.g. "w12"). Never invent a workout.
+- Use ONLY dates from the allowed dates list, at most one session per date, and exactly the requested number of sessions per week (fewer only when the week offers fewer dates).
+- Progressive overload: weekly load builds week after week; every 4th week, and the last week of plans of 6+ weeks, is a recovery week (about 60-65% of the previous weekly TSS, no hard sessions).
+- Follow the purpose of the plan. Vary the workouts: do not reuse an id unless the catalogue is too small.
+- Never put two hard sessions (threshold, vo2max, sprint, force) on consecutive days. Put the longest endurance ride on the last training day of the week. If hard days are specified, put the quality sessions on them.
+- Respect the athlete's notes whenever possible.
+Reply only with JSON: {"summary": "2-3 sentences on the plan's progression", "recovery_weeks": [4, 8], "sessions": [{"date": "YYYY-MM-DD", "id": "w12"}]}. No markdown, no text outside the JSON.`;
+const PAI_SCHEMA = {type: "OBJECT", properties: {summary: {type: "STRING"}, recovery_weeks: {type: "ARRAY", items: {type: "INTEGER"}}, sessions: {type: "ARRAY", items: {type: "OBJECT", properties: {date: {type: "STRING"}, id: {type: "STRING"}}, required: ["date", "id"]}}}, required: ["sessions"]};
+async function planBuildAI(){
+  const weeks = Math.min(24, Math.max(1, +$("pweeks").value || 8)), maxMin = +$("pmax").value || 90, wo = d => (d + 6) % 7;
+  const days = [...document.querySelectorAll("#pdays input:checked")].map(i => +i.value).sort((a, b) => wo(a) - wo(b));
+  if(!days.length) return say("pNone", "err");
+  const n = Math.min(days.length, Math.max(1, +$("psess").value || 3));
+  const hardSel = [...document.querySelectorAll("#phard input:checked")].map(i => +i.value).filter(d => days.includes(d)).sort((a, b) => wo(a) - wo(b));
+  // fournisseur : même logique de contrôle que generate()
+  const prov = $("prov").value, chat = prov !== "gemini"; let url = "", key, model;
+  if(prov === "hf"){ url = "https://router.huggingface.co/v1/chat/completions"; key = $("hfkey").value.trim(); model = $("hfmodel").value.trim(); }
+  else if(prov === "oa"){ if(!$("oaurl").value.trim()) return say("needUrl", "err"); url = $("oaurl").value.trim().replace(/\/+$/, "") + "/chat/completions"; key = $("oakey").value.trim(); model = $("oamodel").value.trim(); }
+  else{ key = $("gkey").value.trim(); model = $("model").value.trim() || DEF.model; }
+  if(!key){ say(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG", "err"); $("cfg").showModal(); return; }
+  if(!model){ say("needM", "err"); $("cfg").showModal(); return; }
+  // catalogue compact (ids courts w1, w2…) limité aux séances qui rentrent dans la durée max
+  const pool = planPool(), all = []; Object.keys(pool).forEach(c => pool[c].forEach(x => all.push([c, x])));
+  let cat = all.filter(([c, x]) => x.mins <= maxMin + 0.5); if(cat.length < 10) cat = all;
+  const byId = {}, lines = cat.map(([c, x], i) => { const id = "w" + (i + 1); byId[id] = x; return `${id} | ${c} | ${Math.round(x.mins)} min | TSS ${Math.round(x.tss)} | ${x.w.name_en}`; });
+  // dates autorisées (mêmes règles que planBuild : jours cochés, semaine du début, rien avant le début)
+  const start = new Date(($("pstart").value || iso(new Date())) + "T12:00:00"), mon = new Date(start); mon.setDate(mon.getDate() - (start.getDay() + 6) % 7);
+  const fWd = new Intl.DateTimeFormat("en", {weekday: "short"}), allowed = new Set(), slotLines = [];
+  for(let w = 0; w < weeks; w++){
+    const ds = [];
+    days.forEach(d => { const date = new Date(mon); date.setDate(mon.getDate() + w * 7 + wo(d)); if(date < start && w === 0 && date.toDateString() !== start.toDateString()) return; const sd = iso(date); allowed.add(sd); ds.push(sd + " " + fWd.format(date)); });
+    slotLines.push(`Week ${w + 1}: ${ds.join(", ") || "(no date)"}`);
+  }
+  const DN = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], ftp = ftpFor($("psport").value), notes = $("pnotes").value.trim();
+  const userText = [
+    `Purpose of the plan: ${$("pgoal").selectedOptions[0].textContent} (${$("pgoal").value}).`,
+    `Weeks: ${weeks}. Sessions per week: ${n}. Maximum session length: ${maxMin} min. Sport: ${$("psport").value}.` + (ftp > 0 ? ` Athlete FTP: ${ftp} W (workouts are in % of FTP).` : ""),
+    hardSel.length ? `Hard (quality) sessions preferably on: ${hardSel.map(d => DN[d]).join(", ")}.` : `Hard days: choose them yourself among the allowed dates.`,
+    `Allowed dates (choose only from these):\n${slotLines.join("\n")}`,
+    notes ? `Athlete notes: ${notes}` : "",
+    `Workout catalogue (id | category | duration | TSS | name):\n${lines.join("\n")}`,
+    `Write "summary" in ${lang === "fr" ? "French" : "English"}.`,
+    chat ? `Reply only with a JSON object {"summary": "...", "recovery_weeks": [...], "sessions": [{"date": "YYYY-MM-DD", "id": "w12"}]} and no text around it.` : ""
+  ].filter(Boolean).join("\n\n");
+  $("pgen").disabled = true; const t0 = Date.now(); say(null); progStart("pAiBuilding");
+  const run = async (ms, fn) => { const signal = abortGen ? abortGen.signal : new AbortController().signal; const to = setTimeout(() => { if(abortGen) abortGen.abort(); }, ms); try{ return await fn(signal); }finally{ clearTimeout(to); } };
+  const parse = txt => { const m = txt.replace(/<think>[\s\S]*?<\/think>/g, "").match(/\{[\s\S]*\}/); const j = JSON.parse((m ? m[0] : txt).replace(/```json|```/g, "").trim()); if(!Array.isArray(j.sessions)) throw new Error(t("badResp")); return j; };
+  const callGemini = mdl => run(240000, async signal => {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(mdl)}:generateContent`, {method: "POST", signal,
+      headers: {"Content-Type": "application/json", "x-goog-api-key": key},
+      body: JSON.stringify({systemInstruction: {parts: [{text: PAI_SYSTEM}]}, contents: [{role: "user", parts: [{text: userText}]}],
+        generationConfig: {...(/^gemini-3/.test(mdl) && $("think").value !== "default" ? {thinkingConfig: {thinkingLevel: $("think").value}} : {}), responseMimeType: "application/json", responseSchema: PAI_SCHEMA}})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok){ const err = new Error(j.error?.message || ("HTTP " + r.status)); err.fatal = r.status === 401 || /api key/i.test(err.message); throw err; }
+    return parse(j.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "");
+  });
+  try{
+    let j;
+    if(chat){
+      const txt = await run(240000, async signal => {
+        const r = await fetch(url, {method: "POST", signal, headers: {"Content-Type": "application/json", Authorization: "Bearer " + key},
+          body: JSON.stringify({model, max_tokens: 8000, messages: [{role: "system", content: PAI_SYSTEM}, {role: "user", content: userText}]})});
+        const jj = await r.json().catch(() => ({}));
+        if(!r.ok) throw new Error((jj.error && (jj.error.message || (typeof jj.error === "string" ? jj.error : ""))) || ("HTTP " + r.status));
+        return (jj.choices && jj.choices[0] && jj.choices[0].message && jj.choices[0].message.content) || "";
+      });
+      j = parse(txt);
+    }else{
+      let cands = [model], errs = [];
+      for(let k = 0; k < cands.length; k++){
+        try{ j = await callGemini(cands[k]); break; }
+        catch(e){
+          errs.push(e); if(e.fatal || (abortGen && abortGen.signal.aborted)) break;
+          if(k === 0){ if(!modelList.length){ try{ modelList = await geminiModels(key); }catch(_){} } cands = [model, ...modelList.filter(x => x !== model)]; }
+          if(k + 1 < cands.length) $("progk").textContent = t("tryNext", cands[k], cands[k + 1]);
+        }
+      }
+      if(!j) throw new Error(errs[0].name === "AbortError" ? t("timeout") : errs[0].message);
+    }
+    // validation : id connu, date autorisée, une séance par jour, au plus n par semaine
+    const items = [], seen = new Set(), perWeek = {}; let bad = 0;
+    j.sessions.slice().sort((a, b) => String(a.date).localeCompare(String(b.date))).forEach(sx => {
+      const x = byId[String(sx.id || "").trim().toLowerCase()], d = String(sx.date || "").slice(0, 10);
+      if(!x || !allowed.has(d) || seen.has(d)){ bad++; return; }
+      const week = Math.floor(Math.round((new Date(d + "T12:00:00") - mon) / 864e5) / 7) + 1;
+      if((perWeek[week] || 0) >= n){ bad++; return; }
+      perWeek[week] = (perWeek[week] || 0) + 1; seen.add(d);
+      items.push({date: d, week, w: x.w, mins: x.mins, tss: x.tss, cat: PCATS[x.w.category], rec: false});
+    });
+    if(!items.length){ say("pAiBad", "err"); }
+    else{
+      const rw = new Set((j.recovery_weeks || []).map(Number)); items.forEach(x => { x.rec = rw.has(x.week); });
+      PLAN.items = items; PLAN.maxMin = maxMin; planRender();
+      const sm = $("paisum"); if(j.summary){ sm.textContent = t("pAiNote", String(j.summary).slice(0, 700)); sm.hidden = false; } else sm.hidden = true;
+      if(bad) say("pAiPartial", "ok", items.length, bad); else say("pAiDone", "ok", items.length, Math.round((Date.now() - t0) / 1000));
+    }
+  }catch(e){
+    if(e.name !== "AbortError"){ say(prov === "hf" ? "errH" : prov === "oa" ? "errA" : "errG", "err", errText(e)); $("cfg").showModal(); }
+  }
+  progEnd(); $("pgen").disabled = false;
+}
+function planEngineUI(){ const ai = $("pengine").value === "ai"; $("paibox").hidden = !ai; $("phint").hidden = ai; }
+$("pengine").value = store.get("si_pengine") === "ai" ? "ai" : "algo";
+$("pnotes").value = store.get("si_pnotes");
+$("pengine").addEventListener("change", () => { store.set("si_pengine", $("pengine").value); planEngineUI(); });
+$("pnotes").addEventListener("input", () => store.set("si_pnotes", $("pnotes").value));
+planEngineUI();
+$("pgen").onclick = () => $("pengine").value === "ai" ? planBuildAI() : planBuild();
 $("pbox").addEventListener("click", e => {
   const ed = e.target.closest("[data-pedit]"); if(ed){ planEdit(+ed.dataset.pedit); return; }
   const sw = e.target.closest("[data-pswap]"); if(sw){ planSwap(+sw.dataset.pswap); return; }
