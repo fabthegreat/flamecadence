@@ -196,6 +196,33 @@ details.fold[open]>summary{margin-bottom:6px}
 .d .bar{width:100%;border-radius:3px 3px 0 0;background:var(--line)}
 .d .bar.h1{background:#5cb85c}.d .bar.h2{background:#f2a33a}.d .bar.h3{background:#d6336c}
 .d.now span{color:var(--ink);font-weight:600}
+#zonbox,#heatbox{position:relative}
+#tourov{position:fixed;inset:0;z-index:1500;background:transparent}
+#tourhl{position:fixed;z-index:1501;border-radius:10px;pointer-events:none;box-shadow:0 0 0 9999px rgba(8,14,20,.62),0 0 0 2px var(--acc);transition:top .2s,left .2s,width .2s,height .2s}
+#tourhl.none{box-shadow:0 0 0 9999px rgba(8,14,20,.62)}
+#tourbub{position:fixed;z-index:1502;width:min(360px,calc(100vw - 24px));background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:0 8px 30px rgba(0,0,0,.35)}
+#tourbub h3{margin:0 0 6px;font-size:1.05rem}
+#tourbub p{margin:0;font-size:.92rem;line-height:1.45;color:var(--ink)}
+#tourbub .tfoot{display:flex;align-items:center;gap:8px;margin-top:12px}
+#tourbub .tcount{margin-right:auto;font-size:.78rem;color:var(--mute)}
+#tourbub button{margin-top:0;padding:6px 12px;font-size:.88rem}
+@media (prefers-reduced-motion:reduce){#tourhl{transition:none}}
+.zw{display:flex;gap:4px;align-items:flex-end;height:110px;margin-top:10px}
+.zc{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:.65rem;color:var(--mute);cursor:default}
+.zc:hover{background:var(--bg)}
+.zc.now span{color:var(--ink);font-weight:600}
+.zst{width:100%;display:flex;flex-direction:column-reverse;border-radius:3px 3px 0 0;overflow:hidden;min-height:2px;background:var(--line)}
+.zst i{display:block}
+.zst i.z1{background:#3a9d8f}.zst i.z2{background:#5cb85c}.zst i.z3{background:#e3cf3f}.zst i.z4{background:#f2a33a}.zst i.z5{background:#ee6c4d}.zst i.z6{background:#d6336c}.zst i.z7{background:#8e44ad}
+.hm{display:block;width:100%;height:auto}
+.hm text{fill:var(--mute);font-size:10px}
+.hm rect{cursor:default}
+.hm rect:hover{stroke:var(--ink);stroke-width:1}
+.hm .h0{fill:var(--line);fill-opacity:.55}.hm .h1{fill:var(--acc);fill-opacity:.3}.hm .h2{fill:var(--acc);fill-opacity:.55}.hm .h3{fill:var(--acc);fill-opacity:.8}.hm .h4{fill:var(--acc)}
+.hm .hnow{stroke:var(--ink);stroke-width:1}
+.hm-leg{display:flex;align-items:center;gap:3px;justify-content:flex-end;font-size:.7rem;color:var(--mute);margin-top:4px}
+.hm-leg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.hm-leg i.h0{background:var(--line);opacity:.55}.hm-leg i.h1{background:var(--acc);opacity:.3}.hm-leg i.h2{background:var(--acc);opacity:.55}.hm-leg i.h3{background:var(--acc);opacity:.8}.hm-leg i.h4{background:var(--acc)}
 .tbl table{width:100%;border-collapse:collapse;font-size:.9rem}
 .tbl th,.tbl td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:right}
 .tbl th:first-child,.tbl td:first-child{text-align:left}
@@ -442,6 +469,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <a class="mi" id="mail" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
 <a class="mi" id="gh" data-ia="title:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span data-i="github"></span></a>
 </div></details>
+<button class="alt small" id="tourbtn" type="button" data-ia="title:tourTip;aria-label:tourTip"><span aria-hidden="true">🧭</span> <span data-i="tourBtn"></span></button>
 <button class="alt small" id="open" type="button" data-i="settings"></button>
 </div>
 </header>
@@ -521,6 +549,8 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
 <label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
 <label><input type="checkbox" id="w_wx"><span data-i="wxT"></span></label>
+<label><input type="checkbox" id="w_zon"><span data-i="zonT"></span></label>
+<label><input type="checkbox" id="w_heat"><span data-i="heatT"></span></label>
 </div>
 <div class="hint" id="jnote" role="status" hidden></div>
 </div>
@@ -859,6 +889,22 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <div id="wxcap" class="hint"></div>
 </section>
 
+<section data-block="zon">
+<div class="phead"><h2 data-i="zonT"></h2>
+<select id="zbas" data-ia="aria-label:zonBas"><option value="power" data-i="zbPow"></option><option value="hr" data-i="zbHr"></option></select>
+<select id="zper" data-ia="aria-label:zonPer"><option value="4" data-i="zp4"></option><option value="8" data-i="zp8" selected></option><option value="12" data-i="zp12"></option></select>
+<button class="alt small icon" id="rzon" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="zonbox"></div>
+<div id="zoncap" class="hint"></div>
+</section>
+
+<section data-block="heat">
+<div class="phead"><h2 data-i="heatT"></h2>
+<button class="alt small icon" id="rheat" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="heatbox"></div>
+<div id="heatcap" class="hint"></div>
+</section>
+
 </aside>
 </div>
 <footer>
@@ -1051,6 +1097,29 @@ intensDone:["All intensities shifted by {0}.","Toutes les intensités ont été 
 exportBtn:["Export","Exporter"], expTitle:["Export the workout","Exporter la séance"],
 exZwo:["Zwift — .zwo","Zwift — .zwo"], exFit:["Garmin — .fit","Garmin — .fit"], exErg:["Smart trainer, watts — .erg","Home trainer, watts — .erg"], exMrc:["Smart trainer, % FTP — .mrc","Home trainer, % FTP — .mrc"], exJson:["Backup / share — .json","Sauvegarde / partage — .json"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
+zonT:["Time in zones","Temps par zone"], heatT:["Year heatmap","Carte de chaleur annuelle"], zbPow:["Power","Puissance"], zbHr:["Heart rate","Fréquence cardiaque"],
+zp4:["4 weeks","4 semaines"], zp8:["8 weeks","8 semaines"], zp12:["12 weeks","12 semaines"], zonBas:["Zone basis","Base de calcul des zones"], zonPer:["Zone time range","Période des zones"],
+zonNone:["No zone data for this period.","Aucune donnée de zones sur cette période."], zonCap:["{0} of zone time · {1} activities","{0} de temps en zone · {1} activités"], zonSkip:[" · {0} without zone data"," · {0} sans données de zones"],
+zWeek:["Week of {0}","Semaine du {0}"], zLow:["Low","Facile"], zMid:["Mid","Moyen"], zHigh:["High","Dur"],
+zvPol:["Polarized: plenty of easy riding plus hard efforts, little in between.","Polarisé : beaucoup de facile et du dur, peu d'intermédiaire."],
+zvPyr:["Pyramidal: mostly easy, with more tempo/threshold than hard work.","Pyramidal : surtout facile, plus de tempo/seuil que de dur."],
+zvTem:["Tempo-heavy: a lot of time in the middle zones.","Riche en tempo : beaucoup de temps dans les zones intermédiaires."],
+zvHard:["Intensity-heavy: not much easy riding.","Riche en intensité : peu d'endurance facile."],
+heatCap:["{0} active days · {1} · {2} TSS over the last 12 months","{0} jours actifs · {1} · {2} TSS sur les 12 derniers mois"], heatStreak:["Longest streak: {0} days · longest break: {1} days","Plus longue série : {0} jours · plus longue pause : {1} jours"],
+heatNone:["No activities in the last 12 months.","Aucune activité sur les 12 derniers mois."], heatLess:["Less","Moins"], heatMore:["More","Plus"], heatAria:["Daily training load over the last 12 months","Charge d'entraînement quotidienne sur les 12 derniers mois"],
+tourBtn:["Tour","Visite"], tourTip:["Take a guided tour of PaceForge","Faire une visite guidée de PaceForge"], tourNext:["Next","Suivant"], tourPrev:["Back","Précédent"], tourSkip:["Skip","Passer"], tourDone:["Done","Terminer"], tourOf:["{0} / {1}","{0} / {1}"],
+tr0T:["Welcome to PaceForge","Bienvenue dans PaceForge"], tr0:["A quick tour of the main areas: the workout tools on the left, your intervals.icu dashboard on the right. Use the arrow keys or the buttons; Esc leaves the tour.","Un petit tour des principales zones : les outils de séance à gauche, ton tableau de bord intervals.icu à droite. Utilise les flèches du clavier ou les boutons ; Échap quitte la visite."],
+tr1T:["Seven ways to get a workout","Sept façons d'obtenir une séance"], tr1:["Library, manual editor, AI generator, file import, rebuild from a past activity, plan builder and session comparison. Each tab shows its own tool below.","Bibliothèque, éditeur manuel, générateur IA, import de fichier, reconstruction depuis une activité, plan d'entraînement et comparaison de séances. Chaque onglet affiche son outil juste dessous."],
+tr2T:["AI generator","Générateur IA"], tr2:["Pick the sport, duration and units, describe the session you want and press the generate button. The result appears as an editable preview that you can send to intervals.icu.","Choisis le sport, la durée et les unités, décris la séance voulue et lance la génération. Le résultat s'affiche en aperçu modifiable que tu peux envoyer vers intervals.icu."],
+tr3T:["Workout library","Bibliothèque de séances"], tr3:["Ready-made workouts sorted by theme. Search, filter by duration, star your favourites; intensities are scaled to your FTP.","Des séances prêtes à l'emploi classées par thème. Recherche, filtre par durée, favoris ; les intensités sont calées sur ta FTP."],
+tr4T:["Manual editor","Éditeur manuel"], tr4:["Write or tweak a workout step by step and see the chart update as you type.","Écris ou ajuste une séance étape par étape et vois le graphique se mettre à jour au fil de la saisie."],
+tr5T:["Plan builder","Plan d'entraînement"], tr5:["Build a multi-week plan for a goal such as base, FTP or VO₂max. Sessions come from the library and are spread over the days you choose.","Construis un plan sur plusieurs semaines pour un objectif (base, FTP, VO₂max…). Les séances viennent de la bibliothèque et sont réparties sur les jours choisis."],
+tr6T:["Compare past sessions","Comparer des séances passées"], tr6:["Describe a shape such as 10x1'/1' and PaceForge finds matching sessions in your history and overlays watts, heart rate and cadence.","Décris une forme comme 10x1'/1' : PaceForge retrouve les séances correspondantes dans ton historique et superpose puissance, fréquence cardiaque et cadence."],
+tr7T:["Calendar","Calendrier"], tr7:["Your intervals.icu calendar: planned and completed sessions. Click a day to see details or edit a planned workout.","Ton calendrier intervals.icu : séances prévues et réalisées. Clique sur un jour pour voir le détail ou modifier une séance prévue."],
+tr8T:["Next planned workout","Prochaine séance planifiée"], tr8:["The next session on your calendar, with its steps charted and the full programme one click away.","La prochaine séance de ton calendrier, avec ses étapes en graphique et le programme complet à portée de clic."],
+tr9T:["Fitness and training load","Forme et charge"], tr9:["Fitness, fatigue and form over time, your last workout with its power and heart-rate curves, and the last two weeks of load.","Forme, fatigue et fraîcheur dans le temps, ta dernière séance avec ses courbes de puissance et de FC, et la charge des deux dernières semaines."],
+tr10T:["Zones and year view","Zones et vue annuelle"], tr10:["Time in each zone over recent weeks, and a heatmap of your daily load over the last year to spot gaps and consistency.","Le temps passé dans chaque zone ces dernières semaines, et une carte de chaleur de ta charge quotidienne sur un an pour repérer les trous et la régularité."],
+tr11T:["Settings","Réglages"], tr11:["Add your AI provider and intervals.icu keys here, and choose which sidebar widgets to show. You can also move widgets up or down from their headers.","Renseigne ici ton fournisseur d'IA et tes clés intervals.icu, et choisis les widgets à afficher. Tu peux aussi les monter ou descendre depuis leur en-tête."],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
@@ -1753,12 +1822,13 @@ async function loadBest(){
 }
 async function loadAll(){
   loadWx().catch(() => {});
-  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox", "nextbox"].forEach(id => $(id).textContent = ""); NEXT.ev = null; NEXT.loaded = false; $("loadbox").textContent = t("needI"); renderCal(); return; }
+  if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox", "nextbox", "zonbox", "heatbox", "zoncap", "heatcap"].forEach(id => $(id).textContent = ""); YR.acts = null; YR.p = null; NEXT.ev = null; NEXT.loaded = false; $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
   loadCal(true).catch(e => { $("calbox").textContent = t("errI", errText(e)); });
   loadLoad().catch(e => { $("loadbox").textContent = t("errI", errText(e)); });
   loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); });
+  if(widgets.includes("zon") || widgets.includes("heat")) loadYr(!!YR.t && Date.now() - YR.t > 30000);
 }
 $("rload").onclick = loadAll;
 // boutons ↻ des autres widgets (même principe que celui du calendrier) : rechargent uniquement leur widget
@@ -1766,6 +1836,91 @@ const refreshBtn = (id, fn) => { $(id).onclick = async () => { const b = $(id); 
 refreshBtn("rfit", () => loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); }));
 refreshBtn("rlast", () => loadLoad(LAST.li || 0).catch(() => {}));
 refreshBtn("rbest", () => loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }));
+
+// --- Widgets « Temps par zone » et « Carte de chaleur annuelle » : une seule requête /activities (53 semaines) partagée par les deux ---
+const YR = {acts: null, p: null, t: 0};
+const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12); x.setDate(x.getDate() - (x.getDay() + 6) % 7); return x; };
+const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+function loadYr(force){
+  if(!KEY()) return Promise.resolve();
+  if(YR.p && !force) return YR.p;
+  if(!YR.acts) ["zonbox", "heatbox"].forEach(id => { $(id).textContent = t("loading"); });
+  const p = icu(`/activities?oldest=${iso(addD(mondayOf(new Date()), -52 * 7))}&newest=${daysAgo(0)}`).then(a => {
+    if(YR.p !== p) return;
+    YR.acts = (Array.isArray(a) ? a : []).filter(x => x && x.start_date_local); YR.t = Date.now(); renderZon(); renderHeat();
+  }).catch(e => { if(YR.p === p){ YR.p = null; if(!YR.acts) ["zonbox", "heatbox"].forEach(id => { $(id).textContent = t("errI", errText(e)); }); } });
+  YR.p = p; return p;
+}
+function actZones(a, hr){ // secondes par zone (1..7) d'une activité, d'après la puissance ou la FC
+  const raw = hr ? a.icu_hr_zone_times : a.icu_zone_times; if(!Array.isArray(raw)) return null;
+  const z = [0, 0, 0, 0, 0, 0, 0, 0]; let any = false;
+  raw.forEach((v, i) => {
+    let k, s;
+    if(v && typeof v === "object"){ const m = /^Z(\d)$/i.exec(String(v.id)); if(!m) return; k = +m[1]; s = +v.secs; } else { k = i + 1; s = +v; }
+    if(k >= 1 && k <= 7 && s > 0){ z[k] += s; any = true; }
+  });
+  return any ? {z, n: hr ? raw.length : 7} : null;
+}
+function renderZon(){
+  const box = $("zonbox"), cap = $("zoncap"); if(!box || !YR.acts) return;
+  const N = +$("zper").value || 8, hr = $("zbas").value === "hr";
+  const m0 = addD(mondayOf(new Date()), -(N - 1) * 7), start = iso(m0);
+  const wk = Array.from({length: N}, (_, i) => ({d: addD(m0, i * 7), z: [0, 0, 0, 0, 0, 0, 0, 0]}));
+  let used = 0, skipped = 0, nz = hr ? 0 : 7;
+  for(const a of YR.acts){
+    const day = a.start_date_local.slice(0, 10); if(day < start) continue;
+    const r = actZones(a, hr);
+    if(!r){ if((a.moving_time || 0) > 0) skipped++; continue; }
+    const idx = Math.floor(Math.round((new Date(day + "T12:00:00") - m0) / 864e5) / 7);
+    if(idx < 0 || idx >= N) continue;
+    for(let k = 1; k <= 7; k++) wk[idx].z[k] += r.z[k];
+    used++; nz = Math.max(nz, r.n);
+  }
+  LAST.zwk = wk;
+  const tot = [0, 0, 0, 0, 0, 0, 0, 0]; wk.forEach(w => { for(let k = 1; k <= 7; k++) tot[k] += w.z[k]; });
+  const T = tot.reduce((x, y) => x + y, 0);
+  if(!T){ box.textContent = t("zonNone"); cap.textContent = ""; return; }
+  const wt = wk.map(w => w.z.reduce((x, y) => x + y, 0)), mx = Math.max(...wt);
+  const cols = wk.map((w, i) => `<div class="zc${i === N - 1 ? " now" : ""}" data-n="${i}"><div class="zst" style="height:${wt[i] ? Math.max(3, wt[i] / mx * 84).toFixed(1) : 2}px">${[1, 2, 3, 4, 5, 6, 7].filter(k => w.z[k] > 0).map(k => `<i class="z${k}" style="flex:${w.z[k].toFixed(0)} 1 0"></i>`).join("")}</div><span>${esc(w.d.toLocaleDateString(loc(), {day: "numeric", month: "numeric"}))}</span></div>`).join("");
+  const sum = (a, b) => { let x = 0; for(let k = a; k <= b; k++) x += tot[k]; return x; };
+  const five = hr && nz <= 5, lo = sum(1, 2), mi = five ? sum(3, 3) : sum(3, 4), hi = five ? sum(4, 7) : sum(5, 7), pc = v => Math.round(v / T * 100);
+  const rg = five ? ["Z1–2", "Z3", "Z4+"] : ["Z1–2", "Z3–4", "Z5+"];
+  const kind = lo / T >= 0.7 ? (hi > mi ? "Pol" : "Pyr") : (mi >= hi ? "Tem" : "Hard");
+  box.innerHTML = zoneBar(tot, false) + `<div class="zw">${cols}</div><div class="tip" hidden></div>`;
+  cap.innerHTML = `${esc(t("zLow"))} (${rg[0]}) ${pc(lo)} % · ${esc(t("zMid"))} (${rg[1]}) ${pc(mi)} % · ${esc(t("zHigh"))} (${rg[2]}) ${pc(hi)} %<br>${esc(t("zv" + kind))}<br>${esc(t("zonCap", hm(T), used) + (skipped ? t("zonSkip", skipped) : ""))}`;
+}
+hoverTip($("zonbox"), i => {
+  const w = (LAST.zwk || [])[i]; if(!w) return "";
+  const T = w.z.reduce((x, y) => x + y, 0);
+  let h = `<b>${esc(t("zWeek", w.d.toLocaleDateString(loc(), {day: "numeric", month: "long"})))}</b><div>${esc(T ? hm(T) : "–")}</div>`;
+  for(let k = 1; k <= 7; k++) if(w.z[k] > 0) h += `<div>Z${k} · ${esc(fmtDur(w.z[k]))} · ${Math.round(w.z[k] / T * 100)} %</div>`;
+  return h;
+});
+function renderHeat(){
+  const box = $("heatbox"), cap = $("heatcap"); if(!box || !YR.acts) return;
+  const by = grp(YR.acts), m0 = mondayOf(addD(new Date(), -52 * 7)), today = daysAgo(0), W = 53, S = 11, X0 = 20, Y0 = 14;
+  const cells = [], months = []; let days = 0, sec = 0, load = 0, run = 0, best = 0, gap = 0, bestGap = 0, seen = false, lastMonthCol = -9, prevMonth = -1;
+  LAST.hmd = [];
+  for(let i = 0; i < W * 7; i++){
+    const d = addD(m0, i), k = iso(d); if(k > today) break;
+    const col = Math.floor(i / 7), row = i % 7, L = by[k] || [];
+    const ld = L.reduce((x, a) => x + (a.icu_training_load || 0), 0), tm = L.reduce((x, a) => x + (a.moving_time || 0), 0);
+    const lv = !L.length || (!ld && !tm) ? 0 : ld >= 120 ? 4 : ld >= 80 ? 3 : ld >= 40 ? 2 : 1;
+    if(lv){ days++; sec += tm; load += ld; run++; best = Math.max(best, run); seen = true; gap = 0; } else { run = 0; if(seen){ gap++; bestGap = Math.max(bestGap, gap); } }
+    if(row === 0 && d.getMonth() !== prevMonth){ const first = prevMonth < 0; prevMonth = d.getMonth(); if(!(first && d.getDate() > 7) && col - lastMonthCol >= 3){ months.push(`<text x="${X0 + col * S}" y="9">${esc(d.toLocaleDateString(loc(), {month: "short"}))}</text>`); lastMonthCol = col; } }
+    LAST.hmd.push(dayHtml(k, L, null, []));
+    cells.push(`<rect class="h${lv}${k === today ? " hnow" : ""}" x="${X0 + col * S}" y="${Y0 + row * S}" width="9" height="9" rx="2" data-n="${i}"/>`);
+  }
+  if(!days){ box.textContent = t("heatNone"); cap.textContent = ""; return; }
+  const dl = [0, 2, 4].map(r => `<text x="0" y="${Y0 + r * S + 8}">${esc(addD(m0, r).toLocaleDateString(loc(), {weekday: "narrow"}))}</text>`).join("");
+  box.innerHTML = `<svg class="hm" viewBox="0 0 ${X0 + W * S} ${Y0 + 7 * S}" role="img" aria-label="${esc(t("heatAria"))}">${months.join("")}${dl}${cells.join("")}</svg><div class="tip" hidden></div><div class="hm-leg">${esc(t("heatLess"))} <i class="h0"></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i> ${esc(t("heatMore"))}</div>`;
+  cap.textContent = t("heatCap", days, hm(sec), Math.round(load)) + "\n" + t("heatStreak", best, bestGap);
+  cap.style.whiteSpace = "pre-line";
+}
+hoverTip($("heatbox"), i => LAST.hmd[i] || "");
+$("zper").onchange = $("zbas").onchange = () => { store.set("si_zper", $("zper").value); store.set("si_zbas", $("zbas").value); renderZon(); };
+refreshBtn("rzon", () => loadYr(true));
+refreshBtn("rheat", () => loadYr(true));
 
 // --- Widget « Prochaine séance planifiée » : graphe des étapes (infobulle au survol) + programme intervals.icu repliable ---
 let NEXT_OPEN = store.get("si_nextopen") === "1";
@@ -5214,7 +5369,7 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
 // --- Widgets visibles de la colonne de droite (réglages) ---
-const WIDGETS = ["cal", "next", "fit", "last", "load", "best", "wx"], WDEF = ["cal", "next", "fit", "last", "wx"];
+const WIDGETS = ["cal", "next", "fit", "last", "load", "best", "wx", "zon", "heat"], WDEF = ["cal", "next", "fit", "last", "wx"];
 let widgets = [];
 function loadWidgets(){
   const raw = store.get("si_widgets");
@@ -5222,13 +5377,16 @@ function loadWidgets(){
   try{ v = raw ? JSON.parse(raw) : null; }catch(e){ v = null; }
   // la météo (ajoutée ensuite) est activée une fois pour les utilisateurs existants ; ils peuvent la masquer dans les réglages
   const wxNew = !store.get("si_wxinit"), nxNew = !store.get("si_nxinit"); // « prochaine séance » : activée une fois pour les utilisateurs existants
-  widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) || (k === "next" && nxNew) : WDEF.includes(k));
+  const zhNew = !store.get("si_zhinit"), zh = k => zhNew && (k === "zon" || k === "heat"); // « temps par zone » et « carte de chaleur » : activés une fois pour les utilisateurs existants
+  widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) || (k === "next" && nxNew) || zh(k) : WDEF.includes(k) || zh(k));
+  if(zhNew){ store.set("si_widgets", JSON.stringify(widgets)); store.set("si_zhinit", "1"); }
   if(wxNew || nxNew){ if(v) store.set("si_widgets", JSON.stringify(widgets)); store.set("si_wxinit", "1"); store.set("si_nxinit", "1"); }
 }
 function applyWidgets(){
   WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
   WIDGETS.forEach(k => { const c = $("w_" + k); if(c) c.checked = widgets.includes(k); });
   updateMoveBtns();
+  if(KEY() && (widgets.includes("zon") || widgets.includes("heat"))) loadYr();
 }
 function toggleWidget(k){ widgets = widgets.includes(k) ? widgets.filter(x => x !== k) : [...widgets, k]; store.set("si_widgets", JSON.stringify(widgets)); applyWidgets(); }
 // --- Ordre des widgets de la colonne de droite (monter / descendre), mémorisé dans le navigateur et dans l'export des réglages ---
@@ -5299,12 +5457,13 @@ function setLinks(){
   });
 }
 function applyLang(){
+  if($("tourbub")) setTimeout(() => tourShow(TOUR.i, 1), 0); // visite en cours : le texte de la bulle suit la langue
   document.documentElement.lang = lang; document.title = t("docTitle");
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI();
-  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
@@ -5313,8 +5472,102 @@ $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftpbox").hidden = $("actout").value !== "pct";
-$("fper").value = store.get("si_fper") || "60"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
+$("fper").value = store.get("si_fper") || "60"; $("zper").value = ["4", "8", "12"].includes(store.get("si_zper")) ? store.get("si_zper") : "8"; $("zbas").value = store.get("si_zbas") === "hr" ? "hr" : "power"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
+
+// ---------- Visite guidée : surbrillance d'un élément + bulle explicative, étape par étape ----------
+const TOUR_STEPS = [
+  {k: 0},
+  {k: 1, sel: [".layout .mode"]},
+  {k: 2, mode: "ai", sel: ['[data-block="req"]']},
+  {k: 3, mode: "lib", sel: ['[data-block="lib"]']},
+  {k: 4, mode: "edit", sel: ['[data-block="edit"]']},
+  {k: 5, mode: "plan", sel: ['[data-block="plan"]']},
+  {k: 6, mode: "cmp", sel: ['[data-block="cmp"]']},
+  {k: 7, w: ["cal"]},
+  {k: 8, w: ["next"]},
+  {k: 9, w: ["fit", "last", "load"]},
+  {k: 10, w: ["zon", "heat"]},
+  {k: 11, sel: ["#open"]}
+];
+const TOUR = {on: false, i: 0, list: [], mode0: null, y0: 0, hl: null, bub: null, ov: null};
+function tourEl(st){
+  const sels = st.w ? st.w.filter(k => widgets.includes(k)).map(k => `[data-block="${k}"]`) : (st.sel || []);
+  for(const q of sels){ const e = document.querySelector(q); if(e && !e.hidden) return e; }
+  return null;
+}
+function tourSetMode(m){
+  if(!m || mode === m) return;
+  const b = document.querySelector(`.mode:not(.cfg-tabs) [data-m="${m}"]`); if(b) b.click();
+}
+function tourPlace(){
+  if(!TOUR.on) return;
+  const st = TOUR.list[TOUR.i], el = st.k === 0 ? null : tourEl(st), hl = TOUR.hl, bub = TOUR.bub, vw = innerWidth, vh = innerHeight, M = 12;
+  let r = null;
+  if(el){
+    const b = el.getBoundingClientRect(), top = Math.max(b.top, 0), cap = vh * 0.55, h = Math.min(b.bottom - top, cap);
+    r = {x: Math.max(b.left - 6, 4), y: Math.max(top - 6, 4), w: Math.min(b.width + 12, vw - 8), h: h + 12};
+    hl.className = ""; hl.style.cssText = `left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px`;
+  } else { hl.className = "none"; hl.style.cssText = `left:${vw / 2}px;top:${vh / 2}px;width:0;height:0`; }
+  const bw = bub.offsetWidth, bh = bub.offsetHeight; let x, y;
+  if(!r){ x = (vw - bw) / 2; y = (vh - bh) / 2; }
+  else {
+    x = Math.min(Math.max(r.x + r.w / 2 - bw / 2, M), vw - bw - M);
+    if(r.y + r.h + M + bh <= vh - M) y = r.y + r.h + M;
+    else if(r.y - M - bh >= M) y = r.y - M - bh;
+    else{ x = (vw - bw) / 2; y = vh - bh - M; } // pas de place autour : bulle ancrée en bas de l'écran
+  }
+  bub.style.left = Math.round(x) + "px"; bub.style.top = Math.round(y) + "px";
+}
+function tourShow(i, dir){
+  const L = TOUR.list;
+  while(i >= 0 && i < L.length){ // saute les étapes dont l'élément n'est pas visible (widget masqué)
+    const st = L[i]; tourSetMode(st.mode);
+    if(st.k === 0 || tourEl(st)) break;
+    i += dir || 1;
+  }
+  if(i < 0 || i >= L.length) return i < 0 ? tourShow(0, 1) : tourEnd();
+  TOUR.i = i; const st = L[i], el = st.k === 0 ? null : tourEl(st);
+  if(el){ const b = el.getBoundingClientRect(); if(b.top < 70 || b.top > innerHeight * 0.4) window.scrollBy({top: b.top - 90, behavior: "auto"}); }
+  const bub = TOUR.bub, last = i === L.length - 1;
+  bub.setAttribute("aria-label", t("tr" + st.k + "T"));
+  bub.innerHTML = `<h3>${esc(t("tr" + st.k + "T"))}</h3><p>${esc(t("tr" + st.k))}</p><div class="tfoot"><span class="tcount">${esc(t("tourOf", i + 1, L.length))}</span>${last ? "" : `<button type="button" class="alt" data-a="skip">${esc(t("tourSkip"))}</button>`}${i ? `<button type="button" class="alt" data-a="prev">${esc(t("tourPrev"))}</button>` : ""}<button type="button" data-a="next">${esc(last ? t("tourDone") : t("tourNext"))}</button></div>`;
+  tourPlace();
+  const nb = bub.querySelector('[data-a="next"]'); if(nb) nb.focus({preventScroll: true});
+}
+function tourEnd(){
+  if(!TOUR.on) return;
+  TOUR.on = false;
+  [TOUR.ov, TOUR.hl, TOUR.bub].forEach(e => e && e.remove());
+  document.removeEventListener("keydown", tourKey, true); removeEventListener("resize", tourPlace); removeEventListener("scroll", tourPlace, true);
+  tourSetMode(TOUR.mode0); window.scrollTo(0, TOUR.y0);
+  $("tourbtn").focus({preventScroll: true});
+}
+function tourKey(e){
+  if(!TOUR.on) return;
+  if(e.key === "Escape"){ e.preventDefault(); e.stopPropagation(); tourEnd(); }
+  else if(e.key === "ArrowRight"){ e.preventDefault(); tourShow(TOUR.i + 1, 1); }
+  else if(e.key === "ArrowLeft"){ e.preventDefault(); tourShow(TOUR.i - 1, -1); }
+  else if(e.key === "Tab"){ // le focus reste dans la bulle
+    const bs = [...TOUR.bub.querySelectorAll("button")]; if(!bs.length) return;
+    const f = bs.indexOf(document.activeElement);
+    if(e.shiftKey && f <= 0){ e.preventDefault(); bs[bs.length - 1].focus(); } else if(!e.shiftKey && f === bs.length - 1){ e.preventDefault(); bs[0].focus(); }
+  }
+}
+function tourStart(){
+  if(TOUR.on) return;
+  const more = $("more"); if(more) more.open = false;
+  TOUR.on = true; TOUR.mode0 = mode; TOUR.y0 = scrollY;
+  // les étapes dont le widget est masqué sont retirées d'avance, pour que le compteur « n / N » soit juste
+  TOUR.list = TOUR_STEPS.filter(st => !st.w || st.w.some(k => widgets.includes(k)));
+  const ov = document.createElement("div"), hl = document.createElement("div"), bub = document.createElement("div");
+  ov.id = "tourov"; hl.id = "tourhl"; bub.id = "tourbub"; bub.setAttribute("role", "dialog"); bub.setAttribute("aria-live", "polite");
+  document.body.append(ov, hl, bub); TOUR.ov = ov; TOUR.hl = hl; TOUR.bub = bub;
+  bub.onclick = e => { const a = e.target.closest("[data-a]"); if(!a) return; const k = a.dataset.a; if(k === "skip") tourEnd(); else if(k === "prev") tourShow(TOUR.i - 1, -1); else if(TOUR.i >= TOUR.list.length - 1) tourEnd(); else tourShow(TOUR.i + 1, 1); };
+  document.addEventListener("keydown", tourKey, true); addEventListener("resize", tourPlace); addEventListener("scroll", tourPlace, true);
+  tourShow(0, 1);
+}
+$("tourbtn").onclick = tourStart;
 // ---------- Glossaire : info-bulle sur chaque terme technique affiché ----------
 // Un MutationObserver enveloppe les termes (FTP, TSS, IF, zones…) dans <abbr class="gl"> partout dans l'interface,
 // y compris dans les contenus générés dynamiquement. Le texte de l'info-bulle suit la langue courante.
