@@ -197,6 +197,9 @@ details.fold[open]>summary{margin-bottom:6px}
 .d .bar.h1{background:#5cb85c}.d .bar.h2{background:#f2a33a}.d .bar.h3{background:#d6336c}
 .d.now span{color:var(--ink);font-weight:600}
 #zonbox,#heatbox{position:relative}
+.calsum{display:flex;flex-wrap:wrap;gap:2px 16px;margin-top:8px;font-size:.8rem;color:var(--mute)}
+.calsum b{color:var(--ink);font-weight:600}
+.cal-max .hid{display:none}
 .rdy{padding:8px 10px;margin:8px 0;border-left:5px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;line-height:1.4}
 .rdy.ok{border-left-color:var(--ok)}.rdy.mid{border-left-color:#f2a33a}.rdy.low{border-left-color:var(--err)}
 .rdy small{display:block;margin-top:3px;color:var(--mute);font-size:.78rem}
@@ -722,7 +725,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="impLbl"></span></h2></div>
 <div id="impzone" style="border:2px dashed var(--line);border-radius:10px;padding:24px 16px;text-align:center">
 <button id="imppick" type="button" data-i="impPick"></button>
-<input type="file" id="impin" accept=".zwo,.fit,.xml" hidden>
+<input type="file" id="impin" accept=".zwo,.fit,.xml,.mrc,.erg,.json,.txt" hidden>
 <p class="hint" data-i="impHint" style="margin-top:12px"></p>
 </div>
 </section>
@@ -843,6 +846,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <button class="alt small icon" id="calmax" type="button" aria-pressed="false" data-ia="title:calMax;aria-label:calMax"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 <a class="alt small icon ext" id="lkCal" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="calbox"></div>
+<div id="calsum" class="calsum"></div>
 </section>
 
 <section data-block="next">
@@ -1131,6 +1135,8 @@ rdOM:["One readiness signal is off ({0}). Listen to how you feel.","Un signal de
 rdOO:["Readiness looks good for today's session.","La récupération semble bonne pour la séance du jour."],
 rdrForm:["form {0}","forme {0}"], rdrHrv:["HRV {0} % below usual","VFC {0} % sous la normale"], rdrRhr:["resting HR {0} bpm above usual","FC repos {0} bpm au-dessus de la normale"], rdrSleep:["only {0} of sleep","seulement {0} de sommeil"],
 rdHrv:["HRV {0} ms (usual {1})","VFC {0} ms (normale {1})"], rdRhr:["Resting HR {0} (usual {1})","FC repos {0} (normale {1})"], rdSleep:["Sleep {0}","Sommeil {0}"],
+calDone:["Done","Réalisé"], calLeft:["Still planned","Reste à faire"], calSess1:["1 session","1 séance"], calSessN:["{0} sessions","{0} séances"],
+wHide:["Hide this widget (show it again in Settings)","Masquer ce widget (à réafficher dans les réglages)"], wHidden:["Widget hidden. You can show it again in Settings → Sidebar widgets.","Widget masqué. Tu peux le réafficher dans Réglages → Widgets de la barre latérale."],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
@@ -1139,11 +1145,16 @@ pHint:["Workouts come from the library (in % of FTP). Load builds week after wee
 pGen:["Build plan","Générer le plan"], pEngine:["Plan engine","Moteur du plan"], pEngAlgo:["Built-in algorithm","Algorithme intégré"], pEngAi:["AI coach (uses your AI settings)","Coach IA (utilise tes réglages IA)"], pAiNotes:["Notes for the AI coach (optional)","Notes pour le coach IA (optionnel)"], pAiPh:["e.g. race on May 18, knee tender: no big-gear work, keep Sundays easy…","ex. course le 18 mai, genou sensible : pas de gros braquet, dimanches faciles…"],
 pAiHint:["The AI coach picks sessions from the same workout library, following your days, sessions per week, purpose and hard days. You can still preview, edit, swap or delete any session before uploading. Uses the provider and key from the AI settings.","Le coach IA choisit les séances dans la même bibliothèque, en respectant tes jours, le nombre de séances, l'objectif et les jours durs. Tu peux toujours prévisualiser, modifier, remplacer ou supprimer une séance avant l'envoi. Utilise le fournisseur et la clé des réglages IA."],
 pAiBuilding:["The AI coach is building your plan…","Le coach IA construit ton plan…"], pAiDone:["Plan built by the AI coach: {0} sessions in {1} s.","Plan construit par le coach IA : {0} séances en {1} s."], pAiPartial:["AI plan built with {0} valid sessions ({1} ignored: unknown workout, invalid date or too many in a week).","Plan IA construit avec {0} séances valides ({1} ignorées : séance inconnue, date invalide ou trop de séances dans la semaine)."], pAiBad:["The AI coach returned no usable session. Your current plan was kept: try again or use the built-in algorithm.","Le coach IA n'a renvoyé aucune séance exploitable. Ton plan actuel est conservé : réessaie ou utilise l'algorithme intégré."], pAiNote:["Coach's note: {0}","Note du coach : {0}"], pSumS:["sessions","séances"], pSumH:["hours","heures"], pSumW:["weeks","semaines"], pEdit:["Edit this session","Modifier cette séance"], pEdBanner:["Editing plan session “{0}” ({1}). “Update the plan” applies your changes to it.","Modification de la séance du plan « {0} » ({1}). « Mettre à jour le plan » y applique tes changements."], pEdCancel:["Cancel editing","Annuler la modification"], pEdSave:["Update the plan","Mettre à jour le plan"], pEdDone:["Session updated in the plan.","Séance mise à jour dans le plan."], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
-tabImp:["Import","Importer"], impLbl:["Import a .zwo or .fit workout file","Importer un fichier de séance .zwo ou .fit"],
-impHint:["Pick a Zwift (.zwo) or Garmin (.fit) workout file — it will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance Zwift (.zwo) ou Garmin (.fit) — il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
+tabImp:["Import","Importer"], impLbl:["Import a workout file","Importer un fichier de séance"],
+impHint:["Pick a workout file: Zwift (.zwo), Garmin (.fit), trainer formats (.mrc, .erg), a PaceForge export (.json) or a text file written in intervals.icu workout syntax (.txt). It will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance : Zwift (.zwo), Garmin (.fit), formats home-trainer (.mrc, .erg), un export PaceForge (.json) ou un fichier texte écrit dans la syntaxe de séance d'intervals.icu (.txt). Il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
 impOk:["Workout imported from {0}.","Séance importée depuis {0}."],
 impEmpty:["No workout steps found in this file.","Aucune étape de séance trouvée dans ce fichier."],
+impOkW:["Workout imported from {0} (watts converted to % using an FTP of {1} W).","Séance importée depuis {0} (watts convertis en % avec une FTP de {1} W)."],
+impNoFtp:["This watts-based file needs your FTP to be converted. Set your FTP first.","Ce fichier en watts nécessite ta FTP pour être converti. Renseigne d'abord ta FTP."],
+impUnk:["Unsupported file type. Use .zwo, .fit, .mrc, .erg, .json or .txt.","Type de fichier non pris en charge. Utilise .zwo, .fit, .mrc, .erg, .json ou .txt."],
+impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."],
+impJsonBad:["This JSON file is not a PaceForge workout export (no steps found).","Ce fichier JSON n'est pas un export de séance PaceForge (aucune étape trouvée)."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
 srcAct:["View the source activity on intervals.icu ↗","Voir l'activité source sur intervals.icu ↗"],
@@ -3353,18 +3364,53 @@ function parseFit(bytes){
   }
   return out;
 }
+// .mrc / .erg : points « temps valeur » (minutes ; % de FTP pour .mrc, watts pour .erg) ; un saut vertical entre deux points = changement de palier
+function parseErgMrc(txt, ext){
+  const lines = txt.replace(/^\uFEFF/, "").split(/\r?\n/).map(l => l.trim());
+  const di = lines.findIndex(l => /^\[COURSE DATA\]/i.test(l)); if(di < 0) throw new Error(t("impErgBad"));
+  const head = lines.slice(0, di).join("\n");
+  const pct = /PERCENT/i.test(head) || (!/WATTS/i.test(head) && ext === "mrc"), unit = /^SECONDS\b/im.test(head) ? 1 : 60;
+  const fm = /^FTP\s*=\s*(\d+(?:\.\d+)?)/im.exec(head), ftp = fm ? +fm[1] : curFtp(), dm = /^DESCRIPTION\s*=\s*(.*)$/im.exec(head);
+  if(!pct && !(ftp > 0)) throw new Error("FTP");
+  const pts = [];
+  for(const l of lines.slice(di + 1)){
+    if(/^\[END\]/i.test(l)) break;
+    const v = l.split(/[\s,;]+/).map(parseFloat); if(v.length >= 2 && isFinite(v[0]) && isFinite(v[1])) pts.push({t: v[0], v: v[1]});
+  }
+  const toP = v => Math.round((pct ? v : v / ftp * 100) * 10) / 10, steps = [];
+  for(let k = 1; k < pts.length; k++){
+    const d = Math.round((pts[k].t - pts[k - 1].t) * unit); if(d < 1) continue; // saut vertical : pas de durée
+    const a = toP(pts[k - 1].v), b = toP(pts[k].v), last = steps[steps.length - 1];
+    if(last && Math.abs(last.a - last.b) < 0.05 && Math.abs(a - b) < 0.05 && Math.abs(last.b - a) < 0.05) last.d += d; // fusionne les paliers identiques consécutifs (fichiers à points denses)
+    else steps.push({d, a, b});
+  }
+  return {steps, name: dm ? dm[1].trim() : "", watts: !pct, ftp};
+}
+// .json : export PaceForge (steps: duration_s / from_pct / to_pct)
+function parseJsonWorkout(txt){
+  const j = JSON.parse(txt.replace(/^\uFEFF/, "")), arr = j && !Array.isArray(j) ? j.steps : null;
+  if(!Array.isArray(arr)) throw new Error(t("impJsonBad"));
+  const steps = arr.map(x => ({d: Math.round(+x.duration_s), a: +x.from_pct, b: +x.to_pct})).filter(x => x.d > 0 && isFinite(x.a) && isFinite(x.b));
+  return {steps, name: typeof j.name === "string" ? j.name.trim() : ""};
+}
 async function importFile(f){
   try{
-    const buf = new Uint8Array(await f.arrayBuffer());
-    const steps = /\.fit$/i.test(f.name) ? parseFit(buf) : parseZwo(new TextDecoder().decode(buf));
+    const ext = ((/\.([a-z0-9]+)$/i.exec(f.name) || [])[1] || "").toLowerCase();
+    let steps, name = "", desc = null, ftpUsed = 0;
+    if(ext === "fit") steps = parseFit(new Uint8Array(await f.arrayBuffer()));
+    else if(ext === "zwo" || ext === "xml") steps = parseZwo(await f.text());
+    else if(ext === "mrc" || ext === "erg"){ const r = parseErgMrc(await f.text(), ext); steps = r.steps; name = r.name; if(r.watts) ftpUsed = r.ftp; }
+    else if(ext === "json"){ const r = parseJsonWorkout(await f.text()); steps = r.steps; name = r.name; }
+    else if(ext === "txt"){ const txt = (await f.text()).replace(/^\uFEFF/, "").trim(); steps = parseWorkout(txt, $("sport").value, curFtp()); desc = txt; } // le texte est gardé tel quel (répétitions, commentaires)
+    else return say("impUnk", "err");
     if(!steps.length) return say("impEmpty", "err");
-    const nm = f.name.replace(/\.(zwo|fit|xml)$/i, "").replace(/[_-]+/g, " ").replace(/\s*\b\w/g, c => c.toUpperCase()).trim().slice(0, 60);
+    const nm = name.slice(0, 60) || f.name.replace(/\.[a-z0-9]+$/i, "").replace(/[_-]+/g, " ").replace(/\s*\b\w/g, c => c.toUpperCase()).trim().slice(0, 60);
     if(nm) $("name").value = nm;
-    $("desc").value = stepsToDesc(steps);
+    $("desc").value = desc != null ? desc : stepsToDesc(steps);
     $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(null);
-    renderChart(); say("impOk", "ok", f.name);
+    renderChart(); if(ftpUsed) say("impOkW", "ok", f.name, Math.round(ftpUsed)); else say("impOk", "ok", f.name);
   }catch(e){
-    say("impErr", "err", e && e.message ? e.message : errText(e));
+    say("impErr", "err", e && e.message === "FTP" ? t("impNoFtp") : e && e.message ? e.message : errText(e));
   }
 }
 $("imppick").onclick = () => $("impin").click();
@@ -4412,7 +4458,22 @@ function renderCal(){
   bindCalChips(box);
   bindCalTips(box, () => (CAL.ev || []).concat(CAL.acts || []));
   if(CAL.big) calMiniLoad(box);
+  renderCalSum();
   updateIcuLinks();
+}
+// Totaux du mois affiché : réalisé (activités) et reste à faire (séances planifiées à venir, hors jours déjà faits) ; un seul trait, pas de requête en plus
+function renderCalSum(){
+  const el = $("calsum"); if(!el) return;
+  if(!KEY()){ el.textContent = ""; return; }
+  const sum = (L, f) => L.reduce((x, e) => x + (f(e) || 0), 0), A = CAL.acts || [], E = CAL.ev || [];
+  const seg = (lbl, L, dist) => {
+    if(!L.length) return "";
+    const sec = sum(L, e => e.moving_time || (e.workout_doc && e.workout_doc.duration)), ld = Math.round(sum(L, e => e.icu_training_load)), km = dist ? sum(L, e => e.distance) / 1000 : 0;
+    const bits = [L.length === 1 ? t("calSess1") : t("calSessN", L.length)];
+    if(sec) bits.push(hm(sec)); if(ld) bits.push(ld + " TSS"); if(km >= 1) bits.push(Math.round(km) + " km");
+    return `<span><b>${esc(lbl)}</b> ${esc(bits.join(" · "))}</span>`;
+  };
+  el.innerHTML = seg(t("calDone"), A, true) + seg(t("calLeft"), E, false);
 }
 $("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
 $("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
@@ -5515,7 +5576,15 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
     m.onclick = () => moveWidget(h.parentNode.dataset.block, d === "up" ? -1 : 1);
     seg.appendChild(m);
   });
-  grp.appendChild(seg); grp.appendChild(b); h.appendChild(grp);
+  grp.appendChild(seg);
+  if(WIDGETS.includes(h.parentNode.dataset.block)){ // masquer le widget : il ne se réaffiche que depuis les réglages
+    const x = document.createElement("button");
+    x.type = "button"; x.className = "alt small icon hid"; x.dataset.ia = "title:wHide;aria-label:wHide";
+    x.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+    x.onclick = () => { const k = h.parentNode.dataset.block; if(widgets.includes(k)) toggleWidget(k); toast(t("wHidden"), "info"); const o = $("open"); if(o) o.focus({preventScroll: true}); };
+    grp.appendChild(x);
+  }
+  grp.appendChild(b); h.appendChild(grp);
 });
 function setLinks(){
   $("mail").href = LINKS.mail;
