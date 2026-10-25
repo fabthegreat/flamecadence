@@ -37,6 +37,28 @@ input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);borde
 textarea{min-height:90px;resize:vertical}
 #desc{font-family:"IBM Plex Mono",monospace;font-size:.85rem;min-height:240px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row.one{grid-template-columns:1fr}
+.cacheinfo{font-size:.75rem;color:var(--mute);opacity:.8;cursor:help}
+.cacheinfo[hidden]{display:none}
+.ukv{display:grid;grid-template-columns:auto 1fr;gap:5px 16px;font-size:.9rem}
+.ukv span{color:var(--mute)}
+.ukv b{font-weight:600;text-align:right}
+.wxres{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.wxres:empty{display:none}
+.wx{display:flex;flex-direction:column}
+.wxr{display:grid;grid-template-columns:3.3rem 1.6rem 4.3rem minmax(0,1fr) minmax(0,1fr) 12px;gap:6px;align-items:center;padding:6px 6px;border-bottom:1px solid var(--line);font-size:.85rem}
+.wxr:last-child{border-bottom:0}
+.wxr.now{background:var(--bg);border-radius:6px}
+.wxd{font-weight:600;text-transform:capitalize;white-space:nowrap}
+.wxi{font-size:1.15rem;line-height:1;text-align:center}
+.wxt{white-space:nowrap}
+.wxt i{font-style:normal;color:var(--mute)}
+.wxp,.wxw{color:var(--mute);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wxk{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ok)}
+.wxk.m{background:#d9902b}
+.wxk.b{background:var(--err)}
+.wxleg{display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:6px}
+.wxleg span{display:inline-flex;align-items:center;gap:5px}
 button,a.alt{display:inline-block;margin-top:14px;padding:11px 16px;border:0;border-radius:6px;background:var(--acc);color:var(--on);font-family:inherit;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}
 button:disabled{opacity:.5;cursor:default}
 .alt{background:transparent!important;color:var(--acc)!important;border:1px solid var(--acc)!important}
@@ -313,7 +335,6 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 /* comparateur de séances passées */
 html.m-cmp #prev{display:none!important}
 #lsvg{cursor:pointer}
-.ftpnote[hidden]{display:none}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
 .cmp-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;cursor:pointer}
 .cmp-row input{width:auto;padding:0;margin:0;flex:none}
@@ -389,6 +410,7 @@ html.m-cmp #prev{display:none!important}
 <div class="mode cfg-tabs" role="tablist" data-ia="aria-label:settingsTitle">
 <button type="button" role="tab" data-cfg="ai" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
 <button type="button" role="tab" data-cfg="icu" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span></button>
+<button type="button" role="tab" data-cfg="user" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></button>
 <button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
 <button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
 </div>
@@ -434,6 +456,18 @@ html.m-cmp #prev{display:none!important}
 <label for="aid" data-i="aid"></label>
 <input id="aid">
 </div>
+<div class="cfg-sec" data-cfgp="user" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></h3>
+<div id="userbox" role="status"></div>
+<div class="actions" style="margin-top:8px"><button class="alt small" id="userref" type="button" data-i="refresh"></button><a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="userEdit" style="align-self:center"></a></div>
+<div class="hint" data-i="userHint"></div>
+<label for="wxq" data-i="wxLoc" style="margin-top:16px"></label>
+<div class="pw"><input id="wxq" type="search" autocomplete="off" data-ia="placeholder:wxPh"><button class="alt" id="wxfind" type="button" data-i="wxFind"></button></div>
+<div id="wxres" class="wxres" role="status"></div>
+<div class="actions" style="margin-top:6px"><button class="alt small" id="wxgeo" type="button" data-i="wxGeo"></button><button class="alt small danger" id="wxclr" type="button" data-i="wxClr"></button></div>
+<div class="hint" id="wxcur"></div>
+<div class="hint" data-i="wxPriv"></div>
+</div>
 <div class="cfg-sec" data-cfgp="wid" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></h3>
 <div class="wgrid">
@@ -442,6 +476,7 @@ html.m-cmp #prev{display:none!important}
 <label><input type="checkbox" id="w_last"><span data-i="lastW"></span></label>
 <label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
 <label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
+<label><input type="checkbox" id="w_wx"><span data-i="wxT"></span></label>
 </div>
 <div class="hint" id="jnote" role="status" hidden></div>
 </div>
@@ -512,11 +547,10 @@ html.m-cmp #prev{display:none!important}
 <section data-block="req">
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="req"></span></h2></div>
 <div class="row">
-<div><label for="ftpsel" data-i="ftpLbl"></label><select id="ftpsel"><option value="in"></option><option value="out"></option></select></div>
-<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option></select></div>
-</div>
-<div class="row">
+<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
 <div><label for="dur" data-i="durLbl"></label><select id="dur"><option value="" data-i="durAuto"></option><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option><option value="150">2h30</option><option value="180">3h</option></select></div>
+</div>
+<div class="row one">
 <div><label for="unit" data-i="unitLbl"></label><select id="unit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 </div>
 <label for="prompt" data-i="wanted"></label>
@@ -532,10 +566,9 @@ html.m-cmp #prev{display:none!important}
 <div id="caledbar" class="hint" hidden><span id="caledtxt"></span><button class="alt small" id="caledx" type="button" data-i="calEdCancel"></button></div>
 <div class="row">
 <div><label for="edname" data-i="name"></label><input id="edname"></div>
-<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride" data-i="sRide"></option><option value="VirtualRide" data-i="sVirt"></option></select></div>
+<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
 </div>
-<div class="row">
-<div><label for="edftp" data-i="ftpLbl"></label><select id="edftp"><option value="in"></option><option value="out"></option></select></div>
+<div class="row one">
 <div><label for="edunit" data-i="unitLbl"></label><select id="edunit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 </div>
 <div class="hint" id="edhint"></div>
@@ -556,7 +589,7 @@ html.m-cmp #prev{display:none!important}
 <section data-block="lib" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2></div>
 <div class="row">
-<div><label for="libftp" data-i="ftpLbl"></label><select id="libftp"><option value="in"></option><option value="out"></option></select></div>
+<div><label for="libsport" data-i="sportLbl"></label><select id="libsport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
 <div><label for="libunit" data-i="unitLbl"></label><select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 </div>
 <div class="row">
@@ -581,10 +614,9 @@ html.m-cmp #prev{display:none!important}
 </div>
 <div class="row">
 <div><label data-i="pStart"></label><input type="hidden" id="pstart"><button type="button" class="alt" id="pstartbtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
-<div><label for="psport" data-i="sportLbl"></label><select id="psport"><option value="VirtualRide" data-i="sVirt"></option><option value="Ride" data-i="sRide"></option></select></div>
+<div><label for="psport" data-i="sportLbl"></label><select id="psport"><option value="VirtualRide"></option><option value="Ride"></option></select></div>
 </div>
-<div class="row">
-<div><label for="pftp" data-i="ftpLbl"></label><select id="pftp"><option value="in"></option><option value="out"></option></select></div>
+<div class="row one">
 <div><label for="punit" data-i="unitLbl"></label><select id="punit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
 </div>
 <label data-i="pDays" style="margin-top:12px;display:block"></label>
@@ -614,10 +646,10 @@ html.m-cmp #prev{display:none!important}
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="actLbl"></span></h2>
 </div>
 <p class="hint" data-i="actDesc"></p>
-<div class="row">
+<div class="row one">
 <div><label for="actout" data-i="actOutLbl"></label><select id="actout"><option value="w" data-i="actOutW"></option><option value="pct" data-i="actOutP"></option></select></div>
-<div id="actftpbox" hidden><label for="actftp" data-i="ftpLbl"></label><select id="actftp"><option value="in"></option><option value="out"></option></select><p class="hint" data-i="actFtpHint"></p></div>
 </div>
+<p class="hint" id="actftpbox" data-i="actFtpHint" hidden></p>
 <div class="row" style="margin-top:12px">
 <div><label for="actplace" data-i="cmpPlace"></label>
 <select id="actplace"><option value="any" data-i="cmpPAny"></option><option value="in" data-i="indoor"></option><option value="out" data-i="outdoor"></option></select></div>
@@ -664,7 +696,7 @@ html.m-cmp #prev{display:none!important}
 <div style="margin-top:12px"><label for="cmpper" data-i="actW"></label><select id="cmpper" data-ia="aria-label:actW"><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
 <div style="margin-top:12px"><label for="cmpq" data-i="cmpQ"></label><input id="cmpq" data-ia="placeholder:cmpPh"></div>
 <p class="hint" data-i="cmpFmt"></p>
-<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button></div>
+<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
 <div class="hint" id="cmpstat" role="status"></div>
 <div id="cmpbox"></div>
 
@@ -758,11 +790,18 @@ html.m-cmp #prev{display:none!important}
 <div id="bestbox" class="tbl"></div>
 </section>
 
+<section data-block="wx">
+<div class="phead"><h2 data-i="wxT"></h2><button class="alt small icon" id="rwx" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="wxbox"></div>
+<div id="wxcap" class="hint"></div>
+</section>
+
 </aside>
 </div>
 <footer>
   <a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a>
   <div>Many thanks to <a href="https://intervals.icu" target="_blank" rel="noopener">intervals.icu</a> — Open training analytics & calendar</div>
+  <div class="cacheinfo" hidden></div>
 </footer>
 </main>
 <script>
@@ -814,6 +853,19 @@ function fontUI(){
 
 // ---------- Traductions ----------
 const T = {
+secUser:["User","Utilisateur"], userNeed:["Add your intervals.icu API key (Settings → intervals.icu) to import your profile.","Ajoute ta clé API intervals.icu (Réglages → intervals.icu) pour importer ton profil."],
+userName:["Name","Nom"], userWeight:["Weight","Poids"], userAge:["Age","Âge"], userFtpIn:["FTP — indoor bike","FTP — vélo indoor"], userFtpOut:["FTP — outdoor bike","FTP — vélo extérieur"], userLthr:["Threshold HR","FC au seuil"], userMaxHr:["Max HR","FC max"],
+userEdit:["Edit on intervals.icu","Modifier sur intervals.icu"],
+userHint:["Read-only, imported from intervals.icu (Settings → Sport settings). When you create a workout, just pick Indoor or Outdoor bike: the matching FTP is applied automatically.","Lecture seule, importé depuis intervals.icu (Settings → Sport settings). Pour créer une séance, choisis simplement Vélo indoor ou extérieur : la FTP correspondante est appliquée automatiquement."],
+wxT:["Week ahead weather","Météo de la semaine"], wxLoc:["Weather location","Lieu pour la météo"], wxPh:["City or village…","Ville ou village…"], wxFind:["Search","Chercher"], wxGeo:["📍 Use my position","📍 Utiliser ma position"], wxClr:["Remove","Retirer"],
+wxNone:["No match.","Aucun résultat."], wxNoGeo:["Position unavailable (permission denied or not supported).","Position indisponible (permission refusée ou non prise en charge)."], wxMyPos:["My position","Ma position"],
+wxCur:["Current location: {0}","Lieu actuel : {0}"], wxNoLoc:["No location set.","Aucun lieu défini."], wxAuto:[" (from your intervals.icu profile)"," (d'après ton profil intervals.icu)"],
+wxPriv:["The place stays in this browser; only its coordinates are sent to Open-Meteo.","Le lieu reste dans ce navigateur ; seules ses coordonnées sont envoyées à Open-Meteo."],
+wxNeed:["Set your location (Settings → User) to see the forecast.","Définis ton lieu (Réglages → Utilisateur) pour voir les prévisions."], wxSet:["Set location","Définir le lieu"], wxErr:["Weather unavailable: {0}","Météo indisponible : {0}"],
+wxGood:["Good for outdoor","Idéal dehors"], wxMid:["Marginal","Limite"], wxBad:["Better indoors","Plutôt en intérieur"],
+wxRain:["rain {0} mm ({1} %)","pluie {0} mm ({1} %)"], wxWind:["wind {0} km/h, gusts {1}","vent {0} km/h, rafales {1}"],
+wx0:["Clear","Dégagé"], wx1:["Mostly clear","Peu nuageux"], wx2:["Partly cloudy","Variable"], wx3:["Overcast","Couvert"], wx45:["Fog","Brouillard"], wx51:["Drizzle","Bruine"], wx61:["Rain","Pluie"], wx71:["Snow","Neige"], wx80:["Showers","Averses"], wx95:["Thunderstorm","Orage"],
+cacheUse:["Local cache: {0} · {1} items","Cache local : {0} · {1} éléments"], cacheTip:["Activity streams kept in this browser (IndexedDB) so they are never downloaded twice. Total site storage in use: {0} of {1}.","Flux d'activités conservés dans ce navigateur (IndexedDB) pour ne jamais les retélécharger. Stockage total du site utilisé : {0} sur {1}."],
 calEdBanner:["Editing “{0}” ({1}). Saving replaces it in the calendar.","Modification de « {0} » ({1}). L'enregistrement la remplace dans le calendrier."], calEdCancel:["Cancel editing","Annuler la modification"],
 calEdSave:["Save changes to calendar","Enregistrer les modifications"], calEdSaved:["Workout updated in the calendar.","Séance mise à jour dans le calendrier."],
 calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éditeur manuel."], calEdRamp:["Loaded. Ramps were flattened to their average intensity; check the steps before saving.","Chargée. Les rampes ont été aplaties à leur intensité moyenne ; vérifie les étapes avant d'enregistrer."],
@@ -851,7 +903,7 @@ saved:["Saved","Enregistrée"], missing:["Missing","Manquante"], yes:["Confirm",
 cfmClear:["Clear all saved API keys?","Effacer toutes les clés API enregistrées ?"],
 cfmDel:["Delete this workout from the history and from the intervals.icu calendar?","Supprimer cette séance de l'historique et du calendrier intervals.icu ?"],
 req:["Generate workout with AI","Générer une séance avec l'IA"], ftpLbl:["intervals.icu FTP","FTP intervals.icu"], indoor:["Indoor","Home trainer"], outdoor:["Outdoor","Extérieur"],
-sportLbl:["Sport","Sport"], sRide:["Bike","Vélo"], sVirt:["Indoor bike (virtual)","Vélo indoor (virtuel)"], sRun:["Run","Course à pied"], sSwim:["Swim","Natation"],
+sportLbl:["Ride type","Type de sortie"], sRide:["Outdoor bike","Vélo extérieur"], sVirt:["Indoor bike","Vélo indoor"], sRun:["Run","Course à pied"], sSwim:["Swim","Natation"],
 durLbl:["Duration","Durée"], durAuto:["Free (from my request)","Libre (selon ma demande)"],
 unitLbl:["Power units","Unités de puissance"], uPct:["% of FTP","% de la FTP"], uW:["Watts (from FTP)","Watts (calculés depuis la FTP)"],
 wanted:["Desired workout","Séance souhaitée"],
@@ -950,8 +1002,8 @@ tabAct:["From activity","Depuis une activité"],
 actLbl:["Rebuild a workout from an activity","Reconstruire une séance depuis une activité"],
 actOutLbl:["Output units","Unités de sortie"],
 actOutW:["Absolute watts","Watts absolus"],
-actOutP:["% of selected FTP","% de la FTP sélectionnée"],
-actFtpHint:["Percentages are scaled to this FTP so the rebuilt steps keep the exact absolute watts of the ride; the preview FTP selector follows it.","Les pourcentages sont calés sur cette FTP pour conserver les watts absolus exacts de la sortie ; le sélecteur de FTP de l'aperçu s'aligne dessus."],
+actOutP:["% of FTP","% de la FTP"],
+actFtpHint:["Percentages are scaled to the FTP of the ride's type (indoor or outdoor) so the rebuilt steps keep the exact absolute watts of the ride.","Les pourcentages sont calés sur la FTP du type de sortie (indoor ou extérieur) pour conserver les watts absolus exacts de la sortie."],
 actDesc:["Pick one of your recent activities below: its power data is analyzed to rebuild the intervals you actually rode as an editable workout in the preview.","Choisis une de tes activités récentes ci-dessous : ses données de puissance sont analysées pour reconstruire les intervalles réellement effectués, en séance modifiable dans l'aperçu."],
 actW:["Activities range","Période d'activités"], w2:["2 weeks","2 semaines"], w4:["4 weeks","4 semaines"], w8:["8 weeks","8 semaines"],
 stopGen:["Stop","Arrêter"], actNres:["{0} matching sessions — tap one to rebuild it.","{0} séances correspondantes — touche-en une pour la reconstruire."], actNone:["No activity with power data in this period.","Aucune activité avec données de puissance sur cette période."],
@@ -1095,6 +1147,7 @@ $("impjsonin").onchange = () => {
     if(Array.isArray(j.oaModels) && j.oaModels.length){ oaList = j.oaModels; $("oal").innerHTML = oaList.map(id => `<option value="${esc(id)}"></option>`).join(""); }
     if(Array.isArray(j.starred)){ setStars(j.starred.filter(x => typeof x === "string")); n++; renderLibraryKeepOpen(); }
     if(Array.isArray(j.widgetOrder)){ WORDER = sanitizeOrder(j.widgetOrder); store.set("si_worder", JSON.stringify(WORDER)); applyOrder(); n++; }
+    if(j.weatherLocation && isFinite(j.weatherLocation.lat) && isFinite(j.weatherLocation.lon)){ store.set("si_wxloc", JSON.stringify({name: String(j.weatherLocation.name || "").slice(0, 80), lat: +j.weatherLocation.lat, lon: +j.weatherLocation.lon})); store.set("si_wxcache", ""); wxCurText(); loadWx(true); n++; }
     if(typeof j.font === "string" && FONTS.some(f => f[0] === j.font)){ font = j.font; store.set("si_font", font); fontUI(); n++; }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
@@ -1106,6 +1159,7 @@ $("expjson").onclick = () => {
   const stArr = stars(); if(stArr.length) o.starred = stArr;
   o.widgetOrder = WORDER.slice(); // ordre des widgets de la colonne de droite
   o.font = font;
+  if(wxLoc()) o.weatherLocation = wxLoc();
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
   if(hfList.length) o.hfModels = hfList;
@@ -1189,7 +1243,7 @@ $("oaurl").onchange = () => { oaList = []; };
 
 // ---------- intervals.icu ----------
 const KEY = () => store.get("si_ikey"), AID = () => store.get("si_aid") || "0";
-const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null}, LAST = {};
+const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null, name: "", city: "", country: "", lthr: 0, maxHr: 0, loaded: false}, LAST = {};
 const icuAuth = () => ({Authorization: "Basic " + btoa("API_KEY:" + KEY())});
 const icuUrl = path => `https://intervals.icu/api/v1/athlete/${encodeURIComponent(AID())}${path}`;
 async function icuFetch(url, opt){
@@ -1206,7 +1260,9 @@ const hm = sec => { const m = Math.round(sec / 60); return m >= 60 ? Math.floor(
 const mmss = sec => Math.floor(sec / 60) + ":" + pad(Math.round(sec) % 60);
 const loc = () => lang === "fr" ? "fr-FR" : "en-GB";
 const isBike = s => /Ride/.test(s);
-function curFtp(){ return ($("ftpsel").value === "in" ? ICU.ftpIn : ICU.ftpOut) || 0; }
+// Source de vérité unique : le type de sortie détermine la FTP (home trainer / VirtualRide → FTP indoor, vélo extérieur → FTP outdoor ; repli sur l'autre si absente)
+function ftpFor(sp){ const virt = sp === "VirtualRide"; return (virt ? ICU.ftpIn : ICU.ftpOut) || (virt ? ICU.ftpOut : ICU.ftpIn) || 0; }
+function curFtp(){ return ftpFor($("sport").value); }
 // Liens vers les pages intervals.icu correspondantes
 const icuAthlete = () => ICU.id || AID();
 const icuPage = path => `https://intervals.icu/athlete/${icuAthlete()}${path || ""}`;
@@ -1221,14 +1277,32 @@ function updateIcuLinks(){
   $("lkBest").href = "https://intervals.icu/power";
   $("lkLast").href = LAST.last && LAST.last.id ? icuPage("/activities/" + LAST.last.id) : icuPage("/activities");
 }
+// Libellés des sélecteurs de type de sortie : « Vélo indoor (FTP 240 W) » / « Vélo extérieur (FTP 250 W) »
 function fillFtp(){
-  const a = t("indoor") + (ICU.ftpIn ? ` (${ICU.ftpIn} W)` : ""), b = t("outdoor") + (ICU.ftpOut ? ` (${ICU.ftpOut} W)` : "");
-  [$("ftpsel"), $("edftp"), $("libftp"), $("actftp"), $("pftp")].forEach(s => { s.options[0].textContent = a; s.options[1].textContent = b; });
+  const lab = (k, f) => t(k) + (f ? ` (FTP ${f} W)` : "");
+  ["sport", "edsport", "psport", "libsport"].forEach(id => {
+    const el = $(id); if(!el) return;
+    [...el.options].forEach(o => { o.textContent = o.value === "VirtualRide" ? lab("sVirt", ftpFor("VirtualRide")) : lab("sRide", ftpFor("Ride")); });
+  });
 }
+// Panneau « Utilisateur » des réglages (lecture seule, données intervals.icu)
 function profText(){
-  if(!$("prof")) return;
-  if(LAST.profErr){ $("prof").textContent = t("errI", LAST.profErr); return; }
-  $("prof").textContent = [ICU.weight ? ICU.weight + " kg" : "", ICU.age ? t("age", ICU.age) : "", "FTP " + t("indoor") + " " + (ICU.ftpIn || "–") + " W", t("outdoor") + " " + (ICU.ftpOut || "–") + " W"].filter(Boolean).join(" · ");
+  const box = $("userbox"); if(!box) return;
+  if(!KEY()){ box.innerHTML = `<div class="hint">${esc(t("userNeed"))}</div>`; return; }
+  if(LAST.profErr){ box.innerHTML = `<div class="hint err">${esc(t("errI", LAST.profErr))}</div>`; return; }
+  if(!ICU.loaded){ box.innerHTML = `<div class="hint">${esc(t("loading"))}</div>`; return; }
+  const kg = ICU.weight, dash = "–";
+  const ftp = f => f ? f + " W" + (kg ? " · " + (f / kg).toFixed(2) + " W/kg" : "") : dash;
+  const rows = [
+    ICU.name ? [t("userName"), ICU.name] : null,
+    [t("userWeight"), kg ? kg + " kg" : dash],
+    [t("userAge"), ICU.age ? t("age", ICU.age) : dash],
+    [t("userFtpIn"), ftp(ICU.ftpIn)],
+    [t("userFtpOut"), ftp(ICU.ftpOut)],
+    ICU.lthr ? [t("userLthr"), ICU.lthr + " bpm"] : null,
+    ICU.maxHr ? [t("userMaxHr"), ICU.maxHr + " bpm"] : null
+  ].filter(Boolean);
+  box.innerHTML = `<div class="ukv">` + rows.map(([k, v]) => `<span>${esc(k)}</span><b>${esc(v)}</b>`).join("") + `</div>`;
 }
 async function loadProfile(){
   const a = await icu("");
@@ -1237,11 +1311,123 @@ async function loadProfile(){
   let ss = (a.sportSettings || []).find(rideSet);
   if(!ss){ try{ ss = (await icu("/sport-settings")).find(rideSet); }catch(e){} }
   ICU.ftpOut = (ss && ss.ftp) || 0; ICU.ftpIn = (ss && (ss.indoor_ftp || ss.ftp)) || 0;
+  ICU.lthr = (ss && ss.lthr) || 0; ICU.maxHr = (ss && ss.max_hr) || 0;
+  ICU.name = a.name || [a.firstname, a.lastname].filter(Boolean).join(" "); ICU.city = a.city || ""; ICU.country = a.country || "";
   ICU.weight = a.icu_weight || a.weight || 0;
   const dob = a.icu_date_of_birth || a.date_of_birth || a.birthdate;
   ICU.age = dob ? Math.floor((Date.now() - new Date(dob)) / 31557600000) : null;
-  LAST.profErr = ""; fillFtp(); profText(); updateIcuLinks();
+  ICU.loaded = true; LAST.profErr = ""; fillFtp(); profText(); updateIcuLinks();
+  wxAuto().catch(() => {}); // lieu météo déduit de la ville du profil, une seule fois
 }
+
+// ---------- Météo de la semaine (Open-Meteo : sans clé API) ----------
+const WX = {data: null, err: "", busy: false};
+function wxLoc(){ try{ const o = JSON.parse(store.get("si_wxloc") || "null"); return o && isFinite(o.lat) && isFinite(o.lon) ? o : null; }catch(e){ return null; } }
+const WMO = c => c === 0 ? ["☀️", "wx0"] : c === 1 ? ["🌤️", "wx1"] : c === 2 ? ["⛅", "wx2"] : c === 3 ? ["☁️", "wx3"] : c === 45 || c === 48 ? ["🌫️", "wx45"] : c >= 51 && c <= 57 ? ["🌦️", "wx51"]
+  : c >= 61 && c <= 67 ? ["🌧️", "wx61"] : c >= 71 && c <= 77 || c === 85 || c === 86 ? ["🌨️", "wx71"] : c >= 80 && c <= 82 ? ["🌦️", "wx80"] : c >= 95 ? ["⛈️", "wx95"] : ["☁️", "wx3"];
+// 0 = bien pour rouler dehors, 1 = limite, 2 = plutôt en intérieur
+function wxRide(d){
+  const snow = d.code >= 71 && d.code <= 77 || d.code === 85 || d.code === 86;
+  if(d.code >= 95 || snow || d.pr >= 5 || (d.pp >= 70 && d.pr >= 1) || d.wind >= 40 || d.gust >= 65 || d.tmax < 2) return 2;
+  if(d.pr >= 1 || d.pp >= 50 || d.wind >= 28 || d.gust >= 50 || d.tmax < 8 || d.tmax >= 33) return 1;
+  return 0;
+}
+async function loadWx(force){
+  if(!$("wxbox")) return;
+  const L = wxLoc();
+  if(!L){ WX.data = null; WX.err = ""; renderWx(); return; }
+  const key = L.lat + "," + L.lon;
+  let c = null; try{ c = JSON.parse(store.get("si_wxcache") || "null"); }catch(e){}
+  if(c && c.k === key && Array.isArray(c.d)) WX.data = c.d; else WX.data = null;
+  if(!force && c && c.k === key && Date.now() - c.ts < 30 * 60000){ WX.err = ""; renderWx(); return; } // cache de 30 min
+  if(WX.busy) return;
+  WX.busy = true; renderWx();
+  try{
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${L.lat}&longitude=${L.lon}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max&timezone=auto&forecast_days=7`);
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const j = await r.json(), d = j.daily;
+    if(!d || !Array.isArray(d.time)) throw new Error("no data");
+    const n = v => typeof v === "number" ? v : 0;
+    WX.data = d.time.map((k, i) => ({k, code: n(d.weather_code[i]), tmax: n(d.temperature_2m_max[i]), tmin: n(d.temperature_2m_min[i]), pr: n(d.precipitation_sum[i]), pp: n(d.precipitation_probability_max[i]), wind: n(d.wind_speed_10m_max[i]), gust: n(d.wind_gusts_10m_max[i])}));
+    store.set("si_wxcache", JSON.stringify({k: key, ts: Date.now(), d: WX.data}));
+    WX.err = "";
+  }catch(e){ WX.err = errText(e); } // en cas d'échec on garde les dernières prévisions connues
+  WX.busy = false; renderWx();
+}
+function renderWx(){
+  const box = $("wxbox"), cap = $("wxcap"); if(!box) return;
+  const L = wxLoc();
+  if(!L){
+    box.innerHTML = `<div class="hint">${esc(t("wxNeed"))}</div><div class="actions" style="margin-top:8px"><button class="alt small" id="wxset" type="button">${esc(t("wxSet"))}</button></div>`;
+    cap.textContent = ""; $("wxset").onclick = () => { $("open").click(); cfgTab("user"); };
+    return;
+  }
+  if(!WX.data){ box.innerHTML = `<div class="hint ${WX.err ? "err" : ""}">${esc(WX.err ? t("wxErr", WX.err) : t("loading"))}</div>`; cap.textContent = ""; return; }
+  const today = iso(new Date()), f1 = v => (Math.round(v * 10) / 10).toLocaleString(loc());
+  box.innerHTML = `<div class="wx">` + WX.data.map(d => {
+    const [ic, lk] = WMO(d.code), rk = wxRide(d), dt = new Date(d.k + "T12:00:00");
+    const rain = d.pr >= 0.1 ? f1(d.pr) + " mm" : d.pp >= 30 ? d.pp + " %" : "–";
+    const verdict = t(["wxGood", "wxMid", "wxBad"][rk]);
+    const tip = [dt.toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long"}), t(lk), Math.round(d.tmin) + " / " + Math.round(d.tmax) + " °C",
+      t("wxRain", f1(d.pr), Math.round(d.pp)), t("wxWind", Math.round(d.wind), Math.round(d.gust)), verdict].join(" · ");
+    return `<div class="wxr${d.k === today ? " now" : ""}" title="${esc(tip)}"><span class="wxd">${esc(dt.toLocaleDateString(loc(), {weekday: "short", day: "numeric"}))}</span><span class="wxi" aria-hidden="true">${ic}</span><span class="wxt"><i>${Math.round(d.tmin)}°</i> / <b>${Math.round(d.tmax)}°</b></span><span class="wxp">💧 ${esc(rain)}</span><span class="wxw">💨 ${Math.round(d.wind)} km/h</span><span class="wxk${rk === 1 ? " m" : rk === 2 ? " b" : ""}" role="img" aria-label="${esc(verdict)}"></span></div>`;
+  }).join("") + `</div>`;
+  cap.innerHTML = `<div class="wxleg"><span><i class="wxk"></i>${esc(t("wxGood"))}</span><span><i class="wxk m"></i>${esc(t("wxMid"))}</span><span><i class="wxk b"></i>${esc(t("wxBad"))}</span></div><div style="margin-top:4px">${esc(L.name)}${WX.err ? " · " + esc(t("wxErr", WX.err)) : ""} · <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></div>`;
+}
+function wxCurText(){
+  const L = wxLoc(), el = $("wxcur"); if(!el) return;
+  el.textContent = L ? t("wxCur", L.name + (L.auto ? t("wxAuto") : "")) : t("wxNoLoc");
+  $("wxclr").hidden = !L;
+}
+function wxSetLoc(o){
+  store.set("si_wxloc", o ? JSON.stringify(o) : ""); store.set("si_wxcache", ""); store.set("si_wxauto", "1");
+  wxCurText(); return loadWx(true);
+}
+const wxGeoUrl = (q, n) => `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=${n}&language=${lang}&format=json`;
+const wxPlace = p => ({name: p.name + (p.country_code ? ", " + p.country_code : ""), lat: Math.round(p.latitude * 1000) / 1000, lon: Math.round(p.longitude * 1000) / 1000});
+async function wxSearch(){
+  const q = $("wxq").value.trim(), out = $("wxres"); if(!q) return;
+  out.textContent = t("loading");
+  try{
+    const r = await fetch(wxGeoUrl(q, 6)); if(!r.ok) throw new Error("HTTP " + r.status);
+    const res = (await r.json()).results || [];
+    out.innerHTML = "";
+    if(!res.length){ out.textContent = t("wxNone"); return; }
+    res.forEach(p => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "alt small";
+      b.textContent = [p.name, p.admin1, p.country].filter(Boolean).join(", ");
+      b.onclick = () => { out.innerHTML = ""; $("wxq").value = ""; wxSetLoc(wxPlace(p)); };
+      out.appendChild(b);
+    });
+  }catch(e){ out.textContent = t("wxErr", errText(e)); }
+}
+async function wxAuto(){
+  if(wxLoc() || store.get("si_wxauto") || !ICU.city) return;
+  store.set("si_wxauto", "1"); // une seule tentative
+  const r = await fetch(wxGeoUrl(ICU.city, 5)); if(!r.ok) return;
+  const res = (await r.json()).results || [], c = String(ICU.country || "").toLowerCase();
+  const p = res.find(x => c && [x.country, x.country_code].some(v => String(v || "").toLowerCase() === c)) || res[0];
+  if(!p) return;
+  store.set("si_wxloc", JSON.stringify({...wxPlace(p), auto: true})); wxCurText(); loadWx(true);
+}
+$("wxfind").onclick = wxSearch;
+$("wxq").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); wxSearch(); } });
+$("wxclr").onclick = () => { $("wxres").textContent = ""; wxSetLoc(null); };
+$("wxgeo").onclick = () => {
+  const out = $("wxres");
+  if(!navigator.geolocation){ out.textContent = t("wxNoGeo"); return; }
+  out.textContent = t("loading");
+  navigator.geolocation.getCurrentPosition(p => { out.textContent = ""; wxSetLoc({name: t("wxMyPos"), lat: Math.round(p.coords.latitude * 1000) / 1000, lon: Math.round(p.coords.longitude * 1000) / 1000}); },
+    () => { out.textContent = t("wxNoGeo"); }, {timeout: 10000, maximumAge: 600000});
+};
+$("rwx").onclick = async () => { const b = $("rwx"); if(b.disabled) return; b.disabled = true; try{ await loadWx(true); }finally{ b.disabled = false; } };
+$("userref").onclick = async () => {
+  const b = $("userref"); if(b.disabled) return;
+  if(!KEY()){ profText(); return; }
+  b.disabled = true; ICU.loaded = false; profText();
+  try{ await loadProfile(); }catch(e){ LAST.profErr = errText(e); profText(); }
+  b.disabled = false;
+};
 
 // --- deux dernières semaines ---
 const grp = l => l.reduce((m, a) => { const k = (a.start_date_local || "").slice(0, 10); (m[k] = m[k] || []).push(a); return m; }, {});
@@ -1356,7 +1542,7 @@ $("lastbox").addEventListener("click", async e => {
   if(bike && ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // travail non enregistré dans l'éditeur
   if(mode === "cmp"){ mode = "act"; store.set("si_mode", mode); applyMode(); } // l'aperçu est masqué dans le comparateur
   if(!(await buildFromAct(a, {disabled: false})) || !bike) return;
-  const {list} = edFromText($("desc").value);
+  const {list} = edFromText($("desc").value, $("sport").value);
   if(!list.some(x => x.k === "s" || x.k === "g")) return;
   ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
   CALEDIT = null; calEdUI();
@@ -1495,6 +1681,7 @@ async function loadBest(){
   LAST.curve = (j.list || [j])[0] || {}; renderBest();
 }
 async function loadAll(){
+  loadWx().catch(() => {});
   if(!KEY()){ ["loadbox", "bestbox", "lastbox", "fitbox"].forEach(id => $(id).textContent = ""); $("loadbox").textContent = t("needI"); renderCal(); return; }
   await loadProfile().catch(e => { LAST.profErr = errText(e); profText(); });
   loadFit().catch(e => { $("fitbox").textContent = t("errI", errText(e)); });
@@ -1509,7 +1696,6 @@ refreshBtn("rfit", () => loadFit().catch(e => { $("fitbox").textContent = t("err
 refreshBtn("rlast", () => loadLoad(LAST.li || 0).catch(() => {}));
 refreshBtn("rbest", () => loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }));
 $("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkind").value); loadBest().catch(e => { $("bestbox").textContent = t("errI", errText(e)); }); };
-$("ftpsel").onchange = () => { store.set("si_ftpsel", $("ftpsel").value); renderChart(); renderBest(); };
 
 // ---------- Graphe de la séance ----------
 let selLine = null, EXPL = null;
@@ -1813,13 +1999,13 @@ async function generate(ctx){
   if(prov === "hf"){ url = "https://router.huggingface.co/v1/chat/completions"; key = $("hfkey").value.trim(); model = $("hfmodel").value.trim(); }
   else if(prov === "oa"){ url = $("oaurl").value.trim().replace(/\/+$/, "") + "/chat/completions"; key = $("oakey").value.trim(); model = $("oamodel").value.trim(); }
   else{ key = $("gkey").value.trim(); model = $("model").value.trim() || DEF.model; }
-  const ask1 = $("prompt").value.trim(), bike = isBike(sport), ftp = bike ? curFtp() : 0;
+  const ask1 = $("prompt").value.trim(), bike = isBike(sport), ftp = bike ? ftpFor(sport) : 0;
   if(prov === "oa" && !$("oaurl").value.trim()) return bad("needUrl");
   if(!key){ bad(prov === "hf" ? "needH" : prov === "oa" ? "needA" : "needG"); $("cfg").showModal(); return; }
   if(!model){ bad("needM"); $("cfg").showModal(); return; }
   if(!ask1) return bad("needAsk");
   const durTxt = $("dur").value ? `Total duration: about ${$("dur").value} minutes (warm-up and cool-down included).\n` : "";
-  const ftpTxt = ftp > 0 ? `Athlete FTP (${$("ftpsel").value === "in" ? "indoor" : "outdoor"}): ${ftp} W (intensities stay expressed in % of FTP).\n` : "";
+  const ftpTxt = ftp > 0 ? `Athlete FTP (${sport === "VirtualRide" ? "indoor" : "outdoor"}): ${ftp} W (intensities stay expressed in % of FTP).\n` : "";
   const userText = `Sport: ${sport}. Date: ${$("date").value}.\n${durTxt}${ftpTxt}${typeof ctx === "string" ? ctx + "\n" : ""}Request: ${ask1}\nReply (name and instructions) in ${lang === "fr" ? "French" : "English"}.` + (chat ? `\nReply only with a JSON object {"name": "...", "description": "...", "explanation_en": "...", "explanation_fr": "..."} and no text around it.` : "");
   $("gen").disabled = true; $("rand").disabled = true;
   const t0 = Date.now();
@@ -2326,8 +2512,10 @@ function libStatsText(item, ftp){
   return hm(st.total) + " · " + t("libAvg") + " " + (w ? Math.round(st.avgPct * ftp / 100) + " W" : Math.round(st.avgPct) + " %") + np + load;
 }
 
+let LIBF = -1;
 function renderLibrary(){
   const c = $("libContainer");
+  $("libsport").value = $("sport").value; LIBF = curFtp(); // le type de sortie choisi (indoor / extérieur) fixe la FTP utilisée pour les watts
   const q = ($("libsearch").value || "").trim().toLowerCase();
   const durF = $("libdur").value || "all";
   const starOnly = $("libstar").checked;
@@ -2406,7 +2594,7 @@ $("libContainer").onclick = e => {
   if(sb){ toggleStar(sb.dataset.star); if($("libstar").checked) renderLibraryKeepOpen(); else { const st = stars().includes(sb.dataset.star); sb.textContent = st ? "★" : "☆"; sb.setAttribute("aria-pressed", String(st)); } return; }
   const btn = e.target.closest("[data-lib]"); if(!btn) return;
   const item = LIBRARY[+btn.dataset.lib];
-  $("sport").value = item.sport; syncUnit();
+  syncUnit(); // le type de sortie (indoor / extérieur) reste celui choisi dans la bibliothèque
   $("name").value = lang === "fr" ? item.name_fr : item.name_en;
   let d = lang === "fr" ? item.desc_fr : item.desc_en;
   if($("unit").value === "w" && isBike(item.sport) && curFtp() > 0) d = toWatts(d, curFtp());
@@ -2417,12 +2605,10 @@ $("libContainer").onclick = e => {
   $("prev").scrollIntoView({behavior: "smooth", block: "start"});
   say("edBuilt", "ok");
 };
+$("libsport").onchange = () => { $("sport").value = $("libsport").value; $("sport").dispatchEvent(new Event("change")); renderLibrary(); };
 $("libunit").onchange = () => { $("unit").value = $("libunit").value; $("unit").dispatchEvent(new Event("change")); };
 $("unit").addEventListener("change", () => { $("libunit").value = $("unit").value; });
 $("libunit").value = $("unit").value;
-$("libftp").onchange = () => { $("ftpsel").value = $("libftp").value; $("ftpsel").dispatchEvent(new Event("change")); renderLibrary(); };
-$("ftpsel").addEventListener("change", () => { $("libftp").value = $("ftpsel").value; });
-$("libftp").value = $("ftpsel").value;
 
 // ---------- Bibliothèque v2 : 311 séances indoor (indoor_bike_workouts_library_v2.json, dédoublonnées) ----------
 // Les séances identiques ou très proches de la bibliothèque existante (83) ont été retirées.
@@ -2911,12 +3097,8 @@ async function buildFromAct(a, btn){
       // « intervals.icu FTP » de l'aperçu sur cette même FTP, car l'aperçu, les exports
       // et l'envoi vers intervals.icu réappliquent les pourcentages sur cette FTP :
       // la valeur absolue est ainsi identique de bout en bout.
-      const fIn = ICU.ftpIn, fOut = ICU.ftpOut;
-      let pf = ($("actftp").value === "out" ? fOut : fIn) || fIn || fOut;
-      if(!pf) pf = curFtp();
-      if(!pf) throw new Error(t("actNeedFtp"));
-      $("ftpsel").value = (pf === fOut && fOut) ? "out" : "in";
-      store.set("si_ftpsel", $("ftpsel").value);
+      // La FTP vient du type de l'activité (déjà appliqué au sélecteur de type ci-dessus) : aperçu, exports et envoi utilisent la même.
+      const pf = ftp;
       steps = steps.map(s => ({d: s.d, a: s.a / pf * 100, b: s.b / pf * 100}));
       $("desc").value = stepsToDesc(steps);
     }else{
@@ -3008,7 +3190,6 @@ $("actq").onkeydown = e => { if(e.key === "Enter"){ e.preventDefault(); if(!ACTS
 }
 $("actper").onchange = () => store.set("si_actper", $("actper").value);
 $("actout").onchange = () => { store.set("si_actout", $("actout").value); $("actftpbox").hidden = $("actout").value !== "pct"; };
-$("actftp").onchange = () => store.set("si_actftp", $("actftp").value);
 
 // ---------- Comparateur de séances passées (recherche par forme + superposition des flux) ----------
 const CMP = {pat: null, hits: [], sel: new Set(), streams: {}, mode: "series", busy: false, stop: false, view: {a: 0, b: 1}};
@@ -3065,7 +3246,7 @@ async function scOp(mode, fn){
   return new Promise(res => { try{ const q = fn(db.transaction("s", mode).objectStore("s")); q.onsuccess = () => res(q.result === undefined ? true : q.result); q.onerror = () => res(null); }catch(e){ res(null); } });
 }
 const scGet = id => scOp("readonly", st => st.get(String(id)));
-const scPut = (id, v) => scOp("readwrite", st => st.put(v, String(id)));
+const scPut = (id, v) => scOp("readwrite", st => st.put(v, String(id))).then(r => { cacheTick(); return r; });
 const scClear = () => scOp("readwrite", st => st.clear());
 const scPack = r => ({
   w: r.w ? Int16Array.from(r.w, v => { v = +v; return v > 0 ? v : 0; }) : null,
@@ -3073,6 +3254,27 @@ const scPack = r => ({
   cad: r.cad ? Uint8Array.from(r.cad, v => { v = +v; return v > 0 ? Math.min(255, v) : 0; }) : null
 });
 const scUnpack = c => ({w: c.w ? Array.from(c.w) : null, hr: c.hr ? Array.from(c.hr) : null, cad: c.cad ? Array.from(c.cad) : null});
+// Indicateur discret de l'espace occupé par le cache (pied de page + comparateur) : somme des tableaux typés stockés
+const scSize = v => v && typeof v === "object" ? Object.values(v).reduce((n, x) => n + (x && typeof x.byteLength === "number" ? x.byteLength : 8), 0) : 8;
+async function cacheStats(){
+  const db = await scDb(); if(!db) return null;
+  return new Promise(res => {
+    try{
+      let n = 0, b = 0; const rq = db.transaction("s", "readonly").objectStore("s").openCursor();
+      rq.onsuccess = () => { const c = rq.result; if(!c) return res({n, b}); n++; b += scSize(c.value) + String(c.key).length; c.continue(); };
+      rq.onerror = () => res(null);
+    }catch(e){ res(null); }
+  });
+}
+const fmtBytes = b => { const u = lang === "fr" ? ["Ko", "Mo", "Go"] : ["KB", "MB", "GB"], f = (v, d) => v.toLocaleString(loc(), {maximumFractionDigits: d}); return b < 1048576 ? f(Math.round(b / 1024), 0) + " " + u[0] : b < 1073741824 ? f(b / 1048576, 1) + " " + u[1] : f(b / 1073741824, 2) + " " + u[2]; };
+let cacheT = 0;
+function cacheTick(ms){ clearTimeout(cacheT); cacheT = setTimeout(cacheRefresh, ms === undefined ? 2500 : ms); } // regroupe les mises à jour pendant un scan
+async function cacheRefresh(){
+  const els = document.querySelectorAll(".cacheinfo"); if(!els.length) return;
+  const st = await cacheStats();
+  let use = 0, quota = 0; try{ if(navigator.storage && navigator.storage.estimate){ const e = await navigator.storage.estimate(); use = e.usage || 0; quota = e.quota || 0; } }catch(e){}
+  els.forEach(el => { el.hidden = !st; if(st){ el.textContent = t("cacheUse", fmtBytes(st.b), st.n); el.title = t("cacheTip", fmtBytes(use), quota ? fmtBytes(quota) : "?"); } });
+}
 const scFresh = a => !!(a && a.start_date_local && Date.now() - new Date(a.start_date_local).getTime() < 2 * 864e5); // trop récente : peut encore être retraitée
 // Filtre souple : une sortie très régulière (indice de variabilité ≈ 1) ne contient pas de blocs d'intervalles.
 // Appliqué uniquement aux formes avec répétitions ou récupération ; sans données de puissance, on ne l'écarte pas.
@@ -3374,7 +3576,7 @@ function cmpChart(){
 }
 $("cmpplot").onchange = () => { store.set("si_cmpplot", $("cmpplot").value); cmpChart(); };
 { const pv = store.get("si_cmpplot"); if(pv && $("cmpplot").querySelector(`option[value="${pv}"]`)) $("cmpplot").value = pv; }
-$("cmpclr").onclick = async () => { await scClear(); CMP.streams = {}; Object.keys(STREAM_CACHE).forEach(k => delete STREAM_CACHE[k]); say("cacheCleared", "ok"); };
+$("cmpclr").onclick = async () => { await scClear(); cacheTick(0); CMP.streams = {}; Object.keys(STREAM_CACHE).forEach(k => delete STREAM_CACHE[k]); say("cacheCleared", "ok"); };
 $("rcmp").onclick = () => { store.set("si_cmpper", $("cmpper").value); store.set("si_cmptype", $("cmptype").value); store.set("si_cmpplace", $("cmpplace").value); cmpSearch(); };
 $("cmpplace").onchange = () => store.set("si_cmpplace", $("cmpplace").value);
 $("cmpper").onchange = () => store.set("si_cmpper", $("cmpper").value);
@@ -3454,7 +3656,7 @@ function plannedSteps(e, ftp){
 }
 function calBigExtra(e, isAct){
   if(!isAct){
-    const sport = e.type || "Ride", ftp = curFtp();
+    const sport = e.type || "Ride", ftp = ftpFor(sport);
     const steps = plannedSteps(e, ftp);
     const svg = stepsSvg(steps);
     let meta = "";
@@ -3575,7 +3777,7 @@ function actPrevSvg(sw){
 }
 function calTipHtml(e, isAct){
   const desc = e.description || "";
-  const ftp = curFtp(), sport = e.type || "Ride";
+  const sport = e.type || "Ride", ftp = ftpFor(sport);
   const steps = !isAct ? plannedSteps(e, ftp) : [];
   let h = `<b>${esc(e.name || "—")}</b>${esc(actT(e.type || ""))}`;
   if(steps.length){
@@ -3807,7 +4009,7 @@ let edUid = 0; const edCollapsed = new Set(); // identifiants de blocs + blocs r
 const edSp = () => $("edsport").value, edKm = () => isBike(edSp()), edW = () => edKm() && $("unit").value === "w";
 const opts = (a, cur) => a.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${esc(l)}</option>`).join("");
 function edDef(ty){
-  const pc = {warm: 55, work: 95, rec: 50, cool: 50}[ty], f = curFtp();
+  const pc = {warm: 55, work: 95, rec: 50, cool: 50}[ty], f = ftpFor(edSp());
   return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid};
 }
 const edAt = p => { const a = String(p).split(".").map(Number); return a.length === 1 ? {list: ED, i: a[0]} : {list: ED[a[0]].items, i: a[1]}; };
@@ -3819,7 +4021,7 @@ const ED_STD = {
   cool: [[2, 0, 60], [3, 0, 50], [5, 0, 40]]
 };
 function stdSteps(ty){
-  const f = curFtp();
+  const f = ftpFor(edSp());
   return (ED_STD[ty] || []).map(([m, s, pc]) => ({k: "s", ty, mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
 }
 const edBtn = (a, txt, ttl, cls) => `<button class="alt small${cls ? " " + cls : ""}" data-a="${a}" type="button"${ttl ? ` title="${esc(ttl)}" aria-label="${esc(ttl)}"` : ""}>${txt}</button>`;
@@ -3845,7 +4047,7 @@ const ED_GSTD = [
 ];
 const gStdLabel = p => { const sec = x => x[0] * 60 + x[1]; return `${p[0]} × ${fmtDur(sec(p[1][0]))}/${fmtDur(sec(p[1][1]))} @${p[1][0][2]}%`; };
 function gStdSteps(p){
-  const f = curFtp();
+  const f = ftpFor(edSp());
   return p[1].map(([m, s, pc], j) => ({k: "s", ty: j % 2 ? "rec" : "work", mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
 }
 const gStdSel = i => `<select class="gstd" data-gstd="${i}" aria-label="${esc(t("gstdLbl"))}"><option value="">${esc(t("gstdLbl"))}</option>${ED_GSTD.map((p, k) => `<option value="${k}">${esc(gStdLabel(p))}</option>`).join("")}</select>`;
@@ -3873,7 +4075,7 @@ function edText(){
   return out.join("\n").trim();
 }
 function edSum(){
-  const tot = parseWorkout(edText(), edSp(), curFtp()).reduce((a, b) => a + b.d, 0);
+  const tot = parseWorkout(edText(), edSp(), ftpFor(edSp())).reduce((a, b) => a + b.d, 0);
   $("edsum").textContent = tot ? t("edTot", hm(tot)) : "";
 }
 function edHtml(){
@@ -3943,7 +4145,7 @@ function inferName(steps, fr){
 }
 let autoName = ""; // dernier nom déduit : remplacé à chaque modification tant que l'utilisateur ne l'a pas retouché
 function edInferred(txt){
-  const n = inferName(parseWorkout(txt, edSp(), curFtp()), lang === "fr");
+  const n = inferName(parseWorkout(txt, edSp(), ftpFor(edSp())), lang === "fr");
   $("edname").placeholder = n || t("edDefName");
   return n;
 }
@@ -3962,7 +4164,7 @@ function edLive(){
   renderChart();
 }
 function edRender(){
-  $("edftp").disabled = $("edunit").disabled = !edKm();
+  $("edunit").disabled = !edKm();
   $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace") + " " + t("hDrag");
   $("edbox").innerHTML = ED.length ? edHtml() : `<div class="hint">${esc(t("edNone"))}</div>`;
   edSum();
@@ -4052,7 +4254,7 @@ $("chart").addEventListener("pointerdown", e => {
   try{ box.setPointerCapture(e.pointerId); }catch(err){}
 });
 function edRzApply(s, e){
-  const box = $("chart"), f = curFtp();
+  const box = $("chart"), f = ftpFor(edSp());
   let nt = null; // ligne de description réécrite (source hors éditeur)
   if(s.k === "t"){
     const dur = Math.max(5, Math.round((s.d0 + (e.clientX - s.px0) / s.W * s.scale) / 5) * 5), tot = s.total0 + (dur - s.orig) * s.cnt;
@@ -4191,27 +4393,14 @@ $("edgo").onclick = () => {
   EXPL = null; selLine = null; $("prev").hidden = false; renderChart(); $("prev").scrollIntoView({behavior: "smooth", block: "start"}); say("edBuilt", "ok");
 };
 $("edsport").value = $("sport").value;
-[["ftpsel", "edftp"], ["unit", "edunit"], ["ftpsel", "pftp"], ["unit", "punit"]].forEach(([a, b]) => {
+[["unit", "edunit"], ["unit", "punit"]].forEach(([a, b]) => {
   $(b).onchange = () => { $(a).value = $(b).value; $(a).dispatchEvent(new Event("change")); };
   $(a).addEventListener("change", () => { $(b).value = $(a).value; });
 });
-// Note sous les sélecteurs de FTP : en mode % FTP, la FTP choisie n'est qu'indicative (affichage en watts) ;
-// intervals.icu applique sa propre FTP à la séance envoyée.
-function updateFtpTip(){
-  const on = $("unit").value === "pct" && !$("unit").disabled;
-  ["ftpsel", "edftp", "libftp", "pftp"].forEach(id => {
-    const el = $(id); if(!el) return;
-    let n = el.parentNode.querySelector(".ftpnote");
-    if(!n){ n = document.createElement("div"); n.className = "hint ftpnote"; el.parentNode.appendChild(n); }
-    n.textContent = t("ftpInfoTip"); n.hidden = !on;
-  });
-}
-["unit", "edunit", "punit", "libunit", "sport"].forEach(id => { const el = $(id); if(el) el.addEventListener("change", () => setTimeout(updateFtpTip)); });
-
 // ---------- Modifier une séance planifiée du calendrier dans l'éditeur manuel ----------
 // Texte intervals.icu -> étapes de l'éditeur. Les rampes sont aplaties (moyenne), les lignes illisibles ignorées (comptées).
-function edFromText(txt){
-  const f = curFtp(), wMode = edW(), list = [], num = x => parseFloat(String(x).replace(",", "."));
+function edFromText(txt, sp){
+  const f = ftpFor(sp || edSp()), wMode = edW(), list = [], num = x => parseFloat(String(x).replace(",", "."));
   let skipped = 0, ramps = 0, group = null, secTy = null, seenWork = false;
   const durS = str => {
     let tt = 0, m; const re = /(\d+(?:[.,]\d+)?)\s*(h|min|m|s)(?![a-z])|(\d+):(\d{2})(?::(\d{2}))?/gi;
@@ -4285,7 +4474,7 @@ function calEdUI(){
 async function calEdit(ev){
   const ty = ev.type || "Ride";
   if(ty !== "Ride" && ty !== "VirtualRide") return say("calEdSport", "err");
-  const {list, skipped, ramps} = edFromText(ev.description || "");
+  const {list, skipped, ramps} = edFromText(ev.description || "", ty);
   if(!list.some(x => x.k === "s" || x.k === "g")) return say("calEdEmpty", "err");
   if(ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // du travail non enregistré dans l'éditeur
   ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
@@ -4420,7 +4609,7 @@ function ppShow(pv){
   clearTimeout(PPT);
   if(PPOP && !PPOP.hidden && PPOP.dataset.pi === pv.dataset.pi) return; // déjà affiché : les survols des enfants ne le redessinent pas
   const x = PLAN.items[+pv.dataset.pi]; if(!x) return;
-  const ftp = curFtp(), steps = parseWorkout(x.w.desc_en, $("psport").value, ftp); if(!steps.length) return;
+  const ftp = ftpFor($("psport").value), steps = parseWorkout(x.w.desc_en, $("psport").value, ftp); if(!steps.length) return;
   const lines = x.w.desc_en.split("\n"), T = steps.reduce((q, st) => q + st.d, 0);
   const VW = 480, VH = 168, X0 = 32, X1 = 474, Y0 = 6, YB = 138, peak = Math.ceil(Math.max(120, ...steps.map(st => Math.max(st.a, st.b))) / 10) * 10;
   const yy = v => YB - v / peak * (YB - Y0), xx = sec => X0 + sec / T * (X1 - X0);
@@ -4510,7 +4699,7 @@ $("pdays").addEventListener("change", e => { // un jour décoché ne peut plus �
 $("phard").addEventListener("change", e => { // un jour dur est forcément un jour d'entraînement
   const i = e.target; if(i.checked){ const d = $("pdays").querySelector(`input[value="${i.value}"]`); if(d) d.checked = true; } planHardWarn();
 });
-const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; return $("punit").value === "w" && curFtp() > 0 ? toWatts(d, curFtp()) : d; }; // % de FTP ou watts (FTP choisie)
+const planDesc = w => { const d = lang === "fr" ? w.desc_fr : w.desc_en; const f = ftpFor($("psport").value); return $("punit").value === "w" && f > 0 ? toWatts(d, f) : d; }; // % de FTP ou watts (FTP du type de sortie)
 $("pgen").onclick = planBuild;
 $("pbox").addEventListener("click", e => {
   const sw = e.target.closest("[data-pswap]"); if(sw){ planSwap(+sw.dataset.pswap); return; }
@@ -4543,6 +4732,7 @@ function applyMode(){
   document.querySelector('[data-block="req"]').hidden = mode !== "ai";
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
+  if(mode === "lib" && LIBF !== curFtp()) renderLibrary();
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
@@ -4565,13 +4755,16 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
 // --- Widgets visibles de la colonne de droite (réglages) ---
-const WIDGETS = ["cal", "fit", "last", "load", "best"];
+const WIDGETS = ["cal", "fit", "last", "load", "best", "wx"];
 let widgets = [];
 function loadWidgets(){
   const raw = store.get("si_widgets");
   let v = null;
   try{ v = raw ? JSON.parse(raw) : null; }catch(e){ v = null; }
-  widgets = WIDGETS.filter(k => v ? v.includes(k) : WIDGETS.indexOf(k) < 3);
+  // la météo (ajoutée ensuite) est activée une fois pour les utilisateurs existants ; ils peuvent la masquer dans les réglages
+  const wxNew = !store.get("si_wxinit");
+  widgets = WIDGETS.filter(k => v ? v.includes(k) || (k === "wx" && wxNew) : WIDGETS.indexOf(k) < 3 || k === "wx");
+  if(wxNew){ if(v) store.set("si_widgets", JSON.stringify(widgets)); store.set("si_wxinit", "1"); }
 }
 function applyWidgets(){
   WIDGETS.forEach(k => { const sec = document.querySelector(`[data-block="${k}"]`); if(sec) sec.hidden = !widgets.includes(k); });
@@ -4648,7 +4841,7 @@ function applyLang(){
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI();
-  setLinks(); fillFtp(); updateFtpTip(); profText(); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderLast(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
@@ -4656,8 +4849,8 @@ $("fontsel").onchange = e => { font = e.target.value; store.set("si_font", font)
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
-$("ftpsel").value = store.get("si_ftpsel") || "in"; $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftp").value = store.get("si_actftp") || "in"; $("actftpbox").hidden = $("actout").value !== "pct";
-$("fper").value = store.get("si_fper") || "60"; $("edftp").value = $("ftpsel").value; $("edunit").value = $("unit").value; $("libftp").value = $("ftpsel").value; $("pftp").value = $("ftpsel").value; $("punit").value = $("unit").value;
+$("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftpbox").hidden = $("actout").value !== "pct";
+$("fper").value = store.get("si_fper") || "60"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
 if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
 // ---------- Glossaire : info-bulle sur chaque terme technique affiché ----------
 // Un MutationObserver enveloppe les termes (FTP, TSS, IF, zones…) dans <abbr class="gl"> partout dans l'interface,
