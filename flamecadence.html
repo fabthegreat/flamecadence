@@ -276,10 +276,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 @media (max-width:560px){.mode:not(.cfg-tabs) button[aria-selected="true"]{gap:6px}.mode:not(.cfg-tabs) button[aria-selected="true"] span{display:inline}}
 @media (max-width:560px){.mode button{gap:0;padding:9px 4px}.mode button span{display:none}}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
-.mode button[hidden]{display:none}
+.mode button[hidden],#libfeel[hidden]{display:none}
+#libfeelb{display:flex;gap:4px}#libfeelb[hidden]{display:none}#libfeelb button{margin:0;padding:6px 9px;font-size:1.25rem;line-height:1;background:transparent;border:1px solid var(--line);border-radius:8px;filter:grayscale(.85);opacity:.65}#libfeelb button[aria-checked="true"]{background:var(--line);border-color:var(--acc);filter:none;opacity:1}
 .grp{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.grp button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.grp button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-i]{cursor:pointer}.sest tr.on{background:var(--line)}
 #sesBox svg{width:100%;height:auto;display:block}
+.sesg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
+.sesd{min-height:52px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;font-size:.7rem;color:var(--mute);display:flex;flex-direction:column;gap:2px;opacity:.7}.sesd.has{background:var(--card);opacity:1}
+.sesd button{margin:0;padding:1px;min-height:0;height:28px;width:100%;display:block;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--acc);font-size:.7rem;line-height:1}.sesd button.on{border-color:var(--acc);background:var(--line)}.sesd svg{width:100%;height:24px;display:block}
 /* survol / focus clavier d'un onglet non actif : l'icône est mise en valeur (couleur d'accent, plus grande, trait plus épais) */
 .mode button svg{transition:transform .15s,stroke-width .15s}
 .mode button:not([aria-selected="true"]):hover,.mode button:not([aria-selected="true"]):focus-visible{background:var(--bg);color:var(--acc)}
@@ -384,6 +388,15 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .tip .cal-prev{display:block;width:210px;height:46px;margin:6px 0 2px;border-radius:4px;background:var(--bg)}
 .tip .cal-prev svg{display:block;width:100%;height:100%}
 .tip b{display:block;margin-bottom:2px}
+#sesBox{position:relative}
+svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.55;pointer-events:none}
+/* barre principale (Générer / Analyser) : couleur « flamme » distincte du sous-menu, qui garde l'accent habituel */
+:root{--top:#c2410c;--top-on:#fff}
+:root[data-theme="dark"]{--top:#ff9a5c;--top-on:#2a1204}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--top:#ff9a5c;--top-on:#2a1204}}
+.grp{border-color:var(--top)}
+.grp button[aria-selected="true"]{background:var(--top);color:var(--top-on)}
+.grp button:not([aria-selected="true"]):hover,.grp button:not([aria-selected="true"]):focus-visible{color:var(--top)}
 .cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
 /* calendrier agrandi : plein écran, avec un aperçu graphique par séance / activité */
 html.calmax,html.calmax body{overflow:hidden}
@@ -697,7 +710,8 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="0-30">≤ 30 min</option><option value="30-45">30 – 45 min</option><option value="45-60">45 – 60 min</option><option value="60-75">60 – 75 min</option><option value="75-90">75 – 90 min</option><option value="90-105">90 – 105 min</option><option value="105-120">105 – 120 min</option><option value="120-inf">&gt; 120 min</option></select></div>
 </div>
 <div class="row" style="align-items:center;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;cursor:pointer" data-ia="title:libFormTip"><input type="checkbox" id="libform" style="width:auto;margin:0"><span data-i="libForm"></span></label>
-<select id="libfeel" data-ia="aria-label:libForm"><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood" selected></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
+<div id="libfeelb" role="radiogroup" hidden data-ia="aria-label:libForm"><button type="button" role="radio" data-v="great" data-ia="title:feelGreat;aria-label:feelGreat">😄</button><button type="button" role="radio" data-v="good" data-ia="title:feelGood;aria-label:feelGood">🙂</button><button type="button" role="radio" data-v="soso" data-ia="title:feelSoso;aria-label:feelSoso">😐</button><button type="button" role="radio" data-v="tired" data-ia="title:feelTired;aria-label:feelTired">😩</button><button type="button" role="radio" data-v="exhausted" data-ia="title:feelExh;aria-label:feelExh">😴</button></div>
+<select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood" selected></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
 <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
@@ -787,7 +801,9 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <!-- Section Comparateur de séances -->
 <section data-block="ses" hidden>
 <div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button></div>
-<select id="sesSel" data-ia="aria-label:sesT"></select>
+<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button></div>
+<div id="sesCal"></div>
+<select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
 <div id="sesBox"></div>
 </section>
 <section data-block="cmp" hidden>
@@ -1508,6 +1524,10 @@ function updateIcuLinks(){
   else $("lkNext").href = "https://intervals.icu";
   $("lkLast").href = LAST.last && LAST.last.id ? "https://intervals.icu/activities/" + encodeURIComponent(LAST.last.id) : icuPage("/activities");
 }
+// Le lien de la dernière séance est aussi recalculé au survol / focus / clic à partir de l'activité réellement affichée
+// (évite tout décalage si l'affichage a changé entre-temps ; fonctionne aussi pour le clic molette et « ouvrir dans un nouvel onglet »)
+{ const fixLast = () => { const a = LAST.last; if(a && a.id != null) $("lkLast").href = "https://intervals.icu/activities/" + encodeURIComponent(String(a.id).trim()); };
+  ["pointerdown", "mouseenter", "focus", "click", "contextmenu"].forEach(ev => $("lkLast").addEventListener(ev, fixLast)); }
 // Libellés des sélecteurs de type de sortie : « Vélo indoor (FTP 240 W) » / « Vélo extérieur (FTP 250 W) »
 function fillFtp(){
   const lab = (k, f) => t(k) + (f ? ` (FTP ${f} W)` : "");
@@ -1758,14 +1778,37 @@ function renderLast(){
   box.innerHTML = `<div class="lt">${esc(a.name || a.type || "")}</div><div class="hint">${esc(when)} · ${esc(actT(a.type))}${pos}</div>` + (LAST.strTried ? streamsSvg() : "") +
     `<div class="kv">${kv.map(([l, v]) => `<div>${esc(l)}<b>${esc(v)}</b></div>`).join("")}</div>`;
   updateIcuLinks();
+  // curseur vertical + infobulle sur le graphe puissance / FC
+  const sv = box.querySelector("#lsvg");
+  if(sv){
+    const w = ds(LAST.sw, 240), h = ds(LAST.sh, 240), n = Math.max(w.length, h.length), dur = LAST.last.moving_time || 0;
+    chartHover(box, sv, n, i => {
+      const tm = mmss(i / Math.max(1, n - 1) * dur), p = w[i] ? Math.round(w[i]) : null, hr = h[i] ? Math.round(h[i]) : null;
+      const li = $("linfo"); if(li) li.textContent = [tm, p ? p + " W" : "", hr ? hr + " bpm" : ""].filter(Boolean).join(" · ");
+      return {html: `<b>${esc(tm)}</b>` + [p ? `${esc(t("lPow"))} : ${p} W` : "", hr ? `${esc(t("lHRs"))} : ${hr} bpm` : ""].filter(Boolean).join("\n"), leave: () => { const l = $("linfo"); if(l) l.innerHTML = "&nbsp;"; }};
+    });
+  }
 }
-$("lastbox").addEventListener("pointermove", e => {
-  const svg = e.target.closest ? e.target.closest("#lsvg") : null; if(!svg || !LAST.last) return;
-  const r = svg.getBoundingClientRect(), fr = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
-  const at = arr => arr && arr.length ? Math.round(ds(arr, 240)[Math.round(fr * (ds(arr, 240).length - 1))]) : null;
-  const p = at(LAST.sw), h = at(LAST.sh);
-  $("linfo").textContent = [mmss(fr * (LAST.last.moving_time || 0)), p ? p + " W" : "", h ? h + " bpm" : ""].filter(Boolean).join(" · ");
-});
+// Curseur vertical + infobulle sur un graphe SVG (viewBox quelconque) : infoAt(i) → {html, leave?}
+function chartHover(box, svg, count, infoAt){
+  if(!svg || !count) return;
+  const NS = "http://www.w3.org/2000/svg", vb = svg.viewBox.baseVal;
+  const ln = document.createElementNS(NS, "line"); ln.setAttribute("class", "cur"); ln.setAttribute("y1", 0); ln.setAttribute("y2", vb.height); ln.style.display = "none"; svg.appendChild(ln);
+  let tip = box.querySelector(":scope > .tip.ctip"); if(!tip){ tip = document.createElement("div"); tip.className = "tip ctip"; tip.hidden = true; box.appendChild(tip); }
+  let leave = null;
+  const hide = () => { ln.style.display = "none"; tip.hidden = true; if(leave) leave(); };
+  const move = e => {
+    const r = svg.getBoundingClientRect(); if(!r.width) return;
+    const fr = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)), i = Math.round(fr * (count - 1)), x = i / Math.max(1, count - 1);
+    ln.setAttribute("x1", x * vb.width); ln.setAttribute("x2", x * vb.width); ln.style.display = "";
+    const info = infoAt(i, fr); leave = info.leave || null; tip.innerHTML = info.html; tip.hidden = false;
+    const br = box.getBoundingClientRect();
+    tip.style.left = Math.max(0, Math.min(r.left - br.left + x * r.width - tip.offsetWidth / 2, br.width - tip.offsetWidth)) + "px";
+    tip.style.top = Math.max(0, r.top - br.top - tip.offsetHeight - 6) + "px"; // au-dessus du graphe, pour ne pas masquer la courbe
+  };
+  ["pointermove", "pointerdown"].forEach(ev => svg.addEventListener(ev, move));
+  svg.addEventListener("pointerleave", hide);
+}
 // Clic sur le graphe de la dernière séance : reconstruction dans l'aperçu ET ouverture dans l'éditeur manuel (vélo uniquement)
 $("lastbox").addEventListener("click", async e => {
   if(!(e.target.closest && e.target.closest("#lsvg")) || !LAST.last) return;
@@ -3195,7 +3238,9 @@ $("libContainer").addEventListener("toggle", e => { const d = e.target; if(d && 
 $("libsearch").addEventListener("input", renderLibrary);
 $("libdur").addEventListener("change", renderLibrary);
 $("libstar").addEventListener("change", renderLibrary);
-$("libform").addEventListener("change", renderLibrary); $("libfeel").addEventListener("change", () => { $("libform").checked = true; renderLibrary(); });
+const feelUI = () => { $("libfeelb").hidden = !$("libform").checked; document.querySelectorAll("#libfeelb button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.v === $("libfeel").value))); };
+$("libform").addEventListener("change", () => { feelUI(); renderLibrary(); }); feelUI();
+document.querySelectorAll("#libfeelb button").forEach(b => b.onclick = () => { $("libfeel").value = b.dataset.v; feelUI(); renderLibrary(); });
 function renderLibraryKeepOpen(){ const c = $("libContainer"); const open = [...c.querySelectorAll("details.lib-theme")].map(d => d.open); renderLibrary(); c.querySelectorAll("details.lib-theme").forEach((d, i) => { d.open = !!open[i]; }); }
 // à l'ouverture d'une catégorie, on la ramène à l'écran pour que sa zone défilante soit entièrement visible
 $("libContainer").addEventListener("click", e => {
@@ -5728,29 +5773,64 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 });
 
 // ---------- Analyse d'une séance : vue de type intervals.icu (stats, graphe puissance/FC, tableau des intervalles) ----------
-const SES = {list: null, tok: 0};
-async function sesInit(){
-  if(SES.list) return;
-  const box = $("sesBox"); if(!KEY()){ box.innerHTML = `<div class="hint">${esc(t("needI"))}</div>`; return; }
-  try{
-    const acts = await icu(`/activities?oldest=${daysAgo(60)}&newest=${iso(new Date())}`);
-    SES.list = (Array.isArray(acts) ? acts : []).filter(a => a.moving_time > 0).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
-  }catch(e){ box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; return; }
-  if(!SES.list.length){ box.innerHTML = `<div class="hint">${esc(t("sesNone"))}</div>`; return; }
-  $("sesSel").innerHTML = SES.list.map(a => `<option value="${esc(a.id)}">${esc((a.start_date_local || "").slice(0, 10) + " · " + (a.name || a.type || ""))}</option>`).join("");
-  const sv = store.get("si_sesid"); if(sv && SES.list.some(a => String(a.id) === sv)) $("sesSel").value = sv;
-  sesShow();
+const SES = {list: [], tok: 0, mt: 0, m: null, cur: ""};
+async function sesInit(){ if(SES.m) return; SES.m = new Date(); SES.m.setDate(1); await sesMonth(true); }
+async function sesMonth(pick){ // petit calendrier du mois : une vignette (profil de puissance) par activité, un clic ouvre l'analyse
+  const box = $("sesBox"), cal = $("sesCal"), m = SES.m;
+  if(!KEY()){ box.innerHTML = `<div class="hint">${esc(t("needI"))}</div>`; return; }
+  $("sesMT").textContent = m.toLocaleDateString(loc(), {month: "long", year: "numeric"});
+  const mt = ++SES.mt; cal.innerHTML = `<div class="hint">${esc(t("sesLoad"))}</div>`; let acts;
+  // mêmes données que le widget Calendrier : liste d'activités du mois en cache (CAL_CACHE), sinon une requête qui l'alimente aussi
+  const now = new Date(), off = (m.getFullYear() - now.getFullYear()) * 12 + m.getMonth() - now.getMonth();
+  try{ acts = (CAL_CACHE_KEY === KEY() && CAL_CACHE[off] ? CAL_CACHE[off] : await calFetch(off)).acts; }
+  catch(e){ if(mt === SES.mt) cal.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; return; }
+  if(mt !== SES.mt) return;
+  SES.list = (Array.isArray(acts) ? acts : []).filter(x => x.id != null).sort((x, y) => x.start_date_local < y.start_date_local ? -1 : 1);
+  $("sesSel").innerHTML = SES.list.map(x => `<option value="${esc(x.id)}"></option>`).join("");
+  let id = ""; if(pick){ const sv = store.get("si_sesid"); id = SES.list.some(x => String(x.id) === sv) ? sv : (SES.list.length ? String(SES.list[SES.list.length - 1].id) : ""); if(id) SES.cur = id; }
+  sesGrid(mt);
+  if(pick){ if(id){ $("sesSel").value = id; sesShow(); } else if(!SES.list.length) box.innerHTML = `<div class="hint">${esc(t("sesNone"))}</div>`; }
+}
+function sesGrid(mt){
+  const m = SES.m, by = {}, nd = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), lead = (new Date(m.getFullYear(), m.getMonth(), 1).getDay() + 6) % 7;
+  SES.list.forEach(a => { const k = (a.start_date_local || "").slice(0, 10); (by[k] = by[k] || []).push(a); });
+  let h = [...Array(7)].map((_, i) => `<div class="dh">${esc(new Date(2024, 0, 1 + i).toLocaleDateString(loc(), {weekday: "narrow"}))}</div>`).join("") + "<div></div>".repeat(lead);
+  for(let d = 1; d <= nd; d++){
+    const L = by[iso(new Date(m.getFullYear(), m.getMonth(), d))] || [];
+    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc(a.name || a.type || "")}" class="${String(a.id) === SES.cur ? "on" : ""}">●</button>`).join("")}</div>`;
+  }
+  const cal = $("sesCal"); cal.innerHTML = `<div class="sesg">${h}</div>`;
+  cal.querySelectorAll("button[data-id]").forEach(b => b.onclick = () => { $("sesSel").value = b.dataset.id; sesShow(); });
+  // vignettes : même chargeur que le calendrier principal (actStreams : 4 requêtes max en parallèle, réessais, cache persistant partagé)
+  // et même rendu (actPrevSvg, avec un profil de repli si l'activité n'a pas de flux exploitable) ; un échec transitoire est retenté plus tard
+  const q = SES.list.map(a => ({a, n: 0})), run = async () => {
+    while(q.length && mt === SES.mt){
+      const it = q.shift(), a = it.a, b = cal.querySelector(`button[data-id="${a.id}"]`); if(!b) continue;
+      let sw = null; try{ sw = await actStreams(String(a.id)); }catch(e){}
+      const sp = sw && !sw.transient ? (actPrevSvg(sw) || actFallbackSvg(a, sw)) : "";
+      if(sp) b.innerHTML = sp;
+      else if((!sw || sw.transient) && ++it.n < 4){ await new Promise(r => setTimeout(r, 800 * it.n)); q.push(it); }
+      else if(sw && !sw.transient){ const fb = actFallbackSvg(a, sw); if(fb) b.innerHTML = fb; }
+    }
+  };
+  run(); run();
 }
 function sesStat(arr, s, e){ if(!arr) return null; let n = 0, sum = 0, mx = 0; for(let i = s; i < Math.min(e, arr.length); i++){ const v = arr[i] || 0; sum += v; n++; if(v > mx) mx = v; } return n ? {avg: sum / n, max: mx} : null; }
 function sesNP(w, s, e){ if(!w || e - s < 30) return null; let acc = 0, n = 0, run = 0; for(let i = s; i < Math.min(e, w.length); i++){ run += w[i] || 0; if(i - s >= 30) run -= w[i - 30] || 0; if(i - s >= 29){ const m = run / 30; acc += m * m * m * m; n++; } } return n ? Math.pow(acc / n, 0.25) : null; }
 async function sesShow(){
   const a = (SES.list || []).find(x => String(x.id) === $("sesSel").value), box = $("sesBox"); if(!a) return;
-  store.set("si_sesid", String(a.id)); const tok = ++SES.tok; box.innerHTML = `<div class="hint">${esc(t("sesLoad"))}</div>`;
+  store.set("si_sesid", String(a.id)); SES.cur = String(a.id); document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
+  // l'en-tête (nom, type, date, lien) s'affiche tout de suite et reste seul quand l'activité n'a ni puissance ni FC (ping-pong, course…)
+  const hdr = `<div class="hint" style="margin-bottom:6px"><b>${esc(a.name || a.type || "")}</b> · ${esc(actT(a.type))} · ${esc((a.start_date_local || "").slice(0, 10))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a></div>`;
+  box.innerHTML = hdr + `<div class="hint">${esc(t("sesLoad"))}</div>`;
+  const noData = !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
   try{
-    const [st, iv] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null)]);
+    let st, iv = null;
+    try{ [st, iv] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null)]); }
+    catch(e){ if(!noData) throw e; st = {}; } // pas de flux pour une activité sans capteur : on garde le nom seul
     if(tok !== SES.tok) return;
     const w = st.w, hr = st.hr, cad = st.cad, N = Math.max((w || []).length, (hr || []).length);
-    if(!N){ box.innerHTML = `<div class="hint">${esc(t("sesNoStr"))}</div>`; return; }
+    if(!N){ box.innerHTML = hdr + `<div class="hint">${esc(t("sesNoStr"))}</div>`; return; }
     const ftp = (a.type === "VirtualRide" ? ICU.ftpIn : ICU.ftpOut) || ICU.ftpIn || ICU.ftpOut || 0;
     let B = ((iv && iv.icu_intervals) || []).filter(x => x.end_index > x.start_index).map(x => ({s: x.start_index, e: x.end_index, label: x.label || "", work: !/REC/i.test(x.type || "")}));
     if(!B.length && w){ let c = 0; B = detectSteps(w, ftp || 250).map(x => { const o = {s: c, e: c + x.d, label: "", work: x.a >= 0.75 * (ftp || 250)}; c += x.d; return o; }); }
@@ -5767,13 +5847,20 @@ async function sesShow(){
       `<text x="4" y="${Hh - 2}" font-size="11" fill="var(--mute)">0</text><text x="${W - 4}" y="${Hh - 2}" font-size="11" text-anchor="end" fill="var(--mute)">${esc(fmtDur(N))}</text></svg>`;
     const rows = B.map((b, i) => { const sw = sesStat(w, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e), np = sesNP(w, b.s, b.e);
       return `<tr data-i="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${f0(sw && sw.avg)}</td><td>${f0(np)}</td><td>${sw && ftp ? Math.round(sw.avg / ftp * 100) : "–"}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td><td>${f0(sw && sw.max)}</td></tr>`; }).join("");
-    box.innerHTML = `<div class="hint" style="margin-bottom:6px"><b>${esc(a.name || a.type || "")}</b> · ${esc((a.start_date_local || "").slice(0, 10))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a></div>` +
+    box.innerHTML = hdr +
       `<div class="kv" style="grid-template-columns:repeat(4,1fr)">${kv.map((v, i) => `<div>${esc(K[i])}<b>${esc(v)}</b></div>`).join("")}</div>` + svg +
       (B.length ? `<h3 style="margin:14px 0 6px;font-size:.95rem">${esc(t("sesIv"))}</h3><div style="overflow-x:auto"><table class="sest"><thead><tr>${H.map(x => `<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` : "");
+    chartHover(box, box.querySelector("svg"), pw.length || hh.length, i => {
+      const s0 = i * bk, s1 = Math.min(N, s0 + bk), sc = sesStat(cad, s0, s1), k = B.findIndex(b => s0 >= b.s && s0 < b.e), b = k >= 0 ? B[k] : null;
+      const L = [pw.length ? `${esc(t("lPow"))} : ${Math.round(pw[i])} W` + (ftp ? ` (${Math.round(pw[i] / ftp * 100)} %)` : "") : "", hh.length && hh[i] ? `${esc(t("lHRs"))} : ${Math.round(hh[i])} bpm` : "", sc && sc.avg ? `${esc(t("lCad"))} : ${Math.round(sc.avg)} rpm` : "", b ? `#${k + 1} · ${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}` : ""].filter(Boolean);
+      return {html: `<b>${esc(fmtDur(s0))}</b>` + L.join("\n")};
+    });
     box.querySelectorAll("tr[data-i]").forEach(r => r.onclick = () => { const on = !r.classList.contains("on"); box.querySelectorAll("tr.on").forEach(x => x.classList.remove("on")); box.querySelectorAll("rect[data-r]").forEach(x => x.setAttribute("opacity", ".13")); if(on){ r.classList.add("on"); const rc = box.querySelector(`rect[data-r="${r.dataset.i}"]`); if(rc){ rc.setAttribute("opacity", ".4"); if(rc.getAttribute("fill") === "none") rc.setAttribute("fill", "var(--mute)"); } } });
   }catch(e){ if(tok === SES.tok) box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; }
 }
-$("sesSel").onchange = sesShow; $("sesRef").onclick = () => { SES.list = null; sesInit(); };
+$("sesRef").onclick = () => sesMonth(false);
+$("sesPrev").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() - 1, 1); sesMonth(false); };
+$("sesNext").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() + 1, 1); sesMonth(false); };
 
 // ---------- Blocs repliables, liens, langue, démarrage ----------
 // --- Widgets visibles de la colonne de droite (réglages) ---
