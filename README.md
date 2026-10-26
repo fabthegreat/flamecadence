@@ -1,33 +1,40 @@
 <p align="center">
-  <img src="logo.svg" width="80" height="80" alt="PaceForge Logo">
+  <img src="logo.svg" width="80" height="80" alt="FlameCadence Logo">
 </p>
 
-<h1 align="center">PaceForge</h1>
+<h1 align="center">FlameCadence</h1>
 
 <p align="center">
-  <b>Forge your next session: describe it, let AI build it, then send it straight to intervals.icu.</b>
+  <b>Fire up your next session: describe it, let AI build it, then send it straight to intervals.icu.</b>
 </p>
 
 ---
 
 ## 🚀 Overview
 
-**PaceForge** is a single-file web app that combines a structured-workout designer with a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. A set of sidebar widgets keeps your calendar, fitness, last workout, recent load and best efforts in view.
+**FlameCadence** is a single-file web app that combines a structured-workout designer, a session analysis tool and a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. Afterwards, analyze what you actually rode, and keep your calendar, fitness, recent load and best efforts in view with the sidebar widgets.
 
-The interface is available in **English and French** and follows your system **light / dark** theme (or a manual choice).
+The interface is available in **English and French**, follows your system **light / dark** theme (or a manual choice), and can be **installed as an app** on your phone.
 
 ---
 
 ## ✨ Key Features
 
-### 🛠️ Ways to build a workout
+The main navigation has two groups: **Generate** (everything that builds a workout) and **Analyze** (everything that studies past sessions).
+
+### 🛠️ Generate: ways to build a workout
 
 * **🤖 AI generator:** Describe the session in plain English or French (e.g. *"1h15 endurance with 3 x 10 min threshold blocks, day before a long ride"*). Pick the sport (outdoor or virtual ride), duration, FTP source (indoor / outdoor) and units (% FTP or watts). The AI takes your recent activities and training load into account and explains why the session is built the way it is. Works with **Gemini** (model list loaded from your key, adjustable thinking level), **Hugging Face**, or any **OpenAI-compatible** API (Groq, OpenRouter, Mistral, …).
 * **✍️ Manual editor:** Add warm-up, interval blocks with recovery, cool-down and free steps. Steps can be defined by time or distance, with intensity in % FTP, watts or % threshold pace, plus optional notes. Reorder with the ⠿ drag handles; the estimated duration updates live.
-* **📚 Workout library:** 300+ ready-made sessions across recovery, endurance, tempo, threshold, VO2max, sprint, beginner and testing categories. Each card has a mini chart and stats, with search, duration filter and a ★ favourites list. Watts or % FTP follows your settings.
+* **📚 Workout library:** 300+ ready-made sessions across recovery, endurance, tempo, threshold, VO2max, sprint, beginner and testing categories. Each card has a mini chart and stats, with search, duration filter and a ★ favourites list. Watts or % FTP follows your settings. Tick **"Match how I feel today"** and pick how you feel (great, good, so-so, tired, exhausted) to show only the sessions that suit your form: the harder types disappear as you get more tired, and sessions are capped in length when you are tired or exhausted.
 * **📅 Training plan builder:** Generate a multi-week plan (1–24 weeks) for a goal (base endurance, raise FTP, VO2max, sprint / punch, get started), with your choice of sessions per week, training days, preferred hard days (with a warning for back-to-back hard days), maximum session length and start date. Recovery weeks are inserted automatically, a weekly TSS chart shows the load progression, and any session can be swapped for a similar one or removed before you upload the whole plan to intervals.icu.
 * **📥 Import:** Drop or pick a Zwift `.zwo` or Garmin `.fit` workout file and turn it into an editable preview.
-* **🔁 From an activity:** Pick one of your recent rides and rebuild the intervals you actually rode, from its power data, as an editable workout. Output can be in % of the selected FTP or exact watts.
+* **🔁 From an activity:** Pick one of your recent rides (or click a completed session in the calendar or the last-workout chart) and load it as an editable workout. If a **planned workout is paired with that ride** in intervals.icu, the original plan is restored exactly as scheduled. Otherwise the intervals you actually rode are rebuilt from the power data. Output can be in % of the selected FTP or exact watts.
+
+### 🔬 Analyze: study what you rode
+
+* **📈 Single session:** Choose one of your last 60 days of activities and get an intervals.icu-style view: key figures (time, distance, average power, normalized power, intensity, load, average heart rate, climb), a chart of power and heart rate with the FTP line and the work intervals shaded, and an **interval table** at the bottom with time, average and max power, normalized power, % FTP, average and max heart rate and cadence for each interval. Click a row to highlight the interval on the chart. It uses the intervals defined in intervals.icu, or detects them when there are none, and links back to the activity on intervals.icu.
+* **🧬 Compare:** Describe a session shape such as `10x1'/1'`; FlameCadence scans your intervals.icu activities, finds the ones that roughly match, and superimposes watts, heart rate and cadence so you can see how the same workout evolved. Filter by workout type, period and name.
 
 ### 📈 Interactive preview
 
@@ -46,37 +53,55 @@ The interface is available in **English and French** and follows your system **l
 
 ### 📊 Dashboard widgets (intervals.icu)
 
-Each widget can be shown or hidden from the settings and has a shortcut to the matching intervals.icu page. Use the ▲ / ▼ buttons in a widget's header to **move it up or down**; the order is remembered in your browser and included in the exported settings JSON.
+The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **Fitness** and **Analysis**. A tab disappears when all its widgets are hidden. Each widget can be shown or hidden from the settings and has a shortcut to the matching intervals.icu page. Use the ▲ / ▼ buttons in a widget's header to **move it up or down** within its tab; the order and the selected tab are remembered in your browser and the order is included in the exported settings JSON.
 
-* **Calendar:** planned and completed sessions for the month. Hover a session for a preview chart (planned power profile, or the real power / speed / heart-rate curve of a completed activity). **Drag and drop** to move a planned workout to another day, **✕** to delete it, and **click an empty day** to open the manual editor with that date already set. Expand it to full screen for a chart on every session.
-* **Fitness:** CTL, ATL and form (TSB) over a selectable period.
-* **Last workout:** browse your latest activities with the previous / next buttons and get an **AI analysis** of the selected one.
-* **Last two weeks:** daily training load, with CTL / ATL / form summary.
-* **Best efforts:** power curve table for indoor or outdoor rides over 6 weeks, 12 weeks or one year.
+* **Agenda tab**
+  * **Calendar:** planned and completed sessions for the month. Hover a session for a preview chart (planned power profile, or the real power / speed / heart-rate curve of a completed activity). **Drag and drop** to move a planned workout to another day, **✕** to delete it, and **click an empty day** to open the manual editor with that date already set. Expand it to full screen for a chart on every session.
+  * **Next planned workout:** the next session on your calendar that you have not done yet.
+  * **Week ahead weather:** the forecast for the coming days, to plan your rides.
+* **Fitness tab**
+  * **Fitness:** CTL, ATL and form (TSB) over a selectable period.
+  * **Last two weeks:** daily training load, with CTL / ATL / form summary.
+  * **VO₂max estimate:** estimated from your **best 5 minutes of power** over the last 7 days, 14 days or 6 weeks (your choice). If you have not done a maximal effort in that window, it falls back to your best of the last 6 weeks, or shows a lower bound (≥). A **second estimate from your heart rate** (steady 10-minute segments of the last 14 days, using your max and resting heart rate) leads when there is no recent maximal effort, never dropping below what your power has already shown. The value from your device is shown too when intervals.icu has one, along with the best 5 minutes over 6 weeks, 12 weeks and a year. These are estimates, accurate to roughly ±10% at best.
+* **Analysis tab**
+  * **Last workout:** browse your latest activities with the previous / next buttons and get an **AI analysis** of the selected one.
+  * **Best efforts:** power curve table for indoor or outdoor rides over 6 weeks, 12 weeks or one year.
+  * **Time in zones** and **Year heatmap:** where your training time goes, and a year-long view of your activity.
 
-### ⚙️ Settings and privacy
+### ⚙️ Settings, privacy and install
 
-* **No backend, no account:** everything runs in your browser from `paceforge.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
+* **No backend, no account:** everything runs in your browser from `flamecadence.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
 * API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings (including the widget order) can be exported / imported as JSON.
+* **Install on your phone:** the **…** menu has an **Install app** entry. On Android it opens the browser's install prompt (or tells you where to find "Install app" / "Add to Home screen" in your browser's menu). The **guided tour** is in the same menu.
 * Built-in help dialog and keyboard-friendly tabs and controls.
 
 ---
 
 ## 🛠️ Getting Started
 
-1. Open `paceforge.html` directly in any modern web browser.
+1. Open `flamecadence.html` directly in any modern web browser.
 2. Click the **⚙ Settings** button in the header.
 3. In the **intervals.icu** tab, enter your **API key** and **Athlete ID** (found under *Developer Settings* on [intervals.icu/settings](https://intervals.icu/settings)).
 4. In the **AI** tab, choose a provider and enter its key:
    * **Gemini** (free tier): get a key from [Google AI Studio](https://aistudio.google.com/apikey).
    * **Hugging Face:** create a token in your [HF settings](https://huggingface.co/settings/tokens).
    * **OpenAI-compatible:** use the base URL and key of your provider (e.g. [Groq](https://console.groq.com/keys), [OpenRouter](https://openrouter.ai/keys)).
-5. Pick a mode (**Library**, **Manual editor**, **AI generator**, **Import**, **From activity** or **Plan builder**), build your session, check the preview and send it to your calendar.
+5. Under **Generate**, pick a mode (**Library**, **Manual editor**, **AI generator**, **Import**, **From activity** or **Plan builder**), build your session, check the preview and send it to your calendar. Under **Analyze**, look at a single session or compare several.
 
-The AI features need a provider key; everything else (library, manual editor, import, export) works without one. Features that read or write your calendar and training data need your intervals.icu key.
+The AI features need a provider key; everything else (library, manual editor, import, export) works without one. Features that read or write your calendar and training data need your intervals.icu key. If you open the **…** menu, you can take a guided tour of the main areas at any time.
+
+### 📲 Hosting it as an installable app
+
+To let browsers offer the install button, serve the app over **HTTPS** (for example with GitHub Pages) and keep these files in the same folder:
+
+* `flamecadence.html`: the app
+* `manifest.webmanifest`: the app name, colours and icon
+* `icon.svg`: the app icon
+
+If your browser does not offer installation, adding 192×192 and 512×512 PNG versions of the icon to `manifest.webmanifest` usually fixes it.
 
 ---
 
 ## 🙏 Credits
 
-Many thanks to [intervals.icu](https://intervals.icu), the open training analytics and calendar platform PaceForge builds on.
+Many thanks to [intervals.icu](https://intervals.icu), the open training analytics and calendar platform FlameCadence builds on.
