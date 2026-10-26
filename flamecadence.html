@@ -301,6 +301,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .mode button[hidden],#libfeel[hidden]{display:none}
 #libfeelb{display:flex;gap:4px}#libfeelb[hidden]{display:none}#libfeelb button{margin:0;padding:6px 9px;font-size:1.25rem;line-height:1;background:transparent;border:1px solid var(--line);border-radius:8px;filter:grayscale(.85);opacity:.65}#libfeelb button[aria-checked="true"]{background:var(--line);border-color:var(--acc);filter:none;opacity:1}
+#libfeelb button[data-v="auto"]{font-size:.8rem;font-weight:700;padding:8px 10px;color:var(--acc);filter:none}
+#libfeelb button.eff:not([aria-checked="true"]){filter:none;opacity:1;border-style:dashed;border-color:var(--acc)}
 /* barre Générer / Analyser (classe distincte de .grp, réservée aux blocs de répétition de l'éditeur manuel) */
 .gbar{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.gbar button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.gbar button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-i]{cursor:pointer}.sest tr.on{background:var(--line)}
@@ -737,8 +739,9 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="0-30">≤ 30 min</option><option value="30-45">30 – 45 min</option><option value="45-60">45 – 60 min</option><option value="60-75">60 – 75 min</option><option value="75-90">75 – 90 min</option><option value="90-105">90 – 105 min</option><option value="105-120">105 – 120 min</option><option value="120-inf">&gt; 120 min</option></select></div>
 </div>
 <div class="row" style="align-items:center;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;cursor:pointer" data-ia="title:libFormTip"><input type="checkbox" id="libform" style="width:auto;margin:0"><span data-i="libForm"></span></label>
-<div id="libfeelb" role="radiogroup" hidden data-ia="aria-label:libForm"><button type="button" role="radio" data-v="great" data-ia="title:feelGreat;aria-label:feelGreat">😄</button><button type="button" role="radio" data-v="good" data-ia="title:feelGood;aria-label:feelGood">🙂</button><button type="button" role="radio" data-v="soso" data-ia="title:feelSoso;aria-label:feelSoso">😐</button><button type="button" role="radio" data-v="tired" data-ia="title:feelTired;aria-label:feelTired">😩</button><button type="button" role="radio" data-v="exhausted" data-ia="title:feelExh;aria-label:feelExh">😴</button></div>
-<select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood" selected></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
+<div id="libfeelb" role="radiogroup" hidden data-ia="aria-label:libForm"><button type="button" role="radio" data-v="auto" data-ia="title:feelAuto;aria-label:feelAuto" data-i="autoLbl"></button><button type="button" role="radio" data-v="great" data-ia="title:feelGreat;aria-label:feelGreat">😄</button><button type="button" role="radio" data-v="good" data-ia="title:feelGood;aria-label:feelGood">🙂</button><button type="button" role="radio" data-v="soso" data-ia="title:feelSoso;aria-label:feelSoso">😐</button><button type="button" role="radio" data-v="tired" data-ia="title:feelTired;aria-label:feelTired">😩</button><button type="button" role="radio" data-v="exhausted" data-ia="title:feelExh;aria-label:feelExh">😴</button></div>
+<span id="libautoi" class="hint" hidden style="flex:1 1 100%;margin:4px 0 0"></span>
+<select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="auto" data-i="feelAuto" selected></option><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood"></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
 <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
 <div id="libContainer" style="margin-top:12px"></div>
@@ -1311,6 +1314,7 @@ sesNone:["No activity with data found in the last 60 days.","Aucune activité av
 sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesKv:["Time|Distance|Avg power|NP|Intensity|Load|Avg HR|Climb","Durée|Distance|Puissance moy.|PN|Intensité|Charge|FC moy.|D+"], sesNoStr:["No power or heart-rate data for this activity.","Pas de données de puissance ni de FC pour cette activité."],
 libForm:["Match how I feel today","Adapter à ma forme du jour"], libFormTip:["Shows only the sessions that suit how you feel (type and length).","N'affiche que les séances adaptées à ta forme (type et durée)."],
+feelAuto:["Auto: from my intervals.icu form","Auto : d'après ma forme intervals.icu"], autoLbl:["Auto","Auto"], autoInfo:["Auto · form {0} → {1}","Auto · forme {0} → {1}"], autoNone:["Auto · no form data from intervals.icu yet: using “I feel good”.","Auto · pas encore de données de forme intervals.icu : « Je me sens bien » utilisé."], autoHrv:["low HRV","VFC basse"], autoRhr:["high resting HR","FC de repos élevée"], autoSleep:["short sleep","sommeil court"],
 feelGreat:["I feel great","Je suis en pleine forme"], feelGood:["I feel good","Je me sens bien"], feelSoso:["So-so","Bof"], feelTired:["I'm tired","Je suis fatigué"], feelExh:["I'm exhausted","Je suis épuisé"],
 actPlan:["Planned workout “{0}” restored as it was scheduled.","Séance planifiée « {0} » restaurée telle qu'elle était prévue."],
 installApp:["Install app","Installer l'application"], installHow:["Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”.","Ouvre le menu du navigateur (⋮) puis choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »."],
@@ -1948,7 +1952,7 @@ $("closeAi").onclick = () => $("aiDlg").close();
 async function loadLoad(idx){
   const rng = `oldest=${daysAgo(13)}&newest=${daysAgo(0)}`;
   const [acts, well, plan] = await Promise.all([icu(`/activities?${rng}`), icu(`/wellness?${rng}`).catch(() => []), icu(`/events?${rng}&category=WORKOUT`).catch(() => [])]);
-  LAST.acts = acts; LAST.well = well; LAST.plan = plan;
+  LAST.acts = acts; LAST.well = well; LAST.plan = plan; libAutoRefresh();
   renderLoad(); loadLast(idx);
 }
 
@@ -2218,7 +2222,7 @@ async function loadNext(){
   if(tok !== NEXT.tok) return; // une réponse plus récente est déjà arrivée
   // même règle que le calendrier : on ignore les séances d'un jour déjà réalisé, et celles déjà liées à une activité
   NEXT.ev = mergeCal(evs, acts).filter(e => !e.paired_activity_id).sort((x, y) => (x.start_date_local || "").localeCompare(y.start_date_local || ""))[0] || null;
-  NEXT.well = Array.isArray(well) ? well : []; NEXT.loaded = true; renderNext(); updateIcuLinks();
+  NEXT.well = Array.isArray(well) ? well : []; NEXT.loaded = true; renderNext(); updateIcuLinks(); libAutoRefresh();
 }
 refreshBtn("rnext", () => loadNext().catch(e => { $("nextbox").textContent = t("errI", errText(e)); }));
 $("nextedit").onclick = () => { if(NEXT.ev) calEdit(NEXT.ev); };
@@ -3162,7 +3166,29 @@ function libStatsText(item, ftp){
   return hm(st.total) + " · " + t("libAvg") + " " + (w ? Math.round(st.avgPct * ftp / 100) + " W" : Math.round(st.avgPct) + " %") + np + load;
 }
 
-let LIBF = -1;
+let LIBF = -1, LIBFK = "";
+// Mode « Auto » : niveau de forme déduit d'intervals.icu. Forme = CTL − ATL (TSB) : ≥ +5 en pleine forme, ≥ −10 bien, ≥ −20 bof, ≥ −30 fatigué, sinon épuisé ;
+// puis un niveau de moins (jusqu'à deux) si les signaux du jour sont au rouge : VFC ≤ 90 % de la moyenne des 7 jours, FC de repos ≥ +5 %, sommeil < 6 h.
+const FEEL_ORDER = ["great", "good", "soso", "tired", "exhausted"];
+function autoFeel(){
+  const W = ((NEXT.well && NEXT.well.length ? NEXT.well : LAST.well) || []).filter(w => w && w.id);
+  const fw = W.filter(w => w.ctl != null).sort((a, b) => a.id < b.id ? -1 : 1).pop();
+  if(!fw) return null;
+  const f = Math.round(fw.ctl - (fw.atl || 0)), today = iso(new Date()), td = W.find(w => w.id === today), why = [];
+  let lvl = f >= 5 ? 0 : f >= -10 ? 1 : f >= -20 ? 2 : f >= -30 ? 3 : 4;
+  if(td){
+    const base = key => { const v = W.filter(w => w.id < today && w[key] > 0).map(w => w[key]); return v.length >= 3 ? v.reduce((a, b) => a + b, 0) / v.length : 0; };
+    const hb = base("hrv"), rb = base("restingHR");
+    if(td.hrv > 0 && hb && td.hrv <= hb * 0.9) why.push(t("autoHrv"));
+    if(td.restingHR > 0 && rb && td.restingHR >= rb * 1.05) why.push(t("autoRhr"));
+    if(td.sleepSecs > 0 && td.sleepSecs < 6 * 3600) why.push(t("autoSleep"));
+    lvl = Math.min(4, lvl + Math.min(2, why.length));
+  }
+  return {level: FEEL_ORDER[lvl], f, why};
+}
+// quand les données de forme d'intervals.icu arrivent (ou changent), le mode Auto met à jour l'affichage et la liste
+function libAutoRefresh(){ try{ if($("libform").checked && $("libfeel").value === "auto"){ feelUI(); if(!document.querySelector('[data-block="lib"]').hidden) renderLibrary(); } }catch(e){} }
+const feelEff = () => { const v = $("libfeel").value; if(v !== "auto") return v; const a = autoFeel(); return a ? a.level : "good"; };
 function renderLibrary(){
   const c = $("libContainer");
   $("libsport").value = $("sport").value; LIBF = curFtp(); // le type de sortie choisi (indoor / extérieur) fixe la FTP utilisée pour les watts
@@ -3216,7 +3242,8 @@ function renderLibrary(){
   };
   // Forme du jour : thèmes autorisés selon le ressenti, et durée plafonnée quand on est fatigué
   const FEEL = {great: null, good: ["beginner", "recovery", "endurance", "tempo", "threshold", "vo2max", "force"], soso: ["beginner", "recovery", "endurance", "tempo", "force"], tired: ["beginner", "recovery", "endurance"], exhausted: ["beginner", "recovery"]};
-  const feelOn = $("libform").checked, feel = $("libfeel").value, feelCap = {tired: 3600, exhausted: 2700}[feel];
+  const feelOn = $("libform").checked, feel = feelEff(), feelCap = {tired: 3600, exhausted: 2700}[feel];
+  LIBFK = feelOn ? feel : "";
   const feelOK = (gid, item) => !feelOn || ((!FEEL[feel] || FEEL[feel].includes(gid)) && (!feelCap || libDuration(item) <= feelCap));
   LIBRARY.forEach((item,idx)=>{ if(!matches(item)) return; const gid=categorize(item); if(!feelOK(gid,item)) return; const group=groups.find(g=>g.id===gid)||groups[5]; group.items.push({item,idx}); });
   const filled = groups.filter(g => g.items.length);
@@ -3254,7 +3281,14 @@ $("libContainer").addEventListener("toggle", e => { const d = e.target; if(d && 
 $("libsearch").addEventListener("input", renderLibrary);
 $("libdur").addEventListener("change", renderLibrary);
 $("libstar").addEventListener("change", renderLibrary);
-const feelUI = () => { $("libfeelb").hidden = !$("libform").checked; document.querySelectorAll("#libfeelb button").forEach(b => b.setAttribute("aria-checked", String(b.dataset.v === $("libfeel").value))); };
+const feelUI = () => {
+  const on = $("libform").checked, v = $("libfeel").value, auto = v === "auto", a = auto ? autoFeel() : null, eff = auto ? (a ? a.level : "good") : v;
+  $("libfeelb").hidden = !on;
+  document.querySelectorAll("#libfeelb button").forEach(b => { b.setAttribute("aria-checked", String(b.dataset.v === v)); b.classList.toggle("eff", auto && b.dataset.v === eff); });
+  const i = $("libautoi"), lab = {great: "feelGreat", good: "feelGood", soso: "feelSoso", tired: "feelTired", exhausted: "feelExh"};
+  i.hidden = !(on && auto);
+  if(!i.hidden) i.textContent = a ? t("autoInfo", (a.f > 0 ? "+" : "") + a.f, t(lab[eff])) + (a.why.length ? " · " + a.why.join(" · ") : "") : t("autoNone");
+};
 $("libform").addEventListener("change", () => { feelUI(); renderLibrary(); }); feelUI();
 document.querySelectorAll("#libfeelb button").forEach(b => b.onclick = () => { $("libfeel").value = b.dataset.v; feelUI(); renderLibrary(); });
 function renderLibraryKeepOpen(){ const c = $("libContainer"); const open = [...c.querySelectorAll("details.lib-theme")].map(d => d.open); renderLibrary(); c.querySelectorAll("details.lib-theme").forEach((d, i) => { d.open = !!open[i]; }); }
@@ -5758,7 +5792,7 @@ function applyMode(){
   document.querySelector('[data-block="req"]').hidden = mode !== "ai";
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
-  if(mode === "lib" && LIBF !== curFtp()) renderLibrary();
+  if(mode === "lib" && (LIBF !== curFtp() || LIBFK !== ($("libform").checked ? feelEff() : ""))) renderLibrary();
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
@@ -6023,7 +6057,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  applyTheme(); fontUI(); calEdUI();
+  applyTheme(); fontUI(); calEdUI(); try{ feelUI(); }catch(e){} // le texte du mode Auto suit la langue
   setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderVo2(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
