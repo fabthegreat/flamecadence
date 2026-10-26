@@ -301,7 +301,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .mode button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .mode button[hidden],#libfeel[hidden]{display:none}
 #libfeelb{display:flex;gap:4px}#libfeelb[hidden]{display:none}#libfeelb button{margin:0;padding:6px 9px;font-size:1.25rem;line-height:1;background:transparent;border:1px solid var(--line);border-radius:8px;filter:grayscale(.85);opacity:.65}#libfeelb button[aria-checked="true"]{background:var(--line);border-color:var(--acc);filter:none;opacity:1}
-.grp{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.grp button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.grp button[aria-selected="true"]{background:var(--acc);color:var(--on)}
+/* barre Générer / Analyser (classe distincte de .grp, réservée aux blocs de répétition de l'éditeur manuel) */
+.gbar{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.gbar button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.gbar button[aria-selected="true"]{background:var(--acc);color:var(--on)}
 .sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-i]{cursor:pointer}.sest tr.on{background:var(--line)}
 #sesBox svg{width:100%;height:auto;display:block}
 .sesg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
@@ -397,7 +398,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cal-d.today .cal-n{color:var(--ink);font-weight:600}
 .cal-ev{display:flex;align-items:center;gap:2px;background:var(--acc);color:var(--on);border-radius:4px;padding:1px 3px;cursor:grab;min-width:0}
 .cal-ev.run{background:#8e44ad}
-.cal-ev.done{background:#4a90d9;opacity:.78;cursor:default}
+.cal-ev.done{background:#4a90d9;opacity:.78;cursor:pointer}
 .cal-ev.done[data-bike]{cursor:pointer}
 .cal-ev.done.run{background:#8e44ad}
 .cal-ev.done .cal-x{display:none}
@@ -412,14 +413,17 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .tip .cal-prev svg{display:block;width:100%;height:100%}
 .tip b{display:block;margin-bottom:2px}
 #sesBox{position:relative}
+.ses-title{margin:4px 0 2px;font-size:1.35rem;line-height:1.25;font-weight:700;color:var(--ink);padding-left:10px;border-left:4px solid var(--acc);overflow-wrap:anywhere}
+.ses-meta{margin:0 0 10px 14px}
+.sest tbody tr[data-i]{cursor:pointer}.sest tbody tr[data-i]:hover{background:var(--bg)}
 svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.55;pointer-events:none}
 /* barre principale (Générer / Analyser) : couleur « flamme » distincte du sous-menu, qui garde l'accent habituel */
 :root{--top:#c2410c;--top-on:#fff}
 :root[data-theme="dark"]{--top:#ff9a5c;--top-on:#2a1204}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--top:#ff9a5c;--top-on:#2a1204}}
-.grp{border-color:var(--top)}
-.grp button[aria-selected="true"]{background:var(--top);color:var(--top-on)}
-.grp button:not([aria-selected="true"]):hover,.grp button:not([aria-selected="true"]):focus-visible{color:var(--top)}
+.gbar{border-color:var(--top)}
+.gbar button[aria-selected="true"]{background:var(--top);color:var(--top-on)}
+.gbar button:not([aria-selected="true"]):hover,.gbar button:not([aria-selected="true"]):focus-visible{color:var(--top)}
 .cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
 /* calendrier agrandi : plein écran, avec un aperçu graphique par séance / activité */
 html.calmax,html.calmax body{overflow:hidden}
@@ -459,7 +463,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 /* comparateur de séances passées */
-html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 #lsvg{cursor:pointer}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
 .cmp-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;cursor:pointer}
@@ -668,7 +672,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <div class="layout">
 <div class="col">
 
-<div class="grp" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button></div>
+<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button></div>
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
 <button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
 <button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
@@ -1292,7 +1296,7 @@ cmpPlot:["Plot","Graphique"], cmpPlEf:["Efficiency (W/HR) vs date","Efficacité 
 cmpPwY:["Average power over the efforts (W)","Puissance moyenne sur les efforts (W)"], cmpHrY:["Average heart rate over the efforts (bpm)","FC moyenne sur les efforts (bpm)"],
 cmpInfoG:["{0} sessions · average {1} · latest moving average {2}","{0} séances · moyenne {1} · dernière moyenne mobile {2}"],
 cmpSkip:["{0} skipped (steady ride)","{0} ignorées (sortie régulière)"], cmpCached:["{0} from cache","{0} depuis le cache"], cacheClr:["Clear stream cache","Vider le cache des flux"], cacheCleared:["Stream cache cleared.","Cache des flux vidé."],
-lCast:["Click to rebuild this ride as an editable workout","Cliquer pour reconstruire cette sortie en séance modifiable"],
+lCast:["Click to open this session in the analysis","Cliquer pour ouvrir cette séance dans l'analyse"],
 cmpNoHr:["No heart rate data in the selected sessions.","Aucune donnée de fréquence cardiaque dans les séances sélectionnées."],
 cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
 cmpPlace:["Location","Lieu"], cmpPAny:["Indoor & outdoor","Intérieur et extérieur"],
@@ -1303,7 +1307,7 @@ cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répé
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
 grpGen:["Generate","Générer"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
-sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
+sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesKv:["Time|Distance|Avg power|NP|Intensity|Load|Avg HR|Climb","Durée|Distance|Puissance moy.|PN|Intensité|Charge|FC moy.|D+"], sesNoStr:["No power or heart-rate data for this activity.","Pas de données de puissance ni de FC pour cette activité."],
 libForm:["Match how I feel today","Adapter à ma forme du jour"], libFormTip:["Shows only the sessions that suit how you feel (type and length).","N'affiche que les séances adaptées à ta forme (type et durée)."],
@@ -1832,21 +1836,10 @@ function chartHover(box, svg, count, infoAt){
   ["pointermove", "pointerdown"].forEach(ev => svg.addEventListener(ev, move));
   svg.addEventListener("pointerleave", hide);
 }
-// Clic sur le graphe de la dernière séance : reconstruction dans l'aperçu ET ouverture dans l'éditeur manuel (vélo uniquement)
-$("lastbox").addEventListener("click", async e => {
+// Clic sur le graphe de la dernière séance : ouverture dans l'analyse d'une séance (la reconstruction se fait depuis un lien de l'analyse)
+$("lastbox").addEventListener("click", e => {
   if(!(e.target.closest && e.target.closest("#lsvg")) || !LAST.last) return;
-  const a = LAST.last, bike = isBike(a.type);
-  if(bike && ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // travail non enregistré dans l'éditeur
-  if(mode === "cmp" || mode === "plan"){ mode = "act"; store.set("si_mode", mode); applyMode(); } // l'aperçu est masqué dans le comparateur et le plan
-  if(!(await buildFromAct(a, {disabled: false})) || !bike) return;
-  const {list} = edFromText($("desc").value, $("sport").value);
-  if(!list.some(x => x.k === "s" || x.k === "g")) return;
-  ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
-  CALEDIT = null; calEdUI();
-  $("edsport").value = $("sport").value; $("edname").value = $("name").value;
-  mode = "edit"; store.set("si_mode", mode); applyMode();
-  edRender(); EDSAVED = edText();
-  $("prev").scrollIntoView({behavior: "smooth", block: "start"});
+  sesOpenAct(LAST.last);
 });
 async function loadLast(idx){
   const done = (LAST.acts || []).filter(a => a.moving_time).sort((x, y) => (x.start_date_local < y.start_date_local ? 1 : -1));
@@ -5351,17 +5344,13 @@ $("calbox").addEventListener("click", e => {
   const el = e.target.closest(".cal-ev:not(.done)"); if(!el) return;
   const ev = (CAL.ev || []).find(v => String(v.id) === el.dataset.eid); if(ev) calEdit(ev);
 });
-// clic sur une séance réalisée du calendrier : reconstruction dans « Depuis une activité » (vélo uniquement :
-// il faut des données de puissance ; course à pied, ping-pong, etc. ne sont pas possibles pour le moment)
-$("calbox").addEventListener("click", async e => {
+// clic sur une séance réalisée du calendrier : ouverture dans l'analyse d'une séance (tous les sports) ;
+// la reconstruction de la séance se fait depuis un lien de l'analyse (vélo uniquement)
+$("calbox").addEventListener("click", e => {
   if(e.target.closest(".cal-x")) return;
   const el = e.target.closest(".cal-ev.done"); if(!el) return;
-  const a = (CAL.acts || []).find(v => "a" + v.id === el.dataset.eid);
-  if(!a || !isBike(a.type)) return;
-  if(mode === "edit" && ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // travail non enregistré dans l'éditeur
-  if(CAL.big) setCalMax(false); // le calendrier agrandi recouvre l'aperçu
-  if(mode !== "act"){ mode = "act"; store.set("si_mode", mode); applyMode(); }
-  buildFromAct(a, {disabled: false});
+  const a = (CAL.acts || []).find(v => "a" + v.id === el.dataset.eid); if(!a) return;
+  sesOpenAct(a);
 });
 
 // ---------- Constructeur de plan d'entraînement ----------
@@ -5781,6 +5770,7 @@ function applyMode(){
     document.querySelectorAll("#grp button").forEach(b => { const on = b.dataset.g === g; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
     document.querySelectorAll(".mode:not(.cfg-tabs) button").forEach(b => { b.hidden = !GRP[g].includes(b.dataset.m); }); }
   document.documentElement.classList.toggle("m-cmp", mode === "cmp");
+  document.documentElement.classList.toggle("m-ses", mode === "ses");
   document.documentElement.classList.toggle("m-plan", mode === "plan");
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
 }
@@ -5844,7 +5834,7 @@ async function sesShow(){
   const a = (SES.list || []).find(x => String(x.id) === $("sesSel").value), box = $("sesBox"); if(!a) return;
   store.set("si_sesid", String(a.id)); SES.cur = String(a.id); document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
   // l'en-tête (nom, type, date, lien) s'affiche tout de suite et reste seul quand l'activité n'a ni puissance ni FC (ping-pong, course…)
-  const hdr = `<div class="hint" style="margin-bottom:6px"><b>${esc(a.name || a.type || "")}</b> · ${esc(actT(a.type))} · ${esc((a.start_date_local || "").slice(0, 10))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a></div>`;
+  const hdr = `<h3 class="ses-title">${esc(a.name || actT(a.type) || a.type || "")}</h3><div class="hint ses-meta">${esc(actT(a.type))} · ${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a>${isBike(a.type) ? ` · <a href="#" data-rebuild="${esc(String(a.id))}">${esc(t("sesRebuild"))}</a>` : ""}</div>`;
   box.innerHTML = hdr + `<div class="hint">${esc(t("sesLoad"))}</div>`;
   const noData = !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
   try{
@@ -5879,8 +5869,31 @@ async function sesShow(){
       return {html: `<b>${esc(fmtDur(s0))}</b>` + L.join("\n")};
     });
     box.querySelectorAll("tr[data-i]").forEach(r => r.onclick = () => { const on = !r.classList.contains("on"); box.querySelectorAll("tr.on").forEach(x => x.classList.remove("on")); box.querySelectorAll("rect[data-r]").forEach(x => x.setAttribute("opacity", ".13")); if(on){ r.classList.add("on"); const rc = box.querySelector(`rect[data-r="${r.dataset.i}"]`); if(rc){ rc.setAttribute("opacity", ".4"); if(rc.getAttribute("fill") === "none") rc.setAttribute("fill", "var(--mute)"); } } });
+    // survol d'une ligne du tableau : la plage correspondante est mise en évidence dans le graphique (sans toucher à la sélection par clic)
+    const rc = r => box.querySelector(`rect[data-r="${r.dataset.i}"]`);
+    box.querySelectorAll("tr[data-i]").forEach(r => {
+      r.addEventListener("mouseenter", () => { const c = rc(r); if(!c) return; c.dataset.f0 = c.getAttribute("fill"); c.setAttribute("opacity", ".4"); if(c.dataset.f0 === "none") c.setAttribute("fill", "var(--mute)"); });
+      r.addEventListener("mouseleave", () => { const c = rc(r); if(!c) return; if(r.classList.contains("on")) return; c.setAttribute("opacity", ".13"); if(c.dataset.f0 === "none") c.setAttribute("fill", "none"); });
+    });
   }catch(e){ if(tok === SES.tok) box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; }
 }
+// Ouvre une activité donnée dans l'analyse d'une séance (depuis le calendrier) : bon mois, bonne activité, onglet « Séance seule »
+async function sesOpenAct(a){
+  if(CAL.big) setCalMax(false); // le calendrier agrandi recouvre l'analyse
+  const d = new Date((a.start_date_local || "").slice(0, 10) + "T12:00:00");
+  SES.m = new Date(d.getFullYear(), d.getMonth(), 1); // défini avant applyMode : sesInit() ne recharge alors pas le mois courant
+  store.set("si_sesid", String(a.id));
+  mode = "ses"; store.set("si_mode", mode); applyMode();
+  document.querySelector('[data-block="ses"]').scrollIntoView({behavior: "smooth", block: "start"});
+  await sesMonth(true);
+}
+// lien « Reconstruire cette séance » de l'analyse : reconstruction dans l'aperçu (onglet « Depuis une activité »)
+$("sesBox").addEventListener("click", async e => {
+  const l = e.target.closest && e.target.closest("[data-rebuild]"); if(!l) return; e.preventDefault();
+  const a = (SES.list || []).find(x => String(x.id) === l.dataset.rebuild); if(!a) return;
+  if(mode !== "act"){ mode = "act"; store.set("si_mode", mode); applyMode(); }
+  buildFromAct(a, {disabled: false});
+});
 $("sesRef").onclick = () => sesMonth(false);
 $("sesPrev").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() - 1, 1); sesMonth(false); };
 $("sesNext").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() + 1, 1); sesMonth(false); };
