@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PaceForge — Forge your next workout</title>
+<title>FlameCadence — Fire up your next workout</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ffb000'/%3E%3Cstop offset='1' stop-color='%23ff3d00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='%23141b24'/%3E%3Cpath d='M34 5C38 18 23 21 29 34c-5-3-8-8-8-13C9 34 13 49 25 56c-1-9 7-12 9-19 8 8 8 14 4 20 13-4 19-17 12-29-1 8-5 10-7 11C45 25 45 16 34 5Z' fill='url(%23g)'/%3E%3Cpath d='M35 24 24 40h9l-3 12 13-19h-9z' fill='%23fff4d6'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#141b24">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef1f4;--card:#fff;--ink:#1b2733;--mute:#5d6b78;--line:#cfd7de;--acc:#0f6e6e;--err:#b3261e;--ok:#1d7a3a;--on:#fff;color-scheme:light}
@@ -267,7 +269,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .mode button svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .more{position:relative}.more summary{list-style:none;display:inline-block;cursor:pointer}.more summary::-webkit-details-marker{display:none}
 .menu{position:absolute;right:0;top:calc(100% + 6px);z-index:30;min-width:200px;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:flex;flex-direction:column}
-.menu a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:.9rem}.menu a:hover{background:var(--line)}
+.menu a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:7px;color:var(--ink);text-decoration:none;font-size:.9rem}.menu a:hover{background:var(--line)}.menu a[hidden]{display:none}.menu a[role=button]{cursor:pointer}
 .menu a svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.menu a svg.fill{fill:currentColor;stroke:none}
 .mode:not(.cfg-tabs) button:not([aria-selected="true"]){flex:0 0 auto;padding:9px 12px}.mode:not(.cfg-tabs) button:not([aria-selected="true"]) span{display:none}
 .mode:not(.cfg-tabs) button[aria-selected="true"]{flex:1 1 auto}
@@ -482,10 +484,11 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 <button class="alt small icon" id="theme" type="button" data-ia="title:thAuto;aria-label:thAuto">🌓</button>
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
 <details class="more" id="more"><summary class="alt small icon" data-ia="title:more;aria-label:more"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></summary><div class="menu">
+<a class="mi" id="tourbtn" role="button" tabindex="0" data-ia="title:tourTip"><span aria-hidden="true">🧭</span><span data-i="tourBtn"></span></a>
+<a class="mi" id="installbtn" role="button" tabindex="0" hidden><span aria-hidden="true">📲</span><span data-i="installApp"></span></a>
 <a class="mi" id="mail" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
 <a class="mi" id="gh" data-ia="title:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span data-i="github"></span></a>
 </div></details>
-<button class="alt small" id="tourbtn" type="button" data-ia="title:tourTip;aria-label:tourTip"><span aria-hidden="true">🧭</span> <span data-i="tourBtn"></span></button>
 <button class="alt small" id="open" type="button" data-i="settings"></button>
 </div>
 </header>
@@ -949,7 +952,7 @@ html.m-cmp #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 "use strict";
 const $ = id => document.getElementById(id);
 const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
-const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/paceforge", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
+const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/flamecadence", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
 let lang = store.get("si_lang") === "fr" ? "fr" : "en";
 
 // ---------- Thème clair / sombre / auto ----------
@@ -1014,11 +1017,11 @@ calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
 secLook:["Appearance","Apparence"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
-fontSample:["Forge your next workout","Forge ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
+fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
-docTitle:["PaceForge — Forge your next workout","PaceForge — Forge ta prochaine séance"],
-title:["PaceForge","PaceForge"],
+docTitle:["FlameCadence — Fire up your next workout","FlameCadence — Allume ta prochaine séance"],
+title:["FlameCadence","FlameCadence"],
 subtitle:["Forge your next session from the library, the editor or AI, then send it straight to intervals.icu.","Forge ta prochaine séance avec la bibliothèque, l'éditeur ou l'IA, puis envoie-la directement dans intervals.icu."],
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
 more:["More","Plus"], contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
@@ -1106,10 +1109,10 @@ fitPer:["Fitness time range","Période du graphique fitness"], p1m:["1 month","1
 tryNext:["{0} failed, trying {1}…","{0} a échoué, essai de {1}…"], alsoFailed:[" ({0} other model(s) also failed)"," ({0} autre(s) modèle(s) a/ont aussi échoué)"], usedModel:[" · fallback model: {0}"," · modèle de secours : {0}"],
 repDec:["Fewer repetitions","Moins de répétitions"], repInc:["More repetitions","Plus de répétitions"],
 helpBtn:["Help & API keys guide","Aide & guide des clés API"],
-helpTitle:["How PaceForge works & getting API keys","Comment fonctionne PaceForge & obtenir ses clés API"],
+helpTitle:["How FlameCadence works & getting API keys","Comment fonctionne FlameCadence & obtenir ses clés API"],
 helpContent:[
-  `<h3>1. How it works</h3><p>PaceForge allows you to build structured training workouts either by prompting an AI assistant, writing them manually, or picking from a built-in library. Once generated or selected, you can review the workout graph and send it directly to your <b>intervals.icu</b> calendar with one click. You can also reorder the workout by <b>dragging the blocks in the preview chart</b>, or the ⠿ handles in the manual editor — the description updates automatically.</p><h3>2. Getting your intervals.icu API key</h3><p>To send workouts to your calendar and fetch your fitness data/FTP, you need your intervals.icu API key:<br>• Go to <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Scroll down to the <b>Developer Settings</b> section.<br>• Copy your API key and paste it into the PaceForge settings.</p><h3>3. Getting an AI Provider Key</h3><p>• <b>Gemini (Recommended):</b> Free and fast. Get a key from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face:</b> Free tier available. Generate a token in your <a href="https://huggingface.co/settings/tokens" target="_blank">HF Settings</a>.<br>• <b>OpenAI-compatible:</b> Use free tiers from <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a>, or Mistral.</p>`,
-  `<h3>1. Comment ça fonctionne</h3><p>PaceForge vous permet de concevoir des séances structurées soit en décrivant votre envie à une IA, soit via l'éditeur manuel, soit en piochant dans la bibliothèque. Une fois prête, vérifiez le graphique et envoyez la séance directement dans votre calendrier <b>intervals.icu</b>. Vous pouvez aussi réordonner la séance en <b>glissant les blocs du graphique d'aperçu</b>, ou les poignées ⠿ de l'éditeur manuel — la description se met à jour automatiquement.</p><h3>2. Obtenir sa clé API intervals.icu</h3><p>Indispensable pour envoyer les séances et récupérer votre FTP et vos charges :<br>• Rendez-vous sur <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Descendez jusqu'à la section <b>Developer Settings</b> (Paramètres développeur).<br>• Copiez votre clé API et collez-la dans les réglages de PaceForge.</p><h3>3. Obtenir une clé de Fournisseur d'IA</h3><p>• <b>Gemini (Recommandé) :</b> Gratuit et rapide. Obtenez une clé sur <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face :</b> Offre gratuite disponible. Générez un jeton dans vos <a href="https://huggingface.co/settings/tokens" target="_blank">Paramètres HF</a>.<br>• <b>Compatible OpenAI :</b> Utilisez les clés gratuites de <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> ou Mistral.</p>`
+  `<h3>1. How it works</h3><p>FlameCadence allows you to build structured training workouts either by prompting an AI assistant, writing them manually, or picking from a built-in library. Once generated or selected, you can review the workout graph and send it directly to your <b>intervals.icu</b> calendar with one click. You can also reorder the workout by <b>dragging the blocks in the preview chart</b>, or the ⠿ handles in the manual editor — the description updates automatically.</p><h3>2. Getting your intervals.icu API key</h3><p>To send workouts to your calendar and fetch your fitness data/FTP, you need your intervals.icu API key:<br>• Go to <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Scroll down to the <b>Developer Settings</b> section.<br>• Copy your API key and paste it into the FlameCadence settings.</p><h3>3. Getting an AI Provider Key</h3><p>• <b>Gemini (Recommended):</b> Free and fast. Get a key from <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face:</b> Free tier available. Generate a token in your <a href="https://huggingface.co/settings/tokens" target="_blank">HF Settings</a>.<br>• <b>OpenAI-compatible:</b> Use free tiers from <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a>, or Mistral.</p>`,
+  `<h3>1. Comment ça fonctionne</h3><p>FlameCadence vous permet de concevoir des séances structurées soit en décrivant votre envie à une IA, soit via l'éditeur manuel, soit en piochant dans la bibliothèque. Une fois prête, vérifiez le graphique et envoyez la séance directement dans votre calendrier <b>intervals.icu</b>. Vous pouvez aussi réordonner la séance en <b>glissant les blocs du graphique d'aperçu</b>, ou les poignées ⠿ de l'éditeur manuel — la description se met à jour automatiquement.</p><h3>2. Obtenir sa clé API intervals.icu</h3><p>Indispensable pour envoyer les séances et récupérer votre FTP et vos charges :<br>• Rendez-vous sur <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Descendez jusqu'à la section <b>Developer Settings</b> (Paramètres développeur).<br>• Copiez votre clé API et collez-la dans les réglages de FlameCadence.</p><h3>3. Obtenir une clé de Fournisseur d'IA</h3><p>• <b>Gemini (Recommandé) :</b> Gratuit et rapide. Obtenez une clé sur <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face :</b> Offre gratuite disponible. Générez un jeton dans vos <a href="https://huggingface.co/settings/tokens" target="_blank">Paramètres HF</a>.<br>• <b>Compatible OpenAI :</b> Utilisez les clés gratuites de <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> ou Mistral.</p>`
 ],
 libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
 libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
@@ -1139,14 +1142,14 @@ zvTem:["Tempo-heavy: a lot of time in the middle zones.","Riche en tempo : beauc
 zvHard:["Intensity-heavy: not much easy riding.","Riche en intensité : peu d'endurance facile."],
 heatCap:["{0} active days · {1} · {2} TSS over the last 12 months","{0} jours actifs · {1} · {2} TSS sur les 12 derniers mois"], heatStreak:["Longest streak: {0} days · longest break: {1} days","Plus longue série : {0} jours · plus longue pause : {1} jours"],
 heatNone:["No activities in the last 12 months.","Aucune activité sur les 12 derniers mois."], heatLess:["Less","Moins"], heatMore:["More","Plus"], heatAria:["Daily training load over the last 12 months","Charge d'entraînement quotidienne sur les 12 derniers mois"],
-tourBtn:["Tour","Visite"], tourTip:["Take a guided tour of PaceForge","Faire une visite guidée de PaceForge"], tourNext:["Next","Suivant"], tourPrev:["Back","Précédent"], tourSkip:["Skip","Passer"], tourDone:["Done","Terminer"], tourOf:["{0} / {1}","{0} / {1}"],
-tr0T:["Welcome to PaceForge","Bienvenue dans PaceForge"], tr0:["A quick tour of the main areas: the workout tools on the left, your intervals.icu dashboard on the right. Use the arrow keys or the buttons; Esc leaves the tour.","Un petit tour des principales zones : les outils de séance à gauche, ton tableau de bord intervals.icu à droite. Utilise les flèches du clavier ou les boutons ; Échap quitte la visite."],
+tourBtn:["Tour","Visite"], tourTip:["Take a guided tour of FlameCadence","Faire une visite guidée de FlameCadence"], tourNext:["Next","Suivant"], tourPrev:["Back","Précédent"], tourSkip:["Skip","Passer"], tourDone:["Done","Terminer"], tourOf:["{0} / {1}","{0} / {1}"],
+tr0T:["Welcome to FlameCadence","Bienvenue dans FlameCadence"], tr0:["A quick tour of the main areas: the workout tools on the left, your intervals.icu dashboard on the right. Use the arrow keys or the buttons; Esc leaves the tour.","Un petit tour des principales zones : les outils de séance à gauche, ton tableau de bord intervals.icu à droite. Utilise les flèches du clavier ou les boutons ; Échap quitte la visite."],
 tr1T:["Seven ways to get a workout","Sept façons d'obtenir une séance"], tr1:["Library, manual editor, AI generator, file import, rebuild from a past activity, plan builder and session comparison. Each tab shows its own tool below.","Bibliothèque, éditeur manuel, générateur IA, import de fichier, reconstruction depuis une activité, plan d'entraînement et comparaison de séances. Chaque onglet affiche son outil juste dessous."],
 tr2T:["AI generator","Générateur IA"], tr2:["Pick the sport, duration and units, describe the session you want and press the generate button. The result appears as an editable preview that you can send to intervals.icu.","Choisis le sport, la durée et les unités, décris la séance voulue et lance la génération. Le résultat s'affiche en aperçu modifiable que tu peux envoyer vers intervals.icu."],
 tr3T:["Workout library","Bibliothèque de séances"], tr3:["Ready-made workouts sorted by theme. Search, filter by duration, star your favourites; intensities are scaled to your FTP.","Des séances prêtes à l'emploi classées par thème. Recherche, filtre par durée, favoris ; les intensités sont calées sur ta FTP."],
 tr4T:["Manual editor","Éditeur manuel"], tr4:["Write or tweak a workout step by step and see the chart update as you type.","Écris ou ajuste une séance étape par étape et vois le graphique se mettre à jour au fil de la saisie."],
 tr5T:["Plan builder","Plan d'entraînement"], tr5:["Build a multi-week plan for a goal such as base, FTP or VO₂max. Sessions come from the library and are spread over the days you choose.","Construis un plan sur plusieurs semaines pour un objectif (base, FTP, VO₂max…). Les séances viennent de la bibliothèque et sont réparties sur les jours choisis."],
-tr6T:["Compare past sessions","Comparer des séances passées"], tr6:["Describe a shape such as 10x1'/1' and PaceForge finds matching sessions in your history and overlays watts, heart rate and cadence.","Décris une forme comme 10x1'/1' : PaceForge retrouve les séances correspondantes dans ton historique et superpose puissance, fréquence cardiaque et cadence."],
+tr6T:["Compare past sessions","Comparer des séances passées"], tr6:["Describe a shape such as 10x1'/1' and FlameCadence finds matching sessions in your history and overlays watts, heart rate and cadence.","Décris une forme comme 10x1'/1' : FlameCadence retrouve les séances correspondantes dans ton historique et superpose puissance, fréquence cardiaque et cadence."],
 tr7T:["Calendar","Calendrier"], tr7:["Your intervals.icu calendar: planned and completed sessions. Click a day to see details or edit a planned workout.","Ton calendrier intervals.icu : séances prévues et réalisées. Clique sur un jour pour voir le détail ou modifier une séance prévue."],
 tr8T:["Next planned workout","Prochaine séance planifiée"], tr8:["The next session on your calendar, with its steps charted and the full programme one click away. When it is planned for today, a readiness hint compares it with your form, HRV, resting HR and sleep.","La prochaine séance de ton calendrier, avec ses étapes en graphique et le programme complet à portée de clic. Quand elle est prévue aujourd'hui, un conseil de récupération la compare à ta forme, ta VFC, ta FC de repos et ton sommeil."],
 tr9T:["Fitness and training load","Forme et charge"], tr9:["Fitness, fatigue and form over time, your last workout with its power and heart-rate curves, and the last two weeks of load.","Forme, fatigue et fraîcheur dans le temps, ta dernière séance avec ses courbes de puissance et de FC, et la charge des deux dernières semaines."],
@@ -1189,7 +1192,7 @@ pGen:["Build plan","Générer le plan"], pEngine:["Plan engine","Moteur du plan"
 pAiHint:["The AI coach picks sessions from the same workout library, following your days, sessions per week, purpose and hard days. You can still preview, edit, swap or delete any session before uploading. Uses the provider and key from the AI settings.","Le coach IA choisit les séances dans la même bibliothèque, en respectant tes jours, le nombre de séances, l'objectif et les jours durs. Tu peux toujours prévisualiser, modifier, remplacer ou supprimer une séance avant l'envoi. Utilise le fournisseur et la clé des réglages IA."],
 pAiBuilding:["The AI coach is building your plan…","Le coach IA construit ton plan…"], pAiDone:["Plan built by the AI coach: {0} sessions in {1} s.","Plan construit par le coach IA : {0} séances en {1} s."], pAiPartial:["AI plan built with {0} valid sessions ({1} ignored: unknown workout, invalid date or too many in a week).","Plan IA construit avec {0} séances valides ({1} ignorées : séance inconnue, date invalide ou trop de séances dans la semaine)."], pAiBad:["The AI coach returned no usable session. Your current plan was kept: try again or use the built-in algorithm.","Le coach IA n'a renvoyé aucune séance exploitable. Ton plan actuel est conservé : réessaie ou utilise l'algorithme intégré."], pAiNote:["Coach's note: {0}","Note du coach : {0}"], pSumS:["sessions","séances"], pSumH:["hours","heures"], pSumW:["weeks","semaines"], pEdit:["Edit this session","Modifier cette séance"], pEdBanner:["Editing plan session “{0}” ({1}). “Update the plan” applies your changes to it.","Modification de la séance du plan « {0} » ({1}). « Mettre à jour le plan » y applique tes changements."], pEdCancel:["Cancel editing","Annuler la modification"], pEdSave:["Update the plan","Mettre à jour le plan"], pEdDone:["Session updated in the plan.","Séance mise à jour dans le plan."], pSend:["Upload plan to intervals.icu","Envoyer le plan vers intervals.icu"], pWeek:["Week {0}","Semaine {0}"], pHard:["Hard sessions on (optional, empty = automatic)","Séances dures le (optionnel, vide = automatique)"], pHardAdj:["Two hard days back to back: recovery will be tight.","Deux jours durs d'affilée : la récupération sera courte."], hDur:["Drag to change duration","Glisser pour changer la durée"], hInt:["Drag to change intensity","Glisser pour changer l'intensité"], hDrag:["Tip: drag the handles on the preview chart to resize blocks.","Astuce : glisse les poignées du graphe d'aperçu pour ajuster les blocs."], fuelT:["Fueling guide","Guide de ravitaillement"], fuelNoneS:["none","aucun"], fuelEn:["Energy","Énergie"], fuelBurn:["burned","dépensées"], fuelCarb:["Carbs during","Glucides pendant"], fuelTot:["total","au total"], fuelNone:["none needed, water is enough","inutiles, de l'eau suffit"], fuelFluid:["Fluid","Boisson"], fuelBot:["bottles of 500 ml","bidons de 500 ml"], fuelNote:["General guidance: adjust to your tolerance, the heat and your body size, and practise fueling in training.","Repères généraux : à ajuster selon ta tolérance, la chaleur et ta morphologie ; teste le ravitaillement à l'entraînement."], znTip:["Zone {0} · {1} ({2}%)","Zone {0} · {1} ({2} %)"], pSwap:["Swap for a similar workout","Remplacer par une séance similaire"], pRecW:["recovery week","semaine de récupération"], pChartT:["Weekly training load (TSS)","Charge hebdomadaire (TSS)"], pNone:["Select at least one training day.","Sélectionne au moins un jour."], pSum:["{0} sessions · {1} h · TSS {2}","{0} séances · {1} h · TSS {2}"], pDone:["{0} workouts sent to intervals.icu.","{0} séances envoyées vers intervals.icu."],
 tabImp:["Import","Importer"], impLbl:["Import a workout file","Importer un fichier de séance"],
-impHint:["Pick a workout file: Zwift (.zwo), Garmin (.fit), trainer formats (.mrc, .erg), a PaceForge export (.json) or a text file written in intervals.icu workout syntax (.txt). It will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance : Zwift (.zwo), Garmin (.fit), formats home-trainer (.mrc, .erg), un export PaceForge (.json) ou un fichier texte écrit dans la syntaxe de séance d'intervals.icu (.txt). Il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
+impHint:["Pick a workout file: Zwift (.zwo), Garmin (.fit), trainer formats (.mrc, .erg), a FlameCadence export (.json) or a text file written in intervals.icu workout syntax (.txt). It will be converted into an editable preview you can send to intervals.icu. You can also drag and drop the file here.","Choisis un fichier de séance : Zwift (.zwo), Garmin (.fit), formats home-trainer (.mrc, .erg), un export FlameCadence (.json) ou un fichier texte écrit dans la syntaxe de séance d'intervals.icu (.txt). Il sera converti en aperçu modifiable que tu pourras envoyer sur intervals.icu. Tu peux aussi glisser-déposer le fichier ici."],
 impPick:["Choose a file…","Choisir un fichier…"],
 impOk:["Workout imported from {0}.","Séance importée depuis {0}."],
 impEmpty:["No workout steps found in this file.","Aucune étape de séance trouvée dans ce fichier."],
@@ -1197,7 +1200,7 @@ impOkW:["Workout imported from {0} (watts converted to % using an FTP of {1} W).
 impNoFtp:["This watts-based file needs your FTP to be converted. Set your FTP first.","Ce fichier en watts nécessite ta FTP pour être converti. Renseigne d'abord ta FTP."],
 impUnk:["Unsupported file type. Use .zwo, .fit, .mrc, .erg, .json or .txt.","Type de fichier non pris en charge. Utilise .zwo, .fit, .mrc, .erg, .json ou .txt."],
 impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."],
-impJsonBad:["This JSON file is not a PaceForge workout export (no steps found).","Ce fichier JSON n'est pas un export de séance PaceForge (aucune étape trouvée)."],
+impJsonBad:["This JSON file is not a FlameCadence workout export (no steps found).","Ce fichier JSON n'est pas un export de séance FlameCadence (aucune étape trouvée)."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
 srcAct:["View the source activity on intervals.icu ↗","Voir l'activité source sur intervals.icu ↗"],
@@ -1211,7 +1214,7 @@ actW:["Activities range","Période d'activités"], w2:["2 weeks","2 semaines"], 
 stopGen:["Stop","Arrêter"], actNres:["{0} matching sessions — tap one to rebuild it.","{0} séances correspondantes — touche-en une pour la reconstruire."], actNone:["No activity with power data in this period.","Aucune activité avec données de puissance sur cette période."],
 tabCmp:["Compare","Comparer"], cmpLbl:["Compare past sessions","Comparer des séances passées"],
 cmpP6:["6 months","6 mois"], cmpP12:["12 months","12 mois"], cmpP24:["2 years","2 ans"], cmpP36:["3 years","3 ans"], cmpP60:["5 years","5 ans"],
-cmpDesc:["Describe a session shape, e.g. 10x1'/1' — PaceForge scans your intervals.icu activities, finds the ones that roughly match that shape, and superimposes watts, heart rate and cadence.","Décris une forme de séance, ex. 10x1'/1' — PaceForge analyse tes activités intervals.icu, repère celles qui correspondent à peu près à cette forme, et superpose puissance, fréquence cardiaque et cadence."],
+cmpDesc:["Describe a session shape, e.g. 10x1'/1' — FlameCadence scans your intervals.icu activities, finds the ones that roughly match that shape, and superimposes watts, heart rate and cadence.","Décris une forme de séance, ex. 10x1'/1' — FlameCadence analyse tes activités intervals.icu, repère celles qui correspondent à peu près à cette forme, et superpose puissance, fréquence cardiaque et cadence."],
 cmpQ:["Session shape or name","Forme ou nom de séance"], cmpPh:["E.g. 10x1'/1' vo2 — shape, name words, or both","Ex. : 10x1'/1' vo2 — forme, mots du nom, ou les deux"],
 cmpType:["Workout type","Type de séance"],
 cmpTAny:["Any type","Tous types"], cmpTRec:["Recovery (< 70% FTP)","Récupération (< 70 % FTP)"],
@@ -1247,6 +1250,8 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
+actPlan:["Planned workout “{0}” restored as it was scheduled.","Séance planifiée « {0} » restaurée telle qu'elle était prévue."],
+installApp:["Install app","Installer l'application"], installHow:["Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”.","Ouvre le menu du navigateur (⋮) puis choisis « Installer l'application » ou « Ajouter à l'écran d'accueil »."],
 actNoPow:["No usable power data in this activity.","Aucune donnée de puissance exploitable dans cette activité."],
 actNeedFtp:["FTP unknown — check your intervals.icu connection.","FTP inconnue — vérifie ta connexion intervals.icu."],
 noChart:["No structured workout data","Aucune donnée de séance structurée"],
@@ -1370,7 +1375,7 @@ $("expjson").onclick = () => {
   if(oaList.length) o.oaModels = oaList;
   const blob = new Blob([JSON.stringify(o, null, 2)], {type: "application/json"});
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = "paceforge-settings.json"; a.click();
+  a.href = URL.createObjectURL(blob); a.download = "flamecadence-settings.json"; a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
 };
 
@@ -1482,7 +1487,7 @@ function updateIcuLinks(){
   const nd = NEXT.ev ? (NEXT.ev.start_date_local || "").slice(0, 10) : "";
   if(nd){ const d = new Date(nd + "T12:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); $("lkNext").href = "https://intervals.icu/?w=" + iso(d); }
   else $("lkNext").href = "https://intervals.icu";
-  $("lkLast").href = LAST.last && LAST.last.id ? icuPage("/activities/" + LAST.last.id) : icuPage("/activities");
+  $("lkLast").href = LAST.last && LAST.last.id ? "https://intervals.icu/activities/" + encodeURIComponent(LAST.last.id) : icuPage("/activities");
 }
 // Libellés des sélecteurs de type de sortie : « Vélo indoor (FTP 240 W) » / « Vélo extérieur (FTP 250 W) »
 function fillFtp(){
@@ -2793,7 +2798,7 @@ const LIBRARY = [
 
 ];
 
-// Original PaceForge sessions organized around MyWhoosh's published workout themes.
+// Original FlameCadence sessions organized around MyWhoosh's published workout themes.
 function extraWorkout(category, name_en, name_fr, desc_en, expl_en, expl_fr){
  const desc_fr=desc_en.replace(/Warmup/g,"Échauffement").replace(/Main set/g,"Série principale").replace(/Cooldown/g,"Retour au calme");
  return {category,name_en,name_fr,sport:"Ride",desc_en,desc_fr,expl_en,expl_fr};
@@ -2824,7 +2829,7 @@ LIBRARY.push(
  extraWorkout("threshold", "Threshold — 4 x 6 min", "Seuil — 4 x 6 min", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 6m 100%\n- 3m 55%\n\nCooldown\n- 10m 50%", "Sustained power around threshold with manageable intervals.", "Puissance soutenue autour du seuil avec intervalles accessibles."),
  extraWorkout("threshold", "Threshold — Over-Under Waves", "Seuil — Vagues over-under", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 3x\n- 2m 95%\n- 1m 105%\n- 2m 95%\n- 1m 105%\n- 4m 55%\n\nCooldown\n- 10m 50%", "Alternating below and above threshold trains changes of pace.", "Alterner sous et au-dessus du seuil entraîne les changements de rythme."),
  extraWorkout("uae", "UAE Team Emirates Style — Climb Simulation", "Style UAE Team Emirates — Simulation de montée", "Warmup\n- 15m 50%\n- 5m 70%\n\nMain set\n- 8m 85%\n- 8m 92%\n- 6m 98%\n- 5m 55%\n- 4m 105%\n\nCooldown\n- 10m 50%", "Original climbing session inspired by the team category, not an official team workout.", "Séance originale axée montée, inspirée de la catégorie, non officielle."),
- extraWorkout("uae", "UAE Team Emirates Style — Race Surges", "Style UAE Team Emirates — Accélérations de course", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 3m 90%\n- 30s 125%\n- 3m30 55%\n\nCooldown\n- 10m 50%", "Original PaceForge session with race-style surges.", "Séance PaceForge originale avec accélérations de course."),
+ extraWorkout("uae", "UAE Team Emirates Style — Race Surges", "Style UAE Team Emirates — Accélérations de course", "Warmup\n- 12m 50%\n- 5m 70%\n\nMain set 4x\n- 3m 90%\n- 30s 125%\n- 3m30 55%\n\nCooldown\n- 10m 50%", "Original FlameCadence session with race-style surges.", "Séance FlameCadence originale avec accélérations de course."),
  extraWorkout("adq", "UAE Team ADQ Style — Cadence and Tempo", "Style UAE Team ADQ — Cadence et tempo", "Warmup\n- 10m 50%\n- 5m 65%\n\nMain set 3x\n- 6m 82%\n- 2m 95%\n- 4m 55%\n\nCooldown\n- 8m 50%", "Original tempo-and-cadence session, not an official team workout.", "Séance tempo-cadence originale, non officielle."),
  extraWorkout("adq", "UAE Team ADQ Style — Short Race Prep", "Style UAE Team ADQ — Prépa course courte", "Warmup\n- 12m 50%\n- 4m 70%\n\nMain set 5x\n- 1m 110%\n- 3m 55%\n\nCooldown\n- 8m 50%", "Original compact race-preparation workout with controlled hard efforts.", "Préparation course compacte originale avec efforts intenses maîtrisés."),
  extraWorkout("vo2max", "VO2 Max — 4 x 4 min", "VO2 Max — 4 x 4 min", "Warmup\n- 12m 50%\n- 5m 70%\n- 3x 30s 115%\n- 2m 50%\n\nMain set 4x\n- 4m 112%\n- 4m 55%\n\nCooldown\n- 10m 50%", "Longer VO2-oriented intervals build aerobic power.", "Des intervalles longs orientés VO2 développent la puissance aérobie."),
@@ -3313,7 +3318,7 @@ function buildZwo(steps){
     if(Math.abs(s.a - s.b) > 0.5) return `<${lo < hi ? "Warmup" : "Cooldown"} Duration="${dur}" PowerLow="${lo.toFixed(3)}" PowerHigh="${hi.toFixed(3)}"/>`;
     return `<SteadyState Duration="${dur}" Power="${(s.a / 100).toFixed(3)}"/>`;
   }).join("\n      ");
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>PaceForge</author>\n  <name>${esc(($("name").value || "Workout").trim())}</name>\n  <workout>\n      ${body}\n  </workout>\n</workout_file>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>FlameCadence</author>\n  <name>${esc(($("name").value || "Workout").trim())}</name>\n  <workout>\n      ${body}\n  </workout>\n</workout_file>`;
 }
 // --- FIT binaire (workout) ---
 function fitCrc(bytes){
@@ -3562,7 +3567,7 @@ function parseErgMrc(txt, ext){
   }
   return {steps, name: dm ? dm[1].trim() : "", watts: !pct, ftp};
 }
-// .json : export PaceForge (steps: duration_s / from_pct / to_pct)
+// .json : export FlameCadence (steps: duration_s / from_pct / to_pct)
 function parseJsonWorkout(txt){
   const j = JSON.parse(txt.replace(/^\uFEFF/, "")), arr = j && !Array.isArray(j) ? j.steps : null;
   if(!Array.isArray(arr)) throw new Error(t("impJsonBad"));
@@ -3727,6 +3732,12 @@ function detectSteps(watts, ftp){
   }
   return steps;
 }
+async function pairedEvent(a){ // séance planifiée liée à l'activité (superposées dans intervals.icu)
+  const id = a.paired_event_id, own = (CAL.ev || []).find(e => (id && e.id === id) || (e.paired_activity_id && e.paired_activity_id === a.id));
+  if(own) return own;
+  if(!id) return null;
+  try{ return await icu(`/events/${id}`); }catch(e){ return null; }
+}
 async function buildFromAct(a, btn){
   btn.disabled = true; say(null);
   try{
@@ -3736,6 +3747,19 @@ async function buildFromAct(a, btn){
     const virt = a.type === "VirtualRide";
     const ftp = (virt ? ICU.ftpIn : ICU.ftpOut) || (virt ? ICU.ftpOut : ICU.ftpIn);
     if(!ftp) throw new Error(t("actNeedFtp"));
+    const pe = await pairedEvent(a); // séance prévue : on la restaure telle quelle (plus fidèle que la détection d'étapes)
+    if(pe){
+      const ps = plannedSteps(pe, ftp);
+      if(ps.length && !ps.some(x => x.est)){
+        if(isBike(a.type)){ $("sport").value = a.type === "VirtualRide" ? "VirtualRide" : "Ride"; syncUnit(); }
+        $("name").value = (pe.name || a.name || a.type || "Workout").trim().slice(0, 60);
+        $("desc").value = pe.description && parseWorkout(pe.description, pe.type || a.type || "Ride", ftp).length ? pe.description : stepsToDesc(ps);
+        $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(a);
+        renderChart(); say("actPlan", "ok", pe.name || a.name || "");
+        $("prev").scrollIntoView({behavior: "smooth", block: "start"});
+        btn.disabled = false; return true;
+      }
+    }
     const j = await icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`);
     const list = Array.isArray(j) ? j : (j.streams || []);
     const get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
@@ -5906,6 +5930,12 @@ function tourStart(){
   tourShow(0, 1);
 }
 $("tourbtn").onclick = tourStart;
+// Installation sur l'écran d'accueil (Android / Chrome et dérivés) : l'invite native si le navigateur la propose, sinon le mode d'emploi
+let DEFER_INSTALL = null;
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); DEFER_INSTALL = e; });
+window.addEventListener("appinstalled", () => { DEFER_INSTALL = null; $("installbtn").hidden = true; });
+if(!(matchMedia("(display-mode: standalone)").matches || navigator.standalone)) $("installbtn").hidden = false;
+$("installbtn").onclick = async () => { if(DEFER_INSTALL){ const p = DEFER_INSTALL; DEFER_INSTALL = null; p.prompt(); try{ await p.userChoice; }catch(e){} } else toast(t("installHow"), "ok"); };
 // ---------- Glossaire : info-bulle sur chaque terme technique affiché ----------
 // Un MutationObserver enveloppe les termes (FTP, TSS, IF, zones…) dans <abbr class="gl"> partout dans l'interface,
 // y compris dans les contenus générés dynamiquement. Le texte de l'info-bulle suit la langue courante.
