@@ -6007,10 +6007,11 @@ const SES_ICO = {
   ride: {c: "#3b82c4", d: '<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/>'},
   run: {c: "#e8590c", d: '<circle cx="14.5" cy="4" r="1.8"/><path d="M12.5 8.5L10 12.5l3.5 2.5 1 5.5"/><path d="M10 12.5L6 14.5"/><path d="M12.8 9.5l3.7 2 2.5-1"/><path d="M11.8 14.2L8.5 18l-3.5.5"/>'},
   swim: {c: "#0e9fb5", d: '<circle cx="17" cy="6" r="1.8"/><path d="M4 12.5l5-2.5 3.5 2 3-3.5"/><path d="M2 16.5c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/><path d="M2 20.5c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/>'},
-  pong: {c: "#8e44ad", d: '<circle cx="9.5" cy="9.5" r="6.5"/><path d="M14.2 14.2L19.5 19.5"/><path d="M18.3 21l2.7-2.7"/><circle cx="19" cy="5" r="1.6"/>'},
+  rideIn: {c: "#5b5fc7", d: '<circle cx="5.5" cy="13.5" r="3"/><circle cx="18.5" cy="13.5" r="3"/><circle cx="15" cy="3.5" r="1"/><path d="M12 13.5V10l-3-3 4-3 2 3h2"/><path d="M3 21h18"/><path d="M5.5 16.5V21"/><path d="M18.5 16.5V21"/>'},
+  pong: {c: "#c2255c", d: '<circle cx="9.5" cy="9.5" r="6.5"/><path d="M14.2 14.2L19.5 19.5"/><path d="M18.3 21l2.7-2.7"/><circle cx="19" cy="5" r="1.6"/>'},
   other: {c: "#f08c00", d: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'}
 };
-const sesKind = ty => /Ride|Bike|Cycl/i.test(ty || "") ? "ride" : /Run/i.test(ty || "") ? "run" : /Swim/i.test(ty || "") ? "swim" : /Table.?Tennis|Ping/i.test(ty || "") ? "pong" : "other";
+const sesKind = a => { const ty = (a && a.type) || ""; return /Ride|Bike|Cycl/i.test(ty) ? (a.trainer === true || ty === "VirtualRide" || /virtual|trainer|indoor|zwift/i.test(a.sub_type || "") ? "rideIn" : "ride") : /Run/i.test(ty) ? "run" : /Swim/i.test(ty) ? "swim" : /Table.?Tennis|Ping/i.test(ty) ? "pong" : "other"; };
 const sesIco = k => `<svg class="sti" viewBox="0 0 24 24" aria-hidden="true">${SES_ICO[k].d}</svg>`;
 function sesTh(b, svg){ const th = b.querySelector(".stth"); if(!th) return; th.classList.remove("ph"); th.style.color = ""; th.innerHTML = svg; } // le vrai profil remplace l'icône d'attente ; le badge de type prend le relais
 function sesGrid(mt){
@@ -6019,7 +6020,7 @@ function sesGrid(mt){
   let h = [...Array(7)].map((_, i) => `<div class="dh">${esc(new Date(2024, 0, 1 + i).toLocaleDateString(loc(), {weekday: "narrow"}))}</div>`).join("") + "<div></div>".repeat(lead);
   for(let d = 1; d <= nd; d++){
     const L = by[iso(new Date(m.getFullYear(), m.getMonth(), d))] || [];
-    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a.type))}</button>`).join("")}</div>`;
+    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : "") + (/^(ride|rideIn)$/.test(sesKind(a)) ? " · " + t(sesKind(a) === "rideIn" ? "indoor" : "outdoor") : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a))}</button>`).join("")}</div>`;
   }
   const cal = $("sesCal"); cal.innerHTML = `<div class="sesg">${h}</div>`;
   cal.querySelectorAll("button[data-id]").forEach(b => b.onclick = () => { $("sesSel").value = b.dataset.id; sesShow(); });
