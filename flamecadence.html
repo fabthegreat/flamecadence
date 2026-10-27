@@ -302,6 +302,13 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .mode button[hidden],#libfeel[hidden]{display:none}
 #libfeelb{display:flex;gap:4px}#libfeelb[hidden]{display:none}#libfeelb button{margin:0;padding:6px 9px;font-size:1.25rem;line-height:1;background:transparent;border:1px solid var(--line);border-radius:8px;filter:grayscale(.85);opacity:.65}#libfeelb button[aria-checked="true"]{background:var(--line);border-color:var(--acc);filter:none;opacity:1}
 #libfeelb button[data-v="auto"]{font-size:.8rem;font-weight:700;padding:8px 10px;color:var(--acc);filter:none}
+#libfeelrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+#libfeelb{flex:0 1 auto;max-width:100%}
+@media (max-width:560px){
+  #libfeelb{flex:1 1 100%;gap:3px}
+  #libfeelb button{flex:1 1 0;min-width:0;padding:6px 0;font-size:1.1rem}
+  #libfeelb button[data-v="auto"]{flex:1.5 1 0;font-size:.72rem;padding:7px 2px}
+}
 #libfeelb button.eff:not([aria-checked="true"]){filter:none;opacity:1;border-style:dashed;border-color:var(--acc)}
 /* barre Générer / Analyser (classe distincte de .grp, réservée aux blocs de répétition de l'éditeur manuel) */
 .gbar{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.gbar button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.gbar button[aria-selected="true"]{background:var(--acc);color:var(--on)}
@@ -415,6 +422,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .tip .cal-prev svg{display:block;width:100%;height:100%}
 .tip b{display:block;margin-bottom:2px}
 #sesBox{position:relative}
+#chart path.hr{stroke:var(--ink);stroke-width:1.3;stroke-dasharray:3 2;vector-effect:non-scaling-stroke;stroke-opacity:.75}
 .ses-title{margin:4px 0 2px;font-size:1.35rem;line-height:1.25;font-weight:700;color:var(--ink);padding-left:10px;border-left:4px solid var(--acc);overflow-wrap:anywhere}
 .ses-meta{margin:0 0 10px 14px}
 .sest tbody tr[data-i]{cursor:pointer}.sest tbody tr[data-i]:hover{background:var(--bg)}
@@ -710,8 +718,9 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div><label for="edname" data-i="name"></label><input id="edname"></div>
 <div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
 </div>
-<div class="row one">
+<div class="row">
 <div><label for="edunit" data-i="unitLbl"></label><select id="edunit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+<div><label for="edmetric" data-i="edMetric"></label><select id="edmetric"><option value="p" data-i="mPow"></option><option value="h" data-i="mHr"></option></select></div>
 </div>
 <div class="hint" id="edhint"></div>
 <div id="edbox" style="margin-top:10px"></div>
@@ -738,7 +747,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div><input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px"></div>
 <div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="0-30">≤ 30 min</option><option value="30-45">30 – 45 min</option><option value="45-60">45 – 60 min</option><option value="60-75">60 – 75 min</option><option value="75-90">75 – 90 min</option><option value="90-105">90 – 105 min</option><option value="105-120">105 – 120 min</option><option value="120-inf">&gt; 120 min</option></select></div>
 </div>
-<div class="row" style="align-items:center;margin-top:10px"><label style="display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;cursor:pointer" data-ia="title:libFormTip"><input type="checkbox" id="libform" style="width:auto;margin:0"><span data-i="libForm"></span></label>
+<div class="row" id="libfeelrow" style="margin-top:10px"><label style="display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;cursor:pointer" data-ia="title:libFormTip"><input type="checkbox" id="libform" style="width:auto;margin:0"><span data-i="libForm"></span></label>
 <div id="libfeelb" role="radiogroup" hidden data-ia="aria-label:libForm"><button type="button" role="radio" data-v="auto" data-ia="title:feelAuto;aria-label:feelAuto" data-i="autoLbl"></button><button type="button" role="radio" data-v="great" data-ia="title:feelGreat;aria-label:feelGreat">😄</button><button type="button" role="radio" data-v="good" data-ia="title:feelGood;aria-label:feelGood">🙂</button><button type="button" role="radio" data-v="soso" data-ia="title:feelSoso;aria-label:feelSoso">😐</button><button type="button" role="radio" data-v="tired" data-ia="title:feelTired;aria-label:feelTired">😩</button><button type="button" role="radio" data-v="exhausted" data-ia="title:feelExh;aria-label:feelExh">😴</button></div>
 <span id="libautoi" class="hint" hidden style="flex:1 1 100%;margin:4px 0 0"></span>
 <select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="auto" data-i="feelAuto" selected></option><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood"></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
@@ -1314,6 +1323,7 @@ sesNone:["No activity with data found in the last 60 days.","Aucune activité av
 sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesKv:["Time|Distance|Avg power|NP|Intensity|Load|Avg HR|Climb","Durée|Distance|Puissance moy.|PN|Intensité|Charge|FC moy.|D+"], sesNoStr:["No power or heart-rate data for this activity.","Pas de données de puissance ni de FC pour cette activité."],
 libForm:["Match how I feel today","Adapter à ma forme du jour"], libFormTip:["Shows only the sessions that suit how you feel (type and length).","N'affiche que les séances adaptées à ta forme (type et durée)."],
+edMetric:["Default target","Cible par défaut"], mPow:["Power","Puissance"], mHr:["Heart rate","Fréquence cardiaque"], mTitle:["Target of this step (power or heart rate)","Cible de cette étape (puissance ou fréquence cardiaque)"], hrEst:["Heart-rate steps: zones and load are estimated from the equivalent power.","Étapes en FC : zones et charge estimées à partir de la puissance équivalente."], edHintH:["Heart-rate steps are in % of your threshold heart rate (LTHR).","Les étapes en FC sont en % de ta FC seuil (LTHR)."], edNoLthr:["Your LTHR is not set in intervals.icu, so bpm values are not shown.","Ta FC seuil (LTHR) n'est pas renseignée dans intervals.icu : les bpm ne sont pas affichés."], pctLthr:["% LTHR","% LTHR"],
 feelAuto:["Auto: from my intervals.icu form","Auto : d'après ma forme intervals.icu"], autoLbl:["Auto","Auto"], autoInfo:["Auto · form {0} → {1}","Auto · forme {0} → {1}"], autoNone:["Auto · no form data from intervals.icu yet: using “I feel good”.","Auto · pas encore de données de forme intervals.icu : « Je me sens bien » utilisé."], autoHrv:["low HRV","VFC basse"], autoRhr:["high resting HR","FC de repos élevée"], autoSleep:["short sleep","sommeil court"],
 feelGreat:["I feel great","Je suis en pleine forme"], feelGood:["I feel good","Je me sens bien"], feelSoso:["So-so","Bof"], feelTired:["I'm tired","Je suis fatigué"], feelExh:["I'm exhausted","Je suis épuisé"],
 actPlan:["Planned workout “{0}” restored as it was scheduled.","Séance planifiée « {0} » restaurée telle qu'elle était prévue."],
@@ -2353,6 +2363,26 @@ $("bper").onchange = $("bkind").onchange = () => { store.set("si_bkind", $("bkin
 
 // ---------- Graphe de la séance ----------
 let selLine = null, EXPL = null;
+// Fréquence cardiaque ↔ intensité équivalente en % FTP : correspondance par zones (Coggan : Z1 < 68 % LTHR ↔ < 55 % FTP, Z2 83 ↔ 75, Z3 94 ↔ 90, Z4 105 ↔ 105…).
+// Une étape en FC est dessinée, colorée par zone et chiffrée (charge estimée) avec cette puissance équivalente.
+const HRMAP = [[0, 0], [68, 55], [83, 75], [94, 90], [105, 105], [115, 120], [130, 160]], HRZ = [60, 76, 89, 100, 110, 120, 130];
+const hrInterp = (x, from, to) => {
+  const P = HRMAP; if(x <= P[0][from]) return P[0][to];
+  for(let i = 1; i < P.length; i++) if(x <= P[i][from]){ const x0 = P[i - 1][from], y0 = P[i - 1][to], x1 = P[i][from], y1 = P[i][to]; return y0 + (y1 - y0) * (x - x0) / (x1 - x0); }
+  const n = P.length - 1, k = (P[n][to] - P[n - 1][to]) / (P[n][from] - P[n - 1][from]); return P[n][to] + (x - P[n][from]) * k;
+};
+const h2p = h => hrInterp(h, 0, 1), p2h = p => hrInterp(p, 1, 0);
+// Cible de FC dans une ligne : « 75% LTHR », « 70-80% LTHR », « 85% HR » (% de la FC max, ramené à la LTHR), « Z2 HR », « 140-150bpm » → en % de la LTHR
+function hrTok(str){
+  const num = x => parseFloat(String(x).replace(",", ".")), k = ICU.maxHr > 0 && ICU.lthr > 0 ? ICU.maxHr / ICU.lthr : 1.1;
+  let m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%\s*(lthr|hr)\b/i);
+  if(m){ const f = m[3].toLowerCase() === "hr" ? k : 1, a = num(m[1]) * f, b = (m[2] ? num(m[2]) : num(m[1])) * f; return {ha: a, hb: b, idx: m.index, end: m.index + m[0].length, ramp: /ramp/i.test(str), range: !!m[2]}; }
+  m = str.match(/\bz([1-7])\s*hr\b/i);
+  if(m){ const v = HRZ[m[1] - 1]; return {ha: v, hb: v, idx: m.index, end: m.index + m[0].length, ramp: false, range: false}; }
+  m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*bpm\b/i);
+  if(m && ICU.lthr > 0){ const a = num(m[1]) / ICU.lthr * 100, b = (m[2] ? num(m[2]) : num(m[1])) / ICU.lthr * 100; return {ha: a, hb: b, idx: m.index, end: m.index + m[0].length, ramp: /ramp/i.test(str), range: !!m[2]}; }
+  return null;
+}
 function parseWorkout(txt, sport, ftp){
   const steps = []; let group = null;
   const flush = () => { if(group){ for(let i = 0; i < group.n; i++) steps.push(...group.items); group = null; } };
@@ -2376,6 +2406,7 @@ function parseWorkout(txt, sport, ftp){
     const v = num(m[1]), u = m[2].toLowerCase(); return u === "km" ? v * 1000 : u === "yrd" ? v * 0.9144 : v;
   };
   const inten = str => {
+    const hv = hrTok(str); if(hv) return {a: h2p(hv.ha), b: h2p(hv.hb), idx: hv.idx, ramp: hv.ramp, hr: hv};
     let m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
     if(m){ const a = num(m[1]), b = m[2] ? num(m[2]) : a; return {a, b, idx: m.index, ramp: /ramp/i.test(str)}; }
     m = str.match(/(\d+(?:[.,]\d+)?)\s*w\b/i);
@@ -2398,6 +2429,7 @@ function parseWorkout(txt, sport, ftp){
       if(!d){ const m = dist(pre); if(m) d = m * spm / Math.max(mid / 100, 0.3); }
       if(!d) continue;
       const step = {d, a: it.ramp ? it.a : mid, b: it.ramp ? it.b : mid, line: li};
+      if(it.hr){ step.hr = true; step.ha = it.ramp ? it.hr.ha : (it.hr.ha + it.hr.hb) / 2; step.hb = it.ramp ? it.hr.hb : step.ha; } // cible en % LTHR conservée à côté de l'équivalent puissance
       if(group) group.items.push(step); else steps.push(step);
     }else if(dashed){
       continue;
@@ -2411,7 +2443,7 @@ function parseWorkout(txt, sport, ftp){
   return steps;
 }
 const zoneOf = p => p < 56 ? 1 : p < 76 ? 2 : p < 91 ? 3 : p < 106 ? 4 : p < 121 ? 5 : p < 151 ? 6 : 7;
-const toWatts = (desc, ftp) => desc.split("\n").map(l => l.trim().startsWith("-") ? l.replace(/(\d+(?:\.\d+)?)\s*%/, (m, p) => Math.round(p * ftp / 100) + "w") : l).join("\n");
+const toWatts = (desc, ftp) => desc.split("\n").map(l => l.trim().startsWith("-") && !hrTok(l) ? l.replace(/(\d+(?:\.\d+)?)\s*%/, (m, p) => Math.round(p * ftp / 100) + "w") : l).join("\n");
 // ---------- Temps par zone et guide de ravitaillement ----------
 function zoneTimes(steps){ // secondes par zone (1..7) ; les rampes sont découpées en tranches pour tenir compte des changements de zone
   const z = [0, 0, 0, 0, 0, 0, 0, 0];
@@ -2452,8 +2484,8 @@ function renderChart(ovr){
   let x = 0, path = "", wsum = 0, t0 = 0;
   for(const s of steps){
     const w = s.d / span * W, ya = H - s.a / peak * (H - 4), yb = H - s.b / peak * (H - 4);
-    path += `<path data-n="${meta.length}" class="z${zoneOf((s.a + s.b) / 2)}${s.line === selLine ? " sel" : ""}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
-    meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
+    path += `<path data-n="${meta.length}" class="z${zoneOf((s.a + s.b) / 2)}${s.hr ? " hr" : ""}${s.line === selLine ? " sel" : ""}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
+    meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line, hr: s.hr, ha: s.ha, hb: s.hb}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
   }
   const avg = Math.round(wsum / total), pace = sport === "Run" || sport === "Swim", mins = Math.round(total / 60);
   const dtxt = mins >= 60 ? Math.floor(mins / 60) + "h" + pad(mins % 60) : mins + " min";
@@ -2461,7 +2493,7 @@ function renderChart(ovr){
   const stt = !pace ? stepsStats(steps) : null;
   const load = stt ? "<div class=\"cap\">IF " + stt.iff.toFixed(2) + " · TSS " + Math.round(stt.tss) + "</div>" : "";
   const zbar = zoneBar(zoneTimes(steps)), fuel = fuelHtml(total, steps, ftp, pace, stt ? stt.iff : avg / 100);
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg>${zbar}<div class="cap">${esc(cap)}</div>${load}${fuel}<div class="tip" hidden></div>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg>${zbar}<div class="cap">${esc(cap)}</div>${load}${steps.some(s => s.hr) ? `<div class="cap">♥ ${esc(t("hrEst"))}</div>` : ""}${fuel}<div class="tip" hidden></div>`;
   box._steps = meta; box._span = span; box._peak = peak; renderExplain(steps);
   if(!ovr){ try{ edHandles(box, meta, span, peak); }catch(err){} }
 }
@@ -2472,6 +2504,11 @@ function tipText(s, ftp, pace){
   const wmode = !pace && ftp > 0 && $("unit").value === "w";
   const pct = ramp ? f(s.a) + " → " + f(s.b) : f(s.a);
   const wat = ramp ? f(s.a * ftp / 100) + " → " + f(s.b * ftp / 100) : f(s.a * ftp / 100);
+  if(s.hr){
+    const ha = Math.round(s.ha), hb = Math.round(s.hb), bp = v => ICU.lthr > 0 ? Math.round(v * ICU.lthr / 100) : 0;
+    const hv = (ramp ? ha + " → " + hb : ha) + " " + t("pctLthr"), bv = bp(s.ha) ? " (≈ " + (ramp ? bp(s.ha) + " → " + bp(s.hb) : bp(s.ha)) + " bpm)" : "";
+    return d + " · ♥ " + hv + bv + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
+  }
   const val = wmode ? wat + " W (" + pct + t("pctFtp") + ")" : pct + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + wat + " W)" : "");
   return d + " · " + val + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
 }
@@ -3537,8 +3574,9 @@ function fmtDurImp(sec){
   return Math.floor(sec / 60) + "m" + (sec % 60);
 }
 function stepsToDesc(steps, watt){
-  const key = s => Math.round(s.d) + "|" + s.a.toFixed(1) + "|" + s.b.toFixed(1);
+  const key = s => Math.round(s.d) + "|" + (s.hr ? "h" + s.ha.toFixed(1) + "|" + s.hb.toFixed(1) : s.a.toFixed(1) + "|" + s.b.toFixed(1));
   const line = s => {
+    if(s.hr) return "- " + fmtDurImp(s.d) + " " + (Math.abs(s.ha - s.hb) > 0.5 ? Math.round(Math.min(s.ha, s.hb)) + "-" + Math.round(Math.max(s.ha, s.hb)) + "% LTHR ramp" : Math.round(s.ha) + "% LTHR");
     const p = Math.abs(s.a - s.b) > 0.5
       ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + (watt ? "w" : "% ramp")
       : Math.round(s.a) + (watt ? "w" : "%");
@@ -4891,10 +4929,21 @@ $("fitbox").addEventListener("pointerleave", () => { const c = $("fcur"); if(c) 
 const ED = [];
 let edUid = 0; const edCollapsed = new Set(); // identifiants de blocs + blocs repliés
 const edSp = () => $("edsport").value, edKm = () => isBike(edSp()), edW = () => edKm() && $("unit").value === "w";
+// Cible par défaut (option du formulaire) : une étape sans choix explicite (x.m absent) la suit ; le sélecteur de l'étape permet de la changer au cas par cas
+const edM0 = () => edKm() && $("edmetric").value === "h" ? "h" : "p", edM = x => edKm() ? (x.m || edM0()) : "p";
+const edIv = pc => { const f = ftpFor(edSp()); return edM0() === "h" ? String(Math.round(p2h(pc))) : String(edW() && f ? Math.round(f * pc / 100) : pc); };
+// conversion de l'intensité d'une étape d'une cible à l'autre (via l'intensité équivalente en % FTP)
+function edConv(v, from, to){
+  if(v === "" || v == null || from === to) return v;
+  const n = parseFloat(String(v).replace(",", ".")); if(!isFinite(n)) return v;
+  const f = ftpFor(edSp());
+  if(from === "p") return String(Math.round(p2h(edW() && f ? n / f * 100 : n)));
+  const pc = h2p(n); return String(edW() && f ? Math.round(f * pc / 100) : Math.round(pc));
+}
 const opts = (a, cur) => a.map(([v, l]) => `<option value="${v}"${v === cur ? " selected" : ""}>${esc(l)}</option>`).join("");
 function edDef(ty){
   const pc = {warm: 55, work: 95, rec: 50, cool: 50}[ty], f = ftpFor(edSp());
-  return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid};
+  return {k: "s", ty, mode: "t", v: ty === "work" ? "5:00" : ty === "rec" ? "2:00" : "10:00", i: edIv(pc), n: "", uid: ++edUid};
 }
 const edAt = p => { const a = String(p).split(".").map(Number); return a.length === 1 ? {list: ED, i: a[0]} : {list: ED[a[0]].items, i: a[1]}; };
 // Échauffement / retour au calme standards : progression de paliers insérée en un clic
@@ -4906,16 +4955,18 @@ const ED_STD = {
 };
 function stdSteps(ty){
   const f = ftpFor(edSp());
-  return (ED_STD[ty] || []).map(([m, s, pc]) => ({k: "s", ty, mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
+  return (ED_STD[ty] || []).map(([m, s, pc]) => ({k: "s", ty, mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: edIv(pc), n: "", uid: ++edUid}));
 }
 const edBtn = (a, txt, ttl, cls) => `<button class="alt small${cls ? " " + cls : ""}" data-a="${a}" type="button"${ttl ? ` title="${esc(ttl)}" aria-label="${esc(ttl)}"` : ""}>${txt}</button>`;
 const edCtl = (rec, std) => `<span class="drg" title="${esc(t("dragLbl"))}" aria-label="${esc(t("dragLbl"))}">⠿</span><span class="ctl">${edBtn("up", "↑", t("mvUp"))}${edBtn("down", "↓", t("mvDown"))}${edBtn("dup", "⧉", t("dup"))}${rec ? edBtn("rec", esc(t("addRecAfter"))) : ""}${std ? edBtn("std", esc(std)) : ""}${edBtn("del", "✕", t("del"), "danger")}</span>`;
 function edStep(x, p){
-  const u = edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
+  const hrm = edM(x) === "h", bpm = hrm && ICU.lthr > 0 && x.i !== "" && x.i != null ? ` title="≈ ${Math.round(parseFloat(x.i) * ICU.lthr / 100) || 0} bpm"` : "";
+  const u = hrm ? "% LTHR" : edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
   return `<div class="st ${x.ty}" data-p="${p}"><select data-f="ty" aria-label="${esc(t("edT"))}">${opts(["warm", "work", "rec", "cool"].map(y => [y, t("tt_" + y)]), x.ty)}</select>` +
     `<select data-f="mode">${opts([["t", t("edTime")], ["d", t("edDist")]], x.mode)}</select>` +
     `<div class="fld"><input data-f="v" value="${esc(x.v)}" aria-label="${esc(t(x.mode === "d" ? "edDist" : "edTime"))}"><span>${x.mode === "d" ? (edKm() ? "km" : "m") : "mm:ss"}</span></div>` +
-    `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}" aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
+    (edKm() ? `<select data-f="m" title="${esc(t("mTitle"))}" aria-label="${esc(t("mTitle"))}">${opts([["p", t("mPow")], ["h", "♥ " + t("mHr")]], edM(x))}</select>` : "") +
+    `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}"${bpm} aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
     `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec", x.ty === "warm" || x.ty === "cool" ? t("std_" + x.ty) : null)}</div>`;
 }
 // Préréglages de répétitions standard : [répétitions, [[min, sec, %FTP] effort, [min, sec, %FTP] récup]]
@@ -4932,7 +4983,7 @@ const ED_GSTD = [
 const gStdLabel = p => { const sec = x => x[0] * 60 + x[1]; return `${p[0]} × ${fmtDur(sec(p[1][0]))}/${fmtDur(sec(p[1][1]))} @${p[1][0][2]}%`; };
 function gStdSteps(p){
   const f = ftpFor(edSp());
-  return p[1].map(([m, s, pc], j) => ({k: "s", ty: j % 2 ? "rec" : "work", mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: String(edW() && f ? Math.round(f * pc / 100) : pc), n: "", uid: ++edUid}));
+  return p[1].map(([m, s, pc], j) => ({k: "s", ty: j % 2 ? "rec" : "work", mode: "t", v: m + ":" + String(s).padStart(2, "0"), i: edIv(pc), n: "", uid: ++edUid}));
 }
 const gStdSel = i => `<select class="gstd" data-gstd="${i}" aria-label="${esc(t("gstdLbl"))}"><option value="">${esc(t("gstdLbl"))}</option>${ED_GSTD.map((p, k) => `<option value="${k}">${esc(gStdLabel(p))}</option>`).join("")}</select>`;
 const edGrp = (g, i) => `<div class="grp" data-gi="${i}"><div class="gh" data-p="${i}"><b>${esc(t("repLbl"))}</b><span class="stp">${edBtn("rm", "−", t("repDec"))}<input data-f="r" type="number" min="1" max="50" value="${esc(g.r)}" aria-label="${esc(t("repLbl"))}">${edBtn("rp", "+", t("repInc"))}<span aria-hidden="true">×</span></span>${edCtl(false)}</div>${g.items.map((x, j) => edStep(x, i + "." + j)).join("")}<div class="actions">${gStdSel(i)}<button class="alt small" data-a="addin" data-g="${i}" data-ty="work" type="button">${esc(t("addWork"))}</button><button class="alt small" data-a="addin" data-g="${i}" data-ty="rec" type="button">${esc(t("addRec"))}</button></div></div>`;
@@ -4942,7 +4993,7 @@ function edDur(x){
   return (h ? h + "h" : "") + (mm ? mm + "m" : "") + (ss ? ss + "s" : "") || "0s";
 }
 function edLine(x){
-  const i = x.i !== "" && x.i != null ? " " + x.i + (edW() ? "w" : "%") + (edKm() ? "" : " Pace") : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
+  const i = x.i !== "" && x.i != null ? " " + x.i + (edM(x) === "h" ? "% LTHR" : (edW() ? "w" : "%") + (edKm() ? "" : " Pace")) : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
   return `- ${edDur(x)}${i}${n ? " " + n : ""}`;
 }
 let EDMAP = {}; // n° de ligne du texte généré -> chemin de l'étape de l'éditeur (pour les poignées du graphe)
@@ -5048,18 +5099,30 @@ function edLive(){
   renderChart();
 }
 function edRender(){
-  $("edunit").disabled = !edKm();
-  $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace") + " " + t("hDrag");
+  $("edunit").disabled = !edKm(); $("edmetric").disabled = !edKm();
+  const anyH = ED.some(x => x.k === "g" ? x.items.some(y => edM(y) === "h") : x.k === "s" && edM(x) === "h");
+  $("edhint").textContent = t(edW() ? "edHintW" : edKm() ? "edHintP" : "edHintPace") + " " + t("hDrag") + (anyH ? " " + t("edHintH") + (ICU.lthr > 0 ? "" : " " + t("edNoLthr")) : "");
   $("edbox").innerHTML = ED.length ? edHtml() : `<div class="hint">${esc(t("edNone"))}</div>`;
   edSum();
   edLive();
 }
 $("edbox").addEventListener("input", e => {
   const el = e.target, h = el.closest("[data-p]"); if(!h || !el.dataset.f) return;
-  const {list, i} = edAt(h.dataset.p); list[i][el.dataset.f] = el.value;
+  const {list, i} = edAt(h.dataset.p);
+  if(el.dataset.f === "m"){ const was = edM(list[i]); list[i].i = edConv(list[i].i, was, el.value); list[i].m = el.value; edRender(); return; }
+  list[i][el.dataset.f] = el.value;
   if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else { edSum(); edLive(); } // aperçu mis à jour à chaque frappe (durée, intensité, répétitions…)
 });
 // le nom saisi dans l'éditeur se répercute en direct dans l'aperçu ; champ vidé => retour au nom déduit
+let ED_M0 = store.get("si_edmetric") === "h" ? "h" : "p"; $("edmetric").value = ED_M0;
+$("edmetric").addEventListener("change", () => {
+  const to = $("edmetric").value, from = ED_M0; if(to === from) return;
+  ED_M0 = to; store.set("si_edmetric", to);
+  // les étapes qui suivent la cible par défaut sont converties ; celles dont la cible a été choisie à la main gardent la leur
+  const conv = x => { if(x.k === "s" && !x.m) x.i = edConv(x.i, from, to); };
+  ED.forEach(x => { if(x.k === "g") x.items.forEach(conv); else conv(x); });
+  edRender();
+});
 $("edname").addEventListener("input", () => { if(!$("edname").value.trim()) $("name").value = ""; edLive(); });
 $("edbox").addEventListener("change", e => {
   const s = e.target.closest("[data-gstd]"); if(!s || s.value === "") return;
@@ -5112,6 +5175,8 @@ function lineTime(line, sec, orig){
   return dash ? nl : nl.replace(/^- /, "");
 }
 function lineInt(line, pct0, pct, ftp){
+  const hv = hrTok(line);
+  if(hv){ const d = Math.round(p2h(pct) - p2h(pct0)), a = Math.round(hv.ha + d), b = Math.round(hv.hb + d); return line.slice(0, hv.idx) + a + (b !== a ? "-" + b : "") + "% LTHR" + line.slice(hv.end); }
   let m = line.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
   if(m){ // une rampe « 50-70% » est décalée en bloc
     const d = pct - pct0, a = parseFloat(m[1].replace(",", ".")), b = m[2] ? parseFloat(m[2].replace(",", ".")) : null;
@@ -5151,9 +5216,11 @@ function edRzApply(s, e){
   }else{
     const pct = Math.max(10, Math.min(300, Math.round(s.pct0 - (e.clientY - s.py0) / s.Hh * 100 / 96 * s.peak)));
     if(pct > s.peak){ s.peak = pct; s.py0 = e.clientY; s.pct0 = pct; CH_FIX.peak = pct; }
-    if(s.it) s.it.i = String(edW() && f ? Math.round(f * pct / 100) : pct);
+    const isH = s.it ? edM(s.it) === "h" : !!hrTok(s.line0 || "");
+    if(s.it) s.it.i = isH ? String(Math.round(p2h(pct))) : String(edW() && f ? Math.round(f * pct / 100) : pct);
     else nt = lineInt(s.line0, s.pctOrig, pct, f);
-    s.label = pct + (/Run|Swim/.test($("sport").value) ? t("pctPace") : t("pctFtp")) + (f > 0 && isBike($("sport").value) ? " · " + Math.round(f * pct / 100) + " W" : "");
+    s.label = isH ? "♥ " + Math.round(p2h(pct)) + t("pctLthr") + (ICU.lthr > 0 ? " · ≈ " + Math.round(ICU.lthr * p2h(pct) / 100) + " bpm" : "")
+      : pct + (/Run|Swim/.test($("sport").value) ? t("pctPace") : t("pctFtp")) + (f > 0 && isBike($("sport").value) ? " · " + Math.round(f * pct / 100) + " W" : "");
   }
   if(s.it) edRender();
   else{
@@ -5297,6 +5364,7 @@ function edFromText(txt, sp){
   };
   const distM = str => { const m = str.match(/(\d+(?:[.,]\d+)?)\s*(mtr|km|yrd)/i); if(!m) return 0; const v = num(m[1]), u = m[2].toLowerCase(); return u === "km" ? v * 1000 : u === "yrd" ? v * 0.9144 : v; };
   const inten = body => {
+    const hv = hrTok(body); if(hv){ const hp = (hv.ha + hv.hb) / 2; return {hr: true, hp, p: h2p(hp), ramp: hv.range, idx: hv.idx, end: hv.end}; }
     let m = body.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
     if(m){
       const a = num(m[1]); let b = m[2] ? num(m[2]) : a, end = m.index + m[0].length;
@@ -5310,6 +5378,7 @@ function edFromText(txt, sp){
   const pctOf = it => it.p != null ? it.p : f > 0 ? it.w / f * 100 : 100;
   const toEd = it => {
     if(!it) return "";
+    if(it.hr) return String(Math.round(it.hp));
     if(wMode) return it.w != null ? String(Math.round(it.w)) : f > 0 ? String(Math.round(it.p * f / 100)) : String(+it.p.toFixed(1));
     return it.p != null ? String(+it.p.toFixed(1)) : f > 0 ? String(Math.round(it.w / f * 100)) : "";
   };
@@ -5318,7 +5387,7 @@ function edFromText(txt, sp){
   const recNames = T.tt_rec.map(x => x.toLowerCase());
   const mk = (ty, d, dm, it, pre, post) => {
     let n = [clean(strip(pre)), clean(post)].filter(Boolean).join(" "); if(recNames.includes(n.toLowerCase())) n = "";
-    return {k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, uid: ++edUid};
+    return {k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, m: it && it.hr ? "h" : "p", uid: ++edUid};
   };
   const headerTy = l => /cool|retour|warm\s?down/i.test(l) ? "cool" : /warm|échauff|echauff/i.test(l) ? "warm" : /recov|récup|recup|\brest\b|repos/i.test(l) ? "rec" : "work";
   for(const raw of String(txt || "").split("\n")){
@@ -5888,7 +5957,7 @@ async function sesShow(){
     const W = 900, Hh = 240, bk = Math.max(1, Math.ceil(N / 700)), pts = (arr) => { if(!arr) return []; const o = []; for(let i = 0; i < N; i += bk){ let sum = 0, n = 0; for(let j = i; j < Math.min(i + bk, arr.length); j++){ sum += arr[j] || 0; n++; } o.push(n ? sum / n : 0); } return o; };
     const pw = pts(w), hh = pts(hr), pmax = Math.max(ftp * 1.5, ...pw, 100), hmax = Math.max(...hh, 100), X = i => i / Math.max(1, pw.length - 1 || hh.length - 1) * W;
     const path = (v, mx) => v.map((y, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + (Hh - 14 - y / mx * (Hh - 24)).toFixed(1)).join("");
-    const rects = B.map((b, i) => `<rect data-r="${i}" x="${(b.s / N * W).toFixed(1)}" width="${Math.max(1, (b.e - b.s) / N * W).toFixed(1)}" y="0" height="${Hh - 14}" fill="${b.work ? "var(--acc)" : "none"}" opacity=".13"/>`).join("");
+    const rects = B.map((b, i) => `<rect data-r="${i}" x="${(b.s / N * W).toFixed(1)}" width="${Math.max(1, (b.e - b.s) / N * W).toFixed(1)}" y="0" height="${Hh - 14}" data-f="${b.work ? "var(--acc)" : "none"}" fill="${b.work ? "var(--acc)" : "none"}" opacity=".13"/>`).join("");
     const svg = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${esc(a.name || "")}">${rects}${ftp ? `<line x1="0" x2="${W}" y1="${Hh - 14 - ftp / pmax * (Hh - 24)}" y2="${Hh - 14 - ftp / pmax * (Hh - 24)}" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>` : ""}` +
       (hh.length ? `<path d="${path(hh, hmax)}" fill="none" stroke="var(--err)" stroke-width="1.2" opacity=".75"/>` : "") + (pw.length ? `<path d="${path(pw, pmax)}" fill="none" stroke="var(--acc)" stroke-width="1.5"/>` : "") +
       `<text x="4" y="${Hh - 2}" font-size="11" fill="var(--mute)">0</text><text x="${W - 4}" y="${Hh - 2}" font-size="11" text-anchor="end" fill="var(--mute)">${esc(fmtDur(N))}</text></svg>`;
@@ -5902,12 +5971,21 @@ async function sesShow(){
       const L = [pw.length ? `${esc(t("lPow"))} : ${Math.round(pw[i])} W` + (ftp ? ` (${Math.round(pw[i] / ftp * 100)} %)` : "") : "", hh.length && hh[i] ? `${esc(t("lHRs"))} : ${Math.round(hh[i])} bpm` : "", sc && sc.avg ? `${esc(t("lCad"))} : ${Math.round(sc.avg)} rpm` : "", b ? `#${k + 1} · ${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}` : ""].filter(Boolean);
       return {html: `<b>${esc(fmtDur(s0))}</b>` + L.join("\n")};
     });
-    box.querySelectorAll("tr[data-i]").forEach(r => r.onclick = () => { const on = !r.classList.contains("on"); box.querySelectorAll("tr.on").forEach(x => x.classList.remove("on")); box.querySelectorAll("rect[data-r]").forEach(x => x.setAttribute("opacity", ".13")); if(on){ r.classList.add("on"); const rc = box.querySelector(`rect[data-r="${r.dataset.i}"]`); if(rc){ rc.setAttribute("opacity", ".4"); if(rc.getAttribute("fill") === "none") rc.setAttribute("fill", "var(--mute)"); } } });
-    // survol d'une ligne du tableau : la plage correspondante est mise en évidence dans le graphique (sans toucher à la sélection par clic)
-    const rc = r => box.querySelector(`rect[data-r="${r.dataset.i}"]`);
+    // surbrillance des plages : une seule fonction recalcule l'aspect de chaque bande (sélection par clic + survol) à partir de son état de base,
+    // pour que tout revienne à l'identique quand on désélectionne (les récupérations « sans remplissage » reprennent leur état invisible)
+    let hov = null;
+    const paint = () => {
+      const sel = box.querySelector("tr.on"), si = sel ? sel.dataset.i : null;
+      box.querySelectorAll("rect[data-r]").forEach(c => {
+        const hi = c.dataset.r === si || c.dataset.r === hov;
+        c.setAttribute("opacity", hi ? ".4" : ".13");
+        c.setAttribute("fill", hi && c.dataset.f === "none" ? "var(--mute)" : c.dataset.f);
+      });
+    };
     box.querySelectorAll("tr[data-i]").forEach(r => {
-      r.addEventListener("mouseenter", () => { const c = rc(r); if(!c) return; c.dataset.f0 = c.getAttribute("fill"); c.setAttribute("opacity", ".4"); if(c.dataset.f0 === "none") c.setAttribute("fill", "var(--mute)"); });
-      r.addEventListener("mouseleave", () => { const c = rc(r); if(!c) return; if(r.classList.contains("on")) return; c.setAttribute("opacity", ".13"); if(c.dataset.f0 === "none") c.setAttribute("fill", "none"); });
+      r.onclick = () => { const on = !r.classList.contains("on"); box.querySelectorAll("tr.on").forEach(x => x.classList.remove("on")); if(on) r.classList.add("on"); paint(); };
+      r.addEventListener("mouseenter", () => { hov = r.dataset.i; paint(); });
+      r.addEventListener("mouseleave", () => { hov = null; paint(); });
     });
   }catch(e){ if(tok === SES.tok) box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; }
 }
