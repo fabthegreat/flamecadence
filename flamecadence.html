@@ -317,6 +317,14 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .sesg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
 .sesd{min-height:52px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;font-size:.7rem;color:var(--mute);display:flex;flex-direction:column;gap:2px;opacity:.7}.sesd.has{background:var(--card);opacity:1}
 .sesd button{margin:0;padding:1px;min-height:0;height:28px;width:100%;display:block;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--acc);font-size:.7rem;line-height:1}.sesd button.on{border-color:var(--acc);background:var(--line)}.sesd svg{width:100%;height:24px;display:block}
+.sesd button{position:relative;overflow:hidden}
+.sesd button .stth{display:block;width:100%;height:24px}
+.sesd button .stth.ph{display:flex;align-items:center;justify-content:center;height:100%;min-height:24px;box-sizing:border-box;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);border:1px solid color-mix(in srgb,currentColor 50%,transparent)}
+.sesd button .stth.ph svg{width:20px;height:20px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.18))}
+.sesd button .stb{position:absolute;left:1px;top:1px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 0 0 1px var(--card)}
+.sesd button .stb svg{width:9px;height:9px}
+.sesd button .stth.ph ~ .stb{display:none}
+.sti{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 /* survol / focus clavier d'un onglet non actif : l'icône est mise en valeur (couleur d'accent, plus grande, trait plus épais) */
 .mode button svg{transition:transform .15s,stroke-width .15s}
 .mode button:not([aria-selected="true"]):hover,.mode button:not([aria-selected="true"]):focus-visible{background:var(--bg);color:var(--acc)}
@@ -423,6 +431,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .tip b{display:block;margin-bottom:2px}
 #sesBox{position:relative}
 #chart path.hr{stroke:var(--ink);stroke-width:1.3;stroke-dasharray:3 2;vector-effect:non-scaling-stroke;stroke-opacity:.75}
+.aibtn{display:inline-flex;align-items:center;gap:6px}.aibtn svg,#sesBox .aibtn svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ses-title{margin:4px 0 2px;font-size:1.35rem;line-height:1.25;font-weight:700;color:var(--ink);padding-left:10px;border-left:4px solid var(--acc);overflow-wrap:anywhere}
 .ses-meta{margin:0 0 10px 14px}
 .sest tbody tr[data-i]{cursor:pointer}.sest tbody tr[data-i]:hover{background:var(--bg)}
@@ -956,7 +965,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <section data-block="last">
 <div class="phead"><h2 data-i="lastW"></h2>
 <span class="seg"><button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></span>
-<button class="alt small" id="lastai" type="button" data-i="lastAi"></button>
+<button class="alt small aibtn" id="lastai" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span data-i="lastAi"></span></button>
 <button class="alt small icon" id="rlast" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <a class="alt small icon ext" id="lkLast" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
 <div id="lastbox"></div>
@@ -1320,7 +1329,7 @@ cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
 grpGen:["Generate","Générer"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
-sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
+sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesKv:["Time|Distance|Avg power|NP|Intensity|Load|Avg HR|Climb","Durée|Distance|Puissance moy.|PN|Intensité|Charge|FC moy.|D+"], sesNoStr:["No power or heart-rate data for this activity.","Pas de données de puissance ni de FC pour cette activité."],
 libForm:["Match how I feel today","Adapter à ma forme du jour"], libFormTip:["Shows only the sessions that suit how you feel (type and length).","N'affiche que les séances adaptées à ta forme (type et durée)."],
 edMetric:["Default target","Cible par défaut"], mPow:["Power","Puissance"], mHr:["Heart rate","Fréquence cardiaque"], mTitle:["Target of this step (power or heart rate)","Cible de cette étape (puissance ou fréquence cardiaque)"], hrEst:["Heart-rate steps: zones and load are estimated from the equivalent power.","Étapes en FC : zones et charge estimées à partir de la puissance équivalente."], edHintH:["Heart-rate steps are in % of your threshold heart rate (LTHR).","Les étapes en FC sont en % de ta FC seuil (LTHR)."], edNoLthr:["Your LTHR is not set in intervals.icu, so bpm values are not shown.","Ta FC seuil (LTHR) n'est pas renseignée dans intervals.icu : les bpm ne sont pas affichés."], pctLthr:["% LTHR","% LTHR"],
@@ -1877,7 +1886,6 @@ $("lprev").onclick = () => loadLast((LAST.li || 0) + 1).catch(() => {});
 $("lnext").onclick = () => loadLast((LAST.li || 0) - 1).catch(() => {});
 
 // --- analyse IA de la séance ---
-const SYSTEM_ANALYSIS = "You are an expert cycling coach. The user sends the summary and downsampled power/heart-rate data of a completed workout. Analyze it in plain text: what the session actually trained, pacing quality and consistency, intensity balance, signs of fatigue or fitness, and one or two concrete suggestions for the coming days. Use short paragraphs or bullet points.";
 // Mise en forme légère (markdown minimal) de l'analyse IA
 function mdLite(txt){
   const inline = s => esc(s).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,;:!?]|$)/g, "$1<i>$2</i>");
@@ -1912,7 +1920,7 @@ async function aiComplete(system, user){
   if(!model) throw new Error(t("needM"));
   if(chat){
     const r = await fetch(url, {method: "POST", headers: {"Content-Type": "application/json", Authorization: "Bearer " + key},
-      body: JSON.stringify({model, max_tokens: 2500, messages: [{role: "system", content: system}, {role: "user", content: user}]})});
+      body: JSON.stringify({model, max_tokens: 4000, messages: [{role: "system", content: system}, {role: "user", content: user}]})});
     const j = await r.json().catch(() => ({}));
     if(!r.ok) throw new Error((j.error && (j.error.message || (typeof j.error === "string" ? j.error : ""))) || ("HTTP " + r.status));
     return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || "";
@@ -1924,30 +1932,90 @@ async function aiComplete(system, user){
   if(!r.ok) throw new Error(j.error?.message || ("HTTP " + r.status));
   return (j.candidates?.[0]?.content?.parts || []).map(p => p.text || "").join("");
 }
-async function analyzeLast(){
-  const a = LAST.last;
-  if(!a) return say("aiNone", "err");
-  $("lastai").disabled = true; say(null); progStart("analyzing");
+// Contexte d'entraînement envoyé à l'IA : séances faites avant (14 j), séances faites / planifiées après (7 j), séance prévue liée, forme (CTL/ATL)
+async function aiContext(a){
+  const out = [];
   try{
-    const f = Math.round, kv = [];
-    kv.push(`Workout: "${a.name || a.type}" (${actT(a.type)})`);
-    kv.push(`Date: ${(a.start_date_local || "").slice(0, 10)}`);
-    kv.push(`Duration: ${hm(a.moving_time || 0)}`);
-    if(a.distance) kv.push(`Distance: ${Math.round(a.distance) / 1000} km`);
-    if(a.total_elevation_gain) kv.push(`Elevation: ${f(a.total_elevation_gain)} m`);
-    if(a.icu_training_load) kv.push(`Training load: ${f(a.icu_training_load)}`);
-    if(a.icu_intensity) kv.push(`Intensity factor: ${(a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2)}`);
-    if(a.icu_weighted_avg_watts) kv.push(`Normalized power: ${f(a.icu_weighted_avg_watts)} W`);
-    if(a.icu_average_watts) kv.push(`Average power: ${f(a.icu_average_watts)} W`);
-    if(a.average_heartrate) kv.push(`Average HR: ${f(a.average_heartrate)} bpm`);
-    if(a.max_heartrate) kv.push(`Max HR: ${f(a.max_heartrate)} bpm`);
-    if(a.average_cadence) kv.push(`Average cadence: ${f(a.average_cadence)} rpm`);
-    if(ICU.ftpIn || ICU.ftpOut) kv.push(`Athlete FTP: ${ICU.ftpIn || ICU.ftpOut} W`);
-    const w = ds(LAST.sw || [], 60).map(f).filter(Boolean);
-    if(w.length) kv.push(`Power curve (avg watts, ${w.length} evenly spaced samples): ${w.join(",")}`);
-    const h = ds(LAST.sh || [], 60).map(f).filter(Boolean);
-    if(h.length) kv.push(`Heart-rate curve (bpm, ${h.length} evenly spaced samples): ${h.join(",")}`);
-    const txt = await aiComplete(SYSTEM_ANALYSIS, kv.join("\n") + `\nAnalyze this completed workout. Reply in ${lang === "fr" ? "French" : "English"}, plain text only.`);
+    const f = Math.round, d = (a.start_date_local || "").slice(0, 10), base = new Date(d + "T12:00:00"), sh = n => { const x = new Date(base); x.setDate(x.getDate() + n); return iso(x); };
+    const [acts, evs, well] = await Promise.all([icu(`/activities?oldest=${sh(-14)}&newest=${sh(7)}`).catch(() => []), icu(`/events?oldest=${d}&newest=${sh(7)}&category=WORKOUT`).catch(() => []), icu(`/wellness?oldest=${sh(-7)}&newest=${d}`).catch(() => [])]);
+    const line = x => `${(x.start_date_local || "").slice(0, 10)} ${x.type || ""} "${x.name || ""}" ${hm(x.moving_time || 0)}` + (x.icu_training_load ? `, load ${f(x.icu_training_load)}` : "") +
+      (x.icu_intensity ? `, IF ${(x.icu_intensity > 5 ? x.icu_intensity / 100 : x.icu_intensity).toFixed(2)}` : "") + (x.icu_weighted_avg_watts ? `, NP ${f(x.icu_weighted_avg_watts)} W` : "") + (x.average_heartrate ? `, avg HR ${f(x.average_heartrate)}` : "");
+    const L = (Array.isArray(acts) ? acts : []).filter(x => x.id != a.id && x.moving_time > 0), key = x => x.start_date_local || "";
+    const prev = L.filter(x => key(x) < key(a)).sort((x, y) => key(x) < key(y) ? -1 : 1).slice(-8), next = L.filter(x => key(x) > key(a)).sort((x, y) => key(x) < key(y) ? -1 : 1).slice(0, 3);
+    const E = Array.isArray(evs) ? evs : [], mine = E.find(e => String(e.paired_activity_id) === String(a.id)), plan = E.filter(e => !e.paired_activity_id && (e.start_date_local || "").slice(0, 10) > d).sort((x, y) => key(x) < key(y) ? -1 : 1).slice(0, 3);
+    const W = (Array.isArray(well) ? well : []).filter(w => w.ctl != null).sort((x, y) => x.id < y.id ? -1 : 1).pop();
+    if(W) out.push(`Fitness on ${W.id}: CTL ${f(W.ctl)}, ATL ${f(W.atl || 0)}, form ${f(W.ctl - (W.atl || 0))}`);
+    if(mine) out.push(`Planned workout for this session: "${mine.name || ""}"${mine.description ? " — " + String(mine.description).replace(/\s+/g, " ").slice(0, 400) : ""}`);
+    if(prev.length) out.push("Sessions before (oldest first):\n" + prev.map(line).join("\n"));
+    if(next.length) out.push("Sessions done after:\n" + next.map(line).join("\n"));
+    if(plan.length) out.push("Planned workouts ahead:\n" + plan.map(e => `${(e.start_date_local || "").slice(0, 10)} "${e.name || ""}"` + (e.moving_time ? " " + hm(e.moving_time) : "") + (e.icu_training_load ? `, planned load ${f(e.icu_training_load)}` : "")).join("\n"));
+  }catch(e){}
+  return out;
+}
+// Indicateurs calculés ici (le modèle ne doit pas faire d'arithmétique) : zones de puissance, moitiés de séance, découplage puissance/FC
+function aiDerived(a, sw, sh, ftp){
+  const f = Math.round, out = [], num = v => typeof v === "number" && !isNaN(v);
+  const avg = (arr, s, e, skip0) => { let n = 0, sum = 0; for(let i = s; i < Math.min(e, arr.length); i++){ const v = arr[i]; if(!num(v) || (skip0 && v <= 0)) continue; sum += v; n++; } return n ? sum / n : 0; };
+  if(a.icu_weighted_avg_watts && a.icu_average_watts) out.push(`Variability index (NP / average power): ${(a.icu_weighted_avg_watts / a.icu_average_watts).toFixed(2)}`);
+  if(sw && sw.length > 600 && ftp){
+    const lim = [.55, .75, .9, 1.05, 1.2, 1.5], c = [0, 0, 0, 0, 0, 0, 0]; let n = 0;
+    for(const v of sw){ if(!num(v)) continue; let z = 0; const r = v / ftp; while(z < 6 && r > lim[z]) z++; c[z]++; n++; }
+    if(n) out.push("Time in power zones (% of FTP, coasting counts as Z1): " + c.map((x, i) => x ? `Z${i + 1} ${f(x / n * 100)}%` : "").filter(Boolean).join(", "));
+  }
+  if(sw && sw.length > 1200){
+    const m = Math.floor(sw.length / 2), p1 = avg(sw, 0, m), p2 = avg(sw, m, sw.length);
+    let line = `First half vs second half: average power ${f(p1)} W vs ${f(p2)} W`;
+    if(sh && sh.length > 1200){
+      const h1 = avg(sh, 0, m, true), h2 = avg(sh, m, sh.length, true);
+      if(h1 && h2){ line += `, average HR ${f(h1)} vs ${f(h2)} bpm`; if(p1 && p2){ const e1 = p1 / h1, e2 = p2 / h2; out.push(line); out.push(`Power-to-HR drift between halves (decoupling): ${((e1 - e2) / e1 * 100).toFixed(1)} % (below 5 % = good aerobic stability; positive = HR rising relative to power)`); return out; } }
+    }
+    out.push(line);
+  }
+  return out;
+}
+const SYSTEM_ANALYSIS = "You are an experienced cycling coach giving feedback to the athlete who rode the workout; address them as \"you\". " +
+  "You receive the workout summary, pre-computed indicators, downsampled power and heart-rate curves, and sometimes a training context (sessions before and after, the planned workout, fitness/fatigue/form). " +
+  "Definitions: intensity factor (IF) = normalized power / FTP and is already computed (it is not heart-rate based); variability index = NP / average power; form = CTL - ATL (negative = fatigued). Trust the numbers given and never recompute or question them. " +
+  "The workout you analyze is the main subject: use the context only to judge how it fits the sequence (accumulated load, recovery, intensity distribution, execution versus the plan) and whether the next sessions still make sense. " +
+  "Do not show your reasoning, drafts, calculations or a recap of the data. Put ONLY the final answer between <answer> and </answer> (anything outside is discarded). " +
+  "Inside, use exactly this markdown, nothing else (no tables, no emojis): \n## Summary\n(2 sentences: what this session trained and how it went)\n## Execution\n(2-3 bullets: pacing, consistency, heart-rate behavior)\n## Load and recovery\n(2-3 bullets: intensity balance, fit with recent days and form)\n## Next days\n(1-2 concrete suggestions, taking the planned sessions into account)\n" +
+  "Be specific and quote figures from the data. Stay under 250 words.";
+// Extrait la réponse finale : balises <answer>, blocs <think> retirés (certains modèles « raisonnent » dans le contenu)
+function aiAnswer(txt){
+  let s = String(txt || "").replace(/<think(?:ing)?>[\s\S]*?<\/think(?:ing)?>/gi, "").replace(/<think(?:ing)?>[\s\S]*$/i, "");
+  const all = [...s.matchAll(/<answer>([\s\S]*?)<\/answer>/gi)];
+  if(all.length) s = all[all.length - 1][1];
+  else{ const k = s.toLowerCase().lastIndexOf("<answer>"); if(k >= 0) s = s.slice(k + 8); }
+  return s.replace(/<\/?answer>/gi, "").trim();
+}
+async function analyzeAct(a, sw, sh, btn){ // analyse IA d'une activité (widget « Dernière séance » et analyse d'une séance)
+  if(!a) return say("aiNone", "err");
+  btn.disabled = true; say(null); progStart("analyzing");
+  try{
+    const f = Math.round, S = [], A = [];
+    const ftp = (a.type === "VirtualRide" ? ICU.ftpIn : ICU.ftpOut) || ICU.ftpIn || ICU.ftpOut || 0;
+    S.push(`Workout: "${a.name || a.type}" (${actT(a.type)})`);
+    S.push(`Date: ${(a.start_date_local || "").slice(0, 10)}`);
+    S.push(`Duration: ${hm(a.moving_time || 0)}`);
+    if(a.distance) S.push(`Distance: ${Math.round(a.distance) / 1000} km`);
+    if(a.total_elevation_gain) S.push(`Elevation gain: ${f(a.total_elevation_gain)} m`);
+    if(a.icu_training_load) S.push(`Training load: ${f(a.icu_training_load)}`);
+    if(a.icu_intensity) S.push(`Intensity factor (IF = NP / FTP): ${(a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2)}`);
+    if(a.icu_weighted_avg_watts) S.push(`Normalized power (NP): ${f(a.icu_weighted_avg_watts)} W`);
+    if(a.icu_average_watts) S.push(`Average power: ${f(a.icu_average_watts)} W`);
+    if(a.average_heartrate) S.push(`Average HR: ${f(a.average_heartrate)} bpm`);
+    if(a.max_heartrate) S.push(`Max HR: ${f(a.max_heartrate)} bpm`);
+    if(a.average_cadence) S.push(`Average cadence: ${f(a.average_cadence)} rpm`);
+    if(ftp) A.push(`Athlete FTP: ${f(ftp)} W`);
+    const D = aiDerived(a, sw, sh, ftp), N = 60, step = sw && sw.length ? sw.length / N / 60 : (sh && sh.length ? sh.length / N / 60 : 0), every = step ? ` — each value is the average over about ${step < 1 ? f(step * 60) + " s" : step.toFixed(1) + " min"}` : "";
+    const w = ds(sw || [], N).map(f), h = ds(sh || [], N).map(f);
+    const C = [];
+    if(w.some(Boolean)) C.push(`Power curve (watts, ${w.length} values in chronological order${every}): ${w.join(",")}`);
+    if(h.some(Boolean)) C.push(`Heart-rate curve (bpm, ${h.length} values${every}): ${h.join(",")}`);
+    const ctx = await aiContext(a);
+    const user = ["WORKOUT\n" + S.join("\n"), A.length ? "ATHLETE\n" + A.join("\n") : "", D.length ? "COMPUTED INDICATORS\n" + D.join("\n") : "", C.length ? "CURVES\n" + C.join("\n") : "", ctx.length ? "TRAINING CONTEXT\n" + ctx.join("\n\n") : ""].filter(Boolean).join("\n\n") +
+      `\n\nWrite the analysis in ${lang === "fr" ? "French" : "English"}, in the required format, with the final answer only inside <answer></answer>.`;
+    const txt = aiAnswer(await aiComplete(SYSTEM_ANALYSIS, user));
     $("aiBody").innerHTML = mdLite(txt || t("badResp"));
     $("aiDlg").showModal();
   }catch(e){
@@ -1955,8 +2023,9 @@ async function analyzeLast(){
     $("cfg").showModal();
   }
   progEnd();
-  $("lastai").disabled = false;
+  btn.disabled = false;
 }
+const analyzeLast = () => analyzeAct(LAST.last, LAST.sw, LAST.sh, $("lastai"));
 $("lastai").onclick = analyzeLast;
 $("closeAi").onclick = () => $("aiDlg").close();
 async function loadLoad(idx){
@@ -3806,12 +3875,13 @@ function actMiniLoad(box, L){
 }
 // Détection d'intervalles : lissage 5 s, segmentation par paliers, fusion des segments courts,
 // tolérance adaptative pour éviter les séances-patates d'arena à des centaines d'étapes.
-function detectSteps(watts, ftp){
+function detectSteps(watts, ftp, opt){
+  opt = opt || {};
   const s = [];
   for(const v of watts) s.push(typeof v === "number" && v >= 0 && v < 2500 ? v : 0);
   const N = s.length;
   if(N < 60 || !ftp) return [];
-  const K = 5, sm = [];
+  const K = opt.K || 5, sm = [];
   let sum = 0;
   for(let i = 0; i < N; i++){ sum += s[i]; if(i >= K) sum -= s[i - K]; sm.push(sum / Math.min(i + 1, K)); }
   const build = rel => {
@@ -3825,7 +3895,7 @@ function detectSteps(watts, ftp){
     }
     if(g) groups.push(g);
     // fusion des segments courts (< 20 s) dans le voisin
-    const min = 20, out = [];
+    const min = opt.min || 20, out = [];
     for(const gr of groups){
       if(gr.n >= min){ out.push({...gr}); continue; }
       if(out.length){ const p = out[out.length - 1]; p.sum += gr.sum; p.n += gr.n; p.end = gr.end; }
@@ -3840,7 +3910,7 @@ function detectSteps(watts, ftp){
     const ents = [];
     for(const gr of out2){
       const raw = s.slice(gr.start, gr.end + 1);
-      const off = raw.length >= 25 ? 8 : 0;
+      const off = raw.length >= 25 ? Math.min(8, Math.round(min * 0.4)) : 0;
       const core = off ? raw.slice(off, raw.length - off) : raw;
       const edge = arr => arr.reduce((x, y) => x + y, 0) / arr.length;
       ents.push({d: gr.n, headW: edge(core.slice(0, Math.min(15, core.length))), tailW: edge(core.slice(-Math.min(15, core.length))), midW: edge(core), wN: core.length});
@@ -3885,7 +3955,7 @@ function detectSteps(watts, ftp){
   let steps = [];
   for(const rel of [0.07, 0.12, 0.18, 0.25]){
     steps = build(rel);
-    if(steps.length <= 50) break;
+    if(steps.length <= (opt.max || 50)) break;
   }
   return steps;
 }
@@ -4349,9 +4419,10 @@ function cmpTable(){
   const col = t("cmpCols").split("|"), S = R.filter(r => CMP.sel.has(r.h.a.id));
   const avg = i => { const v = S.map(r => r.v[i]).filter(x => x); return v.length ? cmpAvg(v) : 0; };
   box.innerHTML = `<table><thead><tr><th><input type="checkbox" id="cmpall"${S.length === R.length ? " checked" : ""}></th>${col.map((c, ci) => `<th>${esc(c)}</th>` + (ci === 1 ? "<th></th>" : "")).join("")}</tr></thead><tbody>` +
-    R.map((r, i) => `<tr data-hi="${r.hi}"${CMP.sel.has(r.h.a.id) ? "" : ' class="unsel"'}><td><input type="checkbox" data-h="${r.hi}"${CMP.sel.has(r.h.a.id) ? " checked" : ""}></td><td>${esc((r.h.a.start_date_local || "").slice(0, 10))}</td><td><i class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:${r.h.col}"></i>${esc(r.h.a.name || r.h.a.type || "")}<a href="https://intervals.icu/activities/${encodeURIComponent(r.h.a.id)}" target="_blank" rel="noopener" title="intervals.icu">\u2197</a></td><td><div class="cmp-mini" data-hi="${r.hi}"></div></td><td>${esc(cmpIndoor(r.h.a) ? t("indoor") : t("outdoor"))}</td>${r.v.map((x, i) => `<td>${f[i](x)}</td>`).join("")}</tr>`).join("") +
+    R.map((r, i) => `<tr data-hi="${r.hi}"${CMP.sel.has(r.h.a.id) ? "" : ' class="unsel"'}><td><input type="checkbox" data-h="${r.hi}"${CMP.sel.has(r.h.a.id) ? " checked" : ""}></td><td>${esc((r.h.a.start_date_local || "").slice(0, 10))}</td><td><i class="sw" style="display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;background:${r.h.col}"></i>${esc(r.h.a.name || r.h.a.type || "")}<a href="#" data-ses="${r.hi}" title="${esc(t('sesT'))}">\u2197</a></td><td><div class="cmp-mini" data-hi="${r.hi}"></div></td><td>${esc(cmpIndoor(r.h.a) ? t("indoor") : t("outdoor"))}</td>${r.v.map((x, i) => `<td>${f[i](x)}</td>`).join("")}</tr>`).join("") +
     (S.length > 1 ? `</tbody><tfoot><tr><td></td><td></td><td>\u00d8 (${S.length})</td><td></td><td></td>${R[0].v.map((_, i) => `<td>${f[i](avg(i))}</td>`).join("")}</tr></tfoot></table>` : "</tbody></table>");
   box.querySelectorAll("tbody input").forEach(c => c.onchange = () => { const h = CMP.hits[+c.dataset.h]; if(c.checked) CMP.sel.add(h.a.id); else CMP.sel.delete(h.a.id); cmpChart(); });
+  box.querySelectorAll("a[data-ses]").forEach(l => l.onclick = e => { e.preventDefault(); const h = CMP.hits[+l.dataset.ses]; if(h) sesOpenAct(h.a); });
   cmpMiniLoad(box);
   const all = $("cmpall"); if(all) all.onchange = () => { CMP.hits.filter(cmpNameOk).forEach(h => { if(all.checked) CMP.sel.add(h.a.id); else CMP.sel.delete(h.a.id); }); cmpChart(); };
 }
@@ -4364,7 +4435,31 @@ function cmpTipSvg(h){
   try{
     const ftp = cmpActFtp(h.a);
     if(h.s.w && ftp){
-      const steps = detectSteps(Array.from(h.s.w), ftp);
+      // précision adaptée à la forme trouvée : lissage et durée mini des paliers réglés sur le plus court des efforts / récups,
+      // et plafond d'étapes relevé pour que les répétitions courtes ne soient plus fusionnées entre elles
+      const shortest = Math.min(h.mw || 60, h.mr || h.mw || 60), mn = Math.max(4, Math.min(20, Math.round(shortest * 0.5)));
+      const W = Array.from(h.s.w), fine = {min: mn, K: shortest < 30 ? 3 : 5, max: Math.max(50, (h.cnt || 1) * 2 + 20)};
+      let steps = [];
+      const wins = (h.win || []).filter(g => g.end > g.start && g.start >= 0 && g.end < W.length).sort((x, y) => x.start - y.start);
+      if(wins.length > 1){
+        // les répétitions déjà repérées par la recherche sont imposées comme paliers : aucune ne peut être absorbée par la récupération voisine
+        const mean = (a, b) => { let t = 0; for(let i = a; i < b; i++) t += W[i] > 0 && W[i] < 2500 ? W[i] : 0; return b > a ? t / (b - a) : 0; };
+        const seg = (a, b) => {
+          if(b - a <= 0) return [];
+          if(b - a >= 60){ const r = detectSteps(W.slice(a, b), ftp, fine); if(r.length) return r; }
+          const m = mean(a, b); return [{d: b - a, a: m, b: m}];
+        };
+        let pos = 0;
+        for(const g of wins){
+          const st = Math.max(g.start, pos), en = g.end + 1;
+          if(en <= st) continue;
+          steps.push(...seg(pos, st));
+          const m = mean(st, en); steps.push({d: en - st, a: m, b: m});
+          pos = en;
+        }
+        steps.push(...seg(pos, W.length));
+      }
+      if(!steps.length) steps = detectSteps(W, ftp, fine);
       if(steps.length) svg = stepsSvg(steps.map(x => ({d: x.d, a: x.a / ftp * 100, b: x.b / ftp * 100})));
     }
     if(!svg) svg = actPrevSvg({w: h.s.w ? Array.from(h.s.w) : null, h: h.s.hr ? Array.from(h.s.hr) : null}) || actFallbackSvg(h.a, null);
@@ -5889,7 +5984,7 @@ document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
 });
 
 // ---------- Analyse d'une séance : vue de type intervals.icu (stats, graphe puissance/FC, tableau des intervalles) ----------
-const SES = {list: [], tok: 0, mt: 0, m: null, cur: ""};
+const SES = {list: [], tok: 0, mt: 0, m: null, cur: "", ai: null};
 async function sesInit(){ if(SES.m) return; SES.m = new Date(); SES.m.setDate(1); await sesMonth(true); }
 async function sesMonth(pick){ // petit calendrier du mois : une vignette (profil de puissance) par activité, un clic ouvre l'analyse
   const box = $("sesBox"), cal = $("sesCal"), m = SES.m;
@@ -5907,13 +6002,24 @@ async function sesMonth(pick){ // petit calendrier du mois : une vignette (profi
   sesGrid(mt);
   if(pick){ if(id){ $("sesSel").value = id; sesShow(); } else if(!SES.list.length) box.innerHTML = `<div class="hint">${esc(t("sesNone"))}</div>`; }
 }
+// ---------- icônes de type d'activité (calendrier « Séance seule ») : vélo, course, natation, ping-pong ; flamme pour le reste ----------
+const SES_ICO = {
+  ride: {c: "#3b82c4", d: '<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/>'},
+  run: {c: "#e8590c", d: '<circle cx="14.5" cy="4" r="1.8"/><path d="M12.5 8.5L10 12.5l3.5 2.5 1 5.5"/><path d="M10 12.5L6 14.5"/><path d="M12.8 9.5l3.7 2 2.5-1"/><path d="M11.8 14.2L8.5 18l-3.5.5"/>'},
+  swim: {c: "#0e9fb5", d: '<circle cx="17" cy="6" r="1.8"/><path d="M4 12.5l5-2.5 3.5 2 3-3.5"/><path d="M2 16.5c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/><path d="M2 20.5c1.5 0 1.5-1.2 3-1.2s1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2"/>'},
+  pong: {c: "#8e44ad", d: '<circle cx="9.5" cy="9.5" r="6.5"/><path d="M14.2 14.2L19.5 19.5"/><path d="M18.3 21l2.7-2.7"/><circle cx="19" cy="5" r="1.6"/>'},
+  other: {c: "#f08c00", d: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'}
+};
+const sesKind = ty => /Ride|Bike|Cycl/i.test(ty || "") ? "ride" : /Run/i.test(ty || "") ? "run" : /Swim/i.test(ty || "") ? "swim" : /Table.?Tennis|Ping/i.test(ty || "") ? "pong" : "other";
+const sesIco = k => `<svg class="sti" viewBox="0 0 24 24" aria-hidden="true">${SES_ICO[k].d}</svg>`;
+function sesTh(b, svg){ const th = b.querySelector(".stth"); if(!th) return; th.classList.remove("ph"); th.style.color = ""; th.innerHTML = svg; } // le vrai profil remplace l'icône d'attente ; le badge de type prend le relais
 function sesGrid(mt){
   const m = SES.m, by = {}, nd = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), lead = (new Date(m.getFullYear(), m.getMonth(), 1).getDay() + 6) % 7;
   SES.list.forEach(a => { const k = (a.start_date_local || "").slice(0, 10); (by[k] = by[k] || []).push(a); });
   let h = [...Array(7)].map((_, i) => `<div class="dh">${esc(new Date(2024, 0, 1 + i).toLocaleDateString(loc(), {weekday: "narrow"}))}</div>`).join("") + "<div></div>".repeat(lead);
   for(let d = 1; d <= nd; d++){
     const L = by[iso(new Date(m.getFullYear(), m.getMonth(), d))] || [];
-    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc(a.name || a.type || "")}" class="${String(a.id) === SES.cur ? "on" : ""}">●</button>`).join("")}</div>`;
+    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a.type))}</button>`).join("")}</div>`;
   }
   const cal = $("sesCal"); cal.innerHTML = `<div class="sesg">${h}</div>`;
   cal.querySelectorAll("button[data-id]").forEach(b => b.onclick = () => { $("sesSel").value = b.dataset.id; sesShow(); });
@@ -5924,51 +6030,69 @@ function sesGrid(mt){
       const it = q.shift(), a = it.a, b = cal.querySelector(`button[data-id="${a.id}"]`); if(!b) continue;
       let sw = null; try{ sw = await actStreams(String(a.id)); }catch(e){}
       const sp = sw && !sw.transient ? (actPrevSvg(sw) || actFallbackSvg(a, sw)) : "";
-      if(sp) b.innerHTML = sp;
+      if(sp) sesTh(b, sp);
       else if((!sw || sw.transient) && ++it.n < 4){ await new Promise(r => setTimeout(r, 800 * it.n)); q.push(it); }
-      else if(sw && !sw.transient){ const fb = actFallbackSvg(a, sw); if(fb) b.innerHTML = fb; }
+      else if(sw && !sw.transient){ const fb = actFallbackSvg(a, sw); if(fb) sesTh(b, fb); }
     }
   };
   run(); run();
 }
 function sesStat(arr, s, e){ if(!arr) return null; let n = 0, sum = 0, mx = 0; for(let i = s; i < Math.min(e, arr.length); i++){ const v = arr[i] || 0; sum += v; n++; if(v > mx) mx = v; } return n ? {avg: sum / n, max: mx} : null; }
 function sesNP(w, s, e){ if(!w || e - s < 30) return null; let acc = 0, n = 0, run = 0; for(let i = s; i < Math.min(e, w.length); i++){ run += w[i] || 0; if(i - s >= 30) run -= w[i - 30] || 0; if(i - s >= 29){ const m = run / 30; acc += m * m * m * m; n++; } } return n ? Math.pow(acc / n, 0.25) : null; }
+function sesAiOn(){ const b = $("sesAi"); if(b) b.disabled = !SES.ai; }
+// flux de vitesse (m/s) pleine résolution pour la course et la natation ; null si l'activité n'en a pas
+async function sesSpeed(id){
+  SES.spd = SES.spd || {};
+  if(SES.spd[id] !== undefined) return SES.spd[id];
+  try{
+    const l = await icuFetch(`https://intervals.icu/api/v1/activity/${id}/streams?types=velocity_smooth`), list = Array.isArray(l) ? l : (l && l.streams) || [];
+    const d = (list.find(x => x.type === "velocity_smooth") || list.find(x => x.type === "speed") || {}).data;
+    return SES.spd[id] = d && d.length ? Array.from(d, v => +v > 0 ? +v : 0) : null;
+  }catch(e){ return null; }
+}
 async function sesShow(){
   const a = (SES.list || []).find(x => String(x.id) === $("sesSel").value), box = $("sesBox"); if(!a) return;
-  store.set("si_sesid", String(a.id)); SES.cur = String(a.id); document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
+  store.set("si_sesid", String(a.id)); SES.cur = String(a.id); SES.ai = null; document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
   // l'en-tête (nom, type, date, lien) s'affiche tout de suite et reste seul quand l'activité n'a ni puissance ni FC (ping-pong, course…)
-  const hdr = `<h3 class="ses-title">${esc(a.name || actT(a.type) || a.type || "")}</h3><div class="hint ses-meta">${esc(actT(a.type))} · ${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a>${isBike(a.type) ? ` · <a href="#" data-rebuild="${esc(String(a.id))}">${esc(t("sesRebuild"))}</a>` : ""}</div>`;
+  const hdr = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 class="ses-title">${esc(a.name || actT(a.type) || a.type || "")}</h3><button type="button" class="alt small aibtn" id="sesAi"${SES.ai && SES.ai.a === a ? "" : " disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span>${esc(t("lastAi"))}</span></button></div><div class="hint ses-meta">${esc(actT(a.type))} · ${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a>${isBike(a.type) ? ` · <a href="#" data-rebuild="${esc(String(a.id))}">${esc(t("sesRebuild"))}</a>` : ""}</div>`;
   box.innerHTML = hdr + `<div class="hint">${esc(t("sesLoad"))}</div>`;
-  const noData = !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
+  const isSpd = /Run|Swim/.test(a.type || ""), noData = !(isSpd && a.average_speed) && !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
   try{
-    let st, iv = null;
-    try{ [st, iv] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null)]); }
+    let st, iv = null, spd = null;
+    try{ [st, iv, spd] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null), isSpd ? sesSpeed(a.id) : null]); }
     catch(e){ if(!noData) throw e; st = {}; } // pas de flux pour une activité sans capteur : on garde le nom seul
     if(tok !== SES.tok) return;
-    const w = st.w, hr = st.hr, cad = st.cad, N = Math.max((w || []).length, (hr || []).length);
-    if(!N){ box.innerHTML = hdr + `<div class="hint">${esc(t("sesNoStr"))}</div>`; return; }
+    if(!noData) SES.ai = {a, w: st.w, hr: st.hr}; // analyse IA : bouton à côté du nom de la séance, activé une fois les données chargées
+    const w = st.w, hr = st.hr, cad = st.cad, N = Math.max((w || []).length, (hr || []).length, (spd || []).length), spdMode = !!(spd && spd.length);
+    if(!N){ box.innerHTML = hdr + `<div class="hint">${esc(t("sesNoStr"))}</div>`; sesAiOn(); return; }
     const ftp = (a.type === "VirtualRide" ? ICU.ftpIn : ICU.ftpOut) || ICU.ftpIn || ICU.ftpOut || 0;
     let B = ((iv && iv.icu_intervals) || []).filter(x => x.end_index > x.start_index).map(x => ({s: x.start_index, e: x.end_index, label: x.label || "", work: !/REC/i.test(x.type || "")}));
-    if(!B.length && w){ let c = 0; B = detectSteps(w, ftp || 250).map(x => { const o = {s: c, e: c + x.d, label: "", work: x.a >= 0.75 * (ftp || 250)}; c += x.d; return o; }); }
-    const f0 = v => v == null ? "–" : Math.round(v), K = t("sesKv").split("|"), H = t("sesHdr").split("|");
+    if(!B.length && w && !spdMode){ let c = 0; B = detectSteps(w, ftp || 250).map(x => { const o = {s: c, e: c + x.d, label: "", work: x.a >= 0.75 * (ftp || 250)}; c += x.d; return o; }); }
+    const f0 = v => v == null ? "–" : Math.round(v), K = t("sesKv").split("|"), H = t(spdMode ? "sesHdrS" : "sesHdr").split("|");
+    const swim = /Swim/.test(a.type || ""), pu = swim ? " /100 m" : " /km", paceOf = v => v > 0.2 ? mmss((swim ? 100 : 1000) / v) : "–";
     const ifv = a.icu_intensity, kv = [fmtDur(a.moving_time), a.distance ? (a.distance / 1000).toFixed(1) + " km" : "–", f0(a.icu_average_watts || a.average_watts) + " W", f0(a.icu_weighted_avg_watts) + " W",
       ifv > 0 ? Math.round(ifv > 3 ? ifv : ifv * 100) + " %" : "–", f0(a.icu_training_load), f0(a.average_heartrate) + " bpm", f0(a.total_elevation_gain) + " m"];
+    if(spdMode){ const sa = a.average_speed || (sesStat(spd, 0, spd.length) || {}).avg || 0; K[2] = t("lPace"); K[3] = t("lSpeed"); kv[2] = paceOf(sa) + pu; kv[3] = sa ? (sa * 3.6).toFixed(1) + " km/h" : "–"; }
     // graphe : puissance et FC moyennées par paquets, intervalles d'effort ombrés
     const W = 900, Hh = 240, bk = Math.max(1, Math.ceil(N / 700)), pts = (arr) => { if(!arr) return []; const o = []; for(let i = 0; i < N; i += bk){ let sum = 0, n = 0; for(let j = i; j < Math.min(i + bk, arr.length); j++){ sum += arr[j] || 0; n++; } o.push(n ? sum / n : 0); } return o; };
-    const pw = pts(w), hh = pts(hr), pmax = Math.max(ftp * 1.5, ...pw, 100), hmax = Math.max(...hh, 100), X = i => i / Math.max(1, pw.length - 1 || hh.length - 1) * W;
+    const sp = spdMode ? pts(spd) : [], hrT = pts(hr), pw = spdMode ? [] : pts(w), hh = spdMode ? [] : hrT, pmax = Math.max(ftp * 1.5, ...pw, 100), hmax = Math.max(...hh, 100), smax = spdMode ? Math.max(...sp, 1) * 1.1 : 1, nb = spdMode ? sp.length : (pw.length || hh.length), X = i => i / Math.max(1, nb - 1) * W;
     const path = (v, mx) => v.map((y, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + (Hh - 14 - y / mx * (Hh - 24)).toFixed(1)).join("");
     const rects = B.map((b, i) => `<rect data-r="${i}" x="${(b.s / N * W).toFixed(1)}" width="${Math.max(1, (b.e - b.s) / N * W).toFixed(1)}" y="0" height="${Hh - 14}" data-f="${b.work ? "var(--acc)" : "none"}" fill="${b.work ? "var(--acc)" : "none"}" opacity=".13"/>`).join("");
-    const svg = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${esc(a.name || "")}">${rects}${ftp ? `<line x1="0" x2="${W}" y1="${Hh - 14 - ftp / pmax * (Hh - 24)}" y2="${Hh - 14 - ftp / pmax * (Hh - 24)}" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>` : ""}` +
+    const svg = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${esc(a.name || "")}">${rects}${ftp && !spdMode ? `<line x1="0" x2="${W}" y1="${Hh - 14 - ftp / pmax * (Hh - 24)}" y2="${Hh - 14 - ftp / pmax * (Hh - 24)}" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>` : ""}` +
       (hh.length ? `<path d="${path(hh, hmax)}" fill="none" stroke="var(--err)" stroke-width="1.2" opacity=".75"/>` : "") + (pw.length ? `<path d="${path(pw, pmax)}" fill="none" stroke="var(--acc)" stroke-width="1.5"/>` : "") +
+      (spdMode ? `<path d="${path(sp, smax)}" fill="none" stroke="var(--acc)" stroke-width="1.5"/><text x="4" y="12" font-size="11" fill="var(--mute)">${esc(t("lSpdMax"))} ${(Math.max(...sp) * 3.6).toFixed(1)} km/h</text>` : "") +
       `<text x="4" y="${Hh - 2}" font-size="11" fill="var(--mute)">0</text><text x="${W - 4}" y="${Hh - 2}" font-size="11" text-anchor="end" fill="var(--mute)">${esc(fmtDur(N))}</text></svg>`;
-    const rows = B.map((b, i) => { const sw = sesStat(w, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e), np = sesNP(w, b.s, b.e);
+    const rows = B.map((b, i) => { if(spdMode){ const ss = sesStat(spd, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e);
+        return `<tr data-i="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${paceOf(ss && ss.avg)}</td><td>${ss ? (ss.avg * 3.6).toFixed(1) : "–"}</td><td>${paceOf(ss && ss.max)}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td></tr>`; }
+      const sw = sesStat(w, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e), np = sesNP(w, b.s, b.e);
       return `<tr data-i="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${f0(sw && sw.avg)}</td><td>${f0(np)}</td><td>${sw && ftp ? Math.round(sw.avg / ftp * 100) : "–"}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td><td>${f0(sw && sw.max)}</td></tr>`; }).join("");
     box.innerHTML = hdr +
       `<div class="kv" style="grid-template-columns:repeat(4,1fr)">${kv.map((v, i) => `<div>${esc(K[i])}<b>${esc(v)}</b></div>`).join("")}</div>` + svg +
       (B.length ? `<h3 style="margin:14px 0 6px;font-size:.95rem">${esc(t("sesIv"))}</h3><div style="overflow-x:auto"><table class="sest"><thead><tr>${H.map(x => `<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` : "");
-    chartHover(box, box.querySelector("svg"), pw.length || hh.length, i => {
+    sesAiOn();
+    chartHover(box, box.querySelector("svg[role=img]"), nb, i => {
       const s0 = i * bk, s1 = Math.min(N, s0 + bk), sc = sesStat(cad, s0, s1), k = B.findIndex(b => s0 >= b.s && s0 < b.e), b = k >= 0 ? B[k] : null;
-      const L = [pw.length ? `${esc(t("lPow"))} : ${Math.round(pw[i])} W` + (ftp ? ` (${Math.round(pw[i] / ftp * 100)} %)` : "") : "", hh.length && hh[i] ? `${esc(t("lHRs"))} : ${Math.round(hh[i])} bpm` : "", sc && sc.avg ? `${esc(t("lCad"))} : ${Math.round(sc.avg)} rpm` : "", b ? `#${k + 1} · ${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}` : ""].filter(Boolean);
+      const hv = hrT[i], L = spdMode ? [`${esc(t("lPace"))} : ${paceOf(sp[i])}${pu}`, `${esc(t("lSpeed"))} : ${(sp[i] * 3.6).toFixed(1)} km/h`, hv ? `${esc(t("lHRs"))} : ${Math.round(hv)} bpm` : "", sc && sc.avg ? `${esc(t("lCad"))} : ${Math.round(sc.avg)} rpm` : "", b ? `#${k + 1} · ${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}` : ""].filter(Boolean) : [pw.length ? `${esc(t("lPow"))} : ${Math.round(pw[i])} W` + (ftp ? ` (${Math.round(pw[i] / ftp * 100)} %)` : "") : "", hh.length && hh[i] ? `${esc(t("lHRs"))} : ${Math.round(hh[i])} bpm` : "", sc && sc.avg ? `${esc(t("lCad"))} : ${Math.round(sc.avg)} rpm` : "", b ? `#${k + 1} · ${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}` : ""].filter(Boolean);
       return {html: `<b>${esc(fmtDur(s0))}</b>` + L.join("\n")};
     });
     // surbrillance des plages : une seule fonction recalcule l'aspect de chaque bande (sélection par clic + survol) à partir de son état de base,
@@ -6001,6 +6125,7 @@ async function sesOpenAct(a){
 }
 // lien « Reconstruire cette séance » de l'analyse : reconstruction dans l'aperçu (onglet « Depuis une activité »)
 $("sesBox").addEventListener("click", async e => {
+  const ai = e.target.closest && e.target.closest("#sesAi"); if(ai){ const x = SES.ai; if(x) analyzeAct(x.a, x.w, x.hr, ai); return; }
   const l = e.target.closest && e.target.closest("[data-rebuild]"); if(!l) return; e.preventDefault();
   const a = (SES.list || []).find(x => String(x.id) === l.dataset.rebuild); if(!a) return;
   if(mode !== "act"){ mode = "act"; store.set("si_mode", mode); applyMode(); }
