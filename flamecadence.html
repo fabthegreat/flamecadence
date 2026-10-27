@@ -312,7 +312,7 @@ h2.ic{display:flex;align-items:center;gap:8px}
 #libfeelb button.eff:not([aria-checked="true"]){filter:none;opacity:1;border-style:dashed;border-color:var(--acc)}
 /* barre Générer / Analyser (classe distincte de .grp, réservée aux blocs de répétition de l'éditeur manuel) */
 .gbar{display:flex;gap:4px;padding:4px;margin-bottom:10px;background:var(--card);border:1px solid var(--line);border-radius:10px}.gbar button{flex:1;margin:0;padding:8px;border-radius:7px;background:transparent;color:var(--ink);font-size:.9rem}.gbar button[aria-selected="true"]{background:var(--acc);color:var(--on)}
-.sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-i]{cursor:pointer}.sest tr.on{background:var(--line)}
+.sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-ri]{cursor:pointer}.sest tr.on{background:var(--line)}
 #sesBox svg{width:100%;height:auto;display:block}
 .sesg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
 .sesd{min-height:52px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;font-size:.7rem;color:var(--mute);display:flex;flex-direction:column;gap:2px;opacity:.7}.sesd.has{background:var(--card);opacity:1}
@@ -429,12 +429,16 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .tip .cal-prev{display:block;width:210px;height:46px;margin:6px 0 2px;border-radius:4px;background:var(--bg)}
 .tip .cal-prev svg{display:block;width:100%;height:100%}
 .tip b{display:block;margin-bottom:2px}
-#sesBox{position:relative}
+#sesBox{position:relative;margin:0;padding:14px;border:1px solid var(--line);border-top:3px solid var(--acc);border-radius:10px;background:var(--card)}
+.ses-pick{padding:10px 12px 2px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.ses-pick .sesg{margin-bottom:8px}
+.ses-lbl{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.ses-lbl2{margin:22px 0 6px}
 #chart path.hr{stroke:var(--ink);stroke-width:1.3;stroke-dasharray:3 2;vector-effect:non-scaling-stroke;stroke-opacity:.75}
 .aibtn{display:inline-flex;align-items:center;gap:6px}.aibtn svg,#sesBox .aibtn svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ses-title{margin:4px 0 2px;font-size:1.35rem;line-height:1.25;font-weight:700;color:var(--ink);padding-left:10px;border-left:4px solid var(--acc);overflow-wrap:anywhere}
 .ses-meta{margin:0 0 10px 14px}
-.sest tbody tr[data-i]{cursor:pointer}.sest tbody tr[data-i]:hover{background:var(--bg)}
+.sest tbody tr[data-ri]{cursor:pointer}.sest tbody tr[data-ri]:hover{background:var(--bg)}
 svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.55;pointer-events:none}
 /* barre principale (Générer / Analyser) : couleur « flamme » distincte du sous-menu, qui garde l'accent habituel */
 :root{--top:#c2410c;--top-on:#fff}
@@ -849,9 +853,13 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <!-- Section Comparateur de séances -->
 <section data-block="ses" hidden>
 <div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button></div>
+<div class="ses-pick">
+<div class="ses-lbl" data-i="sesPick"></div>
 <div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button></div>
 <div id="sesCal"></div>
+</div>
 <select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
+<div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
 <div id="sesBox"></div>
 </section>
 <section data-block="cmp" hidden>
@@ -1329,7 +1337,8 @@ cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
 grpGen:["Generate","Générer"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
-sesIv:["Intervals","Intervalles"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
+sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
+sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
 sesKv:["Time|Distance|Avg power|NP|Intensity|Load|Avg HR|Climb","Durée|Distance|Puissance moy.|PN|Intensité|Charge|FC moy.|D+"], sesNoStr:["No power or heart-rate data for this activity.","Pas de données de puissance ni de FC pour cette activité."],
 libForm:["Match how I feel today","Adapter à ma forme du jour"], libFormTip:["Shows only the sessions that suit how you feel (type and length).","N'affiche que les séances adaptées à ta forme (type et durée)."],
 edMetric:["Default target","Cible par défaut"], mPow:["Power","Puissance"], mHr:["Heart rate","Fréquence cardiaque"], mTitle:["Target of this step (power or heart rate)","Cible de cette étape (puissance ou fréquence cardiaque)"], hrEst:["Heart-rate steps: zones and load are estimated from the equivalent power.","Étapes en FC : zones et charge estimées à partir de la puissance équivalente."], edHintH:["Heart-rate steps are in % of your threshold heart rate (LTHR).","Les étapes en FC sont en % de ta FC seuil (LTHR)."], edNoLthr:["Your LTHR is not set in intervals.icu, so bpm values are not shown.","Ta FC seuil (LTHR) n'est pas renseignée dans intervals.icu : les bpm ne sont pas affichés."], pctLthr:["% LTHR","% LTHR"],
@@ -3504,13 +3513,28 @@ function setStars(a){ starList = Array.isArray(a) ? a.slice() : []; store.set("s
 function toggleStar(id){ const a = stars().slice(); const i = a.indexOf(id); if(i >= 0) a.splice(i, 1); else a.push(id); setStars(a); }
 
 // ---------- Envoi ----------
+// En-tête (nom de la séance) et pied de page (mention FlameCadence) ajoutés au texte envoyé à intervals.icu ; retirés au rechargement dans l'éditeur
+const BRAND = "Generated by FlameCadence (flamecadence.lutix.org)";
+function stripBrand(desc, name){
+  const L = String(desc || "").replace(/\r/g, "").split("\n");
+  while(L.length && !L[L.length - 1].trim()) L.pop();
+  if(L.length && /^generated by flamecadence\b/i.test(L[L.length - 1].trim())) L.pop();
+  while(L.length && !L[L.length - 1].trim()) L.pop();
+  const nm = String(name || "").trim();
+  if(nm && L.length > 1 && L[0].trim() === nm && !L[1].trim()){ L.shift(); while(L.length && !L[0].trim()) L.shift(); }
+  return L.join("\n");
+}
+function brandDesc(name, desc){
+  const nm = String(name || "").trim(), body = stripBrand(desc, nm).trim();
+  return (nm ? nm + "\n\n" : "") + body + "\n\n" + BRAND;
+}
 let CALEDIT = null, EDSAVED = ""; // séance planifiée du calendrier en cours de modification dans l'éditeur manuel
 $("send").onclick = async () => {
   if(!KEY()) return say("needI", "err");
   $("send").disabled = true; say("sending");
   try{
     const ed = CALEDIT, o = ed ? (ed.ev.start_date_local || "") : "";
-    const body = {category: "WORKOUT", start_date_local: $("date").value + (o.length > 10 ? o.slice(10) : "T00:00:00"), type: $("sport").value, name: $("name").value.trim(), description: $("desc").value};
+    const body = {category: "WORKOUT", start_date_local: $("date").value + (o.length > 10 ? o.slice(10) : "T00:00:00"), type: $("sport").value, name: $("name").value.trim(), description: brandDesc($("name").value, $("desc").value)};
     // modification : PUT sur la séance existante (elle est remplacée, pas dupliquée)
     const r = await fetch(icuUrl(ed ? "/events/" + ed.ev.id : "/events"), {method: ed ? "PUT" : "POST", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
     if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
@@ -3837,8 +3861,8 @@ function renderActs(){
   if(ACTS.list === null) return; // pas encore chargé : ne pas toucher la zone
   const box = $("actbox"), L = ACTS.list;
   if(!L.length){ box.textContent = t(ACTS.searched ? "cmpNone" : "actNone"); return; }
-  box.innerHTML = L.map((a, i) => `<button type="button" class="act-row" data-i="${i}"><b>${esc(a.name || a.type || "")}</b><div class="hint">${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"}))} · ${esc(actT(a.type))} · ${hm(a.moving_time)}${a.icu_weighted_avg_watts ? " · NP " + Math.round(a.icu_weighted_avg_watts) + " W" : ""}${a.icu_intensity ? " · IF " + (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2) : ""}${a._m && a._m.q > 0 ? " · " + a._m.cnt + "×" + cmpSec(a._m.mw) + (a._m.mr ? "/" + cmpSec(a._m.mr) : "") + " @ " + Math.round(a._m.avgP) + " W" + (a._m.zone ? " · " + esc(cmpZoneLbl(a._m.zone)) : "") : ""}</div><div class="act-mini" data-i="${i}"></div></button>`).join("");
-  box.querySelectorAll(".act-row").forEach(b => b.onclick = () => buildFromAct(L[+b.dataset.i], b));
+  box.innerHTML = L.map((a, i) => `<button type="button" class="act-row" data-ai="${i}"><b>${esc(a.name || a.type || "")}</b><div class="hint">${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"}))} · ${esc(actT(a.type))} · ${hm(a.moving_time)}${a.icu_weighted_avg_watts ? " · NP " + Math.round(a.icu_weighted_avg_watts) + " W" : ""}${a.icu_intensity ? " · IF " + (a.icu_intensity > 5 ? a.icu_intensity / 100 : a.icu_intensity).toFixed(2) : ""}${a._m && a._m.q > 0 ? " · " + a._m.cnt + "×" + cmpSec(a._m.mw) + (a._m.mr ? "/" + cmpSec(a._m.mr) : "") + " @ " + Math.round(a._m.avgP) + " W" + (a._m.zone ? " · " + esc(cmpZoneLbl(a._m.zone)) : "") : ""}</div><div class="act-mini" data-ai="${i}"></div></button>`).join("");
+  box.querySelectorAll(".act-row").forEach(b => b.onclick = () => buildFromAct(L[+b.dataset.ai], b));
   actMiniLoad(box, L);
 }
 // aperçu graphique de chaque activité de la liste (chargé à l'affichage, mêmes flux/cache que le calendrier)
@@ -3849,7 +3873,7 @@ function actMiniLoad(box, L){
   // la vignette montre exactement la séance qu'on obtiendra en cliquant ; repli sur le profil lissé sinon
   const fill = async el => {
     if(el.dataset.ld) return; el.dataset.ld = "1";
-    const a = L[+el.dataset.i]; if(!a){ el.remove(); return; }
+    const a = L[+el.dataset.ai]; if(!a){ el.remove(); return; }
     let svg = "";
     try{
       const ftp = isBike(a.type) ? cmpActFtp(a) : 0;
@@ -4190,15 +4214,25 @@ function cmpSteady(a, pat){
   return vi > 0 && vi < 1.03;
 }
 const cmpExtra = (nSkip, err) => (nSkip ? " · " + t("cmpSkip", nSkip) : "") + (SC.hits ? " · " + t("cmpCached", SC.hits) : "") + (err ? " (" + err + ")" : "");
+// cadence commune des requêtes de flux : espacement minimal + pause partagée quand intervals.icu limite le débit
+const CMPNET = {next: 0, until: 0, gap: 30};
+async function cmpGate(){ const now = Date.now(), at = Math.max(now, CMPNET.until, CMPNET.next); CMPNET.next = at + CMPNET.gap; if(at > now) await new Promise(r => setTimeout(r, at - now)); }
 async function cmpStreams(id, a){
   if(CMP.streams[id]) return CMP.streams[id];
   const c = await scGet(id);
   if(c && c !== true && (c.w || c.hr || c.cad || c.none)){ SC.hits++; return CMP.streams[id] = scUnpack(c); }
   let list = null, err = null;
   for(const u of [`https://intervals.icu/api/v1/activity/${id}/streams?types=watts,heartrate,cadence`, `https://intervals.icu/api/v1/activity/${id}/streams`]){
-    for(let n = 0; n < 3 && !list; n++){
-      try{ list = await icuFetch(u); }
-      catch(e){ err = e; if(!/HTTP (429|5\d\d)/.test(String(e.message))) break; await new Promise(r => setTimeout(r, 700 * (n + 1))); }
+    for(let n = 0; n < 6 && !list; n++){
+      await cmpGate();
+      try{ list = await icuFetch(u); CMPNET.gap = Math.max(30, CMPNET.gap * .8); }
+      catch(e){
+        err = e; const m = String(e.message || e);
+        // une limitation de débit (429) est souvent vue par le navigateur comme une erreur réseau (TypeError) : on réessaie aussi dans ce cas
+        if(!(e instanceof TypeError || /HTTP (429|5\d\d)/.test(m))) break;
+        const back = Math.min(8000, 500 * 2 ** n) * (.75 + Math.random() * .5);
+        CMPNET.until = Math.max(CMPNET.until, Date.now() + back); CMPNET.gap = Math.min(600, CMPNET.gap * 1.5 + 30); // pause commune à tous les workers + cadence ralentie
+      }
     }
     if(list) break;
   }
@@ -4547,7 +4581,9 @@ function cmpChart(){
   if(curve.length) svg += `<path d="${curve.map((c, i) => (i ? "L" : "M") + xOf(c.tm).toFixed(1) + " " + yOf(c.v).toFixed(1)).join("")}" stroke="${CMP_HR}" stroke-width="2.5" fill="none"/>`;
   svg += P.map(x => `<path d="M${xOf(x.tm).toFixed(1)} ${yOf(x.m).toFixed(1)}h.01" stroke="${CMP_PW}" stroke-width="9" stroke-opacity=".8"/>`).join("");
   svg += `<line class="cmp-cur" x1="0" x2="0" y1="0" y2="220" stroke="#888" stroke-width="1" vector-effect="non-scaling-stroke" style="display:none"/>`;
-  const dfmt = tm => new Date(tm).toLocaleDateString(loc(), {day: "numeric", month: "short", year: span > 300 * 864e5 ? "2-digit" : undefined});
+  // l'année s'affiche dès que la période dépasse ~10 mois OU chevauche deux années civiles (ex. nov. → mars) ; toujours dans l'infobulle
+  const yrs = new Date(t0).getFullYear() !== new Date(t0 + span).getFullYear() || span > 300 * 864e5;
+  const dfmt = (tm, full) => new Date(tm).toLocaleDateString(loc(), {day: "numeric", month: "short", year: full ? "numeric" : yrs ? "2-digit" : undefined});
   const ticks = [0, 1, 2, 3, 4].map(i => `<span class="yt yl" style="top:${((214 - i / 4 * 208) / 220 * 100).toFixed(1)}%">${M.f(lo + st * i)}</span>`).join("");
   const xl = P.length === 1 ? `<span style="left:50%;transform:translateX(-50%)">${dfmt(t0)}</span>` : [0, .25, .5, .75, 1].map(f => `<span style="left:${f * 100}%;transform:translateX(${-f * 100}%)">${dfmt(t0 + f * span)}</span>`).join("");
   box.innerHTML = `<div class="cmp-pr">${ticks}<svg viewBox="0 0 800 220" preserveAspectRatio="none">${svg}</svg></div><div class="cmp-xa">${xl}</div>` +
@@ -4560,7 +4596,7 @@ function cmpChart(){
     const r = sv.getBoundingClientRect(), px = e.clientX - r.left;
     let best = null, bd = 1e9; P.forEach(x => { const d = Math.abs(xOf(x.tm) / 800 * r.width - px); if(d < bd){ bd = d; best = x; } });
     if(!best || bd > 22){ box.onpointerleave(); return; }
-    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${M.f(best.m)}</b> ${M.u} \u00b7 ${FIT ? `<span style="color:var(--mute)">${esc(t("cmpFitV"))}: ${M.f(FIT.at(best.tm))}</span>` : ""}</div><div style="color:var(--mute)">${Math.round(best.pw)} W \u00b7 ${best.hr ? Math.round(best.hr) + " bpm" : "\u2013"}</div>`;
+    tip.innerHTML = `<div style="color:var(--mute)">${esc(dfmt(best.tm, true))} \u2014 ${esc(best.h.a.name || best.h.a.type || "")}</div><div><b>${M.f(best.m)}</b> ${M.u} \u00b7 ${FIT ? `<span style="color:var(--mute)">${esc(t("cmpFitV"))}: ${M.f(FIT.at(best.tm))}</span>` : ""}</div><div style="color:var(--mute)">${Math.round(best.pw)} W \u00b7 ${best.hr ? Math.round(best.hr) + " bpm" : "\u2013"}</div>`;
     tip.style.display = "block";
     const tx = e.clientX + 16 + tip.offsetWidth > window.innerWidth ? e.clientX - 16 - tip.offsetWidth : e.clientX + 16;
     tip.style.left = Math.max(4, tx) + "px"; tip.style.top = Math.max(4, Math.min(e.clientY + 12, window.innerHeight - tip.offsetHeight - 4)) + "px";
@@ -5522,7 +5558,7 @@ function calEdUI(){
 async function calEdit(ev){
   const ty = ev.type || "Ride";
   if(ty !== "Ride" && ty !== "VirtualRide") return say("calEdSport", "err");
-  const {list, skipped, ramps} = edFromText(ev.description || "", ty);
+  const {list, skipped, ramps} = edFromText(stripBrand(ev.description, ev.name), ty);
   if(!list.some(x => x.k === "s" || x.k === "g")) return say("calEdEmpty", "err");
   if(ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // du travail non enregistré dans l'éditeur
   ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
@@ -5933,7 +5969,7 @@ $("psend").onclick = async () => {
     for(const x of L){
       b.textContent = ok + " / " + L.length;
       const r = await fetch(icuUrl("/events"), {method: "POST", headers: {"Content-Type": "application/json", ...icuAuth()},
-        body: JSON.stringify({category: "WORKOUT", start_date_local: x.date + "T00:00:00", type: $("psport").value, name: "W" + x.week + " · " + (lang === "fr" ? x.w.name_fr : x.w.name_en), description: planDesc(x.w)})});
+        body: JSON.stringify({category: "WORKOUT", start_date_local: x.date + "T00:00:00", type: $("psport").value, name: "W" + x.week + " · " + (lang === "fr" ? x.w.name_fr : x.w.name_en), description: brandDesc("W" + x.week + " · " + (lang === "fr" ? x.w.name_fr : x.w.name_en), planDesc(x.w))})});
       if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
       ok++;
     }
@@ -5999,6 +6035,7 @@ async function sesMonth(pick){ // petit calendrier du mois : une vignette (profi
   SES.list = (Array.isArray(acts) ? acts : []).filter(x => x.id != null).sort((x, y) => x.start_date_local < y.start_date_local ? -1 : 1);
   $("sesSel").innerHTML = SES.list.map(x => `<option value="${esc(x.id)}"></option>`).join("");
   let id = ""; if(pick){ const sv = store.get("si_sesid"); id = SES.list.some(x => String(x.id) === sv) ? sv : (SES.list.length ? String(SES.list[SES.list.length - 1].id) : ""); if(id) SES.cur = id; }
+  if(!pick && SES.list.some(x => String(x.id) === SES.cur)) $("sesSel").value = SES.cur; // l'actualisation garde l'activité affichée
   sesGrid(mt);
   if(pick){ if(id){ $("sesSel").value = id; sesShow(); } else if(!SES.list.length) box.innerHTML = `<div class="hint">${esc(t("sesNone"))}</div>`; }
 }
@@ -6051,6 +6088,123 @@ async function sesSpeed(id){
     return SES.spd[id] = d && d.length ? Array.from(d, v => +v > 0 ? +v : 0) : null;
   }catch(e){ return null; }
 }
+// Tours (laps) enregistrés par l'appareil : lus dans le fichier d'origine de l'activité (messages « lap » du FIT), contrairement aux intervalles détectés par intervals.icu
+function fitLaps(bytes){
+  fitLaps.devs = null;
+  if(bytes.length < 14 || String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) !== ".FIT") return null;
+  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength), hl = bytes[0], end = Math.min(bytes.length, hl + dv.getUint32(4, true));
+  const defs = {}, laps = [], recT = [], recP = [], allT = [], allP = [], devs = {}; let t0 = null, pos = hl;
+  try{
+    while(pos < end){
+      const h = bytes[pos++];
+      if(h & 0x80){ const d = defs[(h >> 5) & 3]; if(!d) break; pos += d.size; continue; } // horodatage compressé
+      if(h & 0x40){
+        pos++; const big = bytes[pos++] === 1, g = dv.getUint16(pos, !big); pos += 2;
+        const n = bytes[pos++], f = []; let size = 0;
+        for(let k = 0; k < n; k++){ f.push([bytes[pos], bytes[pos + 1]]); size += bytes[pos + 1]; pos += 3; }
+        if(h & 0x20){ const dn = bytes[pos++]; for(let k = 0; k < dn; k++){ size += bytes[pos + 1]; pos += 3; } } // champs développeur
+        defs[h & 0x0f] = {g, f, big, size};
+      }else{
+        const d = defs[h & 0x0f]; if(!d) break;
+        if(d.g === 19){
+          let p = pos; const r = {};
+          for(const [num, sz] of d.f){ if(sz === 4 && (num === 253 || num === 2 || num === 7)) r[num] = dv.getUint32(p, !d.big); p += sz; }
+          if(r[2] != null && r[7] != null && r[7] !== 0xFFFFFFFF) laps.push({st: r[2], dur: r[7] / 1000});
+        }else if(d.g === 23){ // device_info : capteurs et appareils ayant servi à l'enregistrement
+          let p = pos; const r = {};
+          for(const [num, sz] of d.f){
+            if(num === 27) r.name = String.fromCharCode(...bytes.subarray(p, p + sz).filter(c => c >= 32 && c < 127));
+            else if(sz === 1) r[num] = bytes[p]; else if(sz === 2) r[num] = dv.getUint16(p, !d.big); else if(sz === 4) r[num] = dv.getUint32(p, !d.big);
+            p += sz;
+          }
+          devs[r[0] != null && r[0] !== 255 ? r[0] : "x" + Object.keys(devs).length] = r; // une même ligne revient au début et à la fin : on garde la dernière
+        }else if(d.g === 20){ // enregistrement : horodatage + puissance, pour caler la base de temps sur le flux intervals.icu
+          let p = pos, ts = null, pw = null;
+          for(const [num, sz] of d.f){ if(num === 253 && sz === 4) ts = dv.getUint32(p, !d.big); else if(num === 7 && sz === 2) pw = dv.getUint16(p, !d.big); p += sz; }
+          if(ts != null && ts !== 0xFFFFFFFF){ allT.push(ts); allP.push(pw != null && pw !== 0xFFFF ? pw : 0); }
+          if(ts != null && ts !== 0xFFFFFFFF && pw != null && pw !== 0xFFFF){ recT.push(ts); recP.push(pw); }
+        }
+        pos += d.size;
+      }
+    }
+  }catch(e){ /* fichier tronqué : on garde ce qui a été lu */ }
+  fitLaps.devs = Object.values(devs);
+  if(laps.length < 2) return null;
+  // base de temps = début du premier tour (comme intervals.icu), pas le premier enregistrement du fichier
+  t0 = Math.min(...laps.map(l => l.st));
+  const out = laps.map(l => { const s = Math.max(0, Math.round(l.st - t0)); return {s, e: s + Math.max(1, Math.round(l.dur))}; }).filter(l => l.e > l.s).sort((x, y) => x.s - y.s);
+  for(let i = 0; i < out.length - 1; i++) out[i].e = out[i + 1].s; // tours contigus
+  const res = out.filter(l => l.e > l.s);
+  if(res.length < 2) return null;
+  res.t0 = t0; res.idx = {t: allT, p: allP}; // chaque enregistrement = 1 échantillon du flux (les pauses du chrono n'en créent pas)
+  if(recT.length > 60){ let lo = Infinity, hi = -Infinity; for(const x of recT){ if(x < lo) lo = x; if(x > hi) hi = x; } if(hi - lo < 100000){ const P = new Float32Array(hi - lo + 1).fill(NaN); for(let i = 0; i < recT.length; i++) P[recT[i] - lo] = recP[i]; res.rec = {t0: lo, p: P}; } }
+  return res;
+}
+// décalage (s) entre la base de temps des tours (début du 1er tour) et l'indice 0 du flux intervals.icu :
+// on retrouve l'indice 0 en comparant la puissance du fichier FIT au flux (écart absolu moyen minimal)
+function fitShift(lp, w){
+  if(!lp || !lp.rec || !w || w.length < 120) return {sh: 0, cost: Infinity};
+  const {t0: r0, p: P} = lp.rec, n = Math.min(w.length, 6000);
+  let best = Infinity, bestC = null;
+  for(let c = -30; c <= Math.min(600, lp.t0 - r0 + 60); c++){ // c : horodatage de l'indice 0 = r0 + c
+    let sum = 0, k = 0;
+    for(let i = 0; i < n; i++){ const j = c + i; if(j < 0 || j >= P.length) continue; const v = P[j]; if(v !== v) continue; sum += Math.abs((w[i] || 0) - v); k++; }
+    if(k >= 60 && sum / k < best){ best = sum / k; bestC = c; }
+  }
+  return bestC == null ? {sh: 0, cost: Infinity} : {sh: lp.t0 - (r0 + bestC), cost: best};
+}
+// le flux intervals.icu compte les échantillons (1 par enregistrement), sans les pauses du chrono : on convertit l'horodatage de début de chaque tour
+// en indice d'enregistrement, ou à défaut en décalage constant (flux rééchantillonné à 1 Hz), selon ce qui colle le mieux à la puissance du flux
+function fitToStream(lp, w, N){
+  const tm = fitShift(lp, w); let useIdx = false;
+  if(lp.idx && w && w.length >= 120){
+    const n = Math.min(w.length, lp.idx.p.length, 6000); let sum = 0;
+    for(let i = 0; i < n; i++) sum += Math.abs((w[i] || 0) - lp.idx.p[i]);
+    useIdx = n >= 60 && sum / n <= tm.cost + 0.01;
+  }
+  let L;
+  if(useIdx){
+    const T = lp.idx.t, at = ts => { let a = 0, b = T.length; while(a < b){ const m = (a + b) >> 1; if(T[m] < ts) a = m + 1; else b = m; } return a; };
+    L = lp.map(x => ({s: at(lp.t0 + x.s), e: 0}));
+    for(let i = 0; i < L.length; i++) L[i].e = i + 1 < L.length ? L[i + 1].s : N;
+  }else L = lp.map(x => ({s: Math.max(0, x.s + tm.sh), e: x.e + tm.sh}));
+  return L.filter(x => x.s < N && x.e > x.s).map(x => ({s: x.s, e: Math.min(N, x.e)}));
+}
+// capteurs d'après device_info : type ANT+ (source 0/1) ou BLE (source 2/3) -> rôle ; l'appareil créateur (index 0) est l'enregistreur
+const FIT_MFR = {1: "Garmin", 6: "SRM", 7: "Quarq", 13: "Dynastream", 15: "Dynastream", 32: "Wahoo", 63: "Specialized", 69: "Stages", 70: "Sigma", 73: "Wattbike", 76: "Moxy", 81: "Bryton", 86: "Elite", 89: "Tacx", 95: "Stryd", 107: "Magene", 260: "Zwift", 294: "COROS"};
+const FIT_TRAINER = new Set([89, 86, 32]), FIT_ANT = {11: 1, 120: 2, 121: 3, 122: 4, 123: 5, 17: 6, 35: 7, 36: 7, 40: 8, 34: 9}, FIT_BLE = {3: 1, 2: 2, 4: 3, 6: 4, 5: 5, 8: 6};
+function sesDevices(list, a){
+  // une ligne par rôle selon le type d'activité : vélo intérieur -> Trainer + HR ; vélo extérieur -> Power + HR ; course -> Speed ; natation -> Pace
+  const kind = sesKind(a), L = t("sesDevL").split("|"), colon = lang === "fr" ? " : " : ": ";
+  const clean = n => { n = (n || "").replace(/[^\x20-\x7e]/g, "").trim().replace(/\s+\d{5,}$/, "").trim(); return /^[\d\s\-_.\/]*$/.test(n) ? "" : n; }; // retire numéros de série (« Neo 2T 37404 ») et références (« 34860-1 »)
+  const brand = r => FIT_MFR[r[2]] || clean(r.name);
+  const role = r => { const src = r[25], ty = r[1]; return (src === 2 || src === 3 ? FIT_BLE[ty] : FIT_ANT[ty]) || null; };
+  const all = list || [], head = all.find(r => r[0] === 0), sens = all.filter(r => r[0] !== 0 && r[25] !== 5); // capteurs externes seulement (source 5 = interne)
+  const best = rs => { const c = rs.map(r => { const n = clean(r.name), m = FIT_MFR[r[2]]; return n ? (m && !n.toLowerCase().includes(m.toLowerCase()) ? m + " " + n : n) : (m || ""); }).filter(Boolean); return c.sort((x, y) => y.length - x.length)[0] || ""; };
+  const uniq = rs => [...new Set(rs.map(brand).filter(Boolean))].join(" + ");
+  const headName = clean(a && a.device_name) || (head ? best([head]) : "");
+  const trainers = all.filter(r => r[25] !== 5 && (role(r) === 6 || (role(r) == null && (r[0] === 0 ? r[2] === 89 || r[2] === 86 : FIT_TRAINER.has(r[2])))));
+  const trainer = trainers.length ? best(trainers) : "", power = uniq(sens.filter(r => role(r) === 1)), hr = uniq(sens.filter(r => role(r) === 2));
+  const out = [];
+  if(kind === "rideIn"){ if(trainer) out.push([L[0], trainer]); else if(power) out.push([L[1], power]); if(hr) out.push([L[2], hr]); }
+  else if(kind === "ride"){ if(power) out.push([L[1], power]); else if(headName) out.push([L[3], headName]); if(hr) out.push([L[2], hr]); }
+  else if(kind === "run"){ if(headName) out.push([L[3], headName]); if(hr) out.push([L[2], hr]); }
+  else if(kind === "swim"){ if(headName) out.push([L[4], headName]); if(hr) out.push([L[2], hr]); }
+  return out.map(([k, v]) => k + colon + v);
+}
+async function sesLaps(id){
+  SES.lap = SES.lap || {};
+  if(SES.lap[id] !== undefined) return SES.lap[id];
+  let out = null;
+  try{
+    const r = await fetch(`https://intervals.icu/api/v1/activity/${id}/file`, {headers: icuAuth()});
+    if(!r.ok) return SES.lap[id] = null; // pas de fichier d'origine (activité Strava, saisie manuelle…) : on garde les intervalles intervals.icu
+    let buf = new Uint8Array(await r.arrayBuffer());
+    if(buf[0] === 0x1f && buf[1] === 0x8b && typeof DecompressionStream === "function") buf = new Uint8Array(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
+    out = fitLaps(buf); (SES.dev = SES.dev || {})[id] = fitLaps.devs;
+  }catch(e){ return null; }
+  return SES.lap[id] = out;
+}
 async function sesShow(){
   const a = (SES.list || []).find(x => String(x.id) === $("sesSel").value), box = $("sesBox"); if(!a) return;
   store.set("si_sesid", String(a.id)); SES.cur = String(a.id); SES.ai = null; document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
@@ -6059,8 +6213,8 @@ async function sesShow(){
   box.innerHTML = hdr + `<div class="hint">${esc(t("sesLoad"))}</div>`;
   const isSpd = /Run|Swim/.test(a.type || ""), noData = !(isSpd && a.average_speed) && !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
   try{
-    let st, iv = null, spd = null;
-    try{ [st, iv, spd] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null), isSpd ? sesSpeed(a.id) : null]); }
+    let st, iv = null, spd = null, lp = null;
+    try{ [st, iv, spd, lp] = await Promise.all([cmpStreams(a.id, a), icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/intervals`).catch(() => null), isSpd ? sesSpeed(a.id) : null, sesLaps(a.id)]); }
     catch(e){ if(!noData) throw e; st = {}; } // pas de flux pour une activité sans capteur : on garde le nom seul
     if(tok !== SES.tok) return;
     if(!noData) SES.ai = {a, w: st.w, hr: st.hr}; // analyse IA : bouton à côté du nom de la séance, activé une fois les données chargées
@@ -6068,6 +6222,11 @@ async function sesShow(){
     if(!N){ box.innerHTML = hdr + `<div class="hint">${esc(t("sesNoStr"))}</div>`; sesAiOn(); return; }
     const ftp = (a.type === "VirtualRide" ? ICU.ftpIn : ICU.ftpOut) || ICU.ftpIn || ICU.ftpOut || 0;
     let B = ((iv && iv.icu_intervals) || []).filter(x => x.end_index > x.start_index).map(x => ({s: x.start_index, e: x.end_index, label: x.label || "", work: !/REC/i.test(x.type || "")}));
+    let lapsUsed = false;
+    if(lp && lp.length >= 2){ // tours de l'appareil disponibles : ils remplacent les intervalles d'intervals.icu
+      const L = fitToStream(lp, w, N);
+      if(L.length >= 2){ lapsUsed = true; B = L.map((x, i) => { const sw = w && !spdMode ? sesStat(w, x.s, x.e) : null; return {s: x.s, e: x.e, label: t("sesLap", i + 1), work: sw ? sw.avg >= 0.75 * (ftp || 250) : i % 2 === 0}; }); }
+    }
     if(!B.length && w && !spdMode){ let c = 0; B = detectSteps(w, ftp || 250).map(x => { const o = {s: c, e: c + x.d, label: "", work: x.a >= 0.75 * (ftp || 250)}; c += x.d; return o; }); }
     const f0 = v => v == null ? "–" : Math.round(v), K = t("sesKv").split("|"), H = t(spdMode ? "sesHdrS" : "sesHdr").split("|");
     const swim = /Swim/.test(a.type || ""), pu = swim ? " /100 m" : " /km", paceOf = v => v > 0.2 ? mmss((swim ? 100 : 1000) / v) : "–";
@@ -6084,12 +6243,14 @@ async function sesShow(){
       (spdMode ? `<path d="${path(sp, smax)}" fill="none" stroke="var(--acc)" stroke-width="1.5"/><text x="4" y="12" font-size="11" fill="var(--mute)">${esc(t("lSpdMax"))} ${(Math.max(...sp) * 3.6).toFixed(1)} km/h</text>` : "") +
       `<text x="4" y="${Hh - 2}" font-size="11" fill="var(--mute)">0</text><text x="${W - 4}" y="${Hh - 2}" font-size="11" text-anchor="end" fill="var(--mute)">${esc(fmtDur(N))}</text></svg>`;
     const rows = B.map((b, i) => { if(spdMode){ const ss = sesStat(spd, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e);
-        return `<tr data-i="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${paceOf(ss && ss.avg)}</td><td>${ss ? (ss.avg * 3.6).toFixed(1) : "–"}</td><td>${paceOf(ss && ss.max)}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td></tr>`; }
+        return `<tr data-ri="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${paceOf(ss && ss.avg)}</td><td>${ss ? (ss.avg * 3.6).toFixed(1) : "–"}</td><td>${paceOf(ss && ss.max)}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td></tr>`; }
       const sw = sesStat(w, b.s, b.e), sh = sesStat(hr, b.s, b.e), sc = sesStat(cad, b.s, b.e), np = sesNP(w, b.s, b.e);
-      return `<tr data-i="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${f0(sw && sw.avg)}</td><td>${f0(np)}</td><td>${sw && ftp ? Math.round(sw.avg / ftp * 100) : "–"}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td><td>${f0(sw && sw.max)}</td></tr>`; }).join("");
+      return `<tr data-ri="${i}"><td>${i + 1}</td><td>${esc(b.label || t(b.work ? "sesWork" : "sesRec"))}</td><td>${mmss(b.e - b.s)}</td><td>${f0(sw && sw.avg)}</td><td>${f0(np)}</td><td>${sw && ftp ? Math.round(sw.avg / ftp * 100) : "–"}</td><td>${f0(sh && sh.avg)}</td><td>${f0(sh && sh.max)}</td><td>${f0(sc && sc.avg)}</td><td>${f0(sw && sw.max)}</td></tr>`; }).join("");
+    const devL = sesDevices((SES.dev || {})[a.id], a);
     box.innerHTML = hdr +
-      `<div class="kv" style="grid-template-columns:repeat(4,1fr)">${kv.map((v, i) => `<div>${esc(K[i])}<b>${esc(v)}</b></div>`).join("")}</div>` + svg +
-      (B.length ? `<h3 style="margin:14px 0 6px;font-size:.95rem">${esc(t("sesIv"))}</h3><div style="overflow-x:auto"><table class="sest"><thead><tr>${H.map(x => `<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` : "");
+      `<div class="kv" style="grid-template-columns:repeat(4,1fr)">${kv.map((v, i) => `<div>${esc(K[i])}<b>${esc(v)}</b></div>`).join("")}</div>` +
+      (devL.length ? `<div class="hint" style="margin:6px 0 0">${esc(t("sesDev"))} · ${devL.map(esc).join(" · ")}</div>` : "") + svg +
+      (B.length ? `<h3 style="margin:14px 0 6px;font-size:.95rem">${esc(t(lapsUsed ? "sesLaps" : "sesIv"))}</h3><div style="overflow-x:auto"><table class="sest"><thead><tr>${H.map(x => `<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>` : "");
     sesAiOn();
     chartHover(box, box.querySelector("svg[role=img]"), nb, i => {
       const s0 = i * bk, s1 = Math.min(N, s0 + bk), sc = sesStat(cad, s0, s1), k = B.findIndex(b => s0 >= b.s && s0 < b.e), b = k >= 0 ? B[k] : null;
@@ -6100,16 +6261,16 @@ async function sesShow(){
     // pour que tout revienne à l'identique quand on désélectionne (les récupérations « sans remplissage » reprennent leur état invisible)
     let hov = null;
     const paint = () => {
-      const sel = box.querySelector("tr.on"), si = sel ? sel.dataset.i : null;
+      const sel = box.querySelector("tr.on"), si = sel ? sel.dataset.ri : null;
       box.querySelectorAll("rect[data-r]").forEach(c => {
         const hi = c.dataset.r === si || c.dataset.r === hov;
         c.setAttribute("opacity", hi ? ".4" : ".13");
         c.setAttribute("fill", hi && c.dataset.f === "none" ? "var(--mute)" : c.dataset.f);
       });
     };
-    box.querySelectorAll("tr[data-i]").forEach(r => {
+    box.querySelectorAll("tr[data-ri]").forEach(r => {
       r.onclick = () => { const on = !r.classList.contains("on"); box.querySelectorAll("tr.on").forEach(x => x.classList.remove("on")); if(on) r.classList.add("on"); paint(); };
-      r.addEventListener("mouseenter", () => { hov = r.dataset.i; paint(); });
+      r.addEventListener("mouseenter", () => { hov = r.dataset.ri; paint(); });
       r.addEventListener("mouseleave", () => { hov = null; paint(); });
     });
   }catch(e){ if(tok === SES.tok) box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; }
@@ -6263,6 +6424,9 @@ function applyLang(){
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI(); try{ feelUI(); }catch(e){} // le texte du mode Auto suit la langue
   setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderVo2(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks();
+  if(mode === "ses" && SES.m){ // « Séance seule » : mois, calendrier et tableaux suivent la langue
+    try{ $("sesMT").textContent = SES.m.toLocaleDateString(loc(), {month: "long", year: "numeric"}); if(SES.list.length) sesGrid(++SES.mt); if($("sesSel").value) sesShow(); }catch(e){}
+  }
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
