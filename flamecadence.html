@@ -5097,7 +5097,7 @@ const edAt = p => { const a = String(p).split(".").map(Number); return a.length 
 // depuis le bouton « Standard » de l'étape. Les intensités suivent le réglage des unités
 // (% FTP ou watts absolus via la FTP sélectionnée), comme pour les autres étapes.
 const ED_STD = {
-  warm: [[5, 0, 50], [3, 0, 60], [2, 0, 70], [1, 0, 80], [1, 0, 55]],
+  warm: [[3, 0, 50], [2, 0, 60], [2, 0, 70], [1, 0, 80], [1, 0, 90], [0, 30, 110], [1, 0, 55], [0, 30, 110], [1, 0, 55], [0, 30, 110], [2, 0, 55]],
   cool: [[2, 0, 60], [3, 0, 50], [5, 0, 40]]
 };
 function stdSteps(ty){
