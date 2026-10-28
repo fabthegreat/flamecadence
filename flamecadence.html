@@ -5734,15 +5734,17 @@ $("caledx").onclick = () => { CALEDIT = null; calEdUI(); };
 function edFill(){
   const sec = x => { if(x.k === "g") return (parseInt(x.r, 10) || 1) * x.items.reduce((a, y) => a + sec(y), 0); if(x.k !== "s" || x.mode === "d") return 0; const [m, c] = String(x.v).split(":"); return (parseInt(m, 10) || 0) * 60 + (parseInt(c, 10) || 0); };
   const core = ED.filter(x => !(x.k === "s" && (x.ty === "warm" || x.ty === "cool")) && x.k !== "b"), cs = core.reduce((a, x) => a + sec(x), 0), fill = (parseFloat($("edfilt").value) || 0) * 60 - cs;
-  if(fill < 120) return say("efErr", "err");
-  const wTot = Math.round(fill * 0.6 / 60) * 60, cTot = Math.round(fill / 60) * 60 - wTot;
+  const hasRec = core.length && core[0].k === "s" && core[0].ty === "rec"; // le corps commence déjà par une récupération : on n'en ajoute pas
+  const rTot = hasRec ? 0 : fill >= 480 ? 180 : fill >= 300 ? 120 : 60; // petite récupération gardée entre l'échauffement et le premier bloc de travail
+  if(fill < 120 + rTot) return say("efErr", "err");
+  const left = fill - rTot, wTot = Math.round(left * 0.6 / 60) * 60, cTot = Math.round(left / 60) * 60 - wTot;
   const iv = p => edW() && curFtp() > 0 ? String(Math.round(p * curFtp() / 100)) : String(p), mmss = n => Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0");
   const mk = (ty, n, p) => ({k: "s", ty, mode: "t", v: mmss(n), i: iv(p), n: "", m: "p", uid: ++edUid});
   const split = (tot, parts) => { let rest = tot; return parts.map(([f, p], k) => { const n = k === parts.length - 1 ? rest : Math.round(tot * f / 60) * 60; rest -= n; return [n, p]; }).filter(x => x[0] > 0); };
   const warm = (wTot >= 480 ? split(wTot, [[0.5, 50], [0.3, 60], [0.2, 70]]) : wTot > 0 ? [[wTot, 55]] : []).map(([n, p]) => mk("warm", n, p));
   const cool = (cTot >= 480 ? split(cTot, [[0.4, 60], [0.6, 50]]) : cTot > 0 ? [[cTot, 50]] : []).map(([n, p]) => mk("cool", n, p));
-  const keep = ED.filter(x => !(x.k === "s" && (x.ty === "warm" || x.ty === "cool")));
-  ED.length = 0; [...warm, ...keep, ...cool].forEach(x => ED.push(x));
+  const keep = ED.filter(x => !(x.k === "s" && (x.ty === "warm" || x.ty === "cool"))), rec = rTot ? [mk("rec", rTot, 50)] : [];
+  ED.length = 0; [...warm, ...rec, ...keep, ...cool].forEach(x => ED.push(x));
   edRender(); say("efOk", "ok", Math.round(wTot / 60), Math.round(cTot / 60));
 }
 $("edfillb").onclick = edFill;
