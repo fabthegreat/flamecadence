@@ -476,7 +476,11 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
-.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{margin:0}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn er" "dv dv dv"}
+.run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}.run.rfs #runErgL{grid-area:er}.run.rfs #runFsDev{grid-area:dv}
+.run #runFsDev{display:none}.run.rfs #runFsDev{display:block;font-size:.8rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.run.rfs .phead #runPlay,.run.rfs .phead #runFin{margin:0;width:auto;padding:7px 12px}
+@media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1.2fr) auto auto auto minmax(0,1fr) auto;grid-template-areas:"nm pl fn er dv ex"}}
 .run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
 .run.rfs .rgrid{flex:1 1 0;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 @media (orientation:landscape){.run.rfs .rgrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}}
@@ -947,7 +951,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div id="msg" role="status"></div>
 
 <section data-block="run" class="run" hidden>
-<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsName"></span><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div>
+<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsName"></span><span id="runFsDev" aria-live="polite"></span><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div>
 <div class="rcard rtop"><div class="rrow">
 <div><div class="rlbl" data-i="runWk"></div><b id="runWkName"></b></div>
 <div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt" data-i="runSim"></span>
@@ -6176,6 +6180,8 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
   el.classList.toggle("rfs", on);
+  if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runErgL")); } // Démarrer / Terminer et enregistrer / ERG : ligne du haut, au-dessus des données
+  else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runSimB").after($("runErgL")); }
   if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
   if(!on){ RUN.fsApi = false; if(document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
   const b = $("runFs"), l = t(on ? "runFsX" : "runFs"); b.title = l; b.setAttribute("aria-label", l); $("runFsP").setAttribute("d", on ? "M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" : "M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"); runFit(); setTimeout(runFit, 120); setTimeout(runFit, 500);
@@ -6263,6 +6269,8 @@ function runDraw(){
 // ---- Bluetooth (Web Bluetooth) : ceinture FC = service 0x180D ; home trainer = FTMS 0x1826 (Indoor Bike Data 0x2AD2) ----
 function runBtUI(){
   const n = Object.values(RUN.dev).map(d => d.name || "BLE").join(" + ");
+  { const dv = RUN.dev, nm = k => (dv[k].name || "BLE"), sm = t("runSim"); // résumé des appareils appariés pour le plein écran
+    $("runFsDev").textContent = !dv.trainer && !dv.hr ? "● " + sm : "🚴 " + (dv.trainer ? nm("trainer") : sm) + " · ❤ " + (dv.hr ? nm("hr") : sm); }
   $("runDot").classList.toggle("on", RUN.sim || !!n); $("runBtTxt").textContent = RUN.sim ? t("runSim") : n; $("runSimB").hidden = RUN.sim;
   const m = $("runBtMsg"); m.hidden = !!navigator.bluetooth; if(!navigator.bluetooth) m.textContent = t("runNoBT");
 }
