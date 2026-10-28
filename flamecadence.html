@@ -319,6 +319,8 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .sesd{min-height:52px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;font-size:.7rem;color:var(--mute);display:flex;flex-direction:column;gap:2px;opacity:.7}.sesd.has{background:var(--card);opacity:1}
 .sesd button{margin:0;padding:1px;min-height:0;height:28px;width:100%;display:block;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--acc);font-size:.7rem;line-height:1}.sesd button.on{border-color:var(--acc);background:var(--line)}.sesd svg{width:100%;height:24px;display:block}
 .sesd button{position:relative;overflow:hidden}
+.sesnp{display:block;font-style:normal;font-size:.58rem;line-height:1.1;font-weight:600;color:var(--ink);border-left:3px solid var(--line);padding-left:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sesnp[data-if="1"]{border-color:#22c55e}.sesnp[data-if="2"]{border-color:#eab308}.sesnp[data-if="3"]{border-color:#f97316}.sesnp[data-if="4"]{border-color:#ef4444}
 .sesd button .stth{display:block;width:100%;height:24px}
 .sesd button .stth.ph{display:flex;align-items:center;justify-content:center;height:100%;min-height:24px;box-sizing:border-box;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);border:1px solid color-mix(in srgb,currentColor 50%,transparent)}
 .sesd button .stth.ph svg{width:20px;height:20px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.18))}
@@ -423,8 +425,6 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
 .cal-x:hover{opacity:1}.cal-max .cal-x{display:none}
-.cal-ev{flex-wrap:wrap}.cal-np{flex:0 0 100%;font-size:.6rem;line-height:1.1;font-weight:600;opacity:.9;pointer-events:none;letter-spacing:.2px}
-.cal-ev[data-if="1"]{box-shadow:inset 3px 0 0 #22c55e}.cal-ev[data-if="2"]{box-shadow:inset 3px 0 0 #eab308}.cal-ev[data-if="3"]{box-shadow:inset 3px 0 0 #f97316}.cal-ev[data-if="4"]{box-shadow:inset 3px 0 0 #ef4444}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
@@ -947,7 +947,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <div style="margin-top:12px"><label for="cmpper" data-i="actW"></label><select id="cmpper" data-ia="aria-label:actW"><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
 <div style="margin-top:12px"><label for="cmpq" data-i="cmpQ"></label><input id="cmpq" data-ia="placeholder:cmpPh"></div>
 <p class="hint" data-i="cmpFmt"></p>
-<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpprog" class="alt small aibtn" type="button" data-i="cmpProg" hidden></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
+<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpprog" class="alt small aibtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span data-i="cmpProg"></span></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
 <div class="hint" id="cmpstat" role="status"></div>
 <div id="cmpbox"></div>
 
@@ -4857,7 +4857,6 @@ function calNP(e, isAct){ // NP (W) + niveau d'intensité 1-4 pour la vignette ;
     return {np: Math.round(np), lv: !iff ? 0 : iff < 0.75 ? 1 : iff < 0.9 ? 2 : iff < 1 ? 3 : 4};
   }catch(_){ return null; }
 }
-const calNpHtml = (x) => x ? `<span class="cal-np">NP ${x.np} W</span>` : "";
 function calHtml(off, evList, pick, selDate, actList, big){
   const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date());
   const blank = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
@@ -4873,8 +4872,8 @@ function calHtml(off, evList, pick, selDate, actList, big){
     const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort(byStart), acts = (byA[k] || []).slice().sort(byStart);
     n += evs.length + acts.length;
     html += `<div class="cal-d${k === today ? " today" : ""}${pick && k === selDate ? " sel" : ""}" data-date="${k}"><span class="cal-n">${d}${big ? `<span class="cal-wd"> · ${esc(new Date(y, m, d).toLocaleDateString(loc(), {weekday: "short"}))}</span>` : ""}</span>` +
-      evs.map(e => { const np = calNP(e, false); return `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}"${np && np.lv ? ` data-if="${np.lv}"` : ""} title="${esc(e.name || "")}">${calNpHtml(np)}<span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button>${big ? calBigExtra(e, false) : ""}</div>`; }).join("") +
-      acts.map(a => { const np = calNP(a, true); return `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}"${/Ride/.test(a.type || "") ? " data-bike" : ""} data-eid="a${esc(String(a.id))}"${np && np.lv ? ` data-if="${np.lv}"` : ""} title="${esc(a.name || a.type || "")}">${calNpHtml(np)}<span class="cal-ev-t">${esc(a.name || a.type || "—")}</span>${big ? calBigExtra(a, true) : ""}</div>`; }).join("") + `</div>`;
+      evs.map(e => { return `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}"title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button>${big ? calBigExtra(e, false) : ""}</div>`; }).join("") +
+      acts.map(a => { return `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}"${/Ride/.test(a.type || "") ? " data-bike" : ""} data-eid="a${esc(String(a.id))}"title="${esc(a.name || a.type || "")}"><span class="cal-ev-t">${esc(a.name || a.type || "—")}</span>${big ? calBigExtra(a, true) : ""}</div>`; }).join("") + `</div>`;
   }
   return {html: html + `</div>`, n};
 }
@@ -6545,7 +6544,7 @@ function sesGrid(mt, skeleton){ // skeleton : grille vide du mois (affichée pen
   let h = [...Array(7)].map((_, i) => `<div class="dh">${esc(new Date(2024, 0, 1 + i).toLocaleDateString(loc(), {weekday: "narrow"}))}</div>`).join("") + "<div></div>".repeat(lead);
   for(let d = 1; d <= nd; d++){
     const L = by[iso(new Date(m.getFullYear(), m.getMonth(), d))] || [];
-    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : "") + (/^(ride|rideIn)$/.test(sesKind(a)) ? " · " + t(sesKind(a) === "rideIn" ? "indoor" : "outdoor") : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a))}</button>`).join("")}</div>`;
+    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `${(x => x ? `<i class="sesnp" data-if="${x.lv}" title="NP ${x.np} W">NP ${x.np}</i>` : "")(calNP(a, true))}<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : "") + (/^(ride|rideIn)$/.test(sesKind(a)) ? " · " + t(sesKind(a) === "rideIn" ? "indoor" : "outdoor") : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a))}</button>`).join("")}</div>`;
   }
   const cal = $("sesCal"); cal.innerHTML = `<div class="sesg">${h}</div>`;
   if(skeleton) return;
