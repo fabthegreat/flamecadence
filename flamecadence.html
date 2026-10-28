@@ -470,6 +470,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
 .run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc)}
 .run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}
+.run #runAllL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runAll{width:auto;margin:0}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
 .run #runFsName{display:none}.run.rfs #runFsName{display:block;flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.95rem,3.4vmin,1.3rem)}
 .run #runFs{margin:0;width:auto}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -957,6 +958,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt" data-i="runSim"></span>
 <button type="button" class="alt small" id="runPairT" data-i="runPairT"></button>
 <button type="button" class="alt small" id="runPairH" data-i="runPairH"></button>
+<label id="runAllL"><input type="checkbox" id="runAll"><span data-i="runAll"></span></label>
 <button type="button" class="alt small" id="runSimB" data-i="runSimBack" hidden></button>
 <label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
@@ -1418,7 +1420,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -6275,35 +6277,48 @@ function runBtUI(){
   const m = $("runBtMsg"); m.hidden = !!navigator.bluetooth; if(!navigator.bluetooth) m.textContent = t("runNoBT");
 }
 async function runPair(kind){
+  const m = $("runBtMsg"), say = x => { m.hidden = false; m.textContent = x; };
   if(!navigator.bluetooth){ runBtUI(); return; }
+  const svcs = kind === "hr" ? ["heart_rate"] : ["fitness_machine", "cycling_power"];
+  // un trainer n'annonce pas toujours son service dans sa publicité Bluetooth (Tacx Neo…) : on accepte aussi par nom ; la case « tous les appareils » ne filtre plus rien
+  const names = ["Tacx", "NEO", "KICKR", "Wahoo", "Elite", "Saris", "Zwift", "Wattbike", "JetBlack"];
+  const opts = $("runAll").checked ? {acceptAllDevices: true, optionalServices: svcs} : {filters: svcs.map(x => ({services: [x]})).concat(kind === "hr" ? [] : names.map(n => ({namePrefix: n}))), optionalServices: svcs};
+  let dev; try{ dev = await navigator.bluetooth.requestDevice(opts); }
+  catch(err){ console.warn("BLE:", err); say(err.name === "NotFoundError" ? t("runBtNone") : err.name + ": " + err.message); return; }
+  let note = "";
   try{
-    const dev = await navigator.bluetooth.requestDevice({filters: [{services: [kind === "hr" ? "heart_rate" : "fitness_machine"]}]});
     const srv = await dev.gatt.connect();
     if(kind === "hr"){
       const ch = await (await srv.getPrimaryService("heart_rate")).getCharacteristic("heart_rate_measurement");
       ch.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; RUN.live.h = (v.getUint8(0) & 1) ? v.getUint16(1, true) : v.getUint8(1); });
       await ch.startNotifications();
     }else{
-      const svc = await srv.getPrimaryService("fitness_machine"), ch = await svc.getCharacteristic(0x2AD2);
-      ch.addEventListener("characteristicvaluechanged", e => { // flags (16 bits) puis champs dans l'ordre de la spec FTMS
-        const v = e.target.value, f = v.getUint16(0, true); let o = 2;
-        if(!(f & 1)) o += 2; if(f & 2) o += 2;
-        if(f & 4){ RUN.live.c = v.getUint16(o, true) / 2; o += 2; } if(f & 8) o += 2;
-        if(f & 16) o += 3; if(f & 32) o += 2;
-        if(f & 64){ RUN.live.p = v.getInt16(o, true); }
-      });
-      await ch.startNotifications();
-      try{ // ERG : point de contrôle FTMS (facultatif : certains trainers n'en ont pas)
-        const cp = await svc.getCharacteristic(0x2AD9);
-        cp.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; if(v.getUint8(0) === 0x80 && v.getUint8(1) === 0x00 && v.getUint8(2) !== 1){ RUN.cp = null; $("runErgL").hidden = true; $("runBtMsg").hidden = false; $("runBtMsg").textContent = t("runErgNo"); } });
-        await cp.startNotifications(); RUN.cp = cp; RUN.cpq = null; RUN.sentW = null; $("runErgL").hidden = false; runCpSend([0x00]); if(!RUN.paused){ runCpSend([0x07]); }
-      }catch(e){ console.warn("ERG indisponible", e); }
+      let svc = null; try{ svc = await srv.getPrimaryService("fitness_machine"); }catch(e){}
+      if(svc){
+        const ch = await svc.getCharacteristic(0x2AD2);
+        ch.addEventListener("characteristicvaluechanged", e => { // flags (16 bits) puis champs dans l'ordre de la spec FTMS
+          const v = e.target.value, f = v.getUint16(0, true); let o = 2;
+          if(!(f & 1)) o += 2; if(f & 2) o += 2;
+          if(f & 4){ RUN.live.c = v.getUint16(o, true) / 2; o += 2; } if(f & 8) o += 2;
+          if(f & 16) o += 3; if(f & 32) o += 2;
+          if(f & 64){ RUN.live.p = v.getInt16(o, true); }
+        });
+        await ch.startNotifications();
+        try{ // ERG : point de contrôle FTMS (facultatif : certains trainers n'en ont pas)
+          const cp = await svc.getCharacteristic(0x2AD9);
+          cp.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; if(v.getUint8(0) === 0x80 && v.getUint8(1) === 0x00 && v.getUint8(2) !== 1){ RUN.cp = null; $("runErgL").hidden = true; say(t("runErgNo")); } });
+          await cp.startNotifications(); RUN.cp = cp; RUN.cpq = null; RUN.sentW = null; $("runErgL").hidden = false; runCpSend([0x00]); if(!RUN.paused){ runCpSend([0x07]); }
+        }catch(e){ console.warn("ERG indisponible", e); }
+      }else{ // repli : puissance seule via le service Cycling Power (pas de cadence ni d'ERG)
+        const pw = await (await srv.getPrimaryService("cycling_power")).getCharacteristic("cycling_power_measurement");
+        pw.addEventListener("characteristicvaluechanged", e => { RUN.live.p = e.target.value.getInt16(2, true); });
+        await pw.startNotifications(); note = t("runPwOnly");
+      }
     }
     RUN.dev[kind] = dev; RUN.sim = false; dev.addEventListener("gattserverdisconnected", () => { delete RUN.dev[kind]; if(kind !== "hr"){ RUN.cp = null; $("runErgL").hidden = true; } RUN.live[kind === "hr" ? "h" : "p"] = null; if(kind !== "hr") RUN.live.c = null; if(!Object.keys(RUN.dev).length) RUN.sim = true; runBtUI(); });
-    runBtUI();
-  }catch(err){ console.warn("BLE:", err); }
+    runBtUI(); if(note) say(note);
+  }catch(err){ console.warn("BLE:", err); try{ dev.gatt.disconnect(); }catch(e){} say(t("runBtFail", dev.name || "BLE", err.name + ": " + err.message)); }
 }
-
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
 const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan"], ana: ["ses", "cmp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
