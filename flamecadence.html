@@ -315,11 +315,12 @@ h2.ic{display:flex;align-items:center;gap:8px}
 .sest{width:100%;border-collapse:collapse;font-size:.8rem;white-space:nowrap}.sest th,.sest td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--line)}.sest th:nth-child(-n+2),.sest td:nth-child(-n+2){text-align:left}.sest tr[data-ri]{cursor:pointer}.sest tr.on{background:var(--line)}
 #sesBox svg{width:100%;height:auto;display:block}
 .ses-ph{aspect-ratio:900/240;margin-top:6px;border-radius:8px;opacity:.55;background:linear-gradient(90deg,var(--line) 0%,transparent 50%,var(--line) 100%);background-size:200% 100%;animation:sesph 1.3s linear infinite}@keyframes sesph{to{background-position:-200% 0}}@media (prefers-reduced-motion:reduce){.ses-ph{animation:none}}
-.sesg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:12px}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
+.sesg{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin-bottom:12px}.sesg>*{min-width:0}.sesd{overflow:hidden}.sesg .dh{font-size:.7rem;color:var(--mute);text-align:center}
 .sesd{min-height:52px;border:1px solid var(--line);border-radius:6px;padding:2px 3px;font-size:.7rem;color:var(--mute);display:flex;flex-direction:column;gap:2px;opacity:.7}.sesd.has{background:var(--card);opacity:1}
 .sesd button{margin:0;padding:1px;min-height:0;height:28px;width:100%;display:block;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--acc);font-size:.7rem;line-height:1}.sesd button.on{border-color:var(--acc);background:var(--line)}.sesd svg{width:100%;height:24px;display:block}
 .sesd button{position:relative;overflow:hidden}
 .sesnp{display:block;font-style:normal;font-size:.58rem;line-height:1.1;font-weight:600;color:var(--ink);border-left:3px solid var(--line);padding-left:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:520px){.sesnpl{display:none}.sesnp{font-size:.55rem;padding-left:2px;border-left-width:2px}.sesd{padding:2px}}
 .sesnp[data-if="1"]{border-color:#22c55e}.sesnp[data-if="2"]{border-color:#eab308}.sesnp[data-if="3"]{border-color:#f97316}.sesnp[data-if="4"]{border-color:#ef4444}
 .sesd button .stth{display:block;width:100%;height:24px}
 .sesd button .stth.ph{display:flex;align-items:center;justify-content:center;height:100%;min-height:24px;box-sizing:border-box;border-radius:4px;background:color-mix(in srgb,currentColor 18%,transparent);border:1px solid color-mix(in srgb,currentColor 50%,transparent)}
@@ -6545,7 +6546,7 @@ function sesGrid(mt, skeleton){ // skeleton : grille vide du mois (affichée pen
   let h = [...Array(7)].map((_, i) => `<div class="dh">${esc(new Date(2024, 0, 1 + i).toLocaleDateString(loc(), {weekday: "narrow"}))}</div>`).join("") + "<div></div>".repeat(lead);
   for(let d = 1; d <= nd; d++){
     const L = by[iso(new Date(m.getFullYear(), m.getMonth(), d))] || [];
-    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `${(x => x ? `<i class="sesnp" data-if="${x.lv}" title="NP ${x.np} W">NP ${x.np}</i>` : "")(calNP(a, true))}<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : "") + (/^(ride|rideIn)$/.test(sesKind(a)) ? " · " + t(sesKind(a) === "rideIn" ? "indoor" : "outdoor") : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a))}</button>`).join("")}</div>`;
+    h += `<div class="sesd${L.length ? " has" : ""}"><span>${d}</span>${L.map(a => `${(x => x ? `<i class="sesnp" data-if="${x.lv}" title="NP ${x.np} W"><span class="sesnpl">NP </span>${x.np}</i>` : "")(calNP(a, true))}<button type="button" data-id="${esc(a.id)}" title="${esc((a.name || a.type || "") + (a.type ? " · " + actT(a.type) : "") + (/^(ride|rideIn)$/.test(sesKind(a)) ? " · " + t(sesKind(a) === "rideIn" ? "indoor" : "outdoor") : ""))}" aria-label="${esc((a.name || "") + " " + actT(a.type || ""))}" class="${String(a.id) === SES.cur ? "on" : ""}">${(k => `<span class="stth ph" style="color:${SES_ICO[k].c}">${sesIco(k)}</span><span class="stb" style="background:${SES_ICO[k].c}">${sesIco(k)}</span>`)(sesKind(a))}</button>`).join("")}</div>`;
   }
   const cal = $("sesCal"); cal.innerHTML = `<div class="sesg">${h}</div>`;
   if(skeleton) return;
