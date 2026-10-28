@@ -471,11 +471,12 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc)}
 .run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
+.run #runFsName{display:none}.run.rfs #runFsName{display:block;flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.95rem,3.4vmin,1.3rem)}
 .run #runFs{margin:0;width:auto}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
-.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{justify-content:flex-end!important;margin:0}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{margin:0}
 .run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
 .run.rfs .rgrid{flex:1 1 0;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 @media (orientation:landscape){.run.rfs .rgrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}}
@@ -946,7 +947,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div id="msg" role="status"></div>
 
 <section data-block="run" class="run" hidden>
-<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div>
+<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsName"></span><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div>
 <div class="rcard rtop"><div class="rrow">
 <div><div class="rlbl" data-i="runWk"></div><b id="runWkName"></b></div>
 <div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt" data-i="runSim"></span>
@@ -6137,7 +6138,7 @@ function runRender(){
 function runPick(e, auto){
   if(!auto && RUN.el > 0 && RUN.el < RUN.total && !confirm(t("runConfirm"))) return;
   if(!auto) RUN.touched = true;
-  RUN.cur = e; runLoad(e); $("runWkName").textContent = e.name; if(!auto) $("runLs").open = false; runRender();
+  RUN.cur = e; runLoad(e); $("runWkName").textContent = $("runFsName").textContent = e.name; if(!auto) $("runLs").open = false; runRender();
 }
 function runLoad(e){
   const ftp = runFtp();
@@ -6164,15 +6165,20 @@ function runInit(){
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
   $("runSimB").onclick = () => { Object.values(RUN.dev).forEach(d => { try{ d.gatt && d.gatt.disconnect(); }catch(e){} }); RUN.dev = {}; RUN.cp = null; $("runErgL").hidden = true; RUN.live = {p: null, h: null, c: null}; RUN.sim = true; runBtUI(); };
-  window.addEventListener("resize", () => RUN && mode === "run" && runDraw()); window.addEventListener("orientationchange", () => setTimeout(() => RUN && mode === "run" && runDraw(), 250)); // rotation du téléphone
+  window.addEventListener("resize", () => RUN && mode === "run" && (runFit(), runDraw())); window.addEventListener("orientationchange", () => [150, 500].forEach(d => setTimeout(() => RUN && mode === "run" && (runFit(), runDraw()), d))); if(window.visualViewport) visualViewport.addEventListener("resize", () => RUN && mode === "run" && runFit()); // rotation du téléphone
   runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI();
+}
+function runFit(){ // hauteur = zone réellement visible (barres du navigateur / geste Android exclues) ; sans effet en vrai plein écran natif
+  const el = document.querySelector('[data-block="run"]'), v = window.visualViewport;
+  if(!el.classList.contains("rfs")){ el.style.height = el.style.top = ""; return; }
+  el.style.height = Math.round(v ? v.height : innerHeight) + "px"; el.style.top = Math.round(v ? v.offsetTop : 0) + "px"; runDraw();
 }
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
   el.classList.toggle("rfs", on);
   if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
   if(!on){ RUN.fsApi = false; if(document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
-  const b = $("runFs"), l = t(on ? "runFsX" : "runFs"); b.title = l; b.setAttribute("aria-label", l); $("runFsP").setAttribute("d", on ? "M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" : "M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"); setTimeout(runDraw, 60);
+  const b = $("runFs"), l = t(on ? "runFsX" : "runFs"); b.title = l; b.setAttribute("aria-label", l); $("runFsP").setAttribute("d", on ? "M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" : "M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"); runFit(); setTimeout(runFit, 120); setTimeout(runFit, 500);
 }
 // ---- ERG : contrôle du home trainer via le Fitness Machine Control Point FTMS (0x2AD9) : 0x00 prise de contrôle, 0x05 puissance cible (W), 0x07 démarrer/reprendre, 0x08 arrêt/pause, 0x01 reset
 function runCpSend(b){ const R = RUN; if(!R.cp) return; const u = new Uint8Array(b); R.cpq = (R.cpq || Promise.resolve()).then(() => R.cp.writeValueWithResponse ? R.cp.writeValueWithResponse(u) : R.cp.writeValue(u)).catch(e => console.warn("FTMS CP", e)); } // écritures GATT sérialisées
