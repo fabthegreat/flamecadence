@@ -472,8 +472,19 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
 .run #runFs{margin:0;width:auto}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.run.rfs{position:fixed;inset:0;z-index:1000;overflow:auto;background:var(--bg);padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
-.run.rfs .rgrid .rbig{font-size:clamp(3rem,9vw,6.5rem)}.run.rfs .rbig{font-size:clamp(2.6rem,7vw,4.5rem)}.run.rfs canvas{height:24vh;min-height:130px}
+.run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+/* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
+.run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{justify-content:flex-end!important;margin:0}
+.run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
+.run.rfs .rgrid{flex:1 1 0;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
+@media (orientation:landscape){.run.rfs .rgrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}}
+.run.rfs .rgrid .rcard{display:flex;flex-direction:column;justify-content:center;padding:6px 10px;overflow:hidden;min-height:0}
+.run.rfs .rgrid .rbig{font-size:clamp(2rem,15vmin,6.5rem);line-height:1;margin:2px 0}
+@supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,46cqmin,9rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
+.run.rfs canvas{height:clamp(52px,15dvh,150px)}.run.rfs .rcard:has(canvas){padding:6px}
+.run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
+.run.rfs #runEnd{max-height:45%;overflow:auto}
 .run #runName{overflow-wrap:anywhere}
 .run .rdot{width:9px;height:9px;border-radius:50%;background:var(--mute);display:inline-block}.run .rdot.on{background:#22c55e}
 .cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
@@ -6153,7 +6164,7 @@ function runInit(){
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
   $("runSimB").onclick = () => { Object.values(RUN.dev).forEach(d => { try{ d.gatt && d.gatt.disconnect(); }catch(e){} }); RUN.dev = {}; RUN.cp = null; $("runErgL").hidden = true; RUN.live = {p: null, h: null, c: null}; RUN.sim = true; runBtUI(); };
-  window.addEventListener("resize", () => RUN && mode === "run" && runDraw());
+  window.addEventListener("resize", () => RUN && mode === "run" && runDraw()); window.addEventListener("orientationchange", () => setTimeout(() => RUN && mode === "run" && runDraw(), 250)); // rotation du téléphone
   runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI();
 }
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
