@@ -448,6 +448,34 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .gbar{border-color:var(--top)}
 .gbar button[aria-selected="true"]{background:var(--top);color:var(--top-on)}
 .gbar button:not([aria-selected="true"]):hover,.gbar button:not([aria-selected="true"]):focus-visible{color:var(--top)}
+
+/* ---- Lancer une activité (lecteur + détection Bluetooth) ---- */
+.run{--rz1:#3b82f6;--rz2:#22c55e;--rz3:#eab308;--rz4:#f97316;--rz5:#ef4444;--rz6:#a855f7}
+.run .rbar,.run .rcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.run .rrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.run .rbar{position:relative;overflow:hidden}.run .rbar::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--rzc,var(--acc))}
+.run .rlbl{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:700}
+.run .rbig{font-size:2.2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.run .rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}
+@media (min-width:900px){.run .rgrid{grid-template-columns:repeat(4,1fr)}}
+.run .rgrid .rcard{margin:0}.run .rgrid .rbig{font-size:2.6rem;margin:6px 0 2px}
+.run .rgrid small{color:var(--mute)}
+.run canvas{width:100%;height:130px;display:block;border-radius:8px;border:1px solid var(--line);cursor:pointer}
+.run .rctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
+.run .rctl button,.run .rtop button,.run .rtop select{margin:0;width:auto}
+.run .rbadge{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
+.run .rbt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.run #runChips button{margin:0 4px 6px 0;width:auto}.run #runChips button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
+.run #runRows{max-height:420px;overflow:auto}
+.run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
+.run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc)}
+.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}
+.run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
+.run #runFs{margin:0;width:auto}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.run.rfs{position:fixed;inset:0;z-index:1000;overflow:auto;background:var(--bg);padding:12px;padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.run.rfs .rgrid .rbig{font-size:clamp(3rem,9vw,6.5rem)}.run.rfs .rbig{font-size:clamp(2.6rem,7vw,4.5rem)}.run.rfs canvas{height:24vh;min-height:130px}
+.run #runName{overflow-wrap:anywhere}
+.run .rdot{width:9px;height:9px;border-radius:50%;background:var(--mute);display:inline-block}.run .rdot.on{background:#22c55e}
 .cal-d.sel{outline:2px solid var(--acc);outline-offset:-2px}
 /* calendrier agrandi : plein écran, avec un aperçu graphique par séance / activité */
 html.calmax,html.calmax body{overflow:hidden}
@@ -647,6 +675,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
 <div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
 <div class="hint" data-i="fontHint"></div>
+<label style="margin-top:16px"><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label>
+<div class="hint" data-i="betaRunHint"></div>
 </div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
@@ -696,7 +726,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div class="layout">
 <div class="col">
 
-<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button></div>
+<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button><button type="button" role="tab" data-g="run" data-i="grpRun" hidden style="display:none"></button></div>
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
 <button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
 <button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
@@ -705,6 +735,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <button type="button" role="tab" data-m="act"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="tabAct"></span></button>
 <button type="button" role="tab" data-m="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="tabPlan"></span></button>
 <button type="button" role="tab" data-m="ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span data-i="tabSes"></span></button>
+<button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
 <button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
 </div>
 
@@ -902,6 +933,41 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
   <div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="progf"></i></div>
 </div>
 <div id="msg" role="status"></div>
+
+<section data-block="run" class="run" hidden>
+<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div>
+<div class="rcard rtop"><div class="rrow">
+<div><div class="rlbl" data-i="runWk"></div><b id="runWkName"></b></div>
+<div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt" data-i="runSim"></span>
+<button type="button" class="alt small" id="runPairT" data-i="runPairT"></button>
+<button type="button" class="alt small" id="runPairH" data-i="runPairH"></button>
+<button type="button" class="alt small" id="runSimB" data-i="runSimBack" hidden></button>
+<label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
+<div class="hint" id="runBtMsg" hidden></div></div>
+<details class="rcard" id="runLs" open><summary><b data-i="runListT"></b> <span id="runLsCnt" class="hint"></span></summary>
+<div class="rrow" style="margin:8px 0"><input id="runQ" type="search" data-ia="placeholder:runSearch" style="flex:1;min-width:140px;margin:0"><button type="button" class="alt small" id="runRef" data-ia="title:runRefresh;aria-label:runRefresh">↻</button></div>
+<div id="runChips"></div><div id="runRows"></div><div class="hint" id="runLsMsg"></div></details>
+<div class="rbar" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
+<div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
+<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div></div>
+<div class="rgrid">
+<div class="rcard"><div class="rlbl" data-i="runTgt"></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
+<div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
+<div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
+<div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
+<div class="rcard"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
+<div class="rcard"><div class="rctl">
+<button type="button" class="alt small" data-rn="-10">-10 W</button><button type="button" class="alt small" data-rn="-5">-5 W</button>
+<button type="button" class="alt small" data-rn="0" data-i="runReset"></button>
+<button type="button" class="alt small" data-rn="5">+5 W</button><button type="button" class="alt small" data-rn="10">+10 W</button>
+<span style="width:14px"></span>
+<button type="button" class="alt small" id="runPrev" aria-label="Previous step">⏮</button>
+<button type="button" id="runPlay"></button>
+<button type="button" class="alt small" id="runNext" aria-label="Next step">⏭</button>
+<button type="button" class="alt small" id="runFin" data-i="runFin"></button></div></div>
+<div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
+<div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
+</section>
 
 <section id="prev" data-block="prev" hidden>
 <div class="phead">
@@ -1336,7 +1402,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -5998,9 +6064,232 @@ $("psend").onclick = async () => {
 // menu « Plus » (contact, GitHub, café) : se ferme au clic extérieur, sur un lien ou avec Échap
 document.addEventListener("click", e => { const m = $("more"); if(m.open && (!m.contains(e.target) || e.target.closest(".menu a"))) m.open = false; });
 document.addEventListener("keydown", e => { if(e.key === "Escape") $("more").open = false; });
+
+// ---------- Lancer une activité : lecteur de séance (étape 1 : maquette HUD + détection Bluetooth) ----------
+// TODO : audio (Jamendo), export .fit natif, tableau de bord de fin de séance.
+var RUN = null;
+function runFtp(){ let f = 0; try{ f = +ftpFor("VirtualRide"); }catch(e){} return f > 0 ? f : 250; }
+const runFmt = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
+const runZC = z => ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444", "#a855f7", "#ec4899"][Math.min(7, Math.max(1, z)) - 1];
+// description intervals.icu → étapes du lecteur (même analyseur que le reste de l'app : %, watts, zones, rampes, répétitions « 3x », durées et distances)
+function runSteps(desc, ftp){
+  const raw = parseWorkout(desc || "", "Ride", ftp); if(!raw.length) return [];
+  const lines = desc.split("\n"), hdr = [], rx = /\d(?:[.,]\d+)?\s*%|\d(?:[.,]\d+)?\s*w\b|\bz[1-7]\b/i; let cur = "";
+  lines.forEach((r, i) => { const l = r.trim(); if(!l){ cur = ""; return; } if(l.startsWith("-") || rx.test(l)){ hdr[i] = cur; return; } cur = l; });
+  const tot = {}, seen = {}; raw.forEach(x => tot[x.line] = (tot[x.line] || 0) + 1);
+  return raw.map(x => {
+    const k = x.line, n = (seen[k] = (seen[k] || 0) + 1), txt = (lines[k] || "").replace(/^\s*-\s*/, "").trim(), cm = txt.match(/(\d+)(?:\s*-\s*(\d+))?\s*rpm/i);
+    const h = (hdr[k] || "").replace(/\s*\d+\s*x\s*$/i, "").trim();
+    return {name: [h, txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, "").trim()].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
+  });
+}
+function runMk(src, id, name, date, st){
+  if(!st || !st.length) return null;
+  const dur = st.reduce((a, x) => a + x.d, 0), ifx = Math.sqrt(st.reduce((a, x) => a + x.d * Math.pow((x.a + x.b) / 2, 2), 0) / dur) / 100;
+  return {src, id, name: name || "—", date: date || "", st, dur, ifx, tss: Math.round(dur / 3600 * ifx * ifx * 100), z: zoneTimes(st)};
+}
+// ---- liste des séances exécutables : calendrier intervals.icu (7 j passés non réalisés → 60 j à venir), plan généré non envoyé, bibliothèque (vélo), préréglages
+function runAssemble(){
+  const R = RUN, ftp = runFtp(), out = [];
+  out.push(...R.cal);
+  PLAN.items.forEach((x, i) => { const e = runMk("plan", "plan:" + i + x.date, lang === "fr" ? x.w.name_fr : x.w.name_en, x.date, runSteps(planDesc(x.w), ftp)); if(e) out.push(e); });
+  R.items = out; runRender();
+}
+async function runList(force){
+  const R = RUN; if(R.busy) return; if(!force && R.at && Date.now() - R.at < 300000){ runAssemble(); return; }
+  R.busy = true; R.err = ""; const ftp = runFtp(), today = iso(new Date());
+  if(KEY()){
+    $("runLsMsg").textContent = t("runLoadL");
+    try{
+      const evs = await icu(`/events?oldest=${daysAgo(7)}&newest=${daysAgo(-60)}&category=WORKOUT`);
+      R.cal = (evs || []).filter(e => !e.paired_activity_id && (!e.type || /ride|cycl|bike/i.test(e.type)))
+        .sort((x, y) => (x.start_date_local || "").localeCompare(y.start_date_local || ""))
+        .map(e => runMk("cal", "cal:" + e.id, e.name, (e.start_date_local || "").slice(0, 10), runSteps(e.description, ftp))).filter(Boolean);
+    }catch(err){ R.err = t("errI", errText(err)); R.cal = []; }
+  }else R.cal = [];
+  R.at = Date.now(); R.busy = false; runAssemble();
+  const td = R.cal.find(e => e.date === today) || R.cal.find(e => e.date > today); if(td && !R.touched && !R.el && !(R.cur && R.cur.id === td.id)) runPick(td, true); // séance du jour (sinon la prochaine) chargée d'office tant que rien n'a été lancé
+}
+function runRender(){
+  const R = RUN, q = R.q.trim().toLowerCase(), all = R.items, today = iso(new Date());
+  const chips = [["all", "runSrcAll", all.length]].concat(["cal", "plan"].map(k => [k, {cal: "runSrcCal", plan: "runSrcPlan"}[k], all.filter(e => e.src === k).length])).filter(c => c[0] === "all" || c[2]);
+  if(chips.length < 3) R.f = "all"; // un seul type de séance : pas de filtre à afficher
+  $("runChips").innerHTML = chips.length < 3 ? "" : chips.map(c => `<button type="button" class="alt small" data-s="${c[0]}" aria-pressed="${R.f === c[0]}">${esc(t(c[1]))} · ${c[2]}</button>`).join("");
+  const rows = all.filter(e => (R.f === "all" || e.src === R.f) && (!q || e.name.toLowerCase().includes(q)));
+  const dt = d => new Date(d + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"});
+  $("runRows").innerHTML = rows.map(e => {
+    const bd = e.src === "cal" ? (e.date === today ? t("runToday") : e.date < today ? t("runMissed") : "") : e.src === "plan" ? t("runSrcPlan") : "";
+    return `<div class="wr${R.cur && R.cur.id === e.id ? " sel" : ""}" data-k="${R.items.indexOf(e)}" role="button" tabindex="0"><div class="wm"><div class="wn">${esc(e.name)}</div><small>${e.date ? esc(dt(e.date)) + " · " : ""}${esc(fmtDur(e.dur))} · IF ${e.ifx.toFixed(2)} · TSS ${e.tss}${e.src === "plan" ? " · " + esc(t("runPlanNote")) : ""}</small>${zoneBar(e.z, true)}</div>${bd ? `<span class="rbadge">${esc(bd)}</span>` : ""}</div>`;
+  }).join("");
+  $("runLsCnt").textContent = rows.length + " / " + all.length; $("runLsMsg").textContent = R.err || (rows.length ? "" : t(KEY() ? (all.length ? "runNoMatch" : "runNoPlanned") : "needI"));
+}
+function runPick(e, auto){
+  if(!auto && RUN.el > 0 && RUN.el < RUN.total && !confirm(t("runConfirm"))) return;
+  if(!auto) RUN.touched = true;
+  RUN.cur = e; runLoad(e); $("runWkName").textContent = e.name; if(!auto) $("runLs").open = false; runRender();
+}
+function runLoad(e){
+  const ftp = runFtp();
+  RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2)}));
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
+}
+const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
+function runInit(){
+  RUN = {steps: [], i: 0, left: 0, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null};
+  document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
+  $("runPlay").onclick = () => { RUN.paused = !RUN.paused; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
+  $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
+  $("runCv").onclick = e => { const r = e.target.getBoundingClientRect(); let x = (e.clientX - r.left) / r.width * RUN.total, a = 0; RUN.steps.some((s, k) => { a += s.dur; if(x <= a){ runJump(k); return true; } }); };
+  $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
+  $("runRef").onclick = () => runList(true);
+  $("runChips").onclick = e => { const b = e.target.closest("[data-s]"); if(b){ RUN.f = b.dataset.s; runRender(); } };
+  const pick = e => { const r = e.target.closest(".wr"); if(r) runPick(RUN.items[+r.dataset.k]); };
+  $("runRows").onclick = pick; $("runRows").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(e); } };
+  $("runFs").onclick = () => runFs();
+  $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload;
+  $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); };
+  $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); };
+  document.addEventListener("fullscreenchange", () => { if(RUN.fsApi && !document.fullscreenElement) runFs(false); }); // Échap natif
+  document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
+  $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
+  $("runSimB").onclick = () => { Object.values(RUN.dev).forEach(d => { try{ d.gatt && d.gatt.disconnect(); }catch(e){} }); RUN.dev = {}; RUN.cp = null; $("runErgL").hidden = true; RUN.live = {p: null, h: null, c: null}; RUN.sim = true; runBtUI(); };
+  window.addEventListener("resize", () => RUN && mode === "run" && runDraw());
+  runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI();
+}
+function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
+  const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
+  el.classList.toggle("rfs", on);
+  if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
+  if(!on){ RUN.fsApi = false; if(document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
+  const b = $("runFs"), l = t(on ? "runFsX" : "runFs"); b.title = l; b.setAttribute("aria-label", l); $("runFsP").setAttribute("d", on ? "M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" : "M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"); setTimeout(runDraw, 60);
+}
+// ---- ERG : contrôle du home trainer via le Fitness Machine Control Point FTMS (0x2AD9) : 0x00 prise de contrôle, 0x05 puissance cible (W), 0x07 démarrer/reprendre, 0x08 arrêt/pause, 0x01 reset
+function runCpSend(b){ const R = RUN; if(!R.cp) return; const u = new Uint8Array(b); R.cpq = (R.cpq || Promise.resolve()).then(() => R.cp.writeValueWithResponse ? R.cp.writeValueWithResponse(u) : R.cp.writeValue(u)).catch(e => console.warn("FTMS CP", e)); } // écritures GATT sérialisées
+function runErgTarget(w){ const R = RUN; if(!R.cp || !$("runErg").checked || R.paused) return; w = Math.max(0, Math.round(w)); if(R.sentW === w) return; R.sentW = w; runCpSend([0x05, w & 255, (w >> 8) & 255]); }
+function runErgPause(pause){ const R = RUN; if(!R.cp || !$("runErg").checked) return; R.sentW = null; runCpSend(pause ? [0x08, 0x02] : [0x07]); }
+// ---- enregistrement : une mesure par seconde, uniquement avec de vraies données Bluetooth (jamais la simulation)
+function runTcx(){
+  const R = RUN, pts = R.rec, iso8 = x => new Date(x).toISOString(), P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0;
+  const tp = pts.map(x => `<Trackpoint><Time>${iso8(x.t)}</Time>${x.h != null ? `<HeartRateBpm><Value>${Math.round(x.h)}</Value></HeartRateBpm>` : ""}${x.c != null ? `<Cadence>${Math.round(x.c)}</Cadence>` : ""}${x.p != null ? `<Extensions><ns3:TPX><ns3:Watts>${Math.round(x.p)}</ns3:Watts></ns3:TPX></Extensions>` : ""}</Trackpoint>`).join("");
+  const tot = Math.round((pts[pts.length - 1].t - pts[0].t) / 1000), kj = Math.round(P.reduce((x, y) => x + y, 0) / 1000);
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Activities><Activity Sport="Biking"><Id>${iso8(pts[0].t)}</Id><Lap StartTime="${iso8(pts[0].t)}"><TotalTimeSeconds>${tot}</TotalTimeSeconds><DistanceMeters>0</DistanceMeters><Calories>${kj}</Calories>${H.length ? `<AverageHeartRateBpm><Value>${av(H)}</Value></AverageHeartRateBpm><MaximumHeartRateBpm><Value>${Math.round(Math.max(...H))}</Value></MaximumHeartRateBpm>` : ""}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod><Track>${tp}</Track></Lap><Notes>${esc((R.cur && R.cur.name) || "FlameCadence")}</Notes></Activity></Activities></TrainingCenterDatabase>`;
+}
+function runFinish(){
+  const R = RUN; R.paused = true; runErgPause(true); runUI();
+  const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false;
+  const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
+  if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
+  const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
+  $("runEndS").textContent = t("runSum", fmtDur((pts[pts.length - 1].t - pts[0].t) / 1000), av(P), av(H), Math.round(P.reduce((x, y) => x + y, 0) / 1000));
+}
+async function runUpload(){
+  const R = RUN, b = $("runUp"), m = $("runEndM"); b.disabled = true; m.textContent = "…";
+  try{
+    const fd = new FormData(); fd.append("file", new File([runTcx()], "flamecadence.tcx", {type: "application/vnd.garmin.tcx+xml"}));
+    let r = await icuFetch(icuUrl("/activities"), {method: "POST", body: fd}); r = Array.isArray(r) ? r[0] : r; const id = r && r.id;
+    if(id){ try{ // nom de la séance, type home trainer et rattachement à la séance planifiée (au mieux : l'envoi, lui, est réussi)
+      const body = {name: R.cur.name, type: "VirtualRide", trainer: true}, ev = /^cal:(\d+)$/.exec(R.cur.id); if(ev) body.paired_event_id = +ev[1];
+      await fetch("https://intervals.icu/api/v1/activity/" + encodeURIComponent(id), {method: "PUT", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
+    }catch(e){ console.warn(e); } }
+    m.innerHTML = esc(t("runUpOk")) + (id ? ` · <a href="https://intervals.icu/activities/${encodeURIComponent(id)}" target="_blank" rel="noopener">intervals.icu ↗</a>` : "");
+    R.at = 0; if(typeof loadCal === "function") loadCal(true).catch(() => {});
+  }catch(e){ b.disabled = false; m.textContent = t("errI", errText(e)); }
+}
+function runDownload(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([runTcx()], {type: "application/vnd.garmin.tcx+xml"})); a.download = "flamecadence-" + iso(new Date()) + ".tcx"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
+function runOn(on){
+  if(on && !RUN) runInit();
+  if(!RUN) return;
+  if(on){ runList(false); if(!RUN.tm){ RUN.tm = setInterval(runTick, 1000); runUI(); } }
+  if(!on) runFs(false);
+  if(!on && RUN.tm){ clearInterval(RUN.tm); RUN.tm = 0; if(!RUN.paused) runErgPause(true); RUN.paused = true; runUI(); }
+}
+function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; RUN.left = RUN.steps[k].dur; RUN.nudge = 0; RUN.el = RUN.steps.slice(0, k).reduce((a, s) => a + s.dur, 0); runUI(); }
+function runTick(){
+  const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
+  if(!RUN.paused){
+    if(RUN.left > 0){ RUN.left--; RUN.el++; }
+    else if(RUN.i < RUN.steps.length - 1) runJump(RUN.i + 1);
+    else { $("msg").textContent = t("runDone"); runFinish(); }
+  }
+  // télémétrie : valeurs réelles Bluetooth si présentes, sinon simulation
+  const L = RUN.live, sim = RUN.sim;
+  RUN.ap = L.p != null ? L.p : (RUN.paused ? 0 : RUN.ap + (tgt - RUN.ap) * .35 + (Math.random() * 6 - 3));
+  RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
+  RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
+  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c}); // seulement de vraies données
+  runUI();
+}
+function runUI(){
+  if(!RUN || !RUN.steps.length) return;
+  const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
+  $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
+  $("runBar").style.setProperty("--rzc", runZC(st.z));
+  $("runTimer").textContent = runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = runFmt(RUN.total);
+  runErgTarget(tgt); $("runTP").textContent = tgt; $("runPct").textContent = Math.round(tgt / ftp * 100) + "% FTP" + (RUN.nudge ? " (" + (RUN.nudge > 0 ? "+" : "") + RUN.nudge + " W)" : "") + (st.pw !== st.pw2 ? " ↗" : "");
+  $("runAP").textContent = ap; $("runZone").textContent = "Z" + st.z;
+  const vb = $("runVar"), ok = Math.abs(d) <= 10; vb.textContent = t(ok ? "runOn" : d > 0 ? "runHi" : "runLo"); vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
+  $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad;
+  $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
+  runDraw();
+}
+function runDraw(){
+  const c = $("runCv"); if(!c || !RUN || !RUN.steps.length) return; const r = c.getBoundingClientRect(); if(!r.width) return;
+  c.width = r.width; c.height = r.height; const g = c.getContext("2d"), cs = getComputedStyle(document.documentElement), dim = cs.getPropertyValue("--line").trim() || "#8884", ink = cs.getPropertyValue("--ink").trim() || "#000", H = c.height;
+  const mx = Math.max(...RUN.steps.map(s => Math.max(s.pw, s.pw2))) * 1.15 + Math.max(0, RUN.nudge); let x = 0;
+  RUN.steps.forEach((s, k) => {
+    const w = s.dur / RUN.total * c.width, n = k === RUN.i ? RUN.nudge : 0, h1 = (s.pw + n) / mx * H, h2 = (s.pw2 + n) / mx * H;
+    g.beginPath(); g.moveTo(x, H); g.lineTo(x, H - h1); g.lineTo(x + w - 1, H - h2); g.lineTo(x + w - 1, H); g.closePath();
+    g.fillStyle = k === RUN.i ? runZC(s.z) : dim; g.fill(); if(k === RUN.i){ g.strokeStyle = ink; g.lineWidth = 2; g.stroke(); } x += w;
+  });
+  const cx = RUN.el / RUN.total * c.width; g.fillStyle = ink; g.fillRect(cx - 1.5, 0, 3, H);
+}
+// ---- Bluetooth (Web Bluetooth) : ceinture FC = service 0x180D ; home trainer = FTMS 0x1826 (Indoor Bike Data 0x2AD2) ----
+function runBtUI(){
+  const n = Object.values(RUN.dev).map(d => d.name || "BLE").join(" + ");
+  $("runDot").classList.toggle("on", RUN.sim || !!n); $("runBtTxt").textContent = RUN.sim ? t("runSim") : n; $("runSimB").hidden = RUN.sim;
+  const m = $("runBtMsg"); m.hidden = !!navigator.bluetooth; if(!navigator.bluetooth) m.textContent = t("runNoBT");
+}
+async function runPair(kind){
+  if(!navigator.bluetooth){ runBtUI(); return; }
+  try{
+    const dev = await navigator.bluetooth.requestDevice({filters: [{services: [kind === "hr" ? "heart_rate" : "fitness_machine"]}]});
+    const srv = await dev.gatt.connect();
+    if(kind === "hr"){
+      const ch = await (await srv.getPrimaryService("heart_rate")).getCharacteristic("heart_rate_measurement");
+      ch.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; RUN.live.h = (v.getUint8(0) & 1) ? v.getUint16(1, true) : v.getUint8(1); });
+      await ch.startNotifications();
+    }else{
+      const svc = await srv.getPrimaryService("fitness_machine"), ch = await svc.getCharacteristic(0x2AD2);
+      ch.addEventListener("characteristicvaluechanged", e => { // flags (16 bits) puis champs dans l'ordre de la spec FTMS
+        const v = e.target.value, f = v.getUint16(0, true); let o = 2;
+        if(!(f & 1)) o += 2; if(f & 2) o += 2;
+        if(f & 4){ RUN.live.c = v.getUint16(o, true) / 2; o += 2; } if(f & 8) o += 2;
+        if(f & 16) o += 3; if(f & 32) o += 2;
+        if(f & 64){ RUN.live.p = v.getInt16(o, true); }
+      });
+      await ch.startNotifications();
+      try{ // ERG : point de contrôle FTMS (facultatif : certains trainers n'en ont pas)
+        const cp = await svc.getCharacteristic(0x2AD9);
+        cp.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; if(v.getUint8(0) === 0x80 && v.getUint8(1) === 0x00 && v.getUint8(2) !== 1){ RUN.cp = null; $("runErgL").hidden = true; $("runBtMsg").hidden = false; $("runBtMsg").textContent = t("runErgNo"); } });
+        await cp.startNotifications(); RUN.cp = cp; RUN.cpq = null; RUN.sentW = null; $("runErgL").hidden = false; runCpSend([0x00]); if(!RUN.paused){ runCpSend([0x07]); }
+      }catch(e){ console.warn("ERG indisponible", e); }
+    }
+    RUN.dev[kind] = dev; RUN.sim = false; dev.addEventListener("gattserverdisconnected", () => { delete RUN.dev[kind]; if(kind !== "hr"){ RUN.cp = null; $("runErgL").hidden = true; } RUN.live[kind === "hr" ? "h" : "p"] = null; if(kind !== "hr") RUN.live.c = null; if(!Object.keys(RUN.dev).length) RUN.sim = true; runBtUI(); });
+    runBtUI();
+  }catch(err){ console.warn("BLE:", err); }
+}
+
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan"], ana: ["ses", "cmp"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : "gen";
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan"], ana: ["ses", "cmp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
+const betaRunOn = () => store.get("si_beta_run") === "1";
+if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
+function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
+  const on = betaRunOn(), b = document.querySelector('#grp [data-g="run"]'); b.hidden = !on; b.style.display = on ? "" : "none";
+  if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
+}
+$("betaRun").checked = betaRunOn(); $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
+applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
 function applyMode(){
   if(mode !== "plan" && typeof PLAN !== "undefined" && PLAN.edit){ planEdEnd(); } // quitter le plan met fin à la modification d'une de ses séances
@@ -6014,6 +6303,7 @@ function applyMode(){
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="ses"]').hidden = mode !== "ses"; if(mode === "ses") sesInit();
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
+  document.querySelector('[data-block="run"]').hidden = mode !== "run"; if(typeof runOn === "function") runOn(mode === "run"); // le lecteur ne tourne que sur son onglet
   if(mode === "plan" && applyMode._prev !== "plan") planSyncDays();
   applyMode._prev = mode;
   { const g = curGrp(); store.set("si_g_" + g, mode); // groupe « Générer » / « Analyser » : seuls ses onglets sont affichés
