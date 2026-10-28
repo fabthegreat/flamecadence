@@ -581,8 +581,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 #cmpinfo b{font-weight:600}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;}catch(e){}</script>
-<script>/* PostHog : mesure des connexions (visites). Clé de projet saisie dans les Réglages ; sans clé valide, rien n'est envoyé. */
-(function(){var KEY="",HOST="https://eu.i.posthog.com";try{KEY=(localStorage.getItem("si_phkey")||"").trim();if(localStorage.getItem("si_phreg")==="us")HOST="https://us.i.posthog.com";}catch(e){} // clé et région : Réglages
+<script>/* PostHog : mesure des connexions (visites). Renseigne la clé de projet (phc_…) ci-dessous ; sans clé valide, rien n'est envoyé. */
+(function(){var KEY="phc_REPLACE_WITH_YOUR_PROJECT_KEY",HOST="https://eu.i.posthog.com"; // à renseigner ici ; région US : https://us.i.posthog.com
 if(!/^phc_/.test(KEY)||/REPLACE/.test(KEY))return;
 !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags on onFeatureFlags onSessionId reset get_distinct_id alias set_config opt_in_capturing opt_out_capturing has_opted_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
 posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:false,disable_session_recording:true,capture_pageview:true,capture_pageleave:true});
@@ -626,6 +626,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" role="tab" data-cfg="user" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></button>
 <button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
 <button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
+<button type="button" role="tab" data-cfg="beta" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></button>
 </div>
 <div class="cfg-sec" data-cfgp="ai">
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
@@ -702,11 +703,11 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
 <div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
 <div class="hint" data-i="fontHint"></div>
-<label style="margin-top:16px"><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label>
+</div>
+<div class="cfg-sec" data-cfgp="beta" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
+<label><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label>
 <div class="hint" data-i="betaRunHint"></div>
-<label for="phkey" style="margin-top:16px" data-i="phLbl"></label>
-<div style="display:flex;gap:6px"><input id="phkey" type="text" autocomplete="off" spellcheck="false" placeholder="phc_…" style="flex:1;min-width:0"><select id="phreg" aria-label="PostHog region" style="width:auto"><option value="eu">EU</option><option value="us">US</option></select></div>
-<div class="hint" data-i="phHint"></div>
 </div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
@@ -1201,7 +1202,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
-secLook:["Appearance","Apparence"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
+secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
@@ -1427,7 +1428,7 @@ cmpInfoG:["{0} sessions · average {1} · latest moving average {2}","{0} séanc
 cmpSkip:["{0} skipped (steady ride)","{0} ignorées (sortie régulière)"], cmpCached:["{0} from cache","{0} depuis le cache"], cacheClr:["Clear stream cache","Vider le cache des flux"], cacheCleared:["Stream cache cleared.","Cache des flux vidé."],
 lCast:["Click to open this session in the analysis","Cliquer pour ouvrir cette séance dans l'analyse"],
 cmpNoHr:["No heart rate data in the selected sessions.","Aucune donnée de fréquence cardiaque dans les séances sélectionnées."],
-phLbl:["PostHog analytics key (optional)","Clé PostHog pour les statistiques (facultatif)"], phHint:["Your PostHog project API key (starts with phc_) and its region. Counts visits only, no session recording. Leave empty to disable. Reload the page to apply.","Clé API de ton projet PostHog (commence par phc_) et sa région. Compte uniquement les visites, sans enregistrement de session. Laisse vide pour désactiver. Recharge la page pour appliquer."], cmpProg:["Progression analysis","Analyse de progression"], cmpProgSys:["Not enough sessions to analyse a progression (select at least 3).","Pas assez de séances pour analyser une progression (en sélectionner au moins 3)."], efTot:["Total duration (min)","Durée totale (min)"], efBtn:["Fill with warm-up / cool-down","Compléter avec échauffement / retour au calme"], efErr:["The session is already as long as the target, or longer.","La séance atteint déjà la durée visée, ou la dépasse."], efOk:["Warm-up {0} min and cool-down {1} min added.","Échauffement de {0} min et retour au calme de {1} min ajoutés."], cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
+cmpProg:["Progression analysis","Analyse de progression"], cmpProgSys:["Not enough sessions to analyse a progression (select at least 3).","Pas assez de séances pour analyser une progression (en sélectionner au moins 3)."], efTot:["Total duration (min)","Durée totale (min)"], efBtn:["Fill with warm-up / cool-down","Compléter avec échauffement / retour au calme"], efErr:["The session is already as long as the target, or longer.","La séance atteint déjà la durée visée, ou la dépasse."], efOk:["Warm-up {0} min and cool-down {1} min added.","Échauffement de {0} min et retour au calme de {1} min ajoutés."], cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
 cmpPlace:["Location","Lieu"], cmpPAny:["Indoor & outdoor","Intérieur et extérieur"],
 cmpPanL:["Move left","Décaler vers la gauche"], cmpPanR:["Move right","Décaler vers la droite"], cmpZin:["Zoom in","Zoom avant"], cmpZout:["Zoom out","Zoom arrière"],
 cmpNameQ:["Name contains","Le nom contient"], cmpNameQPh:["E.g. VO2max (optional)","Ex. : VO2max (optionnel)"],
@@ -6461,8 +6462,6 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   const on = betaRunOn(), b = document.querySelector('#grp [data-g="run"]'); b.hidden = !on; b.style.display = on ? "" : "none";
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
-$("phkey").value = store.get("si_phkey"); $("phreg").value = store.get("si_phreg") === "us" ? "us" : "eu";
-$("phkey").onchange = e => store.set("si_phkey", e.target.value.trim()); $("phreg").onchange = e => store.set("si_phreg", e.target.value);
 $("betaRun").checked = betaRunOn(); $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
 applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
