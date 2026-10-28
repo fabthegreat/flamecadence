@@ -477,9 +477,9 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
-.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn er" "dv dv dv"}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn er"}
 .run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}.run.rfs #runErgL{grid-area:er}.run.rfs #runFsDev{grid-area:dv}
-.run #runFsDev{display:none}.run.rfs #runFsDev{display:block;font-size:.8rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.run #runFsDev{display:none}.run.rfs #runFsDev,.run.rfs #runErgL{display:none!important}.run.rfs #runFsDev{font-size:.8rem;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .run.rfs .phead #runPlay,.run.rfs .phead #runFin{margin:0;width:auto;padding:7px 12px}
 @media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1.2fr) auto auto auto minmax(0,1fr) auto;grid-template-areas:"nm pl fn er dv ex"}}
 .run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
