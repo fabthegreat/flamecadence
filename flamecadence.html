@@ -422,7 +422,9 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cal-ev.done .cal-x{display:none}
 .cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
-.cal-x:hover{opacity:1}
+.cal-x:hover{opacity:1}.cal-max .cal-x{display:none}
+.cal-ev{flex-wrap:wrap}.cal-np{flex:0 0 100%;font-size:.6rem;line-height:1.1;font-weight:600;opacity:.9;pointer-events:none;letter-spacing:.2px}
+.cal-ev[data-if="1"]{box-shadow:inset 3px 0 0 #22c55e}.cal-ev[data-if="2"]{box-shadow:inset 3px 0 0 #eab308}.cal-ev[data-if="3"]{box-shadow:inset 3px 0 0 #f97316}.cal-ev[data-if="4"]{box-shadow:inset 3px 0 0 #ef4444}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
@@ -579,6 +581,12 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 #cmpinfo b{font-weight:600}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;}catch(e){}</script>
+<script>/* PostHog : mesure des connexions (visites). Clé de projet saisie dans les Réglages ; sans clé valide, rien n'est envoyé. */
+(function(){var KEY="",HOST="https://eu.i.posthog.com";try{KEY=(localStorage.getItem("si_phkey")||"").trim();if(localStorage.getItem("si_phreg")==="us")HOST="https://us.i.posthog.com";}catch(e){} // clé et région : Réglages
+if(!/^phc_/.test(KEY)||/REPLACE/.test(KEY))return;
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags on onFeatureFlags onSessionId reset get_distinct_id alias set_config opt_in_capturing opt_out_capturing has_opted_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:false,disable_session_recording:true,capture_pageview:true,capture_pageleave:true});
+})();</script>
 </head>
 <body>
 <main>
@@ -696,6 +704,9 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div class="hint" data-i="fontHint"></div>
 <label style="margin-top:16px"><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label>
 <div class="hint" data-i="betaRunHint"></div>
+<label for="phkey" style="margin-top:16px" data-i="phLbl"></label>
+<div style="display:flex;gap:6px"><input id="phkey" type="text" autocomplete="off" spellcheck="false" placeholder="phc_…" style="flex:1;min-width:0"><select id="phreg" aria-label="PostHog region" style="width:auto"><option value="eu">EU</option><option value="us">US</option></select></div>
+<div class="hint" data-i="phHint"></div>
 </div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
@@ -797,6 +808,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <button class="alt small danger" id="edreset" type="button" data-i="edReset"></button>
 </div>
 <div class="hint" id="edsum"></div>
+<div class="actions" id="edfill" style="align-items:center;margin:6px 0"><label for="edfilt" data-i="efTot" style="margin:0"></label><input id="edfilt" type="number" min="10" max="720" step="5" value="90" style="width:84px;margin:0"><button class="alt small" id="edfillb" type="button" data-i="efBtn"></button></div>
 <button id="edgo" type="button" data-i="edGo"></button>
 </section>
 
@@ -906,7 +918,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button></div>
 <div class="ses-pick">
 <div class="ses-lbl" data-i="sesPick"></div>
-<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button></div>
+<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button><button class="alt small" id="sesToday" type="button" data-i="today"></button></div>
 <div id="sesCal"></div>
 </div>
 <select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
@@ -935,7 +947,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div style="margin-top:12px"><label for="cmpper" data-i="actW"></label><select id="cmpper" data-ia="aria-label:actW"><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
 <div style="margin-top:12px"><label for="cmpq" data-i="cmpQ"></label><input id="cmpq" data-ia="placeholder:cmpPh"></div>
 <p class="hint" data-i="cmpFmt"></p>
-<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
+<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpprog" class="alt small aibtn" type="button" data-i="cmpProg" hidden></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
 <div class="hint" id="cmpstat" role="status"></div>
 <div id="cmpbox"></div>
 
@@ -1034,6 +1046,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
 <span id="calmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
 <button class="alt small icon" id="calnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+<button class="alt small" id="caltoday" type="button" data-i="today"></button>
 <button class="alt small icon" id="rcal" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
 <button class="alt small icon" id="calmax" type="button" aria-pressed="false" data-ia="title:calMax;aria-label:calMax"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
 <a class="alt small icon ext" id="lkCal" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
@@ -1414,7 +1427,7 @@ cmpInfoG:["{0} sessions · average {1} · latest moving average {2}","{0} séanc
 cmpSkip:["{0} skipped (steady ride)","{0} ignorées (sortie régulière)"], cmpCached:["{0} from cache","{0} depuis le cache"], cacheClr:["Clear stream cache","Vider le cache des flux"], cacheCleared:["Stream cache cleared.","Cache des flux vidé."],
 lCast:["Click to open this session in the analysis","Cliquer pour ouvrir cette séance dans l'analyse"],
 cmpNoHr:["No heart rate data in the selected sessions.","Aucune donnée de fréquence cardiaque dans les séances sélectionnées."],
-cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
+phLbl:["PostHog analytics key (optional)","Clé PostHog pour les statistiques (facultatif)"], phHint:["Your PostHog project API key (starts with phc_) and its region. Counts visits only, no session recording. Leave empty to disable. Reload the page to apply.","Clé API de ton projet PostHog (commence par phc_) et sa région. Compte uniquement les visites, sans enregistrement de session. Laisse vide pour désactiver. Recharge la page pour appliquer."], cmpProg:["Progression analysis","Analyse de progression"], cmpProgSys:["Not enough sessions to analyse a progression (select at least 3).","Pas assez de séances pour analyser une progression (en sélectionner au moins 3)."], efTot:["Total duration (min)","Durée totale (min)"], efBtn:["Fill with warm-up / cool-down","Compléter avec échauffement / retour au calme"], efErr:["The session is already as long as the target, or longer.","La séance atteint déjà la durée visée, ou la dépasse."], efOk:["Warm-up {0} min and cool-down {1} min added.","Échauffement de {0} min et retour au calme de {1} min ajoutés."], cmpCols:["Date|Session|In/Out|Reps|Work|Rest|Power (W)|% FTP|\u0394 power|HR avg|HR max|Cad (rpm)|W/HR|Match","Date|S\u00e9ance|Int/Ext|Reps|Effort|R\u00e9cup|Puissance (W)|% FTP|\u0394 puiss.|FC moy|FC max|Cad (rpm)|W/FC|Match"],
 cmpPlace:["Location","Lieu"], cmpPAny:["Indoor & outdoor","Intérieur et extérieur"],
 cmpPanL:["Move left","Décaler vers la gauche"], cmpPanR:["Move right","Décaler vers la droite"], cmpZin:["Zoom in","Zoom avant"], cmpZout:["Zoom out","Zoom arrière"],
 cmpNameQ:["Name contains","Le nom contient"], cmpNameQPh:["E.g. VO2max (optional)","Ex. : VO2max (optionnel)"],
@@ -3627,8 +3640,11 @@ $("send").onclick = async () => {
     if(!r.ok) throw new Error("HTTP " + r.status + " " + (await r.text()).slice(0, 200));
     const ev = await r.json().catch(() => ({}));
     loadCal(true).catch(() => {});
-    if(ed){ CALEDIT = null; EDSAVED = edText(); calEdUI(); say("calEdSaved", "ok"); }
-    else say("sentOk", "ok", $("date").value);
+    const sentDay = $("date").value;
+    if(ed){ CALEDIT = null; EDSAVED = edText(); calEdUI(); }
+    // l'envoi est validé : l'aperçu est vidé et retiré
+    $("name").value = ""; $("desc").value = ""; selLine = null; EXPL = null; UNDO = null; $("undoBtn").hidden = true; $("prev").hidden = true; setSrcAct(null); if(!PLAN.edit) renderChart();
+    if(ed) say("calEdSaved", "ok"); else say("sentOk", "ok", sentDay);
   }catch(e){ say("errI", "err", errText(e)); }
   $("send").disabled = false;
 };
@@ -4535,7 +4551,28 @@ function cmpBin(arr, a, b, N, z){
 const cmpIndoor = a => a.trainer === true || a.type === "VirtualRide" || /virtual|trainer|indoor|zwift/i.test(a.sub_type || "");
 const cmpNorm = x => String(x || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const cmpNameOk = h => { const n = cmpNorm(h.a.name || h.a.type); return cmpNorm($("cmpname").value).split(/\s+/).filter(Boolean).every(w => n.includes(w)); };
+const SYSTEM_PROGRESS = "You are an experienced cycling coach. You receive a chronological table of comparable interval sessions done by the same athlete (date, indoor/outdoor, reps, work and rest durations, average power during the work intervals, % of FTP, power drop from first to last rep, heart rate, cadence, power-to-HR ratio, match quality). Judge whether the athlete is progressing on this type of session: look at power at equal effort, heart rate for the same power, fade across reps, consistency, and flag when indoor and outdoor sessions are mixed or the sessions are not really comparable. Be honest: say 'no clear trend' if the data does not show one. Address the athlete as 'you'. Use exactly this markdown: \n## Verdict\n(1-2 sentences)\n## Evidence\n(3-4 bullets with concrete numbers and dates)\n## Caveats\n(1-2 bullets)\n## Next step\n(1-2 concrete suggestions). Put the final answer only inside <answer></answer>.";
+function cmpRows(){ // lignes du tableau, ordre chronologique : sélection, sinon tout ce qui correspond au filtre
+  const hm_ = h => { let m = 0; if(h.s.hr) for(const g of h.win) for(let i = g.start; i <= g.end && i < h.s.hr.length; i++) if(h.s.hr[i] > m) m = h.s.hr[i]; return m; };
+  let H = CMP.hits.filter(cmpNameOk); const S = H.filter(h => CMP.sel.has(h.a.id)); if(S.length) H = S;
+  return H.slice().sort((x, y) => (x.a.start_date_local || "") < (y.a.start_date_local || "") ? -1 : 1).slice(-40).map(h => { const hr = h.s.hr ? winMean(h, "hr") : 0, r = Math.round;
+    return [(h.a.start_date_local || "").slice(0, 10), h.a.name || h.a.type || "", cmpIndoor(h.a) ? "indoor" : "outdoor", r(h.cnt), cmpSec(h.mw), h.mr ? cmpSec(h.mr) : "", r(h.avgP) + " W", h.pct ? r(h.pct) + "%" : "", (h.drop >= 0 ? "+" : "") + r(h.drop) + "%", hr ? r(hr) : "", h.s.hr ? r(hm_(h)) : "", h.s.cad ? r(winMean(h, "cad")) : "", hr ? (h.avgP / hr).toFixed(2) : "", h.q ? r(h.q) + "%" : ""].join(" | "); });
+}
+async function cmpProgress(){
+  const rows = cmpRows(), b = $("cmpprog");
+  if(rows.length < 3) return say("cmpProgSys", "err");
+  b.disabled = true; say(null); progStart("analyzing");
+  try{
+    const user = "COMPARABLE SESSIONS (oldest first)\n" + t("cmpCols").split("|").join(" | ") + "\n" + rows.join("\n") + (ICU.ftpIn || ICU.ftpOut ? "\n\nAthlete FTP: indoor " + (ICU.ftpIn || "?") + " W, outdoor " + (ICU.ftpOut || "?") + " W" : "") +
+      `\n\nWrite the analysis in ${lang === "fr" ? "French" : "English"}, in the required format, with the final answer only inside <answer></answer>.`;
+    const txt = aiAnswer(await aiComplete(SYSTEM_PROGRESS, user));
+    $("aiBody").innerHTML = mdLite(txt || t("badResp")); $("aiDlg").showModal();
+  }catch(e){ say($("prov").value === "hf" ? "errH" : $("prov").value === "oa" ? "errA" : "errG", "err", errText(e)); $("cfg").showModal(); }
+  progEnd(); b.disabled = false;
+}
+$("cmpprog").onclick = cmpProgress;
 function cmpTable(){
+  $("cmpprog").hidden = !CMP.hits.length;
   const box = $("cmptable");
   $("cmpname").style.display = CMP.hits.length ? "" : "none";
   if(!CMP.hits.length){ box.innerHTML = ""; return; }
@@ -4807,6 +4844,20 @@ function calMiniLoad(box){
   const io = CAL.io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ io.unobserve(en.target); fill(en.target); } }), {rootMargin: "300px"});
   els.forEach(el => io.observe(el));
 }
+function calNP(e, isAct){ // NP (W) + niveau d'intensité 1-4 pour la vignette ; null si indisponible
+  try{
+    let np = 0, iff = 0;
+    if(isAct){ np = e.icu_weighted_avg_watts || 0; iff = e.icu_intensity > 5 ? e.icu_intensity / 100 : (e.icu_intensity || 0); }
+    else{
+      const sp = e.type || "Ride", ftp = ftpFor(sp); if(!/Ride/.test(sp) || !(ftp > 0)) return null;
+      const st = plannedSteps(e, ftp); if(!st.length || (st.length === 1 && st[0].est)) return null;
+      const k = stepsStats(st); if(!k) return null; np = k.npPct * ftp / 100; iff = k.iff;
+    }
+    if(!(np > 0)) return null;
+    return {np: Math.round(np), lv: !iff ? 0 : iff < 0.75 ? 1 : iff < 0.9 ? 2 : iff < 1 ? 3 : 4};
+  }catch(_){ return null; }
+}
+const calNpHtml = (x) => x ? `<span class="cal-np">NP ${x.np} W</span>` : "";
 function calHtml(off, evList, pick, selDate, actList, big){
   const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date());
   const blank = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
@@ -4822,8 +4873,8 @@ function calHtml(off, evList, pick, selDate, actList, big){
     const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort(byStart), acts = (byA[k] || []).slice().sort(byStart);
     n += evs.length + acts.length;
     html += `<div class="cal-d${k === today ? " today" : ""}${pick && k === selDate ? " sel" : ""}" data-date="${k}"><span class="cal-n">${d}${big ? `<span class="cal-wd"> · ${esc(new Date(y, m, d).toLocaleDateString(loc(), {weekday: "short"}))}</span>` : ""}</span>` +
-      evs.map(e => `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button>${big ? calBigExtra(e, false) : ""}</div>`).join("") +
-      acts.map(a => `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}"${/Ride/.test(a.type || "") ? " data-bike" : ""} data-eid="a${esc(String(a.id))}" title="${esc(a.name || a.type || "")}"><span class="cal-ev-t">${esc(a.name || a.type || "—")}</span>${big ? calBigExtra(a, true) : ""}</div>`).join("") + `</div>`;
+      evs.map(e => { const np = calNP(e, false); return `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}"${np && np.lv ? ` data-if="${np.lv}"` : ""} title="${esc(e.name || "")}">${calNpHtml(np)}<span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button>${big ? calBigExtra(e, false) : ""}</div>`; }).join("") +
+      acts.map(a => { const np = calNP(a, true); return `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}"${/Ride/.test(a.type || "") ? " data-bike" : ""} data-eid="a${esc(String(a.id))}"${np && np.lv ? ` data-if="${np.lv}"` : ""} title="${esc(a.name || a.type || "")}">${calNpHtml(np)}<span class="cal-ev-t">${esc(a.name || a.type || "—")}</span>${big ? calBigExtra(a, true) : ""}</div>`; }).join("") + `</div>`;
   }
   return {html: html + `</div>`, n};
 }
@@ -5068,6 +5119,7 @@ function renderCalSum(){
 $("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
 $("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
 $("rcal").onclick = () => loadCal(true).catch(() => {});
+$("caltoday").onclick = () => { CAL.m = 0; loadCal().catch(() => {}); if(CAL.big) setTimeout(() => { const td = document.querySelector("#calbox .cal-d.today"); if(td) td.scrollIntoView({block: "center", behavior: "smooth"}); }, 80); };
 const CAL_ICON = {
   max: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
   min: '<path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/>'
@@ -5660,9 +5712,13 @@ function calEdUI(){
 async function calEdit(ev){
   const ty = ev.type || "Ride";
   if(ty !== "Ride" && ty !== "VirtualRide") return say("calEdSport", "err");
-  const {list, skipped, ramps} = edFromText(stripBrand(ev.description, ev.name), ty);
-  if(!list.some(x => x.k === "s" || x.k === "g")) return say("calEdEmpty", "err");
-  if(ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))) return; // du travail non enregistré dans l'éditeur
+  const dsc = stripBrand(ev.description, ev.name), oldUnit = $("unit").value, hasW = /\d\s*w\b/i.test(dsc), hasP = /\d\s*%/.test(dsc);
+  const wantU = hasW && !hasP ? "w" : hasP && !hasW ? "pct" : ""; // séance créée en watts absolus → éditeur en watts (et inversement)
+  const setU = u => { if(u && $("unit").value !== u){ $("unit").value = u; $("unit").dispatchEvent(new Event("change")); } };
+  setU(wantU);
+  const {list, skipped, ramps} = edFromText(dsc, ty);
+  if(!list.some(x => x.k === "s" || x.k === "g")){ setU(oldUnit); return say("calEdEmpty", "err"); }
+  if(ED.length && edText() !== EDSAVED && !(await ask("calEdCfm"))){ setU(oldUnit); return; } // du travail non enregistré dans l'éditeur
   ED.length = 0; list.forEach(x => ED.push(x)); edCollapsed.clear();
   CALEDIT = {ev};
   if(CAL.big) setCalMax(false);
@@ -5674,6 +5730,22 @@ async function calEdit(ev){
   if(ramps) say("calEdRamp", "info"); else if(skipped) say("calEdSkip", "info", skipped); else say("calEdLoaded", "ok");
 }
 $("caledx").onclick = () => { CALEDIT = null; calEdUI(); };
+// Complète le corps de séance avec échauffement (60 %) + retour au calme (40 %) pour atteindre la durée totale visée ; remplace les échauffements / retours existants
+function edFill(){
+  const sec = x => { if(x.k === "g") return (parseInt(x.r, 10) || 1) * x.items.reduce((a, y) => a + sec(y), 0); if(x.k !== "s" || x.mode === "d") return 0; const [m, c] = String(x.v).split(":"); return (parseInt(m, 10) || 0) * 60 + (parseInt(c, 10) || 0); };
+  const core = ED.filter(x => !(x.k === "s" && (x.ty === "warm" || x.ty === "cool")) && x.k !== "b"), cs = core.reduce((a, x) => a + sec(x), 0), fill = (parseFloat($("edfilt").value) || 0) * 60 - cs;
+  if(fill < 120) return say("efErr", "err");
+  const wTot = Math.round(fill * 0.6 / 60) * 60, cTot = Math.round(fill / 60) * 60 - wTot;
+  const iv = p => edW() && curFtp() > 0 ? String(Math.round(p * curFtp() / 100)) : String(p), mmss = n => Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0");
+  const mk = (ty, n, p) => ({k: "s", ty, mode: "t", v: mmss(n), i: iv(p), n: "", m: "p", uid: ++edUid});
+  const split = (tot, parts) => { let rest = tot; return parts.map(([f, p], k) => { const n = k === parts.length - 1 ? rest : Math.round(tot * f / 60) * 60; rest -= n; return [n, p]; }).filter(x => x[0] > 0); };
+  const warm = (wTot >= 480 ? split(wTot, [[0.5, 50], [0.3, 60], [0.2, 70]]) : wTot > 0 ? [[wTot, 55]] : []).map(([n, p]) => mk("warm", n, p));
+  const cool = (cTot >= 480 ? split(cTot, [[0.4, 60], [0.6, 50]]) : cTot > 0 ? [[cTot, 50]] : []).map(([n, p]) => mk("cool", n, p));
+  const keep = ED.filter(x => !(x.k === "s" && (x.ty === "warm" || x.ty === "cool")));
+  ED.length = 0; [...warm, ...keep, ...cool].forEach(x => ED.push(x));
+  edRender(); say("efOk", "ok", Math.round(wTot / 60), Math.round(cTot / 60));
+}
+$("edfillb").onclick = edFill;
 // clic sur une séance planifiée du calendrier : ouverture dans l'éditeur manuel
 $("calbox").addEventListener("click", e => {
   if(e.target.closest(".cal-x")) return;
@@ -6390,6 +6462,8 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   const on = betaRunOn(), b = document.querySelector('#grp [data-g="run"]'); b.hidden = !on; b.style.display = on ? "" : "none";
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
+$("phkey").value = store.get("si_phkey"); $("phreg").value = store.get("si_phreg") === "us" ? "us" : "eu";
+$("phkey").onchange = e => store.set("si_phkey", e.target.value.trim()); $("phreg").onchange = e => store.set("si_phreg", e.target.value);
 $("betaRun").checked = betaRunOn(); $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
 applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
@@ -6754,8 +6828,10 @@ async function sesOpenAct(a){
   SES.m = new Date(d.getFullYear(), d.getMonth(), 1); // défini avant applyMode : sesInit() ne recharge alors pas le mois courant
   store.set("si_sesid", String(a.id));
   mode = "ses"; store.set("si_mode", mode); applyMode();
-  document.querySelector('[data-block="ses"]').scrollIntoView({behavior: "smooth", block: "start"});
+  const toBox = () => { const l = document.querySelector('[data-block="ses"] .ses-lbl2'); if(l) l.scrollIntoView({behavior: "smooth", block: "start"}); };
+  toBox();
   await sesMonth(true);
+  toBox(); setTimeout(toBox, 400); // le détail de la séance est ciblé, pas le calendrier
 }
 // lien « Reconstruire cette séance » de l'analyse : reconstruction dans l'aperçu (onglet « Depuis une activité »)
 $("sesBox").addEventListener("click", async e => {
@@ -6766,6 +6842,7 @@ $("sesBox").addEventListener("click", async e => {
   buildFromAct(a, {disabled: false});
 });
 $("sesRef").onclick = () => sesMonth(false);
+$("sesToday").onclick = () => { const n = new Date(); SES.m = new Date(n.getFullYear(), n.getMonth(), 1); sesMonth(false); };
 $("sesPrev").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() - 1, 1); sesMonth(false, -1); };
 $("sesNext").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() + 1, 1); sesMonth(false, 1); };
 
