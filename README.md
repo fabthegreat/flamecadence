@@ -12,7 +12,7 @@
 
 ## 🚀 Overview
 
-**FlameCadence** is a single-file web app that combines a structured-workout designer, a session analysis tool and a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. Afterwards, analyze what you actually rode, and keep your calendar, fitness, recent load and best efforts in view with the sidebar widgets.
+**FlameCadence** is a single-file web app that combines a structured-workout designer, a session analysis tool and a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. Then **ride it** with the built-in activity player (beta) connected to your Bluetooth trainer and heart-rate strap. Afterwards, analyze what you actually rode, and keep your calendar, fitness, recent load and best efforts in view with the sidebar widgets.
 
 The interface is available in **English and French**, follows your system **light / dark** theme (or a manual choice), and can be **installed as an app** on your phone.
 
@@ -20,7 +20,7 @@ The interface is available in **English and French**, follows your system **ligh
 
 ## ✨ Key Features
 
-The main navigation has two groups: **Generate** (everything that builds a workout) and **Analyze** (everything that studies past sessions).
+The main navigation has two groups: **Generate** (everything that builds a workout) and **Analyze** (everything that studies past sessions). A third group, **Run activity**, appears when you enable the beta option in the settings.
 
 ### 🛠️ Generate: ways to build a workout
 
@@ -35,6 +35,21 @@ The main navigation has two groups: **Generate** (everything that builds a worko
 
 * **📈 Single session:** Pick a session from a small month calendar (each day shows a mini power profile of its rides, with ‹ › to change month) and get an intervals.icu-style view: key figures (time, distance, average power, normalized power, intensity, load, average heart rate, climb), a chart of power and heart rate with the FTP line and the work intervals shaded, and an **interval table** at the bottom with time, average and max power, normalized power, % FTP, average and max heart rate and cadence for each interval. Click a row to highlight the interval on the chart. It uses the intervals defined in intervals.icu, or detects them when there are none, and links back to the activity on intervals.icu.
 * **🧬 Compare:** Describe a session shape such as `10x1'/1'`; FlameCadence scans your intervals.icu activities, finds the ones that roughly match, and superimposes watts, heart rate and cadence so you can see how the same workout evolved. Filter by workout type, period and name.
+
+### 🚴 Run activity (beta): ride the session in the app
+
+An experimental activity player, **off by default**. Tick **Beta: "Run activity" menu** in the settings (**Beta** tab) to add the **Run activity** group next to Generate and Analyze. It needs a browser with **Web Bluetooth** (Chrome, Edge or Brave on Android and desktop; not available on iPhone). In Brave, enable `brave://flags/#enable-web-bluetooth`.
+
+* **Pick a workout:** Choose from your planned sessions in the intervals.icu calendar (today, missed or upcoming) or from a plan you built but have not yet sent. Search and filter by source.
+* **Launch activity:** Opens the full-screen player **paused**, so you have time to get on the trainer and set up your phone. Nothing starts until you press **Start**.
+* **Bluetooth devices:** Pair a **smart trainer** (FTMS, plus Tacx FE-C over Bluetooth) and/or a **heart-rate strap**. With no device paired, the player runs a simulation so you can try it; simulated rides are never saved.
+* **ERG mode:** The trainer follows the target power of each step (ramps included). Nudge the whole session with **±5 W / ±10 W**, and skip with the **Previous / Next** step buttons.
+* **Live display:** Current step and time left, target power with its % FTP, actual power with an on / high / low target indicator and zone, heart rate and cadence. The workout profile chart shows your position, with your **heart-rate curve traced in the background** once real data is coming in.
+* **Countdown beeps:** Three short beeps in the last three seconds of each step and a longer one at the step change (can be turned off in the **Player** settings tab).
+* **Optional metrics:** In the **Player** settings tab, tick the extra cards you want to see while riding: **step average power**, **session average power**, **energy (kJ)** and **decoupling** (power-to-heart-rate drift between the first and second half of the session, shown after 10 minutes of data). They use real Bluetooth data only.
+* **Built for long sessions on a phone:** The screen stays awake, the session is saved and resumed if the page is reloaded, and the layout adapts when you switch to another app and Android shows its navigation bar (a tap brings back native full screen). An optional **keep-alive** mode (inaudible sound or media notification) stops Android from freezing the page in the background, and the media notification gives lock-screen play / pause and step controls.
+* **Music (optional):** With a free Jamendo client ID, a music button plays a playlist whose tempo follows the intensity zone of the current step. Pick a genre in the settings.
+* **When you finish:** A ride summary (duration, average power and heart rate, kJ, time in each zone). **Upload to intervals.icu** or **download a `.tcx`** file. At least 30 seconds of real power or heart-rate data is needed to save a ride.
 
 ### 📈 Interactive preview
 
@@ -71,6 +86,7 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
 ### ⚙️ Settings, privacy and install
 
 * **No backend, no account:** everything runs in your browser from `flamecadence.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
+* **Settings tabs:** AI, intervals.icu, profile, widgets, appearance (choice of site font), **Beta** and, once the beta option is ticked, **Player**. The music and keep-alive options only show when the beta option is on.
 * API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings (including the widget order) can be exported / imported as JSON.
 * **Install on your phone:** the **…** menu has an **Install app** entry. On Android it opens the browser's install prompt (or tells you where to find "Install app" / "Add to Home screen" in your browser's menu). The **guided tour** is in the same menu.
 * Built-in help dialog and keyboard-friendly tabs and controls.
@@ -92,13 +108,7 @@ The AI features need a provider key; everything else (library, manual editor, im
 
 ### 📲 Hosting it as an installable app
 
-To let browsers offer the install button, serve the app over **HTTPS** (for example with GitHub Pages) and keep these files in the same folder:
-
-* `flamecadence.html`: the app
-* `manifest.webmanifest`: the app name, colours and icon
-* `icon.svg`: the app icon
-
-If your browser does not offer installation, adding 192×192 and 512×512 PNG versions of the icon to `manifest.webmanifest` usually fixes it.
+To let browsers offer the install button, serve the app over **HTTPS** (for example with GitHub Pages). `flamecadence.html` is enough on its own: the web app manifest and the 192 / 512 px icons are generated by the page itself. Installation is not possible from a file opened directly (`file://`). The installed app opens in full screen.
 
 ---
 
