@@ -6539,14 +6539,14 @@ function runLaunchUI(){ // hors plein écran : un seul bouton (Lancer l'activit�
 }
 function runGo(){
   if(!RUN || !RUN.cur || !RUN.steps.length) return;
-  runFs(true); // geste utilisateur : plein écran natif
-  if(!RUN.began){ RUN.began = true; RUN.touched = true; RUN.paused = false; RUN.last = Date.now(); RUN.acc = 0; runErgPause(false); }
+  runFs(true); // geste utilisateur : plein écran natif ; la séance ne démarre pas ici : l'utilisateur appuie sur Démarrer une fois installé sur le home trainer
+  RUN.touched = true;
   runUI();
 }
 function runUI(){
   runLaunchUI();
   if(!RUN || !RUN.steps.length) return;
-  runWake(!RUN.paused && !!RUN.tm); runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
+  runWake((!RUN.paused || document.querySelector('[data-block="run"]').classList.contains("rfs")) && !!RUN.tm); // écran maintenu allumé aussi pendant l'attente avant le départ runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
   $("runBar").style.setProperty("--rzc", runZC(st.z));
