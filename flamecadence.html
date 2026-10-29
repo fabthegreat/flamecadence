@@ -6250,7 +6250,7 @@ function runInit(){
   $("runRows").onclick = pick; $("runRows").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(e); } };
   $("runFs").onclick = () => runFs(); $("runGo").onclick = runGo;
   $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload;
-  $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runLaunchUI(); };
+  $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runFs(false); runLaunchUI(); }; // abandon : on quitte le lecteur plein écran
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
   document.addEventListener("fullscreenchange", () => {
     if(!RUN || !RUN.fsApi || document.fullscreenElement) return;
