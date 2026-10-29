@@ -495,6 +495,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs .rgrid .rcard{display:flex;flex-direction:column;justify-content:center;padding:6px 10px;overflow:hidden;min-height:0}
 .run.rfs .rgrid .rbig{font-size:clamp(2rem,15vmin,6.5rem);line-height:1;margin:2px 0}
 @supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,46cqmin,9rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
+.run canvas{pointer-events:none}
 .run.rfs canvas{height:var(--cvh,clamp(52px,15dvh,150px))}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
 .run.rfs #runEnd{max-height:45%;overflow:auto}
@@ -6305,7 +6306,7 @@ function runInit(){
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
   $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
-  $("runCv").onclick = e => { const r = e.target.getBoundingClientRect(); let x = (e.clientX - r.left) / r.width * RUN.total, a = 0; RUN.steps.some((s, k) => { a += s.dur; if(x <= a){ runJump(k); return true; } }); };
+  // le graphique du profil n'est plus cliquable : un toucher accidentel changeait d'étape ; on utilise les boutons Précédent / Suivant
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
   $("runRef").onclick = () => runList(true);
   $("runChips").onclick = e => { const b = e.target.closest("[data-s]"); if(b){ RUN.f = b.dataset.s; runRender(); } };
