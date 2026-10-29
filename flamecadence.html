@@ -735,6 +735,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 </div>
 <div class="cfg-sec" data-cfgp="player" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
+<div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label></div>
 <div class="hint" data-i="pmHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr">
 <label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
@@ -1246,7 +1247,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
-secPlayer:["Player","Lecteur"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
+secPlayer:["Player","Lecteur"], pmBeep:["Countdown beeps before each step change","Bips de compte à rebours avant chaque changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
@@ -6302,7 +6303,7 @@ const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / s
 function runInit(){
   RUN = {steps: [], i: 0, left: 0, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
-  $("runPlay").onclick = () => { RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
+  $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
   $("runCv").onclick = e => { const r = e.target.getBoundingClientRect(); let x = (e.clientX - r.left) / r.width * RUN.total, a = 0; RUN.steps.some((s, k) => { a += s.dur; if(x <= a){ runJump(k); return true; } }); };
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
@@ -6395,16 +6396,42 @@ function runOn(on){
   if(!on && RUN.tm){ clearInterval(RUN.tm); RUN.tm = 0; if(!RUN.paused) runErgPause(true); RUN.paused = true; runUI(); }
 }
 function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; RUN.left = RUN.steps[k].dur; RUN.el = RUN.steps.slice(0, k).reduce((a, s) => a + s.dur, 0); runUI(); }
+// ---- bips : 3 courts bips pendant les 3 dernières secondes d'une étape, un bip long au changement d'étape (contexte audio séparé, créé lors d'un geste utilisateur)
+let RUN_BC = null;
+const runBeepOn = () => store.get("si_rm_beep") !== "0"; // activé par défaut
+function runBeepCtx(){
+  try{
+    if(!RUN_BC){ const C = window.AudioContext || window.webkitAudioContext; if(!C) return null; RUN_BC = new C(); }
+    if(RUN_BC.state !== "running") RUN_BC.resume().catch(() => {});
+    return RUN_BC;
+  }catch(e){ return null; }
+}
+function runBeep(freq, dur){
+  if(!runBeepOn()) return; const c = runBeepCtx(); if(!c) return;
+  try{
+    const o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime;
+    o.type = "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(.0001, t0); g.gain.exponentialRampToValueAtTime(.5, t0 + .01); g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur + .05);
+  }catch(e){}
+}
 function runTick(){
   // horloge basée sur l'heure réelle : un navigateur en arrière-plan ralentit ou gèle les minuteurs, on rattrape donc les secondes manquées
   const now = Date.now(); let n = 0;
   if(RUN.paused){ RUN.last = now; RUN.acc = 0; }
   else { RUN.acc = (RUN.acc || 0) + (now - (RUN.last || now)); RUN.last = now; n = Math.min(Math.floor(RUN.acc / 1000), 86400); RUN.acc -= n * 1000; }
+  let chg = false;
   for(let k = 0; k < n && !RUN.paused; k++){
     if(RUN.left > 0){ RUN.left--; RUN.el++; }
     if(RUN.left > 0) continue;
+    chg = true;
     if(RUN.i < RUN.steps.length - 1){ RUN.i++; RUN.left = RUN.steps[RUN.i].dur; }
     else { $("msg").textContent = t("runDone"); runFinish(); break; }
+  }
+  if(n > 0 && n <= 2){ // pas de bips après un rattrapage (page restée en arrière-plan)
+    const bk = RUN.i + ":" + RUN.left;
+    if(chg){ RUN.bk = bk; runBeep(1320, .5); }
+    else if(!RUN.paused && RUN.left >= 1 && RUN.left <= 3 && RUN.left < RUN.steps[RUN.i].dur && RUN.bk !== bk){ RUN.bk = bk; runBeep(880, .12); }
   }
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
   // télémétrie : valeurs réelles Bluetooth si présentes, sinon simulation
@@ -6561,7 +6588,7 @@ function runLaunchUI(){ // hors plein écran : un seul bouton (Lancer l'activit�
   b.textContent = RUN.began ? "↩ " + t("runBack") : "▶ " + t("runGoT");
 }
 function runGo(){
-  if(!RUN || !RUN.cur || !RUN.steps.length) return;
+  if(!RUN || !RUN.cur || !RUN.steps.length) return; runBeepCtx(); // geste utilisateur : prépare le son
   runFs(true); // geste utilisateur : plein écran natif ; la séance ne démarre pas ici : l'utilisateur appuie sur Démarrer une fois installé sur le home trainer
   RUN.touched = true;
   runUI();
@@ -6739,6 +6766,7 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
 $("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
+$("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
