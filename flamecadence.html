@@ -20,7 +20,7 @@
       const path = location.pathname, m = {
         name: "FlameCadence", short_name: "FlameCadence", description: "Forge, send and analyse structured cycling workouts with intervals.icu",
         start_url: location.origin + path, scope: location.origin + path.replace(/[^\/]*$/, ""), id: location.origin + path,
-        display: "standalone", background_color: "#141b24", theme_color: "#141b24",
+        display: "fullscreen", display_override: ["fullscreen", "standalone"], background_color: "#141b24", theme_color: "#141b24",
         icons: [{src: mk(192, 0), sizes: "192x192", type: "image/png", purpose: "any"}, {src: mk(512, 0), sizes: "512x512", type: "image/png", purpose: "any"}, {src: mk(512, .12), sizes: "512x512", type: "image/png", purpose: "maskable"}]
       };
       mf.href = URL.createObjectURL(new Blob([JSON.stringify(m)], {type: "application/manifest+json"}));
@@ -480,6 +480,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rwk{display:flex;align-items:center;gap:8px;min-width:0}.run .rwk #runWkName{min-width:0;overflow-wrap:anywhere}.run #runFs{margin:0;width:auto;flex:none}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
+.run #runFsHint{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:99px;background:var(--acc);color:var(--on);font-size:.8rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:.92}.run:not(.rfs) #runFsHint{display:none!important}
 .run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn ."}
@@ -983,6 +984,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" class="alt small" id="runSimB" data-i="runSimBack" hidden></button>
 <label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
+<div id="runFsHint" hidden data-i="runFsHint"></div>
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
 <div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
@@ -1206,7 +1208,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
-secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
+secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
@@ -6229,7 +6231,7 @@ function runPick(e, auto){
 function runLoad(e){
   const ftp = runFtp();
   RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2)}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
 }
 const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
 function runInit(){
@@ -6251,19 +6253,19 @@ function runInit(){
     if(!RUN || !RUN.fsApi || document.fullscreenElement) return;
     RUN.fsApi = false;
     // changement d'application : le navigateur quitte le plein écran natif, mais le lecteur reste affiché en recouvrement ; le plein écran natif revient au prochain toucher
-    if(RUN.began && $("runEnd").hidden){ RUN.wantFs = true; runFit(); setTimeout(runFit, 150); setTimeout(runFit, 600); }
+    if(RUN.began && $("runEnd").hidden){ runWant(true); runFit(); setTimeout(runFit, 150); setTimeout(runFit, 600); }
     else runFs(false);
   }); // Échap natif
   document.querySelector('[data-block="run"]').addEventListener("pointerdown", () => {
     const el = document.querySelector('[data-block="run"]');
-    if(RUN.wantFs && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ RUN.wantFs = false; el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
+    if(RUN.wantFs && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ runWant(false); el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
   });
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
   $("runSimB").onclick = () => Object.keys(RUN.dev).forEach(runUnpair);
   $("runDevs").onclick = e => { const b = e.target.closest("[data-dc]"); if(b) runUnpair(b.dataset.dc); }; // un bouton « Déconnecter » par appareil
-  window.addEventListener("resize", () => RUN && mode === "run" && (runFit(), runDraw())); window.addEventListener("orientationchange", () => [150, 500].forEach(d => setTimeout(() => RUN && mode === "run" && (runFit(), runDraw()), d))); if(window.visualViewport) visualViewport.addEventListener("resize", () => RUN && mode === "run" && runFit()); // rotation du téléphone
-  runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI();
+  window.addEventListener("pagehide", () => runSave(true)); window.addEventListener("resize", () => RUN && mode === "run" && (runFit(), runDraw())); window.addEventListener("orientationchange", () => [150, 500].forEach(d => setTimeout(() => RUN && mode === "run" && (runFit(), runDraw()), d))); if(window.visualViewport) visualViewport.addEventListener("resize", () => RUN && mode === "run" && runFit()); // rotation du téléphone
+  runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI(); runRestore();
 }
 function runFit(){ // hauteur = zone réellement visible (barres du navigateur / geste Android exclues) ; sans effet en vrai plein écran natif
   const el = document.querySelector('[data-block="run"]'), v = window.visualViewport;
@@ -6272,7 +6274,7 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
 }
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
-  el.classList.toggle("rfs", on); RUN.wantFs = false;
+  el.classList.toggle("rfs", on); runWant(false);
   if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runFs")); } // Démarrer / Terminer et enregistrer / bouton quitter : ligne du haut ; ERG et nom du trainer ne sont plus affichés en plein écran
   else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runWkName").after($("runFs")); }
   if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
@@ -6311,7 +6313,7 @@ async function runUpload(){
       await fetch("https://intervals.icu/api/v1/activity/" + encodeURIComponent(id), {method: "PUT", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
     }catch(e){ console.warn(e); } }
     m.innerHTML = esc(t("runUpOk")) + (id ? ` · <a href="https://intervals.icu/activities/${encodeURIComponent(id)}" target="_blank" rel="noopener">intervals.icu ↗</a>` : "");
-    R.at = 0; if(typeof loadCal === "function") loadCal(true).catch(() => {});
+    R.at = 0; runSaveClear(); if(typeof loadCal === "function") loadCal(true).catch(() => {});
   }catch(e){ b.disabled = false; m.textContent = t("errI", errText(e)); }
 }
 function runDownload(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([runTcx()], {type: "application/vnd.garmin.tcx+xml"})); a.download = "flamecadence-" + iso(new Date()) + ".tcx"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
@@ -6341,7 +6343,7 @@ function runTick(){
   RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
   RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
   if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c}); // seulement de vraies données
-  runUI();
+  runUI(); runSave();
 }
 let RUN_WL = null; // empêche la mise en veille de l'écran pendant la séance
 async function runWake(on){
@@ -6350,7 +6352,24 @@ async function runWake(on){
     else if(!on && RUN_WL){ const w = RUN_WL; RUN_WL = null; await w.release(); }
   }catch(_){ RUN_WL = null; }
 }
-document.addEventListener("visibilitychange", () => { if(!document.hidden && typeof RUN !== "undefined" && RUN && RUN.tm) runTick(); }); // retour au premier plan : rattrapage immédiat
+document.addEventListener("visibilitychange", () => { if(document.hidden) runSave(true); if(!document.hidden && typeof RUN !== "undefined" && RUN && RUN.tm) runTick(); }); // retour au premier plan : rattrapage immédiat
+// ---- reprise après rechargement : Android peut décharger la page en arrière-plan ; la séance (étape, temps, enregistrement) est sauvegardée et reprise
+const RUN_SAVE = "si_runsess";
+function runSave(force){
+  if(!RUN || !RUN.began || !RUN.cur) return; const now = Date.now(); if(!force && now - (RUN.sv || 0) < 4000) return; RUN.sv = now;
+  try{ localStorage.setItem(RUN_SAVE, JSON.stringify({v: 1, at: now, cur: {id: RUN.cur.id, name: RUN.cur.name, st: RUN.cur.st}, i: RUN.i, left: RUN.left, el: RUN.el, nudge: RUN.nudge, paused: RUN.paused, last: RUN.last || now, done: !$("runEnd").hidden, rec: (RUN.rec || []).slice(-20000)})); }catch(e){}
+}
+const runSaveClear = () => { try{ localStorage.removeItem(RUN_SAVE); }catch(e){} };
+function runRestore(){
+  let sn = null; try{ sn = JSON.parse(localStorage.getItem(RUN_SAVE) || "null"); }catch(e){}
+  if(!sn || sn.v !== 1 || !sn.cur || !Array.isArray(sn.cur.st) || !sn.cur.st.length || Date.now() - sn.at > 12 * 3600 * 1000) return;
+  RUN.touched = true; RUN.cur = sn.cur; runLoad(sn.cur);
+  $("runWkName").textContent = $("runFsName").textContent = sn.cur.name; $("runLs").open = false;
+  Object.assign(RUN, {began: true, i: Math.min(sn.i || 0, RUN.steps.length - 1), left: sn.left, el: sn.el, nudge: sn.nudge || 0, paused: !!sn.paused, rec: sn.rec || [], last: sn.last, acc: 0}); // le premier tick rattrape le temps écoulé depuis la dernière sauvegarde
+  runUI(); if(sn.done) runFinish();
+  runFs(true); runWant(true); runSave(true); // lecteur directement à l'écran ; le plein écran natif revient au premier toucher
+}
+function runWant(v){ RUN.wantFs = v; $("runFsHint").hidden = !v; }
 function runLaunchUI(){ // hors plein écran : un seul bouton (Lancer l'activité / Retour au lecteur) ; les données ne s'affichent qu'en plein écran
   const b = $("runGo"); if(!RUN || !b) return;
   $("runLaunch").hidden = !$("runEnd").hidden; b.disabled = !RUN.cur || !RUN.steps.length;
@@ -7126,7 +7145,7 @@ $("tourbtn").onclick = tourStart;
 let DEFER_INSTALL = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); DEFER_INSTALL = e; });
 window.addEventListener("appinstalled", () => { DEFER_INSTALL = null; $("installbtn").hidden = true; });
-if(!(matchMedia("(display-mode: standalone)").matches || navigator.standalone)) $("installbtn").hidden = false;
+if(!(matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: fullscreen)").matches || navigator.standalone)) $("installbtn").hidden = false;
 $("installbtn").onclick = async () => { if(DEFER_INSTALL){ const p = DEFER_INSTALL; DEFER_INSTALL = null; p.prompt(); try{ await p.userChoice; }catch(e){} } else toast(t("installHow"), "ok"); };
 // ---------- Glossaire : info-bulle sur chaque terme technique affiché ----------
 // Un MutationObserver enveloppe les termes (FTP, TSS, IF, zones…) dans <abbr class="gl"> partout dans l'interface,
