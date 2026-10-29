@@ -6247,7 +6247,17 @@ function runInit(){
   $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload;
   $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runLaunchUI(); };
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
-  document.addEventListener("fullscreenchange", () => { if(RUN.fsApi && !document.fullscreenElement) runFs(false); }); // Échap natif
+  document.addEventListener("fullscreenchange", () => {
+    if(!RUN || !RUN.fsApi || document.fullscreenElement) return;
+    RUN.fsApi = false;
+    // changement d'application : le navigateur quitte le plein écran natif, mais le lecteur reste affiché en recouvrement ; le plein écran natif revient au prochain toucher
+    if(RUN.began && $("runEnd").hidden){ RUN.wantFs = true; runFit(); setTimeout(runFit, 150); setTimeout(runFit, 600); }
+    else runFs(false);
+  }); // Échap natif
+  document.querySelector('[data-block="run"]').addEventListener("pointerdown", () => {
+    const el = document.querySelector('[data-block="run"]');
+    if(RUN.wantFs && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ RUN.wantFs = false; el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
+  });
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
   $("runSimB").onclick = () => Object.keys(RUN.dev).forEach(runUnpair);
@@ -6262,7 +6272,7 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
 }
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
-  el.classList.toggle("rfs", on);
+  el.classList.toggle("rfs", on); RUN.wantFs = false;
   if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runFs")); } // Démarrer / Terminer et enregistrer / bouton quitter : ligne du haut ; ERG et nom du trainer ne sont plus affichés en plein écran
   else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runWkName").after($("runFs")); }
   if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
