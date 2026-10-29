@@ -473,7 +473,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run #runRows{max-height:420px;overflow:auto}
 .run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
 .run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc)}
-.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}
+.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}.run .wr .mini{display:block;width:100%;height:30px;margin:6px 0 2px;border-bottom:1px solid var(--line)}
 .run #runAllL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runAll{width:auto;margin:0}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
 .run #runFsName{display:none}.run.rfs #runFsName{display:block;flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.95rem,3.4vmin,1.3rem)}
@@ -6241,6 +6241,15 @@ async function runList(force){
   R.at = Date.now(); R.busy = false; runAssemble();
   const td = R.cal.find(e => e.date === today) || R.cal.find(e => e.date > today); if(td && !R.touched && !R.el && !(R.cur && R.cur.id === td.id)) runPick(td, true); // séance du jour (sinon la prochaine) chargée d'office tant que rien n'a été lancé
 }
+// aperçu de la séance : une barre par étape (largeur = durée, hauteur = % FTP, rampes en trapèze), couleur = zone
+function runMini(st, dur){
+  const H = 30, W = 200, mx = Math.max(110, ...st.map(x => Math.max(x.a, x.b))); let x0 = 0, o = "";
+  st.forEach(x => {
+    const w = x.d / dur * W, ha = Math.max(1, x.a / mx * H), hb = Math.max(1, x.b / mx * H);
+    o += `<polygon fill="${runZC(zoneOf((x.a + x.b) / 2))}" points="${x0.toFixed(2)},${H} ${x0.toFixed(2)},${(H - ha).toFixed(2)} ${(x0 + w).toFixed(2)},${(H - hb).toFixed(2)} ${(x0 + w).toFixed(2)},${H}"/>`; x0 += w;
+  });
+  return `<svg class="mini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${o}</svg>`;
+}
 function runRender(){
   const R = RUN, q = R.q.trim().toLowerCase(), all = R.items, today = iso(new Date());
   const chips = [["all", "runSrcAll", all.length]].concat(["cal", "plan"].map(k => [k, {cal: "runSrcCal", plan: "runSrcPlan"}[k], all.filter(e => e.src === k).length])).filter(c => c[0] === "all" || c[2]);
@@ -6250,7 +6259,7 @@ function runRender(){
   const dt = d => new Date(d + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"});
   $("runRows").innerHTML = rows.map(e => {
     const bd = e.src === "cal" ? (e.date === today ? t("runToday") : e.date < today ? t("runMissed") : "") : e.src === "plan" ? t("runSrcPlan") : "";
-    return `<div class="wr${R.cur && R.cur.id === e.id ? " sel" : ""}" data-k="${R.items.indexOf(e)}" role="button" tabindex="0"><div class="wm"><div class="wn">${esc(e.name)}</div><small>${e.date ? esc(dt(e.date)) + " · " : ""}${esc(fmtDur(e.dur))} · IF ${e.ifx.toFixed(2)} · TSS ${e.tss}${e.src === "plan" ? " · " + esc(t("runPlanNote")) : ""}</small>${zoneBar(e.z, true)}</div>${bd ? `<span class="rbadge">${esc(bd)}</span>` : ""}</div>`;
+    return `<div class="wr${R.cur && R.cur.id === e.id ? " sel" : ""}" data-k="${R.items.indexOf(e)}" role="button" tabindex="0"><div class="wm"><div class="wn">${esc(e.name)}</div><small>${e.date ? esc(dt(e.date)) + " · " : ""}${esc(fmtDur(e.dur))} · IF ${e.ifx.toFixed(2)} · TSS ${e.tss}${e.src === "plan" ? " · " + esc(t("runPlanNote")) : ""}</small>${runMini(e.st, e.dur)}${zoneBar(e.z, true)}</div>${bd ? `<span class="rbadge">${esc(bd)}</span>` : ""}</div>`;
   }).join("");
   $("runLsCnt").textContent = rows.length + " / " + all.length; $("runLsMsg").textContent = R.err || (rows.length ? "" : t(KEY() ? (all.length ? "runNoMatch" : "runNoPlanned") : "needI"));
 }
