@@ -473,7 +473,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run #runRows{max-height:420px;overflow:auto}
 .run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
 .run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc);outline-offset:-2px}
-.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}.run .wr .wc{display:flex;gap:10px;align-items:flex-end;margin-top:6px}.run .wr .wmini{flex:1;min-width:0;height:34px;display:block}.run .wr .wz{flex:0 0 52px;height:34px;display:flex;align-items:flex-end;gap:2px}.run .wr .wz i{flex:1;display:block;border-radius:2px 2px 0 0}
+.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}.run .wr .wc{display:flex;gap:10px;margin-top:6px}.run .wr .wc{align-items:stretch}.run .wr .wmini{flex:1;min-width:0;height:54px;display:block}.run .wr .wz{flex:0 0 108px;height:54px;box-sizing:border-box;display:flex;gap:3px;padding:4px 5px 2px;border:1px solid var(--line);border-radius:8px}.run .wr .zc{flex:1;min-width:0;display:flex;flex-direction:column}.run .wr .zbw{flex:1;display:flex;align-items:flex-end}.run .wr .zbw i{display:block;width:100%;border-radius:2px 2px 0 0}.run .wr .zc b{font:600 8px/11px system-ui,sans-serif;letter-spacing:-.2px;color:var(--mute);text-align:center}.run .wr .zc.e b{opacity:.35}
 .run #runAllL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runAll{width:auto;margin:0}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
 .run #runFsName{display:none}.run.rfs #runFsName{display:block;flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.95rem,3.4vmin,1.3rem)}
@@ -6254,7 +6254,7 @@ function runMini(st, dur){
 // barres verticales : temps passé dans chaque zone (Z1 → Z7)
 function runZV(z){
   const mx = Math.max(...z.slice(1)); if(!(mx > 0)) return "";
-  return `<div class="wz" role="img" aria-label="${esc(t("runZoneTime"))}">${[1, 2, 3, 4, 5, 6, 7].map(k => `<i style="height:${(z[k] / mx * 100).toFixed(1)}%;background:${runZC(k)}" title="${esc("Z" + k + " · " + fmtDur(z[k]))}"></i>`).join("")}</div>`;
+  return `<div class="wz" role="img" aria-label="${esc(t("runZoneTime"))}">${[1, 2, 3, 4, 5, 6, 7].map(k => `<div class="zc${z[k] > 0.5 ? "" : " e"}" title="${esc("Z" + k + " · " + fmtDur(z[k]))}"><span class="zbw"><i style="height:${(z[k] / mx * 100).toFixed(1)}%;background:${runZC(k)}"></i></span><b>Z${k}</b></div>`).join("")}</div>`;
 }
 function runRender(){
   const R = RUN, q = R.q.trim().toLowerCase(), all = R.items, today = iso(new Date());
