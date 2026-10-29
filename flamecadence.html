@@ -500,6 +500,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
 .run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
 .run #musIc{flex:0 0 auto;display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);color:var(--acc)}.run #musIc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.run #musTag{width:100%;margin:8px 0 0}
 .run #musInfo{margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run.rfs #musInfo{margin-top:2px}
 .run #runName{overflow-wrap:anywhere}
 .run .rdot{width:9px;height:9px;border-radius:50%;background:var(--mute);display:inline-block}.run .rdot.on{background:#22c55e}
@@ -1002,7 +1003,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" id="musGo" class="alt small"></button>
 <button type="button" id="musNext" class="alt small" hidden>⏭</button>
 <input type="range" id="musVol" min="0" max="100" step="5" data-ia="aria-label:musVol">
-</div><div class="hint" id="musInfo"></div></div>
+</div><select id="musTag" data-ia="aria-label:jamTagL"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select><div class="hint" id="musInfo"></div></div>
 <div id="runFsHint" hidden data-i="runFsHint"></div>
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
 <div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
@@ -6441,6 +6442,7 @@ async function musFetch(tier){
 async function musPlay(tier){
   const my = ++MUS.seq; MUS.tier = tier; MUS.since = Date.now();
   try{
+    const tg = store.get("si_jamtag"); if(MUS.qt !== tg){ MUS.q = {}; MUS.qt = tg; } // genre changé : on repart de piles neuves
     let q = MUS.q[tier];
     if(!q || !q.length){ MUS.msg = t("musLoad"); musUI(); q = MUS.q[tier] = await musFetch(tier); if(my !== MUS.seq) return; }
     const tr = q.shift();
@@ -6481,11 +6483,12 @@ function musUI(){
   b.textContent = MUS.on ? "⏹ " + t("musStop") : "▶ " + t("musStart"); b.disabled = !MUS.on && !key;
   n.hidden = !MUS.on; n.title = t("musNext"); n.setAttribute("aria-label", t("musNext"));
   $("musInfo").textContent = MUS.msg || (!key ? t("musNeed") : MUS.on && MUS.cur ? "♪ " + MUS.cur.name + " — " + MUS.cur.artist_name + " · " + t("musT" + MUS.tier) : "");
-  $("musVol").value = Math.round(musVol() * 100);
+  $("musVol").value = Math.round(musVol() * 100); $("musTag").value = store.get("si_jamtag");
 }
 function musBind(){
   $("musGo").onclick = () => MUS.on ? musStop() : musStart();
   $("musNext").onclick = () => { if(MUS.on) musPlay(musTier(musZone())); };
+  $("musTag").onchange = e => { store.set("si_jamtag", e.target.value); if($("jamtag")) $("jamtag").value = e.target.value; if(MUS.on) musPlay(musTier(musZone())); }; // nouveau genre : on enchaîne tout de suite
   $("musVol").oninput = e => { store.set("si_musvol", e.target.value); musApply(); };
   musUI();
 }
