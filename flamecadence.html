@@ -480,6 +480,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rwk{display:flex;align-items:center;gap:8px;min-width:0}.run .rwk #runWkName{min-width:0;overflow-wrap:anywhere}.run #runFs{margin:0;width:auto;flex:none}.run #runFs svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
+.run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn ."}
 .run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}
@@ -982,16 +983,17 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" class="alt small" id="runSimB" data-i="runSimBack" hidden></button>
 <label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
-<div class="rbar" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
+<div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
+<div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
 <div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div></div>
-<div class="rgrid">
+<div class="rgrid rhud">
 <div class="rcard"><div class="rlbl"><span data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
 <div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
 <div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
-<div class="rcard"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
-<div class="rcard"><div class="rctl">
+<div class="rcard rhud"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
+<div class="rcard rhud"><div class="rctl">
 <button type="button" class="alt small" data-rn="-10">-10 W</button><button type="button" class="alt small" data-rn="-5">-5 W</button>
 <button type="button" class="alt small" data-rn="0" data-i="runReset"></button>
 <button type="button" class="alt small" data-rn="5">+5 W</button><button type="button" class="alt small" data-rn="10">+10 W</button>
@@ -1204,7 +1206,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
-secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
+secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
@@ -6227,13 +6229,13 @@ function runPick(e, auto){
 function runLoad(e){
   const ftp = runFtp();
   RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2)}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
 }
 const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
 function runInit(){
   RUN = {steps: [], i: 0, left: 0, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
-  $("runPlay").onclick = () => { RUN.paused = !RUN.paused; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
+  $("runPlay").onclick = () => { RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
   $("runCv").onclick = e => { const r = e.target.getBoundingClientRect(); let x = (e.clientX - r.left) / r.width * RUN.total, a = 0; RUN.steps.some((s, k) => { a += s.dur; if(x <= a){ runJump(k); return true; } }); };
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
@@ -6241,9 +6243,9 @@ function runInit(){
   $("runChips").onclick = e => { const b = e.target.closest("[data-s]"); if(b){ RUN.f = b.dataset.s; runRender(); } };
   const pick = e => { const r = e.target.closest(".wr"); if(r) runPick(RUN.items[+r.dataset.k]); };
   $("runRows").onclick = pick; $("runRows").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(e); } };
-  $("runFs").onclick = () => runFs();
+  $("runFs").onclick = () => runFs(); $("runGo").onclick = runGo;
   $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload;
-  $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); };
+  $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runLaunchUI(); };
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
   document.addEventListener("fullscreenchange", () => { if(RUN.fsApi && !document.fullscreenElement) runFs(false); }); // Échap natif
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
@@ -6283,7 +6285,7 @@ function runTcx(){
 }
 function runFinish(){
   const R = RUN; R.paused = true; runErgPause(true); runUI();
-  const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false;
+  const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; runLaunchUI();
   const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
   const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
@@ -6312,12 +6314,17 @@ function runOn(on){
 }
 function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; RUN.left = RUN.steps[k].dur; RUN.nudge = 0; RUN.el = RUN.steps.slice(0, k).reduce((a, s) => a + s.dur, 0); runUI(); }
 function runTick(){
-  const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
-  if(!RUN.paused){
+  // horloge basée sur l'heure réelle : un navigateur en arrière-plan ralentit ou gèle les minuteurs, on rattrape donc les secondes manquées
+  const now = Date.now(); let n = 0;
+  if(RUN.paused){ RUN.last = now; RUN.acc = 0; }
+  else { RUN.acc = (RUN.acc || 0) + (now - (RUN.last || now)); RUN.last = now; n = Math.min(Math.floor(RUN.acc / 1000), 86400); RUN.acc -= n * 1000; }
+  for(let k = 0; k < n && !RUN.paused; k++){
     if(RUN.left > 0){ RUN.left--; RUN.el++; }
-    else if(RUN.i < RUN.steps.length - 1) runJump(RUN.i + 1);
-    else { $("msg").textContent = t("runDone"); runFinish(); }
+    if(RUN.left > 0) continue;
+    if(RUN.i < RUN.steps.length - 1){ RUN.i++; RUN.left = RUN.steps[RUN.i].dur; RUN.nudge = 0; }
+    else { $("msg").textContent = t("runDone"); runFinish(); break; }
   }
+  const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
   // télémétrie : valeurs réelles Bluetooth si présentes, sinon simulation
   const L = RUN.live, sim = RUN.sim;
   RUN.ap = L.p != null ? L.p : (RUN.paused ? 0 : RUN.ap + (tgt - RUN.ap) * .35 + (Math.random() * 6 - 3));
@@ -6326,8 +6333,29 @@ function runTick(){
   if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c}); // seulement de vraies données
   runUI();
 }
+let RUN_WL = null; // empêche la mise en veille de l'écran pendant la séance
+async function runWake(on){
+  try{
+    if(on && !RUN_WL && "wakeLock" in navigator && !document.hidden){ RUN_WL = await navigator.wakeLock.request("screen"); RUN_WL.addEventListener("release", () => { RUN_WL = null; }); }
+    else if(!on && RUN_WL){ const w = RUN_WL; RUN_WL = null; await w.release(); }
+  }catch(_){ RUN_WL = null; }
+}
+document.addEventListener("visibilitychange", () => { if(!document.hidden && typeof RUN !== "undefined" && RUN && RUN.tm) runTick(); }); // retour au premier plan : rattrapage immédiat
+function runLaunchUI(){ // hors plein écran : un seul bouton (Lancer l'activité / Retour au lecteur) ; les données ne s'affichent qu'en plein écran
+  const b = $("runGo"); if(!RUN || !b) return;
+  $("runLaunch").hidden = !$("runEnd").hidden; b.disabled = !RUN.cur || !RUN.steps.length;
+  b.textContent = RUN.began ? "↩ " + t("runBack") : "▶ " + t("runGoT");
+}
+function runGo(){
+  if(!RUN || !RUN.cur || !RUN.steps.length) return;
+  runFs(true); // geste utilisateur : plein écran natif
+  if(!RUN.began){ RUN.began = true; RUN.touched = true; RUN.paused = false; RUN.last = Date.now(); RUN.acc = 0; runErgPause(false); }
+  runUI();
+}
 function runUI(){
+  runLaunchUI();
   if(!RUN || !RUN.steps.length) return;
+  runWake(!RUN.paused && !!RUN.tm);
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
   $("runBar").style.setProperty("--rzc", runZC(st.z));
