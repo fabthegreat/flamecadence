@@ -499,6 +499,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs #runEnd{max-height:45%;overflow:auto}
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
 .run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
+.run #musIc{flex:0 0 auto;display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);color:var(--acc)}.run #musIc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run #musInfo{margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run.rfs #musInfo{margin-top:2px}
 .run #runName{overflow-wrap:anywhere}
 .run .rdot{width:9px;height:9px;border-radius:50%;background:var(--mute);display:inline-block}.run .rdot.on{background:#22c55e}
@@ -997,6 +998,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
 <div class="rcard rmus" id="runMus" hidden><div class="rctl">
+<a id="musIc" href="https://www.jamendo.com" target="_blank" rel="noopener" title="Jamendo" aria-label="Jamendo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
 <button type="button" id="musGo" class="alt small"></button>
 <button type="button" id="musNext" class="alt small" hidden>⏭</button>
 <input type="range" id="musVol" min="0" max="100" step="5" data-ia="aria-label:musVol">
@@ -6476,7 +6478,7 @@ function musUI(){
   const b = $("musGo"); if(!b) return;
   const key = !!musKey(), n = $("musNext");
   $("runMus").hidden = !key; // visible seulement si un client ID Jamendo est renseigné
-  b.textContent = MUS.on ? "⏹ " + t("musStop") : "🎵 " + t("musStart"); b.disabled = !MUS.on && !key;
+  b.textContent = MUS.on ? "⏹ " + t("musStop") : "▶ " + t("musStart"); b.disabled = !MUS.on && !key;
   n.hidden = !MUS.on; n.title = t("musNext"); n.setAttribute("aria-label", t("musNext"));
   $("musInfo").textContent = MUS.msg || (!key ? t("musNeed") : MUS.on && MUS.cur ? "♪ " + MUS.cur.name + " — " + MUS.cur.artist_name + " · " + t("musT" + MUS.tier) : "");
   $("musVol").value = Math.round(musVol() * 100);
