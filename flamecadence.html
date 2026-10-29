@@ -495,7 +495,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs .rgrid .rcard{display:flex;flex-direction:column;justify-content:center;padding:6px 10px;overflow:hidden;min-height:0}
 .run.rfs .rgrid .rbig{font-size:clamp(2rem,15vmin,6.5rem);line-height:1;margin:2px 0}
 @supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,46cqmin,9rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
-.run.rfs canvas{height:clamp(52px,15dvh,150px)}.run.rfs .rcard:has(canvas){padding:6px}
+.run.rfs canvas{height:var(--cvh,clamp(52px,15dvh,150px))}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
 .run.rfs #runEnd{max-height:45%;overflow:auto}
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
@@ -6336,7 +6336,11 @@ function runInit(){
 function runFit(){ // hauteur = zone réellement visible (barres du navigateur / geste Android exclues) ; sans effet en vrai plein écran natif
   const el = document.querySelector('[data-block="run"]'), v = window.visualViewport;
   if(!el.classList.contains("rfs")){ el.style.height = el.style.top = ""; return; }
-  el.style.height = Math.round(v ? v.height : innerHeight) + "px"; el.style.top = Math.round(v ? v.offsetTop : 0) + "px"; runDraw();
+  const h = Math.round(v ? v.height : innerHeight); el.style.height = h + "px"; el.style.top = Math.round(v ? v.offsetTop : 0) + "px";
+  // barre de navigation Android qui réapparaît (ou barre du navigateur) : le manque de hauteur est absorbé par le graphique du profil, pas par les mesures principales
+  const o = innerWidth > innerHeight ? "l" : "p", M = RUN.fsMax = RUN.fsMax || {}; M[o] = Math.max(M[o] || 0, h);
+  el.style.setProperty("--cvh", Math.max(40, Math.round(Math.min(150, Math.max(52, M[o] * .15)) - (M[o] - h))) + "px");
+  runDraw();
 }
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
@@ -6533,7 +6537,7 @@ async function runWake(on){
     else if(!on && RUN_WL){ const w = RUN_WL; RUN_WL = null; await w.release(); }
   }catch(_){ RUN_WL = null; }
 }
-document.addEventListener("visibilitychange", () => { if(document.hidden) runSave(true); if(!document.hidden && typeof RUN !== "undefined" && RUN && RUN.tm) runTick(); }); // retour au premier plan : rattrapage immédiat
+document.addEventListener("visibilitychange", () => { if(!document.hidden && typeof RUN !== "undefined" && RUN && mode === "run") [0, 150, 600].forEach(d => setTimeout(() => runFit(), d)); /* retour d'une autre application : la hauteur visible se stabilise avec un léger retard */ if(document.hidden) runSave(true); if(!document.hidden && typeof RUN !== "undefined" && RUN && RUN.tm) runTick(); }); // retour au premier plan : rattrapage immédiat
 // ---- reprise après rechargement : Android peut décharger la page en arrière-plan ; la séance (étape, temps, enregistrement) est sauvegardée et reprise
 const RUN_SAVE = "si_runsess";
 function runSave(force){
