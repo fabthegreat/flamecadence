@@ -497,6 +497,9 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs canvas{height:clamp(52px,15dvh,150px)}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
 .run.rfs #runEnd{max-height:45%;overflow:auto}
+.run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
+.run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
+.run #musInfo{margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run.rfs #musInfo{margin-top:2px}
 .run #runName{overflow-wrap:anywhere}
 .run .rdot{width:9px;height:9px;border-radius:50%;background:var(--mute);display:inline-block}.run .rdot.on{background:#22c55e}
 .run .rchip{display:inline-flex;gap:6px;align-items:center;padding:2px 4px 2px 10px;border:1px solid var(--line);border-radius:99px;font-size:.85rem}.run .rchip button{margin:0;width:auto}
@@ -715,6 +718,12 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <label for="runKa" style="margin-top:16px" data-i="runKaL"></label>
 <select id="runKa"><option value="mix" data-i="runKaM"></option><option value="strong" data-i="runKaS"></option><option value="off" data-i="runKaO"></option></select>
 <div class="hint" data-i="runKaH"></div>
+<label for="jamkey" style="margin-top:16px" data-i="jamKeyL"></label>
+<input id="jamkey" autocomplete="off" autocapitalize="off" spellcheck="false">
+<a class="help" href="https://devportal.jamendo.com/" target="_blank" rel="noopener" data-i="jamHelp"></a>
+<div class="hint" data-i="jamKeyH"></div>
+<label for="jamtag" data-i="jamTagL"></label>
+<select id="jamtag"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select>
 </div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
@@ -1007,6 +1016,11 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" id="runPlay"></button>
 <button type="button" class="alt small" id="runNext" aria-label="Next step">⏭</button>
 <button type="button" class="alt small" id="runFin" data-i="runFin"></button></div></div>
+<div class="rcard rmus" id="runMus"><div class="rctl">
+<button type="button" id="musGo" class="alt small"></button>
+<button type="button" id="musNext" class="alt small" hidden>⏭</button>
+<input type="range" id="musVol" min="0" max="100" step="5" data-ia="aria-label:musVol">
+</div><div class="hint" id="musInfo"></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 </section>
@@ -1464,6 +1478,16 @@ lib2Name:["Threshold Over-Unders 4 x 8 min","Over-Unders au seuil 4 x 8 min"], l
 lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc:["High-intensity intervals to boost maximal aerobic power.","Intervalles de haute intensité pour booster la puissance aérobie maximale."],
 lib4Name:["Endurance Zone 2 (1h30)","Endurance Zone 2 (1h30)"], lib4Desc:["Steady aerobic endurance ride to build mitochondrial density.","Sortie d'endurance fondamentale continue pour développer la base aérobie."]
 };
+Object.assign(T, {
+jamKeyL:["Jamendo client ID (music for the activity player)","Client ID Jamendo (musique du lecteur d'activité)"],
+jamHelp:["Get a free client ID at devportal.jamendo.com","Obtiens un client ID gratuit sur devportal.jamendo.com"],
+jamKeyH:["Public identifier, stored only in this browser. It enables the music button in the activity player: a random Jamendo playlist whose tempo follows the intensity zone of the current step.","Identifiant public, enregistré uniquement dans ce navigateur. Il active le bouton musique du lecteur : une playlist Jamendo aléatoire dont le tempo suit la zone d'intensité de l'étape en cours."],
+jamTagL:["Music genre","Genre musical"], jamTagAny:["Any genre","Tous les genres"],
+musStart:["Start music","Lancer la musique"], musStop:["Stop music","Arrêter la musique"], musNext:["Next track","Piste suivante"], musVol:["Music volume","Volume de la musique"],
+musNeed:["Add your Jamendo client ID in Settings → Beta to enable music.","Ajoute ton client ID Jamendo dans Réglages → Bêta pour activer la musique."],
+musLoad:["Loading tracks…","Chargement des pistes…"], musNone:["No track found for this intensity. Try another genre.","Aucune piste pour cette intensité. Essaie un autre genre."],
+musErr:["Jamendo: {0}","Jamendo : {0}"], musT1:["calm","calme"], musT2:["steady","régulier"], musT3:["fast","rapide"], musT4:["very fast","très rapide"]
+});
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 let MSG = null, toastT, ptimer, phide, abortGen = null, toastActCb = null;
@@ -1504,7 +1528,7 @@ function ask(k){
 }
 
 // ---------- Réglages & Aide ----------
-const FIELDS = ["gkey","model","ikey","aid","think","prov","hfkey","hfmodel","oaurl","oakey","oamodel"];
+const FIELDS = ["gkey","model","ikey","aid","think","prov","hfkey","hfmodel","oaurl","oakey","oamodel","jamkey","jamtag"];
 const DEF = {model: "gemini-3.7-flash", aid: "0", think: "low", prov: "gemini", hfmodel: "meta-llama/Llama-3.1-8B-Instruct", oaurl: "https://api.groq.com/openai/v1", oamodel: ""};
 const SECRET = ["gkey","ikey","hfkey","oakey"];
 let modelList = [], hfList = [], oaList = [];
@@ -1542,6 +1566,7 @@ $("open").onclick = () => {
 };
 $("close").onclick = () => $("cfg").close();
 $("cfg").addEventListener("close", loadSettings);
+$("cfg").addEventListener("close", () => { try{ musUI(); }catch(e){} });
 $("save").onclick = () => { FIELDS.forEach(k => store.set("si_" + k, $(k).value.trim())); WIDGETS.forEach(k => { const c = $("w_" + k); if(c && c.checked !== widgets.includes(k)) toggleWidget(k); }); $("cfg").close(); say("settingsSaved", "ok"); loadAll(); };
 $("clear").onclick = async () => { if(!(await ask("cfmClear"))) return; SECRET.forEach(k => store.set("si_" + k, "")); loadSettings(); };
 // --- Import / export des réglages au format JSON ---
@@ -6269,7 +6294,7 @@ function runInit(){
   $("runSimB").onclick = () => Object.keys(RUN.dev).forEach(runUnpair);
   $("runDevs").onclick = e => { const b = e.target.closest("[data-dc]"); if(b) runUnpair(b.dataset.dc); }; // un bouton « Déconnecter » par appareil
   window.addEventListener("pagehide", () => runSave(true)); window.addEventListener("resize", () => RUN && mode === "run" && (runFit(), runDraw())); window.addEventListener("orientationchange", () => [150, 500].forEach(d => setTimeout(() => RUN && mode === "run" && (runFit(), runDraw()), d))); if(window.visualViewport) visualViewport.addEventListener("resize", () => RUN && mode === "run" && runFit()); // rotation du téléphone
-  runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI(); runRestore();
+  runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI(); runRestore(); musBind();
 }
 function runFit(){ // hauteur = zone réellement visible (barres du navigateur / geste Android exclues) ; sans effet en vrai plein écran natif
   const el = document.querySelector('[data-block="run"]'), v = window.visualViewport;
@@ -6300,7 +6325,7 @@ function runTcx(){
   return `<?xml version="1.0" encoding="UTF-8"?>\n<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Activities><Activity Sport="Biking"><Id>${iso8(pts[0].t)}</Id><Lap StartTime="${iso8(pts[0].t)}"><TotalTimeSeconds>${tot}</TotalTimeSeconds><DistanceMeters>0</DistanceMeters><Calories>${kj}</Calories>${H.length ? `<AverageHeartRateBpm><Value>${av(H)}</Value></AverageHeartRateBpm><MaximumHeartRateBpm><Value>${Math.round(Math.max(...H))}</Value></MaximumHeartRateBpm>` : ""}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod><Track>${tp}</Track></Lap><Notes>${esc((R.cur && R.cur.name) || "FlameCadence")}</Notes></Activity></Activities></TrainingCenterDatabase>`;
 }
 function runFinish(){
-  const R = RUN; R.paused = true; runErgPause(true); runUI();
+  musStop(); const R = RUN; R.paused = true; runErgPause(true); runUI();
   const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; runLaunchUI();
   const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
@@ -6387,6 +6412,80 @@ function runMedia(){ // notification média : nom de la séance, étape en cours
     ms.setActionHandler("nexttrack", () => runJump(RUN.i + 1)); ms.setActionHandler("previoustrack", () => runJump(RUN.i - 1));
   }catch(e){}
 }
+// ---- Musique Jamendo (bêta) : playlist aléatoire dont le tempo suit la zone d'intensité de l'étape en cours (Z1 calme · Z2-3 régulier · Z4 rapide · Z5+ très rapide)
+const MUS = {on: false, a: null, tier: 0, q: {}, seen: new Set(), seq: 0, f: 1, ft: 0, since: 0, hold: false, err: 0, cur: null, msg: ""};
+const MUS_SPEED = {1: "low", 2: "medium", 3: "high", 4: "veryhigh"};
+const musKey = () => store.get("si_jamkey").trim();
+const musTier = z => z <= 1 ? 1 : z <= 3 ? 2 : z === 4 ? 3 : 4;
+const musVol = () => { const v = parseInt(store.get("si_musvol"), 10); return isFinite(v) ? Math.min(100, Math.max(0, v)) / 100 : .7; };
+const musZone = () => RUN && RUN.steps && RUN.steps[RUN.i] ? RUN.steps[RUN.i].z : 2;
+function musApply(){ if(MUS.a) MUS.a.volume = Math.min(1, Math.max(0, musVol() * MUS.f)); }
+function musFade(to, ms){ return new Promise(res => { clearInterval(MUS.ft); const from = MUS.f, t0 = Date.now(); MUS.ft = setInterval(() => { const p = Math.min(1, (Date.now() - t0) / ms); MUS.f = from + (to - from) * p; musApply(); if(p >= 1){ clearInterval(MUS.ft); res(); } }, 50); }); }
+async function musGet(tag, off, spd){
+  const u = "https://api.jamendo.com/v3.0/tracks/?client_id=" + encodeURIComponent(musKey()) + "&format=json&limit=40&offset=" + off + "&audioformat=mp32&order=popularity_month&speed=" + spd + (tag ? "&tags=" + encodeURIComponent(tag) : "");
+  const r = await fetch(u); if(!r.ok) throw new Error("HTTP " + r.status);
+  const j = await r.json(), h = j.headers || {};
+  if(h.status && h.status !== "success") throw new Error(h.error_message || h.warnings || "error");
+  return (j.results || []).filter(x => x.audio && !MUS.seen.has(x.id));
+}
+async function musFetch(tier){
+  const spd = MUS_SPEED[tier], tag = store.get("si_jamtag"), off = Math.floor(Math.random() * 60);
+  const tries = tag ? [[tag, off], [tag, 0], ["", off], ["", 0]] : [["", off], ["", 0]];
+  let l = [];
+  for(const [g, o] of tries){ l = await musGet(g, o, spd); if(l.length) break; } // genre trop restrictif : on le lâche
+  for(let i = l.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [l[i], l[j]] = [l[j], l[i]]; }
+  return l;
+}
+async function musPlay(tier){
+  const my = ++MUS.seq; MUS.tier = tier; MUS.since = Date.now();
+  try{
+    let q = MUS.q[tier];
+    if(!q || !q.length){ MUS.msg = t("musLoad"); musUI(); q = MUS.q[tier] = await musFetch(tier); if(my !== MUS.seq) return; }
+    const tr = q.shift();
+    if(!tr){ MUS.msg = t("musNone"); musUI(); return; }
+    if(MUS.a.getAttribute("src") && !MUS.a.paused) await musFade(0, 1200); // fondu sortant du morceau précédent
+    if(my !== MUS.seq || !MUS.on) return;
+    if(MUS.seen.size > 400) MUS.seen.clear();
+    MUS.seen.add(tr.id); MUS.cur = tr; MUS.msg = ""; MUS.f = 0; MUS.a.src = tr.audio; musApply();
+    await MUS.a.play(); MUS.err = 0; musFade(1, 1500); musUI();
+  }catch(e){ if(my !== MUS.seq) return; MUS.msg = t("musErr", e && e.message ? e.message : e); musUI(); }
+}
+function musStart(){
+  if(!musKey()){ MUS.msg = t("musNeed"); musUI(); return; }
+  if(!MUS.a){
+    const a = MUS.a = new Audio(); a.preload = "none";
+    a.onended = () => { if(MUS.on) musPlay(musTier(musZone())); }; // morceau fini : suivant, au tempo de l'étape actuelle
+    a.onerror = () => { if(!MUS.on || !a.getAttribute("src")) return; if(++MUS.err > 3){ MUS.msg = t("musErr", "audio"); musUI(); return; } setTimeout(() => { if(MUS.on) musPlay(musTier(musZone())); }, 800); };
+  }
+  MUS.on = true; MUS.hold = false; MUS.err = 0; MUS.msg = ""; musPlay(musTier(musZone())); musUI();
+}
+function musStop(){
+  MUS.on = false; MUS.seq++; clearInterval(MUS.ft); MUS.cur = null; MUS.msg = "";
+  if(MUS.a){ try{ MUS.a.pause(); MUS.a.removeAttribute("src"); MUS.a.load(); }catch(e){} }
+  musUI();
+}
+function musSync(){ // appelé à chaque tick du lecteur : pause avec la séance, et changement de morceau quand le palier d'intensité change (étape ≥ 60 s, au moins 90 s après le dernier changement)
+  if(!MUS.on || !MUS.a || !RUN || !RUN.steps || !RUN.steps.length) return;
+  const a = MUS.a, hold = !!RUN.began && RUN.paused;
+  if(hold){ if(!a.paused){ a.pause(); MUS.hold = true; } return; }
+  if(MUS.hold){ MUS.hold = false; if(a.getAttribute("src")) a.play().catch(() => {}); }
+  const st = RUN.steps[RUN.i], tr = musTier(st.z);
+  if(tr !== MUS.tier && st.dur >= 60 && Date.now() - MUS.since > 90000) musPlay(tr);
+}
+function musUI(){
+  const b = $("musGo"); if(!b) return;
+  const key = !!musKey(), n = $("musNext");
+  b.textContent = MUS.on ? "⏹ " + t("musStop") : "🎵 " + t("musStart"); b.disabled = !MUS.on && !key;
+  n.hidden = !MUS.on; n.title = t("musNext"); n.setAttribute("aria-label", t("musNext"));
+  $("musInfo").textContent = MUS.msg || (!key ? t("musNeed") : MUS.on && MUS.cur ? "♪ " + MUS.cur.name + " — " + MUS.cur.artist_name + " · " + t("musT" + MUS.tier) : "");
+  $("musVol").value = Math.round(musVol() * 100);
+}
+function musBind(){
+  $("musGo").onclick = () => MUS.on ? musStop() : musStart();
+  $("musNext").onclick = () => { if(MUS.on) musPlay(musTier(musZone())); };
+  $("musVol").oninput = e => { store.set("si_musvol", e.target.value); musApply(); };
+  musUI();
+}
 let RUN_WL = null; // empêche la mise en veille de l'écran pendant la séance
 async function runWake(on){
   try{
@@ -6426,7 +6525,7 @@ function runGo(){
 function runUI(){
   runLaunchUI();
   if(!RUN || !RUN.steps.length) return;
-  runWake(!RUN.paused && !!RUN.tm); runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia();
+  runWake(!RUN.paused && !!RUN.tm); runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
   $("runBar").style.setProperty("--rzc", runZC(st.z));
@@ -7072,7 +7171,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el => { el.textContent = t(el.dataset.i); });
   document.querySelectorAll("[data-ia]").forEach(el => el.dataset.ia.split(";").forEach(p => { const [a, k] = p.split(":"); el.setAttribute(a, t(k)); }));
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
-  applyTheme(); fontUI(); calEdUI(); try{ feelUI(); }catch(e){} // le texte du mode Auto suit la langue
+  applyTheme(); fontUI(); calEdUI(); try{ feelUI(); }catch(e){} try{ musUI(); }catch(e){} // le texte du mode Auto suit la langue
   setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderVo2(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks(); if(RUN){ runBtUI(); runUI(); }
   if(mode === "ses" && SES.m){ // « Séance seule » : mois, calendrier et tableaux suivent la langue
     try{ $("sesMT").textContent = SES.m.toLocaleDateString(loc(), {month: "long", year: "numeric"}); if(SES.list.length) sesGrid(++SES.mt); if($("sesSel").value) sesShow(); }catch(e){}
