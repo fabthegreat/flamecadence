@@ -463,7 +463,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}
 @media (min-width:900px){.run .rgrid{grid-template-columns:repeat(4,1fr)}}
 .run .rgrid .rcard{margin:0}.run .rgrid .rbig{font-size:2.6rem;margin:6px 0 2px}
-.run .rgrid small{color:var(--mute)}
+.run .rgrid small,.run .rmx small{color:var(--mute)}
+.run .rmx{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}.run .rmx[hidden]{display:none!important}.run .rmx .rcard{margin:0}.run .rmx .rbig{font-size:1.9rem;margin:6px 0 2px}.run.rfs .rmx{margin:0;gap:6px}.run.rfs .rmx .rcard{padding:6px 10px}.run.rfs .rmx .rbig{font-size:clamp(1.3rem,6vmin,2.4rem);margin:2px 0}
 .run canvas{width:100%;height:130px;display:block;border-radius:8px;border:1px solid var(--line);cursor:pointer}
 .run .rctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
 .run .rctl button,.run .rtop button,.run .rtop select{margin:0;width:auto}
@@ -636,6 +637,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
 <button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
 <button type="button" role="tab" data-cfg="beta" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></button>
+<button type="button" role="tab" data-cfg="player" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></button>
 </div>
 <div class="cfg-sec" data-cfgp="ai">
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
@@ -726,6 +728,15 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <div class="hint" data-i="jamKeyH"></div>
 <label for="jamtag" data-i="jamTagL"></label>
 <select id="jamtag"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select>
+</div>
+<div class="cfg-sec" data-cfgp="player" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
+<div class="hint" data-i="pmHint"></div>
+<label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
+<label><input type="checkbox" id="pm_avgS"><span data-i="runMxAvgS"></span></label>
+<label><input type="checkbox" id="pm_kj"><span data-i="runMxKj"></span></label>
+<label><input type="checkbox" id="pm_dec"><span data-i="runMxDec"></span></label>
+<div class="hint" data-i="pmDecHint"></div>
 </div>
 <div class="actions">
 <button id="save" type="button" data-i="save"></button>
@@ -1014,6 +1025,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
 <div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
 <div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
+<div class="rmx rhud" id="runMx" hidden><div class="rcard" id="runMx_avg" hidden><div class="rlbl" data-i="runMxAvg"></div><div class="rbig" id="runMxV_avg">--</div><small id="runMxS_avg"></small></div><div class="rcard" id="runMx_avgS" hidden><div class="rlbl" data-i="runMxAvgS"></div><div class="rbig" id="runMxV_avgS">--</div><small id="runMxS_avgS"></small></div><div class="rcard" id="runMx_kj" hidden><div class="rlbl" data-i="runMxKj"></div><div class="rbig" id="runMxV_kj">--</div><small id="runMxS_kj"></small></div><div class="rcard" id="runMx_dec" hidden><div class="rlbl" data-i="runMxDec"></div><div class="rbig" id="runMxV_dec">--</div><small id="runMxS_dec"></small></div></div>
 <div class="rcard rhud"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
 <div class="rcard rhud"><div class="rctl">
 <button type="button" class="alt small" data-rn="-10">-10 W</button><button type="button" class="alt small" data-rn="-5">-5 W</button>
@@ -1228,6 +1240,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
+secPlayer:["Player","Lecteur"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg power","Puissance moy. étape"], runMxAvgS:["Session avg power","Puissance moy. séance"], runMxKj:["Energy","Énergie"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
@@ -6389,7 +6402,7 @@ function runTick(){
   RUN.ap = L.p != null ? L.p : (RUN.paused ? 0 : RUN.ap + (tgt - RUN.ap) * .35 + (Math.random() * 6 - 3));
   RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
   RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
-  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el}); // seulement de vraies données
+  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i}); // seulement de vraies données
   runUI(); runSave();
 }
 // ---- maintien en vie : un son quasi inaudible en boucle + une notification média (comme un lecteur de musique) ; Android garde alors la page active et la décharge beaucoup moins
@@ -6543,6 +6556,21 @@ function runGo(){
   RUN.touched = true;
   runUI();
 }
+const RUNMX = ["avg", "avgS", "kj", "dec"]; // mesures optionnelles du lecteur, cochées dans Réglages > Lecteur (clé si_rm_<id>)
+function runMxUI(){
+  if(typeof RUN === "undefined" || !RUN || !$("runMx")) return;
+  const on = {}; RUNMX.forEach(k => { on[k] = store.get("si_rm_" + k) === "1"; $("runMx_" + k).hidden = !on[k]; });
+  const any = RUNMX.some(k => on[k]); $("runMx").hidden = !any; if(!any) return;
+  const rec = RUN.rec || [], P = rec.filter(x => x.p != null), sum = a => a.reduce((x, y) => x + y, 0), avg = a => a.length ? Math.round(sum(a) / a.length) : "--", set = (k, v, sm) => { $("runMxV_" + k).textContent = v; $("runMxS_" + k).textContent = sm || ""; }; // vraies données seulement
+  if(on.avgS) set("avgS", avg(P.map(x => x.p)), "W");
+  if(on.avg) set("avg", avg(P.filter(x => x.i === RUN.i).map(x => x.p)), "W");
+  if(on.kj){ const kj = sum(P.map(x => x.p)) / 1000; set("kj", P.length ? kj.toFixed(kj < 100 ? 1 : 0) : "--", "kJ"); }
+  if(on.dec){
+    const B = rec.filter(x => x.p != null && x.h > 0), h = B.length >> 1, ef = a => sum(a.map(x => x.p)) / sum(a.map(x => x.h)); // efficacité = puissance / FC
+    const e1 = B.length >= 600 ? ef(B.slice(0, h)) : 0, e2 = B.length >= 600 ? ef(B.slice(h)) : 0;
+    if(e1 > 0 && e2 > 0) set("dec", ((e1 - e2) / e1 * 100).toFixed(1) + "%", t("runMxDecS")); else set("dec", "--", t("runMxDecW"));
+  }
+}
 function runUI(){
   runLaunchUI();
   if(!RUN || !RUN.steps.length) return;
@@ -6556,7 +6584,7 @@ function runUI(){
   const vb = $("runVar"), ok = Math.abs(d) <= 10; vb.textContent = t(ok ? "runOn" : d > 0 ? "runHi" : "runLo"); vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
   $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
-  runErgBadge(); runDraw();
+  runErgBadge(); runMxUI(); runDraw();
 }
 function runDraw(){
   const c = $("runCv"); if(!c || !RUN || !RUN.steps.length) return; const r = c.getBoundingClientRect(); if(!r.width) return;
@@ -6697,6 +6725,7 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
 $("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
+["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
 function applyMode(){
