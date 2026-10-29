@@ -472,8 +472,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run #runChips button{margin:0 4px 6px 0;width:auto}.run #runChips button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
 .run #runRows{max-height:420px;overflow:auto}
 .run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
-.run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc)}
-.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}.run .wr .mini{display:block;width:100%;height:30px;margin:6px 0 2px;border-bottom:1px solid var(--line)}
+.run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc);outline-offset:-2px}
+.run .wr .wm{flex:1;min-width:0}.run .wr .wn{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run .wr small{color:var(--mute)}.run .wr .wc{display:flex;gap:10px;align-items:flex-end;margin-top:6px}.run .wr .wmini{flex:1;min-width:0;height:34px;display:block}.run .wr .wz{flex:0 0 52px;height:34px;display:flex;align-items:flex-end;gap:2px}.run .wr .wz i{flex:1;display:block;border-radius:2px 2px 0 0}
 .run #runAllL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runAll{width:auto;margin:0}
 .run #runErgL{display:inline-flex;gap:4px;align-items:center;font-size:.85rem}.run #runErgL[hidden]{display:none}.run #runErg{width:auto;margin:0}
 .run #runFsName{display:none}.run.rfs #runFsName{display:block;flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:clamp(.95rem,3.4vmin,1.3rem)}
@@ -1482,6 +1482,7 @@ lib3Name:["VO2max Intervals 5 x 3 min","Intervalles VO2max 5 x 3 min"], lib3Desc
 lib4Name:["Endurance Zone 2 (1h30)","Endurance Zone 2 (1h30)"], lib4Desc:["Steady aerobic endurance ride to build mitochondrial density.","Sortie d'endurance fondamentale continue pour développer la base aérobie."]
 };
 Object.assign(T, {
+runZoneTime:["Time in each zone","Temps passé dans chaque zone"],
 jamKeyL:["Jamendo client ID (music for the activity player)","Client ID Jamendo (musique du lecteur d'activité)"],
 jamHelp:["Get a free client ID at devportal.jamendo.com","Obtiens un client ID gratuit sur devportal.jamendo.com"],
 jamKeyH:["Public identifier, stored only in this browser. It enables the music button in the activity player: a random Jamendo playlist whose tempo follows the intensity zone of the current step.","Identifiant public, enregistré uniquement dans ce navigateur. Il active le bouton musique du lecteur : une playlist Jamendo aléatoire dont le tempo suit la zone d'intensité de l'étape en cours."],
@@ -6248,7 +6249,12 @@ function runMini(st, dur){
     const w = x.d / dur * W, ha = Math.max(1, x.a / mx * H), hb = Math.max(1, x.b / mx * H);
     o += `<polygon fill="${runZC(zoneOf((x.a + x.b) / 2))}" points="${x0.toFixed(2)},${H} ${x0.toFixed(2)},${(H - ha).toFixed(2)} ${(x0 + w).toFixed(2)},${(H - hb).toFixed(2)} ${(x0 + w).toFixed(2)},${H}"/>`; x0 += w;
   });
-  return `<svg class="mini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${o}</svg>`;
+  return `<svg class="wmini" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">${o}</svg>`;
+}
+// barres verticales : temps passé dans chaque zone (Z1 → Z7)
+function runZV(z){
+  const mx = Math.max(...z.slice(1)); if(!(mx > 0)) return "";
+  return `<div class="wz" role="img" aria-label="${esc(t("runZoneTime"))}">${[1, 2, 3, 4, 5, 6, 7].map(k => `<i style="height:${(z[k] / mx * 100).toFixed(1)}%;background:${runZC(k)}" title="${esc("Z" + k + " · " + fmtDur(z[k]))}"></i>`).join("")}</div>`;
 }
 function runRender(){
   const R = RUN, q = R.q.trim().toLowerCase(), all = R.items, today = iso(new Date());
@@ -6259,7 +6265,7 @@ function runRender(){
   const dt = d => new Date(d + "T12:00:00").toLocaleDateString(loc(), {weekday: "short", day: "numeric", month: "short"});
   $("runRows").innerHTML = rows.map(e => {
     const bd = e.src === "cal" ? (e.date === today ? t("runToday") : e.date < today ? t("runMissed") : "") : e.src === "plan" ? t("runSrcPlan") : "";
-    return `<div class="wr${R.cur && R.cur.id === e.id ? " sel" : ""}" data-k="${R.items.indexOf(e)}" role="button" tabindex="0"><div class="wm"><div class="wn">${esc(e.name)}</div><small>${e.date ? esc(dt(e.date)) + " · " : ""}${esc(fmtDur(e.dur))} · IF ${e.ifx.toFixed(2)} · TSS ${e.tss}${e.src === "plan" ? " · " + esc(t("runPlanNote")) : ""}</small>${runMini(e.st, e.dur)}${zoneBar(e.z, true)}</div>${bd ? `<span class="rbadge">${esc(bd)}</span>` : ""}</div>`;
+    return `<div class="wr${R.cur && R.cur.id === e.id ? " sel" : ""}" data-k="${R.items.indexOf(e)}" role="button" tabindex="0"><div class="wm"><div class="wn">${esc(e.name)}</div><small>${e.date ? esc(dt(e.date)) + " · " : ""}${esc(fmtDur(e.dur))} · IF ${e.ifx.toFixed(2)} · TSS ${e.tss}${e.src === "plan" ? " · " + esc(t("runPlanNote")) : ""}</small><div class="wc">${runMini(e.st, e.dur)}${runZV(e.z)}</div></div>${bd ? `<span class="rbadge">${esc(bd)}</span>` : ""}</div>`;
   }).join("");
   $("runLsCnt").textContent = rows.length + " / " + all.length; $("runLsMsg").textContent = R.err || (rows.length ? "" : t(KEY() ? (all.length ? "runNoMatch" : "runNoPlanned") : "needI"));
 }
