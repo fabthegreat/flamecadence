@@ -719,9 +719,11 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
 <div class="wgrid" style="grid-template-columns:1fr"><label><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label></div>
 <div class="hint" data-i="betaRunHint"></div>
+<div id="kaCfg">
 <label for="runKa" style="margin-top:16px" data-i="runKaL"></label>
 <select id="runKa"><option value="mix" data-i="runKaM"></option><option value="strong" data-i="runKaS"></option><option value="off" data-i="runKaO"></option></select>
 <div class="hint" data-i="runKaH"></div>
+</div>
 <div id="musCfg">
 <label for="jamkey" style="margin-top:16px" data-i="jamKeyL"></label>
 <input id="jamkey" autocomplete="off" autocapitalize="off" spellcheck="false">
@@ -6726,6 +6728,7 @@ const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
   const on = betaRunOn(), b = document.querySelector('#grp [data-g="run"]'); b.hidden = !on; b.style.display = on ? "" : "none";
+  $("kaCfg").hidden = !on; // maintien en vie du lecteur : seulement si le lecteur est coché
   $("musCfg").hidden = !on; // paramètres musique (Jamendo) : seulement si le lecteur est coché
   const pt = document.querySelector('.cfg-tabs [data-cfg="player"]'); pt.hidden = !on; pt.style.display = on ? "" : "none"; // réglages du lecteur proposés seulement si l'option bêta est cochée
   if(!on && pt.getAttribute("aria-selected") === "true") cfgTab("beta");
