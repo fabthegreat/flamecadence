@@ -925,6 +925,11 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <!-- Section Depuis une activité -->
 <section data-block="shift" hidden>
 <div class="phead"><h2 data-i="shiftT"></h2></div>
+<div class="wtabs" id="shTabs" role="tablist" style="margin-bottom:14px">
+<button type="button" role="tab" data-sh="bulk" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5"/><path d="M12 7l5 5-5 5"/></svg><span data-i="shTabBulk"></span></button>
+<button type="button" role="tab" data-sh="cal" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i="shTabCal"></span></button>
+</div>
+<div id="shBulk">
 <p class="hint" data-i="shiftHint"></p>
 <div class="row">
 <div><label for="shDate" data-i="shiftFrom"></label><input type="date" id="shDate"></div>
@@ -937,6 +942,11 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 <div id="shList" style="margin-top:14px"></div>
 <div class="hint" id="shWarn" style="color:var(--err)" hidden></div>
 <button type="button" id="shGo" style="margin-top:12px;width:100%" disabled></button>
+</div>
+<div id="shCalPane" hidden>
+<p class="hint" data-i="shCalHint"></p>
+<button type="button" id="shCalOpen" style="width:100%;margin-top:6px" data-i="shCalOpen"></button>
+</div>
 </section>
 <section data-block="act" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="actLbl"></span></h2>
@@ -1200,7 +1210,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.1.3"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.2.0"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -1438,7 +1448,7 @@ vo2Cap:["Rough estimate (about ±10 %): ACSM cycling equation, 10.8 × W/kg + 7,
 tr12T:["VO₂max estimate","Estimation de VO₂max"], tr12:["Estimates your VO₂max from your best 5 minutes over the last 7 days (or 14 days, or 6 weeks, your choice), adds a second estimate from your heart rate on steady segments of recent rides, shows your device's value if intervals.icu has one, and compares the best 5 minutes over 6 weeks, 12 weeks and a year.","Estime ta VO₂max à partir de tes 5 meilleures minutes des 7 derniers jours (ou 14 jours, ou 6 semaines, au choix), ajoute une seconde estimation à partir de ta fréquence cardiaque sur des segments stables de tes sorties récentes, affiche la valeur de ton appareil si intervals.icu en a une, et compare le meilleur 5 min sur 6 semaines, 12 semaines et un an."],
 widgetsLbl:["Sidebar widgets","Widgets de la barre latérale"],
 wtAgenda:["Agenda","Agenda"], wtForm:["Fitness","Forme"], wtAna:["Analysis","Analyse"],
-tabShift:["Shift","Décaler"], shiftT:["Shift planned workouts","Décaler des séances planifiées"], shiftHint:["Moves every planned workout of your intervals.icu calendar, from a date onwards, by a number of days or weeks (for example after a change of availability). Completed sessions are never touched.","Décale toutes les séances planifiées de ton calendrier intervals.icu, à partir d'une date, d'un nombre de jours ou de semaines (par exemple après un changement de disponibilité). Les séances déjà réalisées ne sont jamais modifiées."], shiftFrom:["From date","À partir du"], shiftDir:["Direction","Sens"], shiftLater:["Later","Plus tard"], shiftEarlier:["Earlier","Plus tôt"], shiftAmt:["Shift by","Décaler de"], shiftUnit:["Unit","Unité"], shiftDays:["day(s)","jour(s)"], shiftWeeks:["week(s)","semaine(s)"], shiftNone:["No planned workout from this date.","Aucune séance planifiée à partir de cette date."], shiftCount:["{0} planned workout(s) from this date:","{0} séance(s) planifiée(s) à partir de cette date :"], shiftMore:["… and {0} more","… et {0} autres"], shiftGo:["Shift {0} workout(s) {1}","Décaler {0} séance(s) {1}"], shiftPast:["Some workouts would land before today.","Certaines séances tomberaient avant aujourd'hui."], shiftAsk:["Shift {0} planned workout(s) {1}? This changes your intervals.icu calendar.","Décaler {0} séance(s) planifiée(s) {1} ? Cela modifie ton calendrier intervals.icu."], shiftBusy:["Shifting… {0}/{1}","Décalage… {0}/{1}"], shiftDone:["{0} workout(s) shifted","{0} séance(s) décalée(s)"], shiftPart:["{0} shifted, {1} failed: {2}","{0} décalée(s), {1} en échec : {2}"], shiftStale:["The calendar changed since the preview. The list has been refreshed: check it, then click again.","Le calendrier a changé depuis l'aperçu. La liste a été actualisée : vérifie-la puis clique à nouveau."], shiftLoad:["Loading planned workouts…","Chargement des séances planifiées…"],
+tabShift:["Reschedule","Replanifier"], shiftT:["Reschedule planned workouts","Replanifier des séances"], shTabBulk:["Bulk shift","Décalage groupé"], shTabCal:["Calendar","Calendrier"], shCalHint:["Open the maximized calendar to move single sessions by drag and drop, exactly like in the calendar widget. Press Esc or the restore button to come back here.","Ouvre le calendrier agrandi pour déplacer des séances une par une par glisser-déposer, comme dans le widget Calendrier. Échap ou le bouton de réduction te ramène ici."], shCalOpen:["Open the maximized calendar","Ouvrir le calendrier agrandi"], shiftHint:["Moves every planned workout of your intervals.icu calendar, from a date onwards, by a number of days or weeks (for example after a change of availability). Completed sessions are never touched.","Décale toutes les séances planifiées de ton calendrier intervals.icu, à partir d'une date, d'un nombre de jours ou de semaines (par exemple après un changement de disponibilité). Les séances déjà réalisées ne sont jamais modifiées."], shiftFrom:["From date","À partir du"], shiftDir:["Direction","Sens"], shiftLater:["Later","Plus tard"], shiftEarlier:["Earlier","Plus tôt"], shiftAmt:["Shift by","Décaler de"], shiftUnit:["Unit","Unité"], shiftDays:["day(s)","jour(s)"], shiftWeeks:["week(s)","semaine(s)"], shiftNone:["No planned workout from this date.","Aucune séance planifiée à partir de cette date."], shiftCount:["{0} planned workout(s) from this date:","{0} séance(s) planifiée(s) à partir de cette date :"], shiftMore:["… and {0} more","… et {0} autres"], shiftGo:["Shift {0} workout(s) {1}","Décaler {0} séance(s) {1}"], shiftPast:["Some workouts would land before today.","Certaines séances tomberaient avant aujourd'hui."], shiftAsk:["Shift {0} planned workout(s) {1}? This changes your intervals.icu calendar.","Décaler {0} séance(s) planifiée(s) {1} ? Cela modifie ton calendrier intervals.icu."], shiftBusy:["Shifting… {0}/{1}","Décalage… {0}/{1}"], shiftDone:["{0} workout(s) shifted","{0} séance(s) décalée(s)"], shiftPart:["{0} shifted, {1} failed: {2}","{0} décalée(s), {1} en échec : {2}"], shiftStale:["The calendar changed since the preview. The list has been refreshed: check it, then click again.","Le calendrier a changé depuis l'aperçu. La liste a été actualisée : vérifie-la puis clique à nouveau."], shiftLoad:["Loading planned workouts…","Chargement des séances planifiées…"],
 tabPlan:["Plan builder","Plan d'entraînement"], planT:["Training plan builder","Constructeur de plan d'entraînement"], pGoal:["Purpose of the plan","Objectif du plan"],
 pgBase:["Base endurance","Endurance de base"], pgFtp:["Raise FTP (sweet spot → threshold)","Monter la FTP (sweet spot → seuil)"], pgVo2:["VO₂max","VO₂max"], pgSprint:["Sprint / punch","Sprint / punch"], pPopHint:["Hover a block for its duration and power","Survole un bloc pour sa durée et sa puissance"], pgForce:["Force / low-cadence strength","Force / musculation sur le vélo (basse cadence)"], pgStart:["Get started (beginner)","Démarrer (débutant)"],
 pWeeks:["Number of weeks","Nombre de semaines"], pSess:["Sessions per week","Séances par semaine"], pMax:["Max session length","Durée max d'une séance"], pStart:["Plan starts (week of)","Début du plan (semaine du)"], pDays:["Training days","Jours d'entraînement"],
@@ -5216,6 +5226,7 @@ function setCalMax(on){
   b.querySelector("svg").innerHTML = CAL_ICON[CAL.big ? "min" : "max"];
   renderCal();
   sec.scrollTop = 0;
+  if(!CAL.big && CAL.forced){ CAL.forced = false; applyWidgets(); } // calendrier ouvert depuis l'outil Replanifier alors que le widget était masqué : on le remasque
 }
 $("calmax").onclick = () => setCalMax(!CAL.big);
 document.addEventListener("keydown", e => { if(e.key === "Escape" && CAL.big && !document.querySelector("dialog[open]")) setCalMax(false); });
@@ -6849,6 +6860,21 @@ $("shGo").onclick = async () => {
   try{ loadCal(true).catch(() => {}); }catch(e){}
   shiftPreview();
 };
+// sous-onglets de l'outil : décalage groupé / calendrier agrandi (le même que celui du widget Calendrier, même si ce widget est masqué ou dans un autre onglet latéral)
+function openCalMax(){
+  if(!KEY()){ say("needI", "err"); return; }
+  const sec = document.querySelector('[data-block="cal"]');
+  CAL.forced = sec.hidden || sec.classList.contains("wtabhid");
+  sec.hidden = false; sec.classList.remove("wtabhid");
+  setCalMax(true); loadCal().catch(() => {});
+}
+function setShTool(k){
+  $("shTabs").querySelectorAll("[data-sh]").forEach(b => b.setAttribute("aria-selected", String(b.dataset.sh === k)));
+  $("shBulk").hidden = k !== "bulk"; $("shCalPane").hidden = k !== "cal";
+  if(k === "bulk") shiftPreview(); else openCalMax();
+}
+$("shTabs").querySelectorAll("[data-sh]").forEach(b => b.onclick = () => setShTool(b.dataset.sh));
+$("shCalOpen").onclick = openCalMax;
 function applyMode(){
   if(mode !== "plan" && typeof PLAN !== "undefined" && PLAN.edit){ planEdEnd(); } // quitter le plan met fin à la modification d'une de ses séances
   if(mode !== "edit" && CALEDIT){ CALEDIT = null; calEdUI(); } // quitter l'éditeur manuel met fin à la modification d'une séance du calendrier
@@ -6861,7 +6887,7 @@ function applyMode(){
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="ses"]').hidden = mode !== "ses"; if(mode === "ses") sesInit();
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
-  document.querySelector('[data-block="shift"]').hidden = mode !== "shift"; if(mode === "shift") shiftPreview();
+  document.querySelector('[data-block="shift"]').hidden = mode !== "shift"; if(mode === "shift"){ if($("shTabs").querySelector('[data-sh="bulk"]').getAttribute("aria-selected") === "true") shiftPreview(); }
   document.querySelector('[data-block="run"]').hidden = mode !== "run"; if(typeof runOn === "function") runOn(mode === "run"); // le lecteur ne tourne que sur son onglet
   if(mode === "plan" && applyMode._prev !== "plan") planSyncDays();
   applyMode._prev = mode;
