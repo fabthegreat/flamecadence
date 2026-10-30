@@ -1200,7 +1200,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.1.1"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.1.3"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -4954,7 +4954,7 @@ function calHtml(off, evList, pick, selDate, actList, big){
     const k = `${y}-${pad(m + 1)}-${pad(d)}`, evs = (by[k] || []).slice().sort(byStart), acts = (byA[k] || []).slice().sort(byStart);
     n += evs.length + acts.length;
     html += `<div class="cal-d${k === today ? " today" : ""}${pick && k === selDate ? " sel" : ""}" data-date="${k}"><span class="cal-n">${d}${big ? `<span class="cal-wd"> · ${esc(new Date(y, m, d).toLocaleDateString(loc(), {weekday: "short"}))}</span>` : ""}</span>` +
-      evs.map(e => { return `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}"title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">×</button>${big ? calBigExtra(e, false) : ""}</div>`; }).join("") +
+      evs.map(e => { return `<div class="cal-ev${/Ride/.test(e.type || "") ? "" : " run"}" draggable="true" data-eid="${esc(String(e.id))}"title="${esc(e.name || "")}"><span class="cal-ev-t">${esc(e.name || "—")}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">✕</button>${big ? calBigExtra(e, false) : ""}</div>`; }).join("") +
       acts.map(a => { return `<div class="cal-ev done${/Ride/.test(a.type || "") ? "" : " run"}"${/Ride/.test(a.type || "") ? " data-bike" : ""} data-eid="a${esc(String(a.id))}"title="${esc(a.name || a.type || "")}"><span class="cal-ev-t">${esc(a.name || a.type || "—")}</span>${big ? calBigExtra(a, true) : ""}</div>`; }).join("") + `</div>`;
   }
   return {html: html + `</div>`, n};
@@ -7331,13 +7331,6 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
     seg.appendChild(m);
   });
   grp.appendChild(seg);
-  if(WIDGETS.includes(h.parentNode.dataset.block)){ // masquer le widget : il ne se réaffiche que depuis les réglages
-    const x = document.createElement("button");
-    x.type = "button"; x.className = "alt small icon hid"; x.dataset.ia = "title:wHide;aria-label:wHide";
-    x.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
-    x.onclick = () => { const k = h.parentNode.dataset.block; if(widgets.includes(k)) toggleWidget(k); toast(t("wHidden"), "info"); const o = $("open"); if(o) o.focus({preventScroll: true}); };
-    grp.appendChild(x);
-  }
   grp.appendChild(b); h.appendChild(grp);
 });
 function setLinks(){
