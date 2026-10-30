@@ -483,7 +483,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
 .run #runFsHint{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:99px;background:var(--acc);color:var(--on);font-size:.8rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:.92}.run:not(.rfs) #runFsHint{display:none!important}
-.run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}
+.run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run:not(.rfs) .phead,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}.run #runGo::before{content:"\25B6";margin-right:10px;font-size:.9em}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn ."}
 .run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}
@@ -1183,7 +1183,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.0.0"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.0.1"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
