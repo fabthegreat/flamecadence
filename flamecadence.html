@@ -427,6 +427,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cal-ev.done .cal-x{display:none}
 .cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
+#calbox.nav-l{box-shadow:inset 8px 0 0 var(--acc)}#calbox.nav-r{box-shadow:inset -8px 0 0 var(--acc)}#calprev.dragnav,#calnext.dragnav{background:var(--acc);color:var(--on)}
 .cal-x:hover{opacity:1}.cal-max .cal-x{display:none}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -593,12 +594,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 #cmpinfo b{font-weight:600}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;}catch(e){}</script>
-<script>/* PostHog : mesure des connexions (visites). Renseigne la clé de projet (phc_…) ci-dessous ; sans clé valide, rien n'est envoyé. */
-(function(){var KEY="phc_REPLACE_WITH_YOUR_PROJECT_KEY",HOST="https://eu.i.posthog.com"; // à renseigner ici ; région US : https://us.i.posthog.com
-if(!/^phc_/.test(KEY)||/REPLACE/.test(KEY))return;
-!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags on onFeatureFlags onSessionId reset get_distinct_id alias set_config opt_in_capturing opt_out_capturing has_opted_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:false,disable_session_recording:true,capture_pageview:true,capture_pageleave:true});
-})();</script>
+<script data-goatcounter="https://flamecadence.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <main>
@@ -1210,7 +1207,7 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.2.0"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.2.1"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -5100,19 +5097,21 @@ function bindCalTips(box, getEv){
   });
   box.addEventListener("pointerleave", () => { const tip = box.querySelector(".tip"); if(tip) tip.hidden = true; });
 }
+const CALDRAG = {ev: null}; // séance en cours de glisser-déposer : conservée au changement de mois (elle n'est plus dans la liste du mois affiché)
 function setupCalBox(box, getEv, refresh, onPick){
+  box.addEventListener("dragstart", e => { const el = e.target.closest ? e.target.closest(".cal-ev[data-eid]") : null; CALDRAG.ev = el ? ((getEv() || []).find(x => String(x.id) === el.dataset.eid) || null) : null; });
   box.addEventListener("dragover", e => { const c = e.target.closest(".cal-d:not(.empty)"); if(c){ e.preventDefault(); e.dataTransfer.dropEffect = "move"; c.classList.add("over"); } });
   box.addEventListener("dragleave", e => { const c = e.target.closest(".cal-d"); if(c) c.classList.remove("over"); });
   box.addEventListener("drop", async e => {
     const c = e.target.closest(".cal-d:not(.empty)"); if(!c) return;
     e.preventDefault(); c.classList.remove("over");
     const id = e.dataTransfer.getData("text/plain"); if(!id) return;
-    const ev = (getEv() || []).find(x => String(x.id) === id); if(!ev) return;
+    const ev = (getEv() || []).find(x => String(x.id) === id) || (CALDRAG.ev && String(CALDRAG.ev.id) === id ? CALDRAG.ev : null); if(!ev) return;
     const nd = c.dataset.date;
     if((ev.start_date_local || "").slice(0, 10) === nd) return;
     try{
       await icuFetch(icuUrl("/events/" + id), {method: "PUT", headers: {...icuAuth(), "Content-Type": "application/json"}, body: JSON.stringify({...ev, start_date_local: nd + "T00:00:00"})});
-      ev.start_date_local = nd + "T00:00:00"; say("calMoved", "ok", nd); refresh();
+      ev.start_date_local = nd + "T00:00:00"; CALDRAG.ev = null; say("calMoved", "ok", nd); refresh();
     }catch(err){ say("errI", "err", errText(err)); }
   });
   box.addEventListener("click", async e => {
@@ -5229,6 +5228,23 @@ function setCalMax(on){
   if(!CAL.big && CAL.forced){ CAL.forced = false; applyWidgets(); } // calendrier ouvert depuis l'outil Replanifier alors que le widget était masqué : on le remasque
 }
 $("calmax").onclick = () => setCalMax(!CAL.big);
+// glisser une séance vers le bord gauche / droit du calendrier (ou sur les flèches ‹ ›) change de mois, pour déplacer une séance d'un mois à l'autre
+(() => {
+  const sec = document.querySelector('[data-block="cal"]'), box = $("calbox"); let timer = null, dir = 0, last = 0;
+  const mark = d => { box.classList.toggle("nav-l", d < 0); box.classList.toggle("nav-r", d > 0); $("calprev").classList.toggle("dragnav", d < 0); $("calnext").classList.toggle("dragnav", d > 0); };
+  const stop = () => { clearTimeout(timer); timer = null; dir = 0; mark(0); };
+  const arm = d => {
+    if(dir === d && timer) return; stop(); dir = d; mark(d);
+    timer = setTimeout(() => { const still = Date.now() - last < 500; stop(); if(still && CALDRAG.ev){ CAL.m += d; loadCal().catch(() => {}); } }, 700);
+  };
+  sec.addEventListener("dragover", e => {
+    if(!CALDRAG.ev) return; last = Date.now();
+    const r = box.getBoundingClientRect(), z = Math.min(90, r.width * .12);
+    const d = e.target.closest("#calprev") ? -1 : e.target.closest("#calnext") ? 1 : (e.clientY >= r.top && e.clientY <= r.bottom ? (e.clientX < r.left + z ? -1 : e.clientX > r.right - z ? 1 : 0) : 0);
+    if(d) arm(d); else stop();
+  });
+  ["drop", "dragend"].forEach(n => document.addEventListener(n, () => { stop(); if(n === "dragend") CALDRAG.ev = null; }, true));
+})();
 document.addEventListener("keydown", e => { if(e.key === "Escape" && CAL.big && !document.querySelector("dialog[open]")) setCalMax(false); });
 // clic sur un jour vide : ouvre l'éditeur manuel avec cette date
 setupCalBox($("calbox"), () => CAL.ev, () => loadCal(true).catch(() => {}), k => {
