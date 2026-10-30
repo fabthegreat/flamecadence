@@ -6328,7 +6328,7 @@ function runInit(){
   });
   document.querySelector('[data-block="run"]').addEventListener("click", () => { // le plein écran natif ne revient qu'après un vrai toucher (clic), pas au début d'un balayage depuis le bord : sinon il masquait aussitôt les barres système que l'on venait de faire apparaître
     const el = document.querySelector('[data-block="run"]');
-    if(RUN.wantFs && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ runWant(false); el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
+    if(RUN.wantFs && !runPwaFs() && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ runWant(false); el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
   });
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
@@ -6346,12 +6346,14 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
   el.style.setProperty("--cvh", Math.max(40, Math.round(Math.min(150, Math.max(52, M[o] * .15)) - (M[o] - h))) + "px");
   runDraw();
 }
+// application installée déjà en plein écran (manifeste) : on n'ajoute pas de plein écran natif de la page, qui masquait les barres système de façon plus agressive (balayage depuis le bord) ; le lecteur reste simplement affiché en recouvrement
+const runPwaFs = () => matchMedia("(display-mode: fullscreen)").matches;
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
   el.classList.toggle("rfs", on); runWant(false);
   if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runFs")); } // Démarrer / Terminer et enregistrer / bouton quitter : ligne du haut ; ERG et nom du trainer ne sont plus affichés en plein écran
   else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runWkName").after($("runFs")); }
-  if(on && el.requestFullscreen) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
+  if(on && el.requestFullscreen && !runPwaFs()) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
   if(!on){ RUN.fsApi = false; if(document.fullscreenElement) document.exitFullscreen().catch(() => {}); }
   const b = $("runFs"), l = t(on ? "runFsX" : "runFs"); b.title = l; b.setAttribute("aria-label", l); $("runFsP").setAttribute("d", on ? "M8 3v3a2 2 0 0 1-2 2H3M21 8h-3a2 2 0 0 1-2-2V3M3 16h3a2 2 0 0 1 2 2v3M16 21v-3a2 2 0 0 1 2-2h3" : "M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"); runFit(); setTimeout(runFit, 120); setTimeout(runFit, 500);
 }
