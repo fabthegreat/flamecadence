@@ -52,7 +52,7 @@ An experimental activity player, **off by default**. Tick **Beta: "Run activity"
 * **Sounds:** A rising three-note sound when you press **Start** or resume, three short beeps in the last three seconds of each step and a longer one at the step change (all can be turned off with one tick box in the **Player** settings tab).
 * **Optional metrics:** In the **Player** settings tab, tick the extra cards you want to see while riding: **step average power**, **session average power**, **energy (kJ)** and **decoupling** (power-to-heart-rate drift between the first and second half of the session, shown after 10 minutes of data). They use real Bluetooth data only.
 * **Built for long sessions on a phone:** The screen stays awake, the session is saved and resumed if the page is reloaded, and the layout adapts when you switch to another app and Android shows its navigation bar (a tap brings back native full screen). An optional **keep-alive** mode (inaudible sound or media notification) stops Android from freezing the page in the background, and the media notification gives lock-screen play / pause and step controls.
-* **Music (optional):** With a free Jamendo client ID, a music button plays a playlist whose tempo follows the intensity zone of the current step. Pick a genre in the settings.
+* **Music (optional):** With a free Jamendo client ID, a music button plays a playlist whose tempo follows the intensity zone of the current step. Enter the client ID and pick a genre in the **Player** settings tab.
 * **When you finish:** A ride summary (duration, average power and heart rate, kJ, time in each zone). **Upload to intervals.icu** or **download a `.tcx`** file. At least 30 seconds of real power or heart-rate data is needed to save a ride.
 
 ### 📈 Interactive preview
@@ -90,7 +90,7 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
 ### ⚙️ Settings, privacy and install
 
 * **No backend, no account:** everything runs in your browser from `flamecadence.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
-* **Settings tabs:** AI, intervals.icu, profile, widgets, appearance (choice of site font), **Beta** and, once the beta option is ticked, **Player**. The music and keep-alive options only show when the beta option is on.
+* **Settings tabs:** AI, intervals.icu, profile, widgets, appearance (choice of site font), **Beta** and, once the beta option is ticked, **Player**. The **Player** tab holds the sound, optional-metric and music (Jamendo) settings; the keep-alive option sits in the Beta tab. Both only show when the beta option is on.
 * API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings (including the widget order) can be exported / imported as JSON.
 * **Install on your phone:** the **…** menu has an **Install app** entry. On Android it opens the browser's install prompt (or tells you where to find "Install app" / "Add to Home screen" in your browser's menu). The **guided tour** is in the same menu.
 * Built-in help dialog and keyboard-friendly tabs and controls.
