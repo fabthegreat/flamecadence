@@ -36,6 +36,7 @@
 :root[data-theme="dark"]{--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12181e;--card:#1a232b;--ink:#e6ebef;--mute:#98a6b3;--line:#2d3944;--acc:#4fc3c3;--err:#ff8a80;--ok:#7bd88f;--on:#08201f;color-scheme:dark}}
 *{box-sizing:border-box}
+:root[data-square] *:not(.rdot):not(.wxk):not(.stb){border-radius:0!important}
 body{margin:0;min-height:100vh;background:radial-gradient(1100px 480px at 50% 115%,rgba(255,157,0,.16),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,77,0,.09),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(15,110,110,.08),transparent 60%),linear-gradient(180deg,#f8fafc 0%,var(--bg) 45%,#f4efe9 100%);background-attachment:fixed;color:var(--ink);font:16px/1.5 var(--ff,"IBM Plex Sans",system-ui,sans-serif)}
 :root[data-font="system"]{--ff:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 :root[data-font="inter"]{--ff:"Inter",system-ui,sans-serif}
@@ -486,11 +487,11 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run #runFsHint{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:99px;background:var(--acc);color:var(--on);font-size:.8rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:.92}.run:not(.rfs) #runFsHint{display:none!important}
 .run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run:not(.rfs) .phead,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}.run #runGo::before{content:"\25B6";margin-right:10px;font-size:.9em}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
-.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn ."}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn pg"}
 .run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}
 .run #runFsDev,.run.rfs #runFsDev,.run.rfs #runErgL,.run.rfs #runDevs{display:none!important}
 .run.rfs .phead #runPlay,.run.rfs .phead #runFin{margin:0;width:auto;padding:7px 12px}
-@media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"nm pl fn ex"}}
+@media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:"nm pl fn pg ex"}}
 .run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
 .run.rfs .rgrid{flex:1 1 0;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 @media (orientation:landscape){.run.rfs .rgrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}}
@@ -501,6 +502,29 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs canvas{height:var(--cvh,clamp(52px,15dvh,150px))}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
 .run.rfs #runEnd{max-height:45%;overflow:auto}
+/* second écran du lecteur (plein écran) : vide pour l'instant ; on y accède par glissement latéral ou par le bouton ●○ */
+.run #runPg{display:none}.run.rfs #runPg{display:inline-block;grid-area:pg;justify-self:end;margin:0;width:auto;padding:7px 12px;letter-spacing:3px;line-height:1}
+.run.rfs{touch-action:pan-y}.run #runS2{display:none}
+.run.rfs.rs2 #runS2{display:block;position:relative;overflow:hidden;flex:1 1 0;min-height:0;border:1px solid var(--line);background:var(--card);animation:rs2in .18s ease-out}
+.run.rfs #runRd{display:block;width:100%;height:100%}
+#runHz{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr) clamp(130px,30%,230px);grid-template-rows:auto 1fr auto;gap:8px;padding:8px;pointer-events:none;color:#fff;font-variant-numeric:tabular-nums}
+#runHz .hzt{grid-column:1;grid-row:1;display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+#runHz .hk{background:rgba(8,12,20,.62);padding:6px 10px;min-width:70px;line-height:1.1}
+#runHz .hl{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+#runHz .hv{font-size:clamp(1.3rem,5.5vmin,2.4rem);font-weight:800;line-height:1.05}#runHz .hv small{font-size:.45em;margin-left:3px;opacity:.8}
+#runHz .hzp{border-top:4px solid var(--zc,#22c55e);min-width:120px}#runHz .hzp .hv{font-size:clamp(2rem,9vmin,4rem)}#runHz .hzp .hl:last-child{font-weight:700;opacity:1;color:var(--tc,#fff)}
+#runHz .hzr{grid-column:2;grid-row:1/4;position:relative;overflow:hidden;background:rgba(8,12,20,.38);min-height:0}
+#hzList{position:absolute;left:0;right:0;top:0;padding:8px 6px;transition:transform .6s ease}
+#hzList .hs{position:relative;margin-bottom:4px;padding:3px 8px;overflow:hidden;background:color-mix(in srgb,var(--c) 70%,#0b1018);border-left:5px solid var(--c);opacity:.95;display:flex;flex-direction:column;justify-content:center;line-height:1.15}
+#hzList .hs b{position:relative;font-size:.95rem}#hzList .hs span{position:relative;font-size:.68rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#hzList .hs .hf{position:absolute;left:0;top:0;width:100%;height:0;background:rgba(0,0,0,.45)}
+#hzList .hs.past{opacity:.3}#hzList .hs.cur{outline:2px solid #fff;outline-offset:-2px;opacity:1}
+#runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
+#runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
+#runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
+.run.rfs.rs2 .rhud{display:none!important}
+@keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.run.rfs.rs2 #runS2{animation:none}}
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
 .run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
 .run #musIc{flex:0 0 auto;display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);color:var(--acc)}.run #musIc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -549,7 +573,8 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 /* comparateur de séances passées */
-html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+.run #runWkChart{margin-top:8px}.run #runWkChart:empty{display:none}.run #runWkChart svg{display:block;width:100%;height:56px;border-radius:6px;background:var(--bg)}
 #lsvg{cursor:pointer}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
 .cmp-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;cursor:pointer}
@@ -593,7 +618,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 #cmpinfo{min-height:1.2em}
 #cmpinfo b{font-weight:600}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;}catch(e){}</script>
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";}catch(e){}</script>
 <script data-goatcounter="https://flamecadence.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -713,6 +738,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
 <div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
 <div class="hint" data-i="fontHint"></div>
+<div class="wgrid" style="grid-template-columns:1fr;margin-top:14px"><label><input type="checkbox" id="sqCorners"><span data-i="sqLbl"></span></label></div>
+<div class="hint" data-i="sqHint"></div>
 </div>
 <div class="cfg-sec" data-cfgp="beta" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
@@ -1029,19 +1056,20 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <div id="msg" role="status"></div>
 
 <section data-block="run" class="run" hidden>
-<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsName"></span><span id="runFsDev" aria-live="polite"></span></div>
-<details class="rcard" id="runLs" open><summary><b data-i="runListT"></b> <span id="runLsCnt" class="hint"></span></summary>
-<div class="rrow" style="margin:8px 0"><input id="runQ" type="search" data-ia="placeholder:runSearch" style="flex:1;min-width:140px;margin:0"><button type="button" class="alt small" id="runRef" data-ia="title:runRefresh;aria-label:runRefresh">↻</button></div>
-<div id="runChips"></div><div id="runRows"></div><div class="hint" id="runLsMsg"></div></details>
-<div class="rcard rtop"><div class="rrow">
-<div><div class="rlbl" data-i="runWk"></div><div class="rwk"><b id="runWkName"></b><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div></div>
-<div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt"></span><span id="runDevs" class="rbt"></span>
+<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsName"></span><span id="runFsDev" aria-live="polite"></span><button type="button" class="alt small" id="runPg">●○</button></div>
+<div class="rcard rtop rdev"><div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt"></span><span id="runDevs" class="rbt"></span>
 <button type="button" class="alt small" id="runPairT" data-i="runPairT"></button>
 <button type="button" class="alt small" id="runPairH" data-i="runPairH"></button>
 <label id="runAllL"><input type="checkbox" id="runAll"><span data-i="runAll"></span></label>
 <button type="button" class="alt small" id="runSimB" data-i="runSimBack" hidden></button>
-<label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div></div>
+<label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
+<details class="rcard" id="runLs" open><summary><b data-i="runListT"></b> <span id="runLsCnt" class="hint"></span></summary>
+<div class="rrow" style="margin:8px 0"><input id="runQ" type="search" data-ia="placeholder:runSearch" style="flex:1;min-width:140px;margin:0"><button type="button" class="alt small" id="runRef" data-ia="title:runRefresh;aria-label:runRefresh">↻</button></div>
+<div id="runChips"></div><div id="runRows"></div><div class="hint" id="runLsMsg"></div></details>
+<div class="rcard rtop"><div class="rrow">
+<div><div class="rlbl" data-i="runWk"></div><div class="rwk"><b id="runWkName"></b><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div><div id="runWkChart" aria-hidden="true"></div></div>
+</div></div>
 <div class="rcard rmus" id="runMus" hidden><div class="rctl">
 <a id="musIc" href="https://www.jamendo.com" target="_blank" rel="noopener" title="Jamendo" aria-label="Jamendo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
 <button type="button" id="musGo" class="alt small"></button>
@@ -1069,6 +1097,14 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <button type="button" id="runPlay"></button>
 <button type="button" class="alt small" id="runNext" aria-label="Next step">⏭</button>
 <button type="button" class="alt small" id="runFin" data-i="runFin"></button></div></div>
+<div id="runS2"><canvas id="runRd" aria-hidden="true"></canvas><div id="runHz"><div class="hzt">
+<div class="hk"><div class="hl" data-i="runTotal"></div><div class="hv" id="hzEl">00:00</div><div class="hl" id="hzTot"></div></div>
+<div class="hk hzp" id="hzPw"><div class="hl" data-i="runAct"></div><div class="hv"><span id="hzAp">--</span><small>W</small></div><div class="hl" id="hzTg"></div></div>
+<div class="hk"><div class="hl">♥ bpm</div><div class="hv" id="hzHr">--</div></div>
+<div class="hk"><div class="hl">rpm</div><div class="hv" id="hzCd">--</div></div>
+<div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div></div>
+<div class="hzr"><div id="hzList"></div></div>
+<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div></div></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 </section>
@@ -1100,7 +1136,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-plan:not(.pl-edit) #prev{display:none!i
 <details class="fold" id="descDet"><summary data-i="descLbl"></summary>
 <textarea id="desc"></textarea></details>
 <div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button><button id="plsave" type="button" data-i="pEdSave" hidden></button>
-<button class="alt small" id="expdl" type="button" data-i="exportBtn"></button></div>
+<button class="alt small" id="expdl" type="button" data-i="exportBtn"></button>
+<button class="alt small" id="toplayer" type="button" hidden></button></div>
 </section>
 
 
@@ -1278,7 +1315,7 @@ calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules 
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
 secPlayer:["Player","Lecteur"], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
-fontSample:["Fire up your next workout","Allume ta prochaine séance"], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
+fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
 docTitle:["FlameCadence — Fire up your next workout","FlameCadence — Allume ta prochaine séance"],
@@ -1512,7 +1549,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -1641,6 +1678,7 @@ $("impjsonin").onchange = () => {
     if(Array.isArray(j.widgetOrder)){ WORDER = sanitizeOrder(j.widgetOrder); store.set("si_worder", JSON.stringify(WORDER)); applyOrder(); n++; }
     if(j.weatherLocation && isFinite(j.weatherLocation.lat) && isFinite(j.weatherLocation.lon)){ store.set("si_wxloc", JSON.stringify({name: String(j.weatherLocation.name || "").slice(0, 80), lat: +j.weatherLocation.lat, lon: +j.weatherLocation.lon})); store.set("si_wxcache", ""); wxCurText(); loadWx(true); n++; }
     if(typeof j.font === "string" && FONTS.some(f => f[0] === j.font)){ font = j.font; store.set("si_font", font); fontUI(); n++; }
+    if(typeof j.square === "boolean"){ store.set("si_square", j.square ? "1" : "0"); applySquare(); n++; }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
     jnote("jsonImpOk", "ok", f.name);
@@ -1650,7 +1688,7 @@ $("expjson").onclick = () => {
   const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
   const stArr = stars(); if(stArr.length) o.starred = stArr;
   o.widgetOrder = WORDER.slice(); // ordre des widgets de la colonne de droite
-  o.font = font;
+  o.font = font; o.square = store.get("si_square") === "1";
   if(wxLoc()) o.weatherLocation = wxLoc();
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
@@ -2743,6 +2781,7 @@ function fuelHtml(totalSec, steps, ftp, pace, iff){
 }
 let CH_FIX = null; // échelle figée pendant le redimensionnement par poignées {scale, peak}
 function renderChart(ovr){
+  try{ prevPlayBtn(); }catch(e){}
   const box = $("chart"), sport = $("sport").value, ftp = curFtp();
   const steps = ovr || parseWorkout($("desc").value, sport, ftp);
   if(!steps.length){ box.innerHTML = ""; box._steps = []; $("explain").hidden = true; return; }
@@ -3559,7 +3598,7 @@ function renderLibrary(){
       const title=lang==="fr"?item.name_fr:item.name_en;
       const desc=lang==="fr"?item.expl_fr:item.expl_en;
       const st = stars().includes(item.id);
-      return `<div class="lib-card" data-lc="${idx}"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview"></div><p class="lib-stats"></p><p>${esc(desc)}</p><div style="display:flex;gap:8px;align-items:center"><button class="alt small" data-star="${esc(item.id)}" type="button" aria-pressed="${st}" title="${esc(t("starT"))}">${st ? "★" : "☆"}</button><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button></div></div>`;
+      return `<div class="lib-card" data-lc="${idx}"><h3>${esc(title)}</h3><div class="lib-preview" role="img" aria-label="${esc(title)} session preview"></div><p class="lib-stats"></p><p>${esc(desc)}</p><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="alt small" data-star="${esc(item.id)}" type="button" aria-pressed="${st}" title="${esc(t("starT"))}">${st ? "★" : "☆"}</button><button class="alt small" data-lib="${idx}" type="button">${esc(t("edGo"))}</button>${betaRunOn() && isBike(item.sport) ? `<button class="alt small" data-lplay="${idx}" type="button" title="${esc(t("libToPlT"))}">▶ ${esc(t("runItT"))}</button>` : ""}</div></div>`;
     }).join("")}</div></div>
   </details>`).join("");
   c.querySelectorAll("details.lib-theme[open]").forEach(libHydrate); // recherche : catégories ouvertes d'office
@@ -3601,9 +3640,29 @@ $("libContainer").addEventListener("click", e => {
   const sm = e.target.closest ? e.target.closest(".lib-theme>summary") : null; if(!sm) return;
   const d = sm.parentElement; setTimeout(() => { if(d.open) d.scrollIntoView({block: "nearest", behavior: "smooth"}); }, 0);
 });
+// envoie une séance de la bibliothèque dans le lecteur d'activité (bêta) : bascule sur l'onglet Lecteur et la charge
+function libToPlayer(item){ if(item) sendToPlayer("lib:" + item.id, lang === "fr" ? item.name_fr : item.name_en, item.desc_en); }
+function sendToPlayer(id, name, desc){
+  const e = runMk(id.split(":")[0], id, name, "", runSteps(desc, runFtp()));
+  if(!e) return;
+  if(typeof RUN !== "undefined" && RUN && RUN.el > 0 && RUN.el < RUN.total && !confirm(t("runConfirm"))) return;
+  mode = "run"; store.set("si_mode", mode); applyMode(); // crée le lecteur au besoin
+  if(!RUN) return;
+  runPick(e, true); RUN.touched = true; $("runLs").open = false;
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+// bouton « Lecteur » du bloc Aperçu : lance la séance en cours de construction sans passer par le calendrier
+function prevPlayBtn(){
+  const b = $("toplayer"); if(!b) return;
+  let on = false; try{ on = betaRunOn() && isBike($("sport").value) && !!$("desc").value.trim(); }catch(e){}
+  b.hidden = !on; if(on) b.textContent = "▶ " + t("runItT"); b.title = t("prevToPlT");
+}
+$("toplayer").onclick = () => sendToPlayer("prev:" + Date.now(), $("name").value.trim() || t("runWk"), $("desc").value);
 $("libContainer").onclick = e => {
   const sb = e.target.closest("[data-star]");
   if(sb){ toggleStar(sb.dataset.star); if($("libstar").checked) renderLibraryKeepOpen(); else { const st = stars().includes(sb.dataset.star); sb.textContent = st ? "★" : "☆"; sb.setAttribute("aria-pressed", String(st)); } return; }
+  const pb = e.target.closest("[data-lplay]");
+  if(pb){ libToPlayer(LIBRARY[+pb.dataset.lplay]); return; }
   const btn = e.target.closest("[data-lib]"); if(!btn) return;
   const item = LIBRARY[+btn.dataset.lib];
   syncUnit(); // le type de sortie (indoor / extérieur) reste celui choisi dans la bibliothèque
@@ -6347,7 +6406,7 @@ function runPick(e, auto){
 function runLoad(e){
   const ftp = runFtp();
   RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2)}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; runUI();
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI();
 }
 const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
 function runInit(){
@@ -6397,9 +6456,139 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
 }
 // application installée déjà en plein écran (manifeste) : on n'ajoute pas de plein écran natif de la page, qui masquait les barres système de façon plus agressive (balayage depuis le bord) ; le lecteur reste simplement affiché en recouvrement
 const runPwaFs = () => matchMedia("(display-mode: fullscreen)").matches;
+// ---- second écran : route en vue subjective (pseudo-3D). La vitesse suit la puissance réelle ; à l'arrêt ou en pause la route s'immobilise.
+const RS = {raf: 0, v: 0, dist: 0, t: 0, sig: ""}, HZ = {key: "", tops: [], i: -1};
+// ---- HUD façon Zwift : valeurs en haut, étapes de la séance à droite, étape en cours et progression en bas
+function hzBuild(){
+  let top = 0; HZ.tops = []; HZ.i = -1;
+  $("hzList").innerHTML = RUN.steps.map(st => {
+    const h = Math.max(34, Math.min(150, Math.round(st.dur / 60 * 7))); HZ.tops.push(top); top += h + 4;
+    return `<div class="hs" style="height:${h}px;--c:${runZC(st.z)}"><div class="hf"></div><b>${st.pw === st.pw2 ? st.pw + " W" : st.pw + "→" + st.pw2 + " W"}</b><span>${esc(st.name)} · ${runFmt(st.dur)}</span></div>`;
+  }).join("");
+}
+function hzUpdate(){
+  const R = typeof RUN !== "undefined" ? RUN : null, has = !!(R && R.steps && R.steps.length), ftp = has ? runFtp() : 0, st = has ? R.steps[R.i] : null;
+  if(has){
+    const key = (R.cur ? R.cur.id : "") + "|" + R.steps.length + "|" + ftp; if(key !== HZ.key){ HZ.key = key; hzBuild(); }
+    if(R.i !== HZ.i){ HZ.i = R.i; [...$("hzList").children].forEach((c, k) => { c.classList.toggle("past", k < R.i); c.classList.toggle("cur", k === R.i); }); $("hzList").style.transform = `translateY(${-Math.max(0, HZ.tops[R.i] - 8)}px)`; }
+  }else if(HZ.key){ HZ.key = ""; $("hzList").innerHTML = ""; }
+  const ap = has ? Math.round(R.ap || 0) : 0, tg = has ? runTgt(st, R.left) : 0, pr = has ? Math.round((1 - R.left / st.dur) * 100) : 0;
+  const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + R.i : "", pr].join("~");
+  if(sig === RS.sig) return; RS.sig = sig;
+  $("hzSp").textContent = Math.round(RS.v * 3.6); $("hzAp").textContent = has ? ap : "--"; $("hzHr").textContent = $("runHRv").textContent; $("hzCd").textContent = $("runCV").textContent;
+  const pw = $("hzPw"), dv = ap - tg, near = Math.abs(dv) <= Math.max(5, tg * .05);
+  pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", !has || !tg ? "#fff" : near ? "#4ade80" : dv > 0 ? "#fb923c" : "#60a5fa");
+  $("hzTg").textContent = has ? "▶ " + tg + " W" : "";
+  $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + runFmt(R.total) : "";
+  $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? runFmt(R.left) : "";
+  $("hzPr").style.width = has ? Math.round(R.el / R.total * 100) + "%" : "0";
+  if(has){ const c = $("hzList").children[R.i]; if(c) c.firstChild.style.height = pr + "%"; }
+}
+function roadStart(){ if(RS.raf) return; RS.t = performance.now(); RS.raf = requestAnimationFrame(roadFrame); }
+function roadStop(){ if(RS.raf) cancelAnimationFrame(RS.raf); RS.raf = 0; }
+// décor généré une fois (graine fixe) : arbres, brins d'herbe et nuages positionnés dans le monde, rebouclés tous les 480 m
+const RDS = (() => { let sd = 7; const r = () => (sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296;
+  return {
+    trees: Array.from({length: 46}, (_, i) => ({z: i * 480 / 46 + r() * 6, side: i % 2 ? 1 : -1, off: 1.4 + r() * 1.9, s: .7 + r() * .75, k: r()})),
+    blades: Array.from({length: 280}, () => ({z: r() * 480, x: (r() < .5 ? -1 : 1) * (1.25 + r() * 4), l: .5 + r(), k: r()})),
+    clouds: Array.from({length: 7}, () => ({x: r(), y: .08 + r() * .5, w: .1 + r() * .14, a: .35 + r() * .4}))
+  }; })();
+const rdMix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
+const rdRgb = (c, al) => al == null ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${al})`;
+const rdSc = (c, k) => [Math.min(255, c[0] * k), Math.min(255, c[1] * k), Math.min(255, c[2] * k)];
+function roadFrame(now){
+  RS.raf = requestAnimationFrame(roadFrame);
+  const cv = $("runRd"), w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) return;
+  const dpr = Math.min(2, window.devicePixelRatio || 1), pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+  if(cv.width !== pw || cv.height !== ph){ cv.width = pw; cv.height = ph; }
+  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const dt = Math.min(.1, (now - RS.t) / 1000); RS.t = now;
+  const P = typeof RUN !== "undefined" && RUN && !RUN.paused ? (+RUN.ap || 0) : 0, target = P > 5 ? Math.cbrt(P / .22) : 0; // m/s
+  RS.v += (target - RS.v) * Math.min(1, dt * 1.5); RS.dist += RS.v * dt;
+  const th = document.documentElement.dataset.theme, dark = th ? th === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  const yh = h * .44, H = h - yh, curve = Math.sin(RS.dist / 260) * .6 + Math.sin(RS.dist / 97) * .15;
+  const cxAt = tt => w / 2 + curve * (1 - tt) * (1 - tt) * w * .38, rwAt = tt => tt * w * .42 + 1, fogAt = tt => Math.pow(Math.max(0, 1 - tt * 2.6), 1.4) * .9;
+  const haze = dark ? [36, 42, 96] : [208, 226, 242], dist = RS.dist;
+  // ciel : dégradé vers la brume de l'horizon, halo du soleil (ou de la lune), nuages qui dérivent
+  const sk = g.createLinearGradient(0, 0, 0, yh); sk.addColorStop(0, rdRgb(dark ? [8, 12, 38] : [64, 134, 210])); sk.addColorStop(1, rdRgb(haze));
+  g.fillStyle = sk; g.fillRect(0, 0, w, yh + 1);
+  const sx = w * .7 - curve * w * .1, sy = yh * .55, sr = Math.min(w, h) * (dark ? .22 : .38), sg = g.createRadialGradient(sx, sy, 0, sx, sy, sr);
+  sg.addColorStop(0, dark ? "rgba(190,200,255,.28)" : "rgba(255,246,205,.75)"); sg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = sg; g.fillRect(0, 0, w, yh);
+  g.fillStyle = dark ? "#e6eaff" : "#fffbe6"; g.beginPath(); g.arc(sx, sy, Math.min(w, h) * (dark ? .03 : .034), 0, 7); g.fill();
+  RDS.clouds.forEach(c => {
+    const cx = (((c.x + dist * 1.5e-5 - curve * .04) % 1.3) + 1.3) % 1.3 * w - w * .15, cy = c.y * yh, cw = c.w * w;
+    [[0, 0, 1], [-.55, .12, .7], [.6, .1, .8]].forEach(([ox, oy, k]) => {
+      const rg = g.createRadialGradient(cx + ox * cw, cy + oy * cw * .3, 0, cx + ox * cw, cy + oy * cw * .3, cw * k);
+      rg.addColorStop(0, dark ? `rgba(120,130,190,${c.a * .35})` : `rgba(255,255,255,${c.a})`); rg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = rg;
+      g.save(); g.translate(cx + ox * cw, cy + oy * cw * .3); g.scale(1, .32); g.translate(-(cx + ox * cw), -(cy + oy * cw * .3)); g.fillRect(cx + ox * cw - cw * k, cy + oy * cw * .3 - cw * k, cw * k * 2, cw * k * 2); g.restore();
+    });
+  });
+  // collines en trois plans : plus loin = plus pâle et plus bleu (perspective atmosphérique)
+  const HL = dark ? [[[32, 40, 88], .06, 3.1, 2.1, .6], [[24, 44, 70], .045, 4.3, 3.6, 1.2], [[16, 40, 44], .03, 5.7, 5.2, 2]] : [[[160, 188, 212], .06, 3.1, 2.1, .6], [[118, 156, 158], .045, 4.3, 3.6, 1.2], [[72, 118, 82], .03, 5.7, 5.2, 2]];
+  HL.forEach(([col, amp, f1, f2, par]) => {
+    g.fillStyle = rdRgb(col); g.beginPath(); g.moveTo(0, yh + 1);
+    for(let x = 0; x <= w + 8; x += 8){ const u = x / w + curve * par * .12; g.lineTo(x, yh - (Math.sin(u * f1 * 3) * .5 + Math.sin(u * f2 * 6 + 1.3) * .3 + .9) * h * amp); }
+    g.lineTo(w + 8, yh + 1); g.fill();
+  });
+  // sol : herbe et asphalte aux variations douces (pas de bandes franches), accotement clair, lignes fines
+  const gB = dark ? [24, 58, 34] : [88, 134, 60], rB = dark ? [54, 57, 64] : [96, 98, 104], sB = dark ? [88, 86, 80] : [168, 158, 130];
+  for(let y = Math.ceil(yh); y < h; y += 2){
+    const tt = (y - yh) / H, zd = 14 / tt, cx = cxAt(tt), rw = rwAt(tt), f = fogAt(tt), q = zd + dist;
+    const wv = Math.sin(q * .9) * .035 + Math.sin(q * .23 + 1) * .05 + (((Math.sin(q * 12.9898) * 43758.5453) % 1) * .015);
+    g.fillStyle = rdRgb(rdMix(rdSc(gB, 1 + wv), haze, f)); g.fillRect(0, y, w, 2);
+    g.fillStyle = rdRgb(rdMix(sB, haze, f)); g.fillRect(cx - rw * 1.1, y, rw * 2.2, 2);
+    g.fillStyle = rdRgb(rdMix(rdSc(rB, 1 + wv * .7), haze, f)); g.fillRect(cx - rw, y, rw * 2, 2);
+    const lw = Math.max(1, rw * .018), lc = rdRgb(rdMix([236, 236, 230], haze, f * 1.05 > 1 ? 1 : f * 1.05));
+    g.fillStyle = lc; g.fillRect(cx - rw * .93, y, lw, 2); g.fillRect(cx + rw * .93 - lw, y, lw, 2);
+    if(tt > .04 && (Math.floor(q / 5) & 1) === 0) g.fillRect(cx - lw / 2, y, lw, 2);
+  }
+  // brume basse à l'horizon
+  const hz = g.createLinearGradient(0, yh - h * .05, 0, yh + H * .2); hz.addColorStop(0, rdRgb(haze, 0)); hz.addColorStop(.28, rdRgb(haze, .6)); hz.addColorStop(1, rdRgb(haze, 0));
+  g.fillStyle = hz; g.fillRect(0, yh - h * .05, w, h * .05 + H * .2);
+  // brins d'herbe qui défilent le long des bas-côtés
+  RDS.blades.forEach(b => {
+    const a = ((b.z - dist) % 480 + 480) % 480 + 14, tt = 14 / a; if(tt < .04) return;
+    const cx = cxAt(tt), rw = rwAt(tt), x = cx + b.x * rw, by = yh + tt * H, f = fogAt(tt);
+    g.strokeStyle = rdRgb(rdMix(rdSc(gB, b.k > .5 ? 1.35 : .7), haze, f)); g.lineWidth = Math.max(.6, tt * 1.6); g.beginPath(); g.moveTo(x, by); g.lineTo(x + (b.k - .5) * tt * 6, by - b.l * tt * h * .035); g.stroke();
+  });
+  // arbres (du plus loin au plus proche), avec ombre au sol et reflet côté soleil
+  const tr = RDS.trees.map(t => ({t, a: ((t.z - dist) % 480 + 480) % 480 + 14})).sort((p, q) => q.a - p.a);
+  tr.forEach(({t, a}) => {
+    const tt = 14 / a; if(tt < .035 || tt > 1) return;
+    const cx = cxAt(tt), rw = rwAt(tt), x = cx + t.side * rw * t.off, by = yh + tt * H, ht = tt * h * .46 * t.s, f = fogAt(tt);
+    const dk = dark ? [14, 40, 28] : (t.k > .5 ? [36, 88, 50] : [52, 98, 44]), lt = dark ? [26, 62, 44] : (t.k > .5 ? [70, 128, 70] : [94, 140, 62]);
+    g.fillStyle = "rgba(0,0,0,.16)"; g.beginPath(); g.ellipse(x, by, ht * .22, ht * .035, 0, 0, 7); g.fill();
+    g.fillStyle = rdRgb(rdMix(dark ? [40, 30, 26] : [84, 62, 42], haze, f)); g.fillRect(x - ht * .03, by - ht * .38, ht * .06, ht * .38);
+    g.fillStyle = rdRgb(rdMix(dk, haze, f)); g.beginPath(); g.ellipse(x, by - ht * .62, ht * .2, ht * .34, 0, 0, 7); g.fill();
+    g.fillStyle = rdRgb(rdMix(lt, haze, f)); g.beginPath(); g.ellipse(x + ht * .05, by - ht * .68, ht * .12, ht * .24, 0, 0, 7); g.fill();
+  });
+  // vignettage léger
+  const vg = g.createRadialGradient(w / 2, h * .5, Math.min(w, h) * .35, w / 2, h * .5, Math.max(w, h) * .75); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.3)");
+  g.fillStyle = vg; g.fillRect(0, 0, w, h);
+  hzUpdate();
+}
+// second écran du lecteur : bouton ●○, balayage horizontal ou flèches du clavier
+function runScr(n){
+  const el = document.querySelector('[data-block="run"]'), two = n === 2 && el.classList.contains("rfs");
+  el.classList.toggle("rs2", two); if(two) roadStart(); else roadStop();
+  const b = $("runPg"), l = t(two ? "runScrP" : "runScrN"); b.textContent = two ? "○●" : "●○"; b.title = l; b.setAttribute("aria-label", l);
+  if(typeof RUN !== "undefined" && RUN) setTimeout(() => { runFit(); runDraw(); }, 0); // le profil se redessine à son retour
+}
+(function(){
+  const el = document.querySelector('[data-block="run"]'); let x0 = 0, y0 = 0, on = false;
+  $("runPg").onclick = () => runScr(el.classList.contains("rs2") ? 1 : 2);
+  el.addEventListener("pointerdown", e => { on = el.classList.contains("rfs") && e.pointerType !== "mouse"; x0 = e.clientX; y0 = e.clientY; });
+  el.addEventListener("pointerup", e => {
+    if(!on) return; on = false;
+    const dx = e.clientX - x0, dy = e.clientY - y0; if(Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    runScr(dx < 0 ? 2 : 1);
+  });
+  el.addEventListener("pointercancel", () => { on = false; });
+  document.addEventListener("keydown", e => { if(el.classList.contains("rfs") && !/INPUT|SELECT|TEXTAREA/.test((e.target || {}).tagName || "")){ if(e.key === "ArrowRight") runScr(2); else if(e.key === "ArrowLeft") runScr(1); } });
+})();
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
-  el.classList.toggle("rfs", on); runWant(false);
+  el.classList.toggle("rfs", on); runWant(false); runScr(1); // on revient toujours au premier écran
   if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runFs")); } // Démarrer / Terminer et enregistrer / bouton quitter : ligne du haut ; ERG et nom du trainer ne sont plus affichés en plein écran
   else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runWkName").after($("runFs")); }
   if(on && el.requestFullscreen && !runPwaFs()) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
@@ -6818,7 +7007,7 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   if(!on && pt.getAttribute("aria-selected") === "true") cfgTab("beta");
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
-$("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); };
+$("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); renderLibraryKeepOpen(); prevPlayBtn(); };
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
@@ -6913,6 +7102,7 @@ function applyMode(){
   document.documentElement.classList.toggle("m-cmp", mode === "cmp");
   document.documentElement.classList.toggle("m-ses", mode === "ses");
   document.documentElement.classList.toggle("m-plan", mode === "plan");
+  document.documentElement.classList.toggle("m-run", mode === "run");
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
 }
 document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
@@ -7397,6 +7587,9 @@ function applyLang(){
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
+function applySquare(){ const on = store.get("si_square") === "1"; document.documentElement.toggleAttribute("data-square", on); const c = $("sqCorners"); if(c) c.checked = on; }
+$("sqCorners").onchange = e => { store.set("si_square", e.target.checked ? "1" : "0"); applySquare(); };
+applySquare();
 $("fontsel").onchange = e => { font = e.target.value; store.set("si_font", font); applyFont(); };
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
