@@ -6324,8 +6324,10 @@ function runInit(){
     else runFs(false);
   }); // Échap natif
   document.querySelector('[data-block="run"]').addEventListener("pointerdown", () => {
-    const el = document.querySelector('[data-block="run"]');
     if(RUN.began && $("runEnd").hidden) runKeepAlive(true); // un toucher relance aussi le maintien en vie après une reprise
+  });
+  document.querySelector('[data-block="run"]').addEventListener("click", () => { // le plein écran natif ne revient qu'après un vrai toucher (clic), pas au début d'un balayage depuis le bord : sinon il masquait aussitôt les barres système que l'on venait de faire apparaître
+    const el = document.querySelector('[data-block="run"]');
     if(RUN.wantFs && el.classList.contains("rfs") && !document.fullscreenElement && el.requestFullscreen){ runWant(false); el.requestFullscreen().then(() => { RUN.fsApi = true; runFit(); }).catch(() => {}); }
   });
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
