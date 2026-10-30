@@ -267,6 +267,7 @@ details.fold[open]>summary{margin-bottom:6px}
 footer{display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 0 32px;color:var(--mute);font-size:.9rem}
 footer a{color:var(--acc);text-decoration:none}
 footer a:hover{text-decoration:underline}
+.appver{font-size:.75rem;opacity:.7}
 a.coffee{margin:0;display:inline-flex;gap:8px;align-items:center;background:#ffc439;color:#111!important;border-radius:999px;padding:10px 20px;font-weight:600;text-decoration:none}
 a.coffee.soon{opacity:.6}
 a.coffee.top{padding:6px 12px;gap:6px;font-size:.85rem;line-height:1;white-space:nowrap;align-items:center}
@@ -1178,9 +1179,12 @@ posthog.init(KEY,{api_host:HOST,person_profiles:"identified_only",autocapture:fa
   <a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a>
   <div>Many thanks to <a href="https://intervals.icu" target="_blank" rel="noopener">intervals.icu</a> — Open training analytics & calendar</div>
   <div class="cacheinfo" hidden></div>
+  <div class="appver" id="appVer"></div>
 </footer>
 </main>
 <script>
+const APP_VERSION = "1.0.0"; // à incrémenter à chaque mise à jour
+document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
 const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
