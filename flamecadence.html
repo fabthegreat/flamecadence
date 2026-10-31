@@ -519,6 +519,10 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #hzList .hs b{position:relative;font-size:.95rem}#hzList .hs span{position:relative;font-size:.68rem;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #hzList .hs .hf{position:absolute;left:0;top:0;width:100%;height:0;background:rgba(0,0,0,.45)}
 #hzList .hs.past{opacity:.3}#hzList .hs.cur{outline:2px solid #fff;outline-offset:-2px;opacity:1}
+#hzMap{grid-column:1;grid-row:2;align-self:end;justify-self:start;width:clamp(150px,44%,320px);max-height:100%;aspect-ratio:4/3;border:2px solid rgba(255,255,255,.85);border-radius:8px;overflow:hidden;background:#1b2430;box-shadow:0 2px 10px rgba(0,0,0,.5)}#hzMap svg{display:block;width:100%;height:100%}
+#runS2.mapfull #runRd{display:none}
+#runS2.mapfull #hzMap{position:absolute;inset:0;grid-column:1/-1;grid-row:1/-1;align-self:stretch;justify-self:stretch;margin:-8px;z-index:0;width:auto;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}
+#runS2.mapfull #runHz .hzt,#runS2.mapfull #runHz .hzr,#runS2.mapfull #runHz .hzbt{position:relative;z-index:1}
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
 #runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
 #runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
@@ -754,7 +758,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 </div>
 <div class="cfg-sec" data-cfgp="player" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
-<div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label></div>
+<div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label>
+<label><input type="checkbox" id="pm_map"><span data-i="pmMap"></span></label></div>
 <div class="hint" data-i="pmHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr">
 <label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
@@ -763,6 +768,9 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <label><input type="checkbox" id="pm_dec"><span data-i="runMxDec"></span></label>
 </div>
 <div class="hint" data-i="pmDecHint"></div>
+<label for="riderKg" style="margin-top:16px" data-i="riderKgL"></label>
+<input id="riderKg" type="number" min="30" max="200" step="0.5" inputmode="decimal" style="max-width:140px">
+<div class="hint" data-i="riderKgH"></div>
 <div id="musCfg" style="margin-top:8px">
 <label for="jamkey" style="margin-top:16px" data-i="jamKeyL"></label>
 <input id="jamkey" autocomplete="off" autocapitalize="off" spellcheck="false">
@@ -1082,7 +1090,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
 <div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div></div>
 <div class="rgrid rhud">
-<div class="rcard"><div class="rlbl"><span data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
+<div class="rcard"><div class="rlbl"><span id="runTgtL" data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
 <div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
 <div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
@@ -1104,7 +1112,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="hk"><div class="hl">rpm</div><div class="hv" id="hzCd">--</div></div>
 <div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div></div>
 <div class="hzr"><div id="hzList"></div></div>
-<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div></div></div></div>
+<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div></div><div id="hzMap" hidden></div></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 </section>
@@ -1313,7 +1321,7 @@ calEdLoaded:["Workout loaded in the manual editor.","Séance chargée dans l'éd
 calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check the steps before saving.","Chargée. {0} ligne(s) que l'éditeur ne sait pas représenter ont été ignorées ; vérifie les étapes avant d'enregistrer."],
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
-secPlayer:["Player","Lecteur"], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
+secPlayer:["Player","Lecteur"], sesExp:["Export (.fit)","Exporter (.fit)"], sesExpT:["Download this activity as a FIT file, readable by Garmin, Strava, TrainingPeaks, Zwift…","Télécharger cette activité au format FIT, lisible par Garmin, Strava, TrainingPeaks, Zwift…"], sesExpErr:["Export unavailable (no file for this activity, e.g. synced from Strava)","Export impossible (pas de fichier pour cette activité, ex. synchronisée depuis Strava)"], hSlope:["Drag up or down to change the slope (the power is only a guide)","Glisse vers le haut ou le bas pour changer la pente (la puissance n'est qu'un guide)"], pmMap:["Show a satellite map of the route on the animation screen (needs an internet connection)","Afficher une carte satellite du parcours sur l'écran d'animation (connexion internet requise)"], mapVirt:["Virtual route","Parcours virtuel"], runGuide:["Effort guide","Puissance guide"], runOnG:["In the guide","Dans le guide"], runHiG:["Above guide","Au-dessus du guide"], runLoG:["Below guide","Sous le guide"], edGuideT:["Slope step: the trainer follows the slope, not a power target. This intensity is only an effort guide (zone, load, estimated duration).","Étape en pente : le home trainer suit la pente, pas une puissance cible. Cette intensité n'est qu'un guide d'effort (zone, charge, durée estimée)."], riderKgL:["Rider weight (kg) for slope sections","Poids du coureur (kg) pour les tronçons en pente"], riderKgH:["Used to compute your speed, hence the distance covered, on slope steps (8 kg bike added). Leave empty to use the weight from intervals.icu, or 75 kg. Set the same weight in your trainer's app so the resistance matches.","Sert à calculer ta vitesse, donc la distance parcourue, sur les étapes en pente (vélo de 8 kg ajouté). Laisse vide pour utiliser le poids d'intervals.icu, ou 75 kg. Renseigne le même poids dans l'appli de ton home trainer pour que la résistance corresponde."], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
@@ -1549,7 +1557,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -2730,10 +2738,15 @@ function parseWorkout(txt, sport, ftp){
     if(it){
       // une ligne avec durée + intensité est une étape, avec ou sans tiret (format natif intervals.icu)
       const pre = body.slice(0, it.idx), mid = (it.a + it.b) / 2;
-      let d = dur(pre);
-      if(!d){ const m = dist(pre); if(m) d = m * spm / Math.max(mid / 100, 0.3); }
+      let d = dur(pre), md = 0;
+      const sm = body.slice(it.idx).match(/\b(?:slope|pente)\s*([+-]?\d+(?:[.,]\d+)?)\s*pct\b/i), gv = sm ? num(sm[1]) : null; // pente (%) en texte libre après la cible : ignoré par intervals.icu, lu par le lecteur
+      if(!d){ const m = dist(pre); if(m){
+        if(gv != null && ftp > 0 && sport !== "Run" && sport !== "Swim"){ md = m; d = Math.min(14400, m / physV(Math.max(1, ftp * mid / 100), gv, totalKg())); } // étape en pente définie par sa distance : durée estimée avec le modèle physique (FTP, poids)
+        else d = m * spm / Math.max(mid / 100, 0.3);
+      } }
       if(!d) continue;
       const step = {d, a: it.ramp ? it.a : mid, b: it.ramp ? it.b : mid, line: li};
+      if(gv != null) step.g = gv; if(md) step.m = md;
       if(it.hr){ step.hr = true; step.ha = it.ramp ? it.hr.ha : (it.hr.ha + it.hr.hb) / 2; step.hb = it.ramp ? it.hr.hb : step.ha; } // cible en % LTHR conservée à côté de l'équivalent puissance
       if(group) group.items.push(step); else steps.push(step);
     }else if(dashed){
@@ -2787,11 +2800,17 @@ function renderChart(ovr){
   if(!steps.length){ box.innerHTML = ""; box._steps = []; $("explain").hidden = true; return; }
   const total = steps.reduce((s, x) => s + x.d, 0), peak = Math.max(120, ...steps.map(s => Math.max(s.a, s.b)), CH_FIX ? CH_FIX.peak : 0), span = Math.max(total, CH_FIX ? CH_FIX.scale : 0);
   const W = 300, H = 100, meta = [];
-  let x = 0, path = "", wsum = 0, t0 = 0;
+  let x = 0, path = "", wsum = 0, t0 = 0, slope = "", alt = 0; const elev = [];
   for(const s of steps){
     const w = s.d / span * W, ya = H - s.a / peak * (H - 4), yb = H - s.b / peak * (H - 4);
     path += `<path data-n="${meta.length}" class="z${zoneOf((s.a + s.b) / 2)}${s.hr ? " hr" : ""}${s.line === selLine ? " sel" : ""}" d="M${x.toFixed(2)} ${H}L${x.toFixed(2)} ${ya.toFixed(1)}L${(x + w).toFixed(2)} ${yb.toFixed(1)}L${(x + w).toFixed(2)} ${H}Z"/>`;
-    meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line, hr: s.hr, ha: s.ha, hb: s.hb}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
+    if(s.g != null){ const gc = s.g < -1 ? "#3b82f6" : s.g < 4 ? "#22c55e" : s.g < 7 ? "#eab308" : s.g < 10 ? "#f97316" : "#ef4444"; slope += `<rect x="${x.toFixed(2)}" y="0" width="${w.toFixed(2)}" height="7" fill="${gc}"/>`; }
+    elev.push([x, alt]); alt += s.g != null ? (s.m ? s.m : colV(COLS_WKG * ((s.a + s.b) / 200), s.g) * s.d) * s.g / 100 : 0;
+    meta.push({d: s.d, a: s.a, b: s.b, start: t0, line: s.line, hr: s.hr, ha: s.ha, hb: s.hb, g: s.g, m: s.m}); t0 += s.d; x += w; wsum += s.d * (s.a + s.b) / 2;
+  }
+  if(slope){ // profil d'altitude estimé (courbe) + bande de pente en haut du graphe, colorée selon la pente
+    elev.push([W, alt]); const lo = Math.min(...elev.map(p => p[1])), hi = Math.max(...elev.map(p => p[1])), rg = Math.max(hi - lo, 1);
+    path += slope + `<polyline fill="none" stroke="var(--ink)" stroke-width="1.6" stroke-linejoin="round" vector-effect="non-scaling-stroke" opacity=".85" points="${elev.map(p => p[0].toFixed(1) + "," + (H - 6 - (p[1] - lo) / rg * (H - 22)).toFixed(1)).join(" ")}"/>`;
   }
   const avg = Math.round(wsum / total), pace = sport === "Run" || sport === "Swim", mins = Math.round(total / 60);
   const dtxt = mins >= 60 ? Math.floor(mins / 60) + "h" + pad(mins % 60) : mins + " min";
@@ -2799,13 +2818,14 @@ function renderChart(ovr){
   const stt = !pace ? stepsStats(steps) : null;
   const load = stt ? "<div class=\"cap\">IF " + stt.iff.toFixed(2) + " · TSS " + Math.round(stt.tss) + "</div>" : "";
   const zbar = zoneBar(zoneTimes(steps)), fuel = fuelHtml(total, steps, ftp, pace, stt ? stt.iff : avg / 100);
-  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg>${zbar}<div class="cap">${esc(cap)}</div>${load}${steps.some(s => s.hr) ? `<div class="cap">♥ ${esc(t("hrEst"))}</div>` : ""}${fuel}<div class="tip" hidden></div>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="${esc(cap)}">${path}</svg>${zbar}<div class="cap">${esc(cap)}</div>${load}${steps.some(s => s.hr) ? `<div class="cap">♥ ${esc(t("hrEst"))}</div>` : ""}${slope ? `<div class="cap">⛰ ${esc(t("slopeCap", steps.filter(s => s.g != null).length, Math.max(...steps.filter(s => s.g != null).map(s => s.g)).toFixed(1)))}</div>` : ""}${fuel}<div class="tip" hidden></div>`;
   box._steps = meta; box._span = span; box._peak = peak; renderExplain(steps);
   if(!ovr){ try{ edHandles(box, meta, span, peak); }catch(err){} }
 }
 function tipText(s, ftp, pace){
   const f = v => Math.round(v), sec = Math.round(s.d);
-  const d = sec < 60 ? sec + " s" : (sec % 60 ? Math.floor(sec / 60) + "'" + pad(sec % 60) : Math.round(sec / 60) + " min");
+  const dT = sec < 60 ? sec + " s" : (sec % 60 ? Math.floor(sec / 60) + "'" + pad(sec % 60) : Math.round(sec / 60) + " min");
+  const d = s.m ? (s.m >= 1000 ? (s.m / 1000).toFixed(2).replace(/\.?0+$/, "") + " km" : Math.round(s.m) + " m") + " (≈ " + dT + ")" : dT; // étape à distance : distance exacte, durée estimée
   const ramp = Math.abs(s.a - s.b) > 0.5;
   const wmode = !pace && ftp > 0 && $("unit").value === "w";
   const pct = ramp ? f(s.a) + " → " + f(s.b) : f(s.a);
@@ -2816,7 +2836,7 @@ function tipText(s, ftp, pace){
     return d + " · ♥ " + hv + bv + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
   }
   const val = wmode ? wat + " W (" + pct + t("pctFtp") + ")" : pct + (pace ? t("pctPace") : t("pctFtp")) + (!pace && ftp > 0 ? " (" + wat + " W)" : "");
-  return d + " · " + val + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
+  return d + " · " + val + (s.g != null ? " · ⛰ " + s.g.toFixed(1) + " %" : "") + "\n" + t("tipZ", zoneOf((s.a + s.b) / 2), mmss(s.start));
 }
 {
   const cb = $("chart");
@@ -3563,10 +3583,11 @@ function renderLibrary(){
     {id:"vo2max",icon:"⚡",en:"VO₂ Max & Anaerobic",fr:"VO₂ Max & anaérobie"},
     {id:"sprint",icon:"💥",en:"Sprint & Race",fr:"Sprint & course"},
     {id:"force",icon:"🦵",en:"Force & Low Cadence",fr:"Force & basse cadence"},
+    {id:"cols",icon:"⛰️",en:"Famous Cols (slope mode)",fr:"Cols mythiques (mode pente)"},
     {id:"testing",icon:"🎯",en:"Testing",fr:"Tests"}
   ];
   // Regroupement des anciennes catégories (toutes les séances sont conservées)
-  const CATMAP = {force:"force",beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint",uae:"sprint",adq:"sprint",testing:"testing",bz_test:"testing"};
+  const CATMAP = {cols:"cols",force:"force",beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint",uae:"sprint",adq:"sprint",testing:"testing",bz_test:"testing"};
   const groups=themes.map(theme=>({...theme,items:[]}));
   const categorize=item=>{
     if(item.category) return CATMAP[item.category] || "endurance";
@@ -3584,7 +3605,7 @@ function renderLibrary(){
     return CATMAP[base] || "endurance";
   };
   // Forme du jour : thèmes autorisés selon le ressenti, et durée plafonnée quand on est fatigué
-  const FEEL = {great: null, good: ["beginner", "recovery", "endurance", "tempo", "threshold", "vo2max", "force"], soso: ["beginner", "recovery", "endurance", "tempo", "force"], tired: ["beginner", "recovery", "endurance"], exhausted: ["beginner", "recovery"]};
+  const FEEL = {great: null, good: ["beginner", "recovery", "endurance", "tempo", "threshold", "vo2max", "force", "cols"], soso: ["beginner", "recovery", "endurance", "tempo", "force"], tired: ["beginner", "recovery", "endurance"], exhausted: ["beginner", "recovery"]};
   const feelOn = $("libform").checked, feel = feelEff(), feelCap = {tired: 3600, exhausted: 2700}[feel];
   LIBFK = feelOn ? feel : "";
   const feelOK = (gid, item) => !feelOn || ((!FEEL[feel] || FEEL[feel].includes(gid)) && (!feelCap || libDuration(item) <= feelCap));
@@ -3641,9 +3662,9 @@ $("libContainer").addEventListener("click", e => {
   const d = sm.parentElement; setTimeout(() => { if(d.open) d.scrollIntoView({block: "nearest", behavior: "smooth"}); }, 0);
 });
 // envoie une séance de la bibliothèque dans le lecteur d'activité (bêta) : bascule sur l'onglet Lecteur et la charge
-function libToPlayer(item){ if(item) sendToPlayer("lib:" + item.id, lang === "fr" ? item.name_fr : item.name_en, item.desc_en); }
-function sendToPlayer(id, name, desc){
-  const e = runMk(id.split(":")[0], id, name, "", runSteps(desc, runFtp()));
+function libToPlayer(item){ if(item) sendToPlayer("lib:" + item.id, lang === "fr" ? item.name_fr : item.name_en, item.desc_en, item); }
+function sendToPlayer(id, name, desc, item){
+  const e = runMk(id.split(":")[0], id, name, "", item ? runStepsOf(item, runFtp()) : runSteps(desc, runFtp()));
   if(!e) return;
   if(typeof RUN !== "undefined" && RUN && RUN.el > 0 && RUN.el < RUN.total && !confirm(t("runConfirm"))) return;
   mode = "run"; store.set("si_mode", mode); applyMode(); // crée le lecteur au besoin
@@ -3754,6 +3775,75 @@ function insertWarmRest(desc){
   return (d.slice(0, end) + "- 2m 50%\n" + after).slice(1);
 }
 LIBRARY.forEach(w => { w.desc_en = insertWarmRest(w.desc_en); w.desc_fr = insertWarmRest(w.desc_fr); });
+
+// ---------- Cols mythiques : montées jouées en mode PENTE dans le lecteur (le home trainer reçoit la pente, plus de cible ERG) ----------
+// Profils approximatifs : distance, pente moyenne et dénivelé sont ceux des fiches usuelles ; la pente de chaque kilomètre est une allure indicative recalée pour retomber sur la moyenne.
+// Chaque tronçon est défini par sa distance exacte (le lecteur passe au suivant quand elle est parcourue) ; la durée affichée dans l'aperçu est une estimation (FTP, poids du coureur, modèle physique). L'échauffement et le retour au calme restent en ERG.
+const COLS_WKG = 3.4;
+// Modèle physique commun (aperçu, lecteur, route animée) : vitesse d'équilibre (m/s) pour une puissance P (W), une pente g (%) et une masse totale coureur + vélo (kg)
+function physV(P, g, kg){
+  const th = Math.atan(g / 100), F = kg * 9.81 * (Math.sin(th) + .005 * Math.cos(th)); let lo = .05, hi = 30;
+  for(let i = 0; i < 45; i++){ const v = (lo + hi) / 2; if(F * v + .5 * 1.15 * .38 * v * v * v > P) hi = v; else lo = v; }
+  return (lo + hi) / 2;
+}
+function colV(wkg, g){ return physV(wkg * 75, g, 83); } // coureur de référence 75 kg + vélo 8 kg
+// Poids du coureur (Réglages > Lecteur) ; vide = poids du profil intervals.icu, sinon 75 kg ; vélo 8 kg ajouté
+function riderKg(){ const v = parseFloat(String(store.get("si_rider_kg")).replace(",", ".")); if(v >= 30 && v <= 200) return v; return ICU.weight >= 30 && ICU.weight <= 200 ? ICU.weight : 75; }
+function totalKg(){ return riderKg() + 8; }
+// Vitesse (m/s) sur une étape en pente : à l'arrêt de pédalage la distance n'avance plus (sauf en descente, où l'on continue de rouler)
+function runSpeed(P, g){ return (P > 5 || g < -1) ? physV(Math.max(0, P), g || 0, totalKg()) : 0; }
+function distTxt(m){ m = Math.round(m); return m % 1000 === 0 ? (m / 1000) + "km" : m + "mtr"; } // syntaxe intervals.icu (« m » = minutes)
+function fmtDistShort(m){ return m >= 1000 ? (m / 1000).toFixed(2) + " km" : Math.max(0, Math.ceil(m)) + " m"; }
+function colMake(c){
+  let segs = c.segs;
+  if(!segs){ // profil kilomètre par kilomètre, recalé sur la pente moyenne officielle, regroupé par blocs de c.blk km
+    const raw = c.raw, lens = raw.map((_, i) => Math.min(1, c.km - i)), f = c.avg * c.km / raw.reduce((a, g, i) => a + g * lens[i], 0), blk = c.blk || 1; segs = [];
+    for(let i = 0; i < raw.length; i += blk){ let L = 0, G = 0; for(let j = i; j < Math.min(raw.length, i + blk); j++){ L += lens[j]; G += raw[j] * f * lens[j]; } segs.push([L, G / L]); }
+  }
+  const lines = [], g = [null], ne = ["Warm-up"], nf = ["Échauffement"]; let at = 0;
+  segs.forEach(([L, gr]) => {
+    const pct = gr < -1 ? 40 : gr < 1.5 ? 60 : Math.round(c.ifp * 100), a = at.toFixed(1), b = (at + L).toFixed(1); at += L;
+    const g1 = Math.round(gr * 10) / 10; lines.push("- " + distTxt(L * 1000) + " " + pct + "% slope " + g1.toFixed(1) + " pct"); g.push(g1);
+    ne.push("Km " + a + "–" + b + " · " + gr.toFixed(1) + "%"); nf.push("Km " + a.replace(".", ",") + "–" + b.replace(".", ",") + " · " + gr.toFixed(1).replace(".", ",") + " %");
+  });
+  g.push(null); ne.push("Cool-down"); nf.push("Retour au calme");
+  const en = "Warmup\n- 10m 55%\n\nMain set\n" + lines.join("\n") + "\n\nCooldown\n- 5m 50%";
+  const km1 = c.km.toFixed(1), kf = km1.replace(".", ","), av = c.avg.toFixed(1), avf = av.replace(".", ",");
+  return {category: "cols", sport: "VirtualRide", name_en: c.en + " — " + c.from_en + " (" + km1 + " km · " + av + "%)", name_fr: c.en + " — " + c.from_fr + " (" + kf + " km · " + avf + " %)",
+    desc_en: en, desc_fr: en.replace(/Warmup/g, "Échauffement").replace(/Main set/g, "Série principale").replace(/Cooldown/g, "Retour au calme").replace(/slope (-?)(\d+)\.(\d) pct/g, "pente $1$2,$3 pct"),
+    expl_en: km1 + " km at " + av + " % average, about " + c.gain.toLocaleString("en") + " m of climbing. In the player the trainer is set to the slope of each section (no ERG) and each section ends when its distance is covered, computed from your power and weight; warm-up and cool-down stay in ERG.",
+    expl_fr: kf + " km à " + avf + " % de moyenne, environ " + c.gain.toLocaleString("fr") + " m de dénivelé. Dans le lecteur, le home trainer reçoit la pente de chaque tronçon (pas d'ERG) et chaque tronçon se termine quand sa distance est parcourue, calculée d'après ta puissance et ton poids ; l'échauffement et le retour au calme restent en ERG.",
+    climb: {g, ne, nf}};
+}
+[
+  {en: "Alpe d'Huez", from_en: "from Le Bourg-d'Oisans", from_fr: "depuis Le Bourg-d'Oisans", km: 13.8, avg: 8.1, gain: 1120, ifp: .85, blk: 1, raw: [10.2, 10.3, 9.3, 9.5, 10.1, 9.5, 8.4, 8.0, 7.7, 7.2, 7.1, 6.3, 5.8, 5.0]},
+  {en: "Mont Ventoux", from_en: "from Bédoin", from_fr: "depuis Bédoin", km: 21.6, avg: 7.5, gain: 1617, ifp: .78, blk: 2, raw: [2.2, 3.8, 4.8, 5.8, 5.4, 8.2, 9.5, 9.8, 9.4, 9.6, 9.5, 9.3, 9.6, 9.5, 9.2, 8.6, 7.0, 7.8, 7.5, 7.9, 7.6, 7.4]},
+  {en: "Col du Tourmalet", from_en: "from Luz-Saint-Sauveur", from_fr: "depuis Luz-Saint-Sauveur", km: 18.8, avg: 7.4, gain: 1390, ifp: .8, blk: 2, raw: [4.5, 5.5, 6.0, 7.0, 7.5, 7.5, 7.8, 7.5, 7.8, 8.0, 8.0, 7.8, 7.5, 8.0, 8.5, 8.5, 9.0, 8.8, 8.0]},
+  {en: "Col d'Aubisque", from_en: "from Laruns", from_fr: "depuis Laruns", km: 16.6, avg: 7.1, gain: 1180, ifp: .78, blk: 2, raw: [4.5, 6.0, 7.0, 7.5, 8.0, 8.5, 8.5, 8.0, 8.0, 7.5, 7.5, 8.0, 8.5, 8.0, 6.5, 4.0, 2.5]},
+  {en: "Col de la Madeleine", from_en: "from La Chambre", from_fr: "depuis La Chambre", km: 19.2, avg: 7.9, gain: 1520, ifp: .8, blk: 2, raw: [7.5, 8.5, 9.0, 8.5, 8.0, 8.0, 8.0, 7.5, 7.5, 8.0, 8.0, 7.5, 7.5, 7.5, 8.0, 8.5, 8.5, 8.0, 7.5, 6.5]},
+  {en: "Col de Joux Plane", from_en: "from Samoëns", from_fr: "depuis Samoëns", km: 11.6, avg: 8.5, gain: 985, ifp: .88, blk: 1, raw: [8.0, 8.5, 9.0, 8.5, 8.0, 8.5, 9.5, 9.0, 8.5, 8.0, 7.5, 8.5]},
+  {en: "Col du Galibier", from_en: "from Saint-Michel-de-Maurienne", from_fr: "depuis Saint-Michel-de-Maurienne", km: 34.8, avg: 5.5, gain: 1930, ifp: .7,
+   segs: [[12, 7.1], [2.5, -5.4], [2.6, .5], [2, 5.5], [3, 6.5], [3, 7.0], [3, 7.3], [2.5, 8.0], [2, 8.2], [2.2, 5.8]]}
+].forEach(c => { const w = colMake(c); w.id = w.name_en; LIBRARY.push(w); });
+// Cols supplémentaires (Alpes, Pyrénées, Italie) : distance, pente moyenne et dénivelé d'après les fiches usuelles (cols-cyclisme, climbfinder, ASO, Wikipédia) ; profil km par km indicatif, recalé sur la moyenne.
+[
+  {en: "Col de la Ramaz", from_en: "from Mieussy", from_fr: "depuis Mieussy", km: 13.9, avg: 7.1, gain: 986, ifp: 0.86, blk: 1, raw: [7.5, 7.8, 8.0, 7.0, 8.0, 8.0, 3.0, 6.0, 7.0, 7.5, 7.5, 8.0, 9.0, 11.5]},
+  {en: "Col de la Colombière", from_en: "from Scionzier (Cluses)", from_fr: "depuis Scionzier (Cluses)", km: 16.3, avg: 6.8, gain: 1108, ifp: 0.82, blk: 2, raw: [3, 3.5, 5, 8, 8, 6.5, 4.5, 4.5, 5, 5.5, 8.5, 9, 9, 9.5, 9, 9.5, 10]},
+  {en: "Col du Télégraphe", from_en: "from Saint-Michel-de-Maurienne", from_fr: "depuis Saint-Michel-de-Maurienne", km: 11.9, avg: 7.1, gain: 848, ifp: 0.86, blk: 1, raw: [9.0, 8.0, 7.5, 7.0, 7.2, 7.0, 7.5, 7.0, 6.8, 7.0, 6.5, 6.0]},
+  {en: "Col du Galibier", from_en: "from Valloire", from_fr: "depuis Valloire", km: 18.1, avg: 6.9, gain: 1245, ifp: 0.78, blk: 2, raw: [6.0, 5.5, 5.8, 6.0, 5.5, 6.2, 6.5, 6.0, 6.8, 7.0, 7.5, 7.8, 8.0, 8.0, 8.2, 8.5, 9.0, 9.0, 9.0]},
+  {en: "Col de la Croix de Fer", from_en: "from Saint-Étienne-de-Cuines", from_fr: "depuis Saint-Étienne-de-Cuines", km: 22.8, avg: 6.9, gain: 1582, ifp: 0.75, blk: 2, raw: [5.5, 6.0, 6.5, 5.5, 6.0, 6.5, 5.5, 6.0, 6.5, 6.0, 7.5, 8.0, 8.5, 9.0, 8.5, 8.0, 8.5, 9.5, 9.0, 8.0, 7.5, 7.5, 7.0]},
+  {en: "Col de la Loze", from_en: "from Brides-les-Bains via Méribel", from_fr: "depuis Brides-les-Bains par Méribel", km: 21.6, avg: 7.7, gain: 1653, ifp: 0.78, blk: 2, raw: [6.0, 5.5, 5.8, 6.0, 5.2, 5.6, 5.8, 5.4, 7.0, 7.5, 6.5, 7.5, 7.0, 7.8, 7.0, 9.0, 9.5, 11.0, 8.5, 10.5, 12.0, 13.0]},
+  {en: "Col d'Izoard", from_en: "from Briançon", from_fr: "depuis Briançon", km: 19.1, avg: 6.1, gain: 1174, ifp: 0.8, blk: 2, raw: [5.0, 4.5, 5.0, 5.5, 5.5, 6.0, 6.5, 5.5, 6.0, 6.5, 6.0, 6.0, 7.0, 6.5, 6.0, 6.5, 7.5, 8.0, 9.0, 8.5]},
+  {en: "Col du Grand Colombier", from_en: "from Culoz", from_fr: "depuis Culoz", km: 17.7, avg: 7.2, gain: 1273, ifp: 0.82, blk: 2, raw: [8.5, 9.5, 10.0, 10.5, 10.0, 9.0, 9.5, 9.5, 9.0, 3.5, 2.5, 4.5, 3.0, 5.0, 6.5, 7.5, 8.0, 7.5]},
+  {en: "Col du Tourmalet", from_en: "from Sainte-Marie-de-Campan", from_fr: "depuis Sainte-Marie-de-Campan", km: 17.2, avg: 7.4, gain: 1268, ifp: 0.8, blk: 2, raw: [2.0, 3.0, 4.0, 5.5, 7.0, 7.5, 7.8, 7.5, 7.8, 8.0, 8.5, 8.0, 7.5, 7.8, 8.5, 8.5, 9.5, 10.0]},
+  {en: "Col d'Aspin", from_en: "from Arreau", from_fr: "depuis Arreau", km: 12.0, avg: 6.5, gain: 779, ifp: 0.86, blk: 1, raw: [6.0, 6.5, 6.5, 6.0, 6.5, 7.0, 6.5, 7.0, 6.5, 6.5, 6.5, 6.5]},
+  {en: "Col de Peyresourde", from_en: "from Bagnères-de-Luchon", from_fr: "depuis Bagnères-de-Luchon", km: 15.3, avg: 6.1, gain: 939, ifp: 0.84, blk: 2, raw: [3.0, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 7.5, 7.5, 8.0, 8.0, 7.5, 7.0, 6.5]},
+  {en: "Port de Balès", from_en: "from Mauléon-Barousse", from_fr: "depuis Mauléon-Barousse", km: 19.3, avg: 6.5, gain: 1250, ifp: 0.8, blk: 2, raw: [4.5, 5.5, 5.5, 6.0, 6.5, 6.5, 7.0, 6.5, 6.0, 7.0, 7.5, 6.5, 5.0, 6.5, 7.5, 8.0, 8.5, 8.5, 9.0, 9.5]},
+  {en: "Plateau de Beille", from_en: "from Les Cabannes", from_fr: "depuis Les Cabannes", km: 15.8, avg: 7.9, gain: 1255, ifp: 0.82, blk: 2, raw: [10.5, 8.5, 8.5, 7.5, 8.0, 8.5, 8.0, 8.0, 7.5, 8.0, 8.0, 8.0, 7.5, 7.5, 6.5, 5.0]},
+  {en: "Passo dello Stelvio", from_en: "from Prato allo Stelvio", from_fr: "depuis Prato allo Stelvio", km: 24.3, avg: 7.4, gain: 1808, ifp: 0.72, blk: 2, raw: [4.5, 5.0, 6.0, 6.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.5, 7.0, 7.5, 7.5, 7.5, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 7.0]},
+  {en: "Passo del Mortirolo", from_en: "from Mazzo di Valtellina", from_fr: "depuis Mazzo di Valtellina", km: 12.4, avg: 10.5, gain: 1300, ifp: 0.88, blk: 1, raw: [9.0, 10.0, 12.0, 13.5, 14.5, 12.5, 9.0, 8.5, 10.5, 10.5, 11.0, 11.0, 8.0]},
+  {en: "Monte Zoncolan", from_en: "from Ovaro", from_fr: "depuis Ovaro", km: 10.1, avg: 11.9, gain: 1210, ifp: 0.88, blk: 1, raw: [9.5, 10.5, 12.5, 12.5, 13.5, 12.5, 11.5, 12.5, 11.5, 10.5, 9.0]}
+].forEach(c => { const w = colMake(c); w.id = w.name_en; LIBRARY.push(w); });
 // cache mémoire = source de vérité ; localStorage peut être indisponible (sandbox), store.set ignore silencieusement les échecs
 let starList = (() => { try{ const a = JSON.parse(store.get("si_stars") || "[]"); return Array.isArray(a) ? a : []; }catch(e){ return []; } })();
 const stars = () => starList;
@@ -3918,13 +4008,13 @@ function fmtDurImp(sec){
   return Math.floor(sec / 60) + "m" + (sec % 60);
 }
 function stepsToDesc(steps, watt){
-  const key = s => Math.round(s.d) + "|" + (s.hr ? "h" + s.ha.toFixed(1) + "|" + s.hb.toFixed(1) : s.a.toFixed(1) + "|" + s.b.toFixed(1));
+  const key = s => (s.m ? "m" + Math.round(s.m) : Math.round(s.d)) + "|" + (s.g != null ? "g" + s.g + "|" : "") + (s.hr ? "h" + s.ha.toFixed(1) + "|" + s.hb.toFixed(1) : s.a.toFixed(1) + "|" + s.b.toFixed(1));
   const line = s => {
-    if(s.hr) return "- " + fmtDurImp(s.d) + " " + (Math.abs(s.ha - s.hb) > 0.5 ? Math.round(Math.min(s.ha, s.hb)) + "-" + Math.round(Math.max(s.ha, s.hb)) + "% LTHR ramp" : Math.round(s.ha) + "% LTHR");
+    if(s.hr) return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + (Math.abs(s.ha - s.hb) > 0.5 ? Math.round(Math.min(s.ha, s.hb)) + "-" + Math.round(Math.max(s.ha, s.hb)) + "% LTHR ramp" : Math.round(s.ha) + "% LTHR");
     const p = Math.abs(s.a - s.b) > 0.5
       ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + (watt ? "w" : "% ramp")
       : Math.round(s.a) + (watt ? "w" : "%");
-    return "- " + fmtDurImp(s.d) + " " + p;
+    return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + p + (s.g != null ? " slope " + s.g.toFixed(1) + " pct" : "");
   };
   const out = []; let i = 0;
   while(i < steps.length){
@@ -4150,6 +4240,16 @@ function actMiniLoad(box, L){
 }
 // Détection d'intervalles : lissage 5 s, segmentation par paliers, fusion des segments courts,
 // tolérance adaptative pour éviter les séances-patates d'arena à des centaines d'étapes.
+// pente moyenne (%) de chaque étape détectée = dénivelé / distance sur la fenêtre de l'étape (flux à 1 Hz) ; seulement si la sortie comporte de vraies pentes (≥ 2 %)
+function slopeFor(steps, dist, alt){
+  if(!dist || !alt || dist.length < 60) return;
+  let at = 0, any = false; const gs = [], ds = [];
+  for(const s of steps){
+    const i0 = Math.min(at, dist.length - 1), i1 = Math.min(at + Math.round(s.d), dist.length - 1), dd = dist[i1] - dist[i0]; at += Math.round(s.d); ds.push(dd);
+    let g = dd >= 80 ? (alt[i1] - alt[i0]) / dd * 100 : null; if(g != null){ g = Math.max(-25, Math.min(25, g)); if(Math.abs(g) >= 2) any = true; } gs.push(g);
+  }
+  if(any) steps.forEach((s, k) => { if(gs[k] != null){ s.g = Math.round(gs[k] * 10) / 10; s.m = Math.max(10, Math.round(ds[k] / 10) * 10); } }); // pente + distance réelle de l'étape
+}
 function detectSteps(watts, ftp, opt){
   opt = opt || {};
   const s = [];
@@ -4262,13 +4362,16 @@ async function buildFromAct(a, btn){
         btn.disabled = false; return true;
       }
     }
-    const j = await icuFetch(`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`);
-    const list = Array.isArray(j) ? j : (j.streams || []);
+    let list = [];
+    for(const u of [`https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts,distance,fixed_altitude`, `https://intervals.icu/api/v1/activity/${a.id}/streams?types=watts`]){
+      try{ const j = await icuFetch(u); list = Array.isArray(j) ? j : (j && j.streams) || []; if(list.length) break; }catch(e){ if(/types=watts$/.test(u)) throw e; } // sans altitude (ancienne API / activité intérieure) : on retombe sur la puissance seule
+    }
     const get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
     const w = get("watts", "power", "watts_calc");
     if(!w) throw new Error(t("actNoPow"));
     let steps = detectSteps(w, ftp);
     if(!steps.length) throw new Error(t("actNoPow"));
+    if(isBike(a.type)) slopeFor(steps, get("distance"), get("fixed_altitude", "altitude")); // pente moyenne de chaque étape (sorties extérieures avec altitude)
     if(isBike(a.type)){ $("sport").value = a.type === "VirtualRide" ? "VirtualRide" : "Ride"; syncUnit(); }
     $("name").value = (a.name || a.type || "Workout").trim().slice(0, 60);
     if($("actout").value === "pct"){
@@ -4279,7 +4382,7 @@ async function buildFromAct(a, btn){
       // la valeur absolue est ainsi identique de bout en bout.
       // La FTP vient du type de l'activité (déjà appliqué au sélecteur de type ci-dessus) : aperçu, exports et envoi utilisent la même.
       const pf = ftp;
-      steps = steps.map(s => ({d: s.d, a: s.a / pf * 100, b: s.b / pf * 100}));
+      steps = steps.map(s => ({d: s.d, a: s.a / pf * 100, b: s.b / pf * 100, g: s.g}));
       $("desc").value = stepsToDesc(steps);
     }else{
       $("desc").value = stepsToDesc(steps, true); // valeurs absolues en watts : la séance reproduit la puissance réelle
@@ -5411,14 +5514,22 @@ function stdSteps(ty){
 }
 const edBtn = (a, txt, ttl, cls) => `<button class="alt small${cls ? " " + cls : ""}" data-a="${a}" type="button"${ttl ? ` title="${esc(ttl)}" aria-label="${esc(ttl)}"` : ""}>${txt}</button>`;
 const edCtl = (rec, std) => `<span class="drg" title="${esc(t("dragLbl"))}" aria-label="${esc(t("dragLbl"))}">⠿</span><span class="ctl">${edBtn("up", "↑", t("mvUp"))}${edBtn("down", "↓", t("mvDown"))}${edBtn("dup", "⧉", t("dup"))}${rec ? edBtn("rec", esc(t("addRecAfter"))) : ""}${std ? edBtn("std", esc(std)) : ""}${edBtn("del", "✕", t("del"), "danger")}</span>`;
+const edGuide = x => edKm() && edM(x) !== "h" && x.g !== "" && x.g != null && isFinite(+x.g); // étape en pente : l'intensité n'est qu'un guide d'effort
+function edUnit(x){ // unité du champ d'intensité ; pour une étape en pente on affiche aussi l'équivalent (W ou % FTP)
+  const hrm = edM(x) === "h", u = hrm ? "% LTHR" : edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
+  const f = edKm() ? ftpFor(edSp()) : 0, v = parseFloat(String(x.i).replace(",", "."));
+  if(!edGuide(x) || !(f > 0) || !(v > 0)) return u;
+  return edW() ? u + " ≈ " + Math.round(v / f * 100) + "% FTP" : u + " ≈ " + Math.round(v * f / 100) + " W";
+}
 function edStep(x, p){
   const hrm = edM(x) === "h", bpm = hrm && ICU.lthr > 0 && x.i !== "" && x.i != null ? ` title="≈ ${Math.round(parseFloat(x.i) * ICU.lthr / 100) || 0} bpm"` : "";
-  const u = hrm ? "% LTHR" : edW() ? "W" : edKm() ? "% FTP" : "% " + t("pace");
+  const u = edUnit(x);
   return `<div class="st ${x.ty}" data-p="${p}"><select data-f="ty" aria-label="${esc(t("edT"))}">${opts(["warm", "work", "rec", "cool"].map(y => [y, t("tt_" + y)]), x.ty)}</select>` +
     `<select data-f="mode">${opts([["t", t("edTime")], ["d", t("edDist")]], x.mode)}</select>` +
     `<div class="fld"><input data-f="v" value="${esc(x.v)}" aria-label="${esc(t(x.mode === "d" ? "edDist" : "edTime"))}"><span>${x.mode === "d" ? (edKm() ? "km" : "m") : "mm:ss"}</span></div>` +
     (edKm() ? `<select data-f="m" title="${esc(t("mTitle"))}" aria-label="${esc(t("mTitle"))}">${opts([["p", t("mPow")], ["h", "♥ " + t("mHr")]], edM(x))}</select>` : "") +
-    `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}"${bpm} aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
+    `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}"${bpm}${edGuide(x) ? ` title="${esc(t("edGuideT"))}"` : ""} aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
+    (edKm() ? `<div class="fld"><input data-f="g" type="number" step="0.1" value="${esc(x.g == null ? "" : x.g)}" title="${esc(t("edSlopeT"))}" aria-label="${esc(t("edSlopeT"))}"><span>% ⛰</span></div>` : "") +
     `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec", x.ty === "warm" || x.ty === "cool" ? t("std_" + x.ty) : null)}</div>`;
 }
 // Préréglages de répétitions standard : [répétitions, [[min, sec, %FTP] effort, [min, sec, %FTP] récup]]
@@ -5446,7 +5557,8 @@ function edDur(x){
 }
 function edLine(x){
   const i = x.i !== "" && x.i != null ? " " + x.i + (edM(x) === "h" ? "% LTHR" : (edW() ? "w" : "%") + (edKm() ? "" : " Pace")) : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
-  return `- ${edDur(x)}${i}${n ? " " + n : ""}`;
+  const sl = edKm() && x.g !== "" && x.g != null && isFinite(+x.g) ? " slope " + (+x.g).toFixed(1) + " pct" : ""; // pente : mode « simulation » du home trainer dans le lecteur
+  return `- ${edDur(x)}${i}${sl}${n ? " " + n : ""}`;
 }
 let EDMAP = {}; // n° de ligne du texte généré -> chemin de l'étape de l'éditeur (pour les poignées du graphe)
 function edText(){
@@ -5563,6 +5675,7 @@ $("edbox").addEventListener("input", e => {
   const {list, i} = edAt(h.dataset.p);
   if(el.dataset.f === "m"){ const was = edM(list[i]); list[i].i = edConv(list[i].i, was, el.value); list[i].m = el.value; edRender(); return; }
   list[i][el.dataset.f] = el.value;
+  if(el.dataset.f === "g" || el.dataset.f === "i"){ const ie = h.querySelector('[data-f="i"]'), sp = ie && ie.nextElementSibling; if(ie && sp){ sp.textContent = edUnit(list[i]); if(edGuide(list[i])) ie.title = t("edGuideT"); else ie.removeAttribute("title"); } } // équivalent W / % FTP et infobulle « guide » mis à jour à la frappe
   if(el.dataset.f === "ty" || el.dataset.f === "mode") edRender(); else { edSum(); edLive(); } // aperçu mis à jour à chaque frappe (durée, intensité, répétitions…)
 });
 // le nom saisi dans l'éditeur se répercute en direct dans l'aperçu ; champ vidé => retour au nom déduit
@@ -5612,7 +5725,7 @@ function edHandles(box, meta, span, peak){
     if(seen.has(s.line) || s.line == null || !(s.d > 0) || (ed && !EDMAP[s.line])) return; seen.add(s.line);
     const e = (s.start + s.d) / span * 100, c = (s.start + s.d / 2) / span * 100, wp = s.d / span * 100, y = 100 - (s.a + s.b) / 2 / peak * 96;
     h += `<div class="dgh dgt" data-k="t" data-n="${n}" style="left:calc(${e.toFixed(2)}% - 6px);top:${(y + (100 - y) / 2).toFixed(2)}%" title="${esc(t("hDur"))}"></div>`;
-    if(wp >= 2) h += `<div class="dgh dgi" data-k="i" data-n="${n}" style="left:${c.toFixed(2)}%;top:${y.toFixed(2)}%;width:max(12px,min(34px,${wp.toFixed(2)}%))" title="${esc(t("hInt"))}"></div>`;
+    if(wp >= 2) h += `<div class="dgh dgi" data-k="i" data-n="${n}" style="left:${c.toFixed(2)}%;top:${y.toFixed(2)}%;width:max(12px,min(34px,${wp.toFixed(2)}%))" title="${esc(t(s.g != null && !s.hr ? "hSlope" : "hInt"))}"></div>`;
   });
   if(h) box.insertAdjacentHTML("afterbegin", `<div class="dgl">${h}</div>`);
 }
@@ -5650,7 +5763,7 @@ $("chart").addEventListener("pointerdown", e => {
   e.preventDefault();
   const r = svg.getBoundingClientRect(), total0 = box._steps.reduce((a, x) => a + x.d, 0);
   edRz = {k: hd.dataset.k, it, lines, li: st.line, line0: lines ? lines[st.line] : "", pid: e.pointerId, px0: e.clientX, py0: e.clientY, W: Math.max(r.width, 1), Hh: Math.max(r.height, 1),
-    d0: st.d, orig: st.d, v0: it ? it.v : null, cnt: box._steps.filter(x => x.line === st.line).length, total0, scale: box._span || total0, peak: box._peak || 120, pct0: (st.a + st.b) / 2, pctOrig: (st.a + st.b) / 2};
+    d0: st.d, orig: st.d, v0: it ? it.v : null, cnt: box._steps.filter(x => x.line === st.line).length, total0, scale: box._span || total0, peak: box._peak || 120, pct0: (st.a + st.b) / 2, pctOrig: (st.a + st.b) / 2, g0: st.g != null && !st.hr ? st.g : null};
   CH_FIX = {scale: edRz.scale, peak: edRz.peak};
   try{ box.setPointerCapture(e.pointerId); }catch(err){}
 });
@@ -5665,6 +5778,11 @@ function edRzApply(s, e){
       else s.it.v = Math.floor(dur / 60) + ":" + String(dur % 60).padStart(2, "0");
     }else nt = lineTime(s.line0, dur, s.orig);
     s.label = fmtDur(dur);
+  }else if(s.g0 != null){ // étape pilotée par la pente : le glissement vertical change la pente (la puissance, simple guide, ne bouge pas) ; hauteur du graphe ≈ 25 % de pente
+    const g = Math.max(-25, Math.min(25, Math.round((s.g0 - (e.clientY - s.py0) / s.Hh * 100 / 96 * 25) * 10) / 10));
+    if(s.it) s.it.g = String(g);
+    else nt = s.line0.replace(/(\b(?:slope|pente)\s*)([+-]?\d+(?:[.,]\d+)?)(\s*pct\b)/i, (m, a, v, b) => a + g.toFixed(1) + b);
+    s.label = "⛰ " + g.toFixed(1) + " %";
   }else{
     const pct = Math.max(10, Math.min(300, Math.round(s.pct0 - (e.clientY - s.py0) / s.Hh * 100 / 96 * s.peak)));
     if(pct > s.peak){ s.peak = pct; s.py0 = e.clientY; s.pct0 = pct; CH_FIX.peak = pct; }
@@ -5838,8 +5956,9 @@ function edFromText(txt, sp){
   const strip = x => x.replace(/\d+(?:[.,]\d+)?\s*(?:h|min|m|s)(?![a-z])(?:\s*\d{1,2}(?=\s|$))?|\d+:\d{2}(?::\d{2})?|\d+(?:[.,]\d+)?\s*(?:mtr|km|yrd)/gi, " ");
   const recNames = T.tt_rec.map(x => x.toLowerCase());
   const mk = (ty, d, dm, it, pre, post) => {
+    let g = ""; const sm = String(post || "").match(/\b(?:slope|pente)\s*([+-]?\d+(?:[.,]\d+)?)\s*pct\b/i); if(sm){ g = String(parseFloat(sm[1].replace(",", "."))); post = post.replace(sm[0], " "); }
     let n = [clean(strip(pre)), clean(post)].filter(Boolean).join(" "); if(recNames.includes(n.toLowerCase())) n = "";
-    return {k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, m: it && it.hr ? "h" : "p", uid: ++edUid};
+    return {g, k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, m: it && it.hr ? "h" : "p", uid: ++edUid};
   };
   const headerTy = l => /cool|retour|warm\s?down/i.test(l) ? "cool" : /warm|échauff|echauff/i.test(l) ? "warm" : /recov|récup|recup|\brest\b|repos/i.test(l) ? "rec" : "work";
   for(const raw of String(txt || "").split("\n")){
@@ -6341,8 +6460,14 @@ function runSteps(desc, ftp){
   return raw.map(x => {
     const k = x.line, n = (seen[k] = (seen[k] || 0) + 1), txt = (lines[k] || "").replace(/^\s*-\s*/, "").trim(), cm = txt.match(/(\d+)(?:\s*-\s*(\d+))?\s*rpm/i);
     const h = (hdr[k] || "").replace(/\s*\d+\s*x\s*$/i, "").trim();
-    return {name: [h, txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, "").trim()].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
+    return {name: [h, txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, "").trim()].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
   });
+}
+// séance de la bibliothèque → étapes du lecteur ; pour les cols, chaque étape porte sa pente (g, en %) et son libellé (km, pente)
+function runStepsOf(item, ftp){
+  const st = runSteps(item.desc_en, ftp), cl = item.climb;
+  if(cl && cl.g.length === st.length) st.forEach((x, i) => { x.name = (lang === "fr" ? cl.nf : cl.ne)[i] || x.name; });
+  return st;
 }
 function runMk(src, id, name, date, st){
   if(!st || !st.length) return null;
@@ -6405,12 +6530,18 @@ function runPick(e, auto){
 }
 function runLoad(e){
   const ftp = runFtp();
-  RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2)}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI();
+  RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2), g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0}));
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI();
 }
+function runProg(){ // avancement de la séance en « secondes équivalentes » : une étape à distance avance selon les mètres parcourus
+  const R = RUN; if(!R || !R.steps.length) return 0; let p = 0; for(let k = 0; k < R.i; k++) p += R.steps[k].dur;
+  const st = R.steps[R.i]; if(st) p += st.m > 0 ? st.dur * (1 - Math.max(0, R.mleft) / st.m) : st.dur - R.left;
+  return Math.max(0, Math.min(R.total, p));
+}
+function runEnter(){ const st = RUN.steps[RUN.i]; RUN.left = st.dur; RUN.mleft = st.m > 0 ? st.m : 0; } // entrée dans une étape
 const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
 function runInit(){
-  RUN = {steps: [], i: 0, left: 0, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null, crk: null, cadSrc: "", cadAt: 0};
+  RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
   $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
@@ -6457,13 +6588,13 @@ function runFit(){ // hauteur = zone réellement visible (barres du navigateur /
 // application installée déjà en plein écran (manifeste) : on n'ajoute pas de plein écran natif de la page, qui masquait les barres système de façon plus agressive (balayage depuis le bord) ; le lecteur reste simplement affiché en recouvrement
 const runPwaFs = () => matchMedia("(display-mode: fullscreen)").matches;
 // ---- second écran : route en vue subjective (pseudo-3D). La vitesse suit la puissance réelle ; à l'arrêt ou en pause la route s'immobilise.
-const RS = {raf: 0, v: 0, dist: 0, t: 0, sig: ""}, HZ = {key: "", tops: [], i: -1};
+const RS = {raf: 0, v: 0, dist: 0, t: 0, sig: "", acc: 0, cost: 0}, HZ = {key: "", tops: [], i: -1};
 // ---- HUD façon Zwift : valeurs en haut, étapes de la séance à droite, étape en cours et progression en bas
 function hzBuild(){
   let top = 0; HZ.tops = []; HZ.i = -1;
   $("hzList").innerHTML = RUN.steps.map(st => {
     const h = Math.max(34, Math.min(150, Math.round(st.dur / 60 * 7))); HZ.tops.push(top); top += h + 4;
-    return `<div class="hs" style="height:${h}px;--c:${runZC(st.z)}"><div class="hf"></div><b>${st.pw === st.pw2 ? st.pw + " W" : st.pw + "→" + st.pw2 + " W"}</b><span>${esc(st.name)} · ${runFmt(st.dur)}</span></div>`;
+    return `<div class="hs" style="height:${h}px;--c:${runZC(st.z)}"><div class="hf"></div><b>${st.g != null ? st.g.toFixed(1) + " %  ·  " + st.pw + " W" : st.pw === st.pw2 ? st.pw + " W" : st.pw + "→" + st.pw2 + " W"}</b><span>${esc(st.name)} · ${st.m > 0 ? fmtDistShort(st.m) : runFmt(st.dur)}</span></div>`;
   }).join("");
 }
 function hzUpdate(){
@@ -6472,100 +6603,223 @@ function hzUpdate(){
     const key = (R.cur ? R.cur.id : "") + "|" + R.steps.length + "|" + ftp; if(key !== HZ.key){ HZ.key = key; hzBuild(); }
     if(R.i !== HZ.i){ HZ.i = R.i; [...$("hzList").children].forEach((c, k) => { c.classList.toggle("past", k < R.i); c.classList.toggle("cur", k === R.i); }); $("hzList").style.transform = `translateY(${-Math.max(0, HZ.tops[R.i] - 8)}px)`; }
   }else if(HZ.key){ HZ.key = ""; $("hzList").innerHTML = ""; }
-  const ap = has ? Math.round(R.ap || 0) : 0, tg = has ? runTgt(st, R.left) : 0, pr = has ? Math.round((1 - R.left / st.dur) * 100) : 0;
-  const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + R.i : "", pr].join("~");
+  const ap = has ? Math.round(R.ap || 0) : 0, tg = has ? runTgt(st, R.left) : 0, pr = has ? Math.round((st.m > 0 ? 1 - Math.max(0, R.mleft) / st.m : 1 - R.left / st.dur) * 100) : 0;
+  const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + Math.round(R.mleft) + "|" + R.i : "", pr].join("~");
+  try{ mapSync(has); }catch(e){}
   if(sig === RS.sig) return; RS.sig = sig;
   $("hzSp").textContent = Math.round(RS.v * 3.6); $("hzAp").textContent = has ? ap : "--"; $("hzHr").textContent = $("runHRv").textContent; $("hzCd").textContent = $("runCV").textContent;
   const pw = $("hzPw"), dv = ap - tg, near = Math.abs(dv) <= Math.max(5, tg * .05);
   pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", !has || !tg ? "#fff" : near ? "#4ade80" : dv > 0 ? "#fb923c" : "#60a5fa");
-  $("hzTg").textContent = has ? "▶ " + tg + " W" : "";
-  $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + runFmt(R.total) : "";
-  $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? runFmt(R.left) : "";
-  $("hzPr").style.width = has ? Math.round(R.el / R.total * 100) + "%" : "0";
+  $("hzTg").textContent = has ? (st.g != null ? "≈ " : "▶ ") + tg + " W" : "";
+  $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) : "";
+  $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
+  $("hzPr").style.width = has ? Math.round(runProg() / R.total * 100) + "%" : "0";
   if(has){ const c = $("hzList").children[R.i]; if(c) c.firstChild.style.height = pr + "%"; }
 }
 function roadStart(){ if(RS.raf) return; RS.t = performance.now(); RS.raf = requestAnimationFrame(roadFrame); }
 function roadStop(){ if(RS.raf) cancelAnimationFrame(RS.raf); RS.raf = 0; }
-// décor généré une fois (graine fixe) : arbres, brins d'herbe et nuages positionnés dans le monde, rebouclés tous les 480 m
+// Rendu allégé : ciel, nuages, collines, brume et arbres sont dessinés UNE fois dans des calques en cache ; à chaque image on ne fait que les copier (drawImage)
+// et tracer les lignes du sol (valeurs précalculées). Résolution interne plafonnée à 800 px de large, cadence plafonnée (~35 i/s), qualité réduite si la machine peine.
 const RDS = (() => { let sd = 7; const r = () => (sd = (sd * 1664525 + 1013904223) >>> 0) / 4294967296;
   return {
-    trees: Array.from({length: 46}, (_, i) => ({z: i * 480 / 46 + r() * 6, side: i % 2 ? 1 : -1, off: 1.4 + r() * 1.9, s: .7 + r() * .75, k: r()})),
-    blades: Array.from({length: 280}, () => ({z: r() * 480, x: (r() < .5 ? -1 : 1) * (1.25 + r() * 4), l: .5 + r(), k: r()})),
+    trees: Array.from({length: 40}, (_, i) => ({z: i * 480 / 40 + r() * 6, side: i % 2 ? 1 : -1, off: 1.4 + r() * 1.9, s: .7 + r() * .75, k: i % 3})),
+    blades: Array.from({length: 140}, () => ({z: r() * 480, x: (r() < .5 ? -1 : 1) * (1.25 + r() * 4), l: .5 + r(), k: r()})),
     clouds: Array.from({length: 7}, () => ({x: r(), y: .08 + r() * .5, w: .1 + r() * .14, a: .35 + r() * .4}))
   }; })();
 const rdMix = (a, b, k) => [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k, a[2] + (b[2] - a[2]) * k];
 const rdRgb = (c, al) => al == null ? `rgb(${c[0] | 0},${c[1] | 0},${c[2] | 0})` : `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${al})`;
 const rdSc = (c, k) => [Math.min(255, c[0] * k), Math.min(255, c[1] * k), Math.min(255, c[2] * k)];
-function roadFrame(now){
-  RS.raf = requestAnimationFrame(roadFrame);
-  const cv = $("runRd"), w = cv.clientWidth, h = cv.clientHeight; if(!w || !h) return;
-  const dpr = Math.min(2, window.devicePixelRatio || 1), pw = Math.round(w * dpr), ph = Math.round(h * dpr);
-  if(cv.width !== pw || cv.height !== ph){ cv.width = pw; cv.height = ph; }
-  const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const dt = Math.min(.1, (now - RS.t) / 1000); RS.t = now;
-  const P = typeof RUN !== "undefined" && RUN && !RUN.paused ? (+RUN.ap || 0) : 0, target = P > 5 ? Math.cbrt(P / .22) : 0; // m/s
-  RS.v += (target - RS.v) * Math.min(1, dt * 1.5); RS.dist += RS.v * dt;
-  const th = document.documentElement.dataset.theme, dark = th ? th === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
-  const yh = h * .44, H = h - yh, curve = Math.sin(RS.dist / 260) * .6 + Math.sin(RS.dist / 97) * .15;
-  const cxAt = tt => w / 2 + curve * (1 - tt) * (1 - tt) * w * .38, rwAt = tt => tt * w * .42 + 1, fogAt = tt => Math.pow(Math.max(0, 1 - tt * 2.6), 1.4) * .9;
-  const haze = dark ? [36, 42, 96] : [208, 226, 242], dist = RS.dist;
-  // ciel : dégradé vers la brume de l'horizon, halo du soleil (ou de la lune), nuages qui dérivent
-  const sk = g.createLinearGradient(0, 0, 0, yh); sk.addColorStop(0, rdRgb(dark ? [8, 12, 38] : [64, 134, 210])); sk.addColorStop(1, rdRgb(haze));
-  g.fillStyle = sk; g.fillRect(0, 0, w, yh + 1);
-  const sx = w * .7 - curve * w * .1, sy = yh * .55, sr = Math.min(w, h) * (dark ? .22 : .38), sg = g.createRadialGradient(sx, sy, 0, sx, sy, sr);
+const rdFog = tt => Math.pow(Math.max(0, 1 - tt * 2.6), 1.4) * .9, RDL = 10, RC = {key: "", C: null};
+const rdCol = dark => ({haze: dark ? [36, 42, 96] : [208, 226, 242], gB: dark ? [24, 58, 34] : [88, 134, 60], rB: dark ? [54, 57, 64] : [96, 98, 104], sB: dark ? [88, 86, 80] : [168, 158, 130]});
+function rdBuild(w, h, dark){
+  const mk = (cw, ch) => { const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(cw)); c.height = Math.max(1, Math.round(ch)); return c; };
+  const yh = h * .44, H = h - yh, K = rdCol(dark), haze = K.haze, C = {w, h, yh, H, K, rows: {}};
+  let c = mk(w, yh + 1), g = c.getContext("2d"); C.sky = c; // ciel + halo + soleil / lune
+  let sk = g.createLinearGradient(0, 0, 0, yh); sk.addColorStop(0, rdRgb(dark ? [8, 12, 38] : [64, 134, 210])); sk.addColorStop(1, rdRgb(haze)); g.fillStyle = sk; g.fillRect(0, 0, w, yh + 1);
+  const sx = w * .7, sy = yh * .55, sr = Math.min(w, h) * (dark ? .22 : .38), sg = g.createRadialGradient(sx, sy, 0, sx, sy, sr);
   sg.addColorStop(0, dark ? "rgba(190,200,255,.28)" : "rgba(255,246,205,.75)"); sg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = sg; g.fillRect(0, 0, w, yh);
   g.fillStyle = dark ? "#e6eaff" : "#fffbe6"; g.beginPath(); g.arc(sx, sy, Math.min(w, h) * (dark ? .03 : .034), 0, 7); g.fill();
-  RDS.clouds.forEach(c => {
-    const cx = (((c.x + dist * 1.5e-5 - curve * .04) % 1.3) + 1.3) % 1.3 * w - w * .15, cy = c.y * yh, cw = c.w * w;
-    [[0, 0, 1], [-.55, .12, .7], [.6, .1, .8]].forEach(([ox, oy, k]) => {
-      const rg = g.createRadialGradient(cx + ox * cw, cy + oy * cw * .3, 0, cx + ox * cw, cy + oy * cw * .3, cw * k);
-      rg.addColorStop(0, dark ? `rgba(120,130,190,${c.a * .35})` : `rgba(255,255,255,${c.a})`); rg.addColorStop(1, "rgba(255,255,255,0)"); g.fillStyle = rg;
-      g.save(); g.translate(cx + ox * cw, cy + oy * cw * .3); g.scale(1, .32); g.translate(-(cx + ox * cw), -(cy + oy * cw * .3)); g.fillRect(cx + ox * cw - cw * k, cy + oy * cw * .3 - cw * k, cw * k * 2, cw * k * 2); g.restore();
-    });
-  });
-  // collines en trois plans : plus loin = plus pâle et plus bleu (perspective atmosphérique)
-  const HL = dark ? [[[32, 40, 88], .06, 3.1, 2.1, .6], [[24, 44, 70], .045, 4.3, 3.6, 1.2], [[16, 40, 44], .03, 5.7, 5.2, 2]] : [[[160, 188, 212], .06, 3.1, 2.1, .6], [[118, 156, 158], .045, 4.3, 3.6, 1.2], [[72, 118, 82], .03, 5.7, 5.2, 2]];
-  HL.forEach(([col, amp, f1, f2, par]) => {
-    g.fillStyle = rdRgb(col); g.beginPath(); g.moveTo(0, yh + 1);
-    for(let x = 0; x <= w + 8; x += 8){ const u = x / w + curve * par * .12; g.lineTo(x, yh - (Math.sin(u * f1 * 3) * .5 + Math.sin(u * f2 * 6 + 1.3) * .3 + .9) * h * amp); }
-    g.lineTo(w + 8, yh + 1); g.fill();
-  });
-  // sol : herbe et asphalte aux variations douces (pas de bandes franches), accotement clair, lignes fines
-  const gB = dark ? [24, 58, 34] : [88, 134, 60], rB = dark ? [54, 57, 64] : [96, 98, 104], sB = dark ? [88, 86, 80] : [168, 158, 130];
-  for(let y = Math.ceil(yh); y < h; y += 2){
-    const tt = (y - yh) / H, zd = 14 / tt, cx = cxAt(tt), rw = rwAt(tt), f = fogAt(tt), q = zd + dist;
-    const wv = Math.sin(q * .9) * .035 + Math.sin(q * .23 + 1) * .05 + (((Math.sin(q * 12.9898) * 43758.5453) % 1) * .015);
-    g.fillStyle = rdRgb(rdMix(rdSc(gB, 1 + wv), haze, f)); g.fillRect(0, y, w, 2);
-    g.fillStyle = rdRgb(rdMix(sB, haze, f)); g.fillRect(cx - rw * 1.1, y, rw * 2.2, 2);
-    g.fillStyle = rdRgb(rdMix(rdSc(rB, 1 + wv * .7), haze, f)); g.fillRect(cx - rw, y, rw * 2, 2);
-    const lw = Math.max(1, rw * .018), lc = rdRgb(rdMix([236, 236, 230], haze, f * 1.05 > 1 ? 1 : f * 1.05));
-    g.fillStyle = lc; g.fillRect(cx - rw * .93, y, lw, 2); g.fillRect(cx + rw * .93 - lw, y, lw, 2);
-    if(tt > .04 && (Math.floor(q / 5) & 1) === 0) g.fillRect(cx - lw / 2, y, lw, 2);
+  C.TW = w * 1.4; c = mk(C.TW, yh); g = c.getContext("2d"); C.cl = c; // nuages (tuile qui se répète)
+  RDS.clouds.forEach(cl => { const cx = cl.x * C.TW, cy = cl.y * yh, cw = cl.w * w;
+    [[0, 0, 1], [-.55, .12, .7], [.6, .1, .8]].forEach(([ox, oy, k]) => { const x = cx + ox * cw, y = cy + oy * cw * .3;
+      g.save(); g.translate(x, y); g.scale(1, .32); const rg = g.createRadialGradient(0, 0, 0, 0, 0, cw * k); rg.addColorStop(0, dark ? `rgba(120,130,190,${cl.a * .35})` : `rgba(255,255,255,${cl.a})`); rg.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = rg; g.fillRect(-cw * k, -cw * k, cw * k * 2, cw * k * 2); g.restore(); }); });
+  C.HW = w * 1.6; C.hh = Math.ceil(h * .14); c = mk(C.HW, C.hh); g = c.getContext("2d"); C.hl = c; // collines en trois plans (perspective atmosphérique)
+  const HL = dark ? [[[32, 40, 88], .06, 3.1, 2.1], [[24, 44, 70], .045, 4.3, 3.6], [[16, 40, 44], .03, 5.7, 5.2]] : [[[160, 188, 212], .06, 3.1, 2.1], [[118, 156, 158], .045, 4.3, 3.6], [[72, 118, 82], .03, 5.7, 5.2]];
+  HL.forEach(([col, amp, f1, f2]) => { g.fillStyle = rdRgb(col); g.beginPath(); g.moveTo(0, C.hh);
+    for(let x = 0; x <= C.HW + 8; x += 8){ const u = x / C.HW; g.lineTo(x, C.hh - (Math.sin(u * f1 * 3.6) * .5 + Math.sin(u * f2 * 7.2 + 1.3) * .3 + .9) * h * amp); }
+    g.lineTo(C.HW + 8, C.hh); g.fill(); });
+  C.hzH = h * .05 + H * .2; c = mk(w, C.hzH); g = c.getContext("2d"); C.hz = c; // brume basse
+  const hz = g.createLinearGradient(0, 0, 0, C.hzH); hz.addColorStop(0, rdRgb(haze, 0)); hz.addColorStop(h * .05 / C.hzH * .9, rdRgb(haze, .6)); hz.addColorStop(1, rdRgb(haze, 0)); g.fillStyle = hz; g.fillRect(0, 0, w, C.hzH);
+  const TP = dark ? [[[14, 40, 28], [26, 62, 44]], [[14, 40, 28], [26, 62, 44]], [[14, 40, 28], [26, 62, 44]]] : [[[36, 88, 50], [70, 128, 70]], [[52, 98, 44], [94, 140, 62]], [[30, 76, 58], [60, 118, 92]]];
+  C.tree = TP.map(([dk, lt]) => { const t = mk(100, 200), q = t.getContext("2d"); // sprite d'arbre (hauteur de référence 180 px, pied à y = 190)
+    q.fillStyle = "rgba(0,0,0,.16)"; q.beginPath(); q.ellipse(50, 190, 40, 6, 0, 0, 7); q.fill();
+    q.fillStyle = rdRgb(dark ? [40, 30, 26] : [84, 62, 42]); q.fillRect(44.6, 122, 10.8, 68);
+    q.fillStyle = rdRgb(dk); q.beginPath(); q.ellipse(50, 78, 36, 61, 0, 0, 7); q.fill();
+    q.fillStyle = rdRgb(lt); q.beginPath(); q.ellipse(59, 68, 22, 44, 0, 0, 7); q.fill(); return t; });
+  return C;
+}
+function rdRows(C, step){ // lignes du sol : tout ce qui ne dépend que de la hauteur est calculé une fois (couleurs comprises)
+  const K = C.K, rows = [];
+  for(let y = Math.ceil(C.yh); y < C.h; y += step){
+    const tt = (y - C.yh) / C.H, f = rdFog(tt), gc = [], rc = [];
+    for(let l = 0; l < RDL; l++){ const wv = -.1 + .2 * l / (RDL - 1); gc.push(rdRgb(rdMix(rdSc(K.gB, 1 + wv), K.haze, f))); rc.push(rdRgb(rdMix(rdSc(K.rB, 1 + wv * .7), K.haze, f))); }
+    rows.push({y, tt, zd: 14 / tt, rw: tt * C.w * .42 + 1, ck: (1 - tt) * (1 - tt) * C.w * .38, sh: rdRgb(rdMix(K.sB, K.haze, f)), ln: rdRgb(rdMix([236, 236, 230], K.haze, Math.min(1, f * 1.05))), gc, rc});
   }
-  // brume basse à l'horizon
-  const hz = g.createLinearGradient(0, yh - h * .05, 0, yh + H * .2); hz.addColorStop(0, rdRgb(haze, 0)); hz.addColorStop(.28, rdRgb(haze, .6)); hz.addColorStop(1, rdRgb(haze, 0));
-  g.fillStyle = hz; g.fillRect(0, yh - h * .05, w, h * .05 + H * .2);
-  // brins d'herbe qui défilent le long des bas-côtés
-  RDS.blades.forEach(b => {
-    const a = ((b.z - dist) % 480 + 480) % 480 + 14, tt = 14 / a; if(tt < .04) return;
-    const cx = cxAt(tt), rw = rwAt(tt), x = cx + b.x * rw, by = yh + tt * H, f = fogAt(tt);
-    g.strokeStyle = rdRgb(rdMix(rdSc(gB, b.k > .5 ? 1.35 : .7), haze, f)); g.lineWidth = Math.max(.6, tt * 1.6); g.beginPath(); g.moveTo(x, by); g.lineTo(x + (b.k - .5) * tt * 6, by - b.l * tt * h * .035); g.stroke();
+  return rows;
+}
+// ---- Mini-carte satellite du parcours (écran d'animation) : vrai tracé pour les cols (route OpenStreetMap entre le départ et le sommet, mise en cache), parcours virtuel généré pour les autres séances ; fond = imagerie Esri
+const COL_GEO = { // départ et sommet : coordonnées (a, b) ou noms de lieux à géocoder (qa, qb ; Nominatim, résultat mis en cache) ; le tracé est obtenu en routant entre les deux, puis vérifié par sa longueur. Clé = nom de la séance avant la longueur (« Col — depuis »)
+  "Alpe d'Huez — from Le Bourg-d'Oisans": {a: [45.0553, 6.0309], b: [45.0905, 6.0703]},
+  "Mont Ventoux — from Bédoin": {a: [44.1244, 5.1795], b: [44.1739, 5.2785]},
+  "Col du Tourmalet — from Luz-Saint-Sauveur": {a: [42.8733, -0.0040], b: [42.9097, 0.1424]},
+  "Col d'Aubisque — from Laruns": {a: [42.9890, -0.4380], b: [42.9769, -0.3410]},
+  "Col de la Madeleine — from La Chambre": {a: [45.3590, 6.2950], b: [45.4290, 6.3740]},
+  "Col de Joux Plane — from Samoëns": {a: [46.0832, 6.7280], b: [46.1004, 6.7256]},
+  "Col du Galibier — from Saint-Michel-de-Maurienne": {a: [45.2175, 6.4645], b: [45.0640, 6.4075]},
+  "Col de la Ramaz — from Mieussy": {a: [46.1347, 6.5233], b: [46.1633, 6.5747]},
+  "Col de la Colombière — from Scionzier (Cluses)": {qa: "Scionzier", b: [45.9922, 6.4758]},
+  "Col du Télégraphe — from Saint-Michel-de-Maurienne": {a: [45.2175, 6.4645], qb: "Col du Télégraphe"},
+  "Col du Galibier — from Valloire": {qa: "Valloire", b: [45.0640, 6.4075]},
+  "Col de la Croix de Fer — from Saint-Étienne-de-Cuines": {qa: "Saint-Étienne-de-Cuines", b: [45.2275, 6.2033]},
+  "Col de la Loze — from Brides-les-Bains via Méribel": {qa: "Brides-les-Bains", qb: "Col de la Loze", bike: true},
+  "Col d'Izoard — from Briançon": {qa: "Briançon", b: [44.8203, 6.7358]},
+  "Col du Grand Colombier — from Culoz": {qa: "Culoz", qb: "Col du Grand Colombier"},
+  "Col du Tourmalet — from Sainte-Marie-de-Campan": {qa: "Sainte-Marie-de-Campan", b: [42.9082, 0.1451]},
+  "Col d'Aspin — from Arreau": {qa: "Arreau", b: [42.9423, 0.3274]},
+  "Col de Peyresourde — from Bagnères-de-Luchon": {qa: "Bagnères-de-Luchon", qb: "Col de Peyresourde"},
+  "Port de Balès — from Mauléon-Barousse": {qa: "Mauléon-Barousse", qb: "Port de Balès"},
+  "Plateau de Beille — from Les Cabannes": {qa: "Les Cabannes, Ariège", qb: "Plateau de Beille"},
+  "Passo dello Stelvio — from Prato allo Stelvio": {qa: "Prato allo Stelvio", b: [46.5286, 10.4533], cc: "it"},
+  "Passo del Mortirolo — from Mazzo di Valtellina": {qa: "Mazzo di Valtellina", qb: "Passo del Mortirolo", cc: "it"},
+  "Monte Zoncolan — from Ovaro": {qa: "Ovaro", qb: "Monte Zoncolan", cc: "it"}
+};
+// séance du lecteur → clé de COL_GEO : par identifiant de bibliothèque, sinon (séance du calendrier…) par le nom du col quand il est sans ambiguïté
+function colKey(cur){
+  const id = (cur && cur.id) || "", nm = (cur && cur.name) || "", ks = Object.keys(COL_GEO);
+  const k = ks.find(x => id.indexOf("lib:" + x + " (") === 0); if(k) return k;
+  return ks.find(x => nm.indexOf(x.split(" — ")[0] + " — ") === 0) || null;
+}
+const MAP = {key: "", tok: 0, real: false, len: 0, path: null, prog: null, dot: null, sig: -1}, MAP_FAKE = [41.93, 2.97];
+function mapMerc(lat, lon, z){ const n = 256 * Math.pow(2, z), r = lat * Math.PI / 180; return [(lon + 180) / 360 * n, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n]; }
+function mapFake(seed){ // route sinueuse reproductible (même séance = même parcours), longueur ≈ 6,5 km
+  let h = 2166136261; for(const ch of String(seed)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  const rnd = () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; };
+  let x = 0, y = 0, a = rnd() * 6.283, c = 0; const co = [];
+  for(let i = 0; i < 260; i++){ c = Math.max(-.14, Math.min(.14, (c + (rnd() - .5) * .09) * .95)); a += c; x += Math.cos(a) * 25; y += Math.sin(a) * 25; co.push([MAP_FAKE[0] - y / 111320, MAP_FAKE[1] + x / (111320 * Math.cos(MAP_FAKE[0] * Math.PI / 180))]); }
+  return co;
+}
+async function mapGeo(q, cc){ // géocodage d'un lieu (Nominatim, OpenStreetMap), mis en cache
+  const ck = "si_geo_" + q; try{ const c = JSON.parse(store.get(ck) || "null"); if(Array.isArray(c) && c.length === 2) return c; }catch(e){}
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 8000);
+  try{
+    const r = await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=" + (cc || "fr") + "&q=" + encodeURIComponent(q), {signal: ac.signal}), j = await r.json();
+    if(Array.isArray(j) && j[0]){ const p = [+(+j[0].lat).toFixed(5), +(+j[0].lon).toFixed(5)]; store.set(ck, JSON.stringify(p)); return p; }
+  }catch(e){}
+  finally{ clearTimeout(to); }
+  return null;
+}
+function mapDist(a, b){ const r = Math.PI / 180, dl = (b[0] - a[0]) * r, dn = (b[1] - a[1]) * r, h = Math.sin(dl / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dn / 2) ** 2; return 12742000 * Math.asin(Math.sqrt(h)); }
+async function mapRoute(key, km){
+  const g = COL_GEO[key]; if(!g) return null;
+  try{ const c = JSON.parse(store.get("si_route_" + key) || "null"); if(Array.isArray(c) && c.length > 10) return c; }catch(e){}
+  const a = g.a || await mapGeo(g.qa, g.cc), b = g.b || await mapGeo(g.qb, g.cc); if(!a || !b) return null;
+  const ac = new AbortController(), to = setTimeout(() => ac.abort(), 9000);
+  try{
+    const base = g.bike ? "https://routing.openstreetmap.de/routed-bike/route/v1/driving/" : "https://router.project-osrm.org/route/v1/driving/";
+    const r = await fetch(base + a[1] + "," + a[0] + ";" + b[1] + "," + b[0] + "?overview=full&geometries=geojson", {signal: ac.signal});
+    const j = await r.json(), rt = j && j.routes && j.routes[0];
+    if(!rt || !(rt.distance > km * 750 && rt.distance < km * 1250)) return null; // longueur incohérente avec le col : on n'affiche pas un faux « vrai » tracé
+    let co = rt.geometry.coordinates.map(q => [q[1], q[0]]);
+    if(rt.distance > km * 1040){ let acc = 0, i = co.length - 1; while(i > 0 && acc < km * 1000){ acc += mapDist(co[i - 1], co[i]); i--; } co = co.slice(i); } // le village de départ peut être avant le pied du col : on ne garde que les derniers km (longueur officielle) en partant du sommet
+    const k = Math.ceil(co.length / 500); if(k > 1) co = co.filter((_, i) => i % k === 0 || i === co.length - 1);
+    co = co.map(q => [+q[0].toFixed(5), +q[1].toFixed(5)]); store.set("si_route_" + key, JSON.stringify(co)); return co;
+  }catch(e){ return null; }
+  finally{ clearTimeout(to); }
+}
+function mapBuild(co, real, full){
+  const box = $("hzMap"), s2 = $("runS2"), W = full ? Math.max(320, Math.min(1600, s2.clientWidth || innerWidth)) : 640, H = full ? Math.max(240, Math.min(1000, s2.clientHeight || innerHeight)) : 480, rx = full ? Math.min(230, W * .3) : 0, ty0 = full ? 90 : 0, by0 = full ? 60 : 0, q = co.map(p => mapMerc(p[0], p[1], 20)), xs = q.map(p => p[0]), ys = q.map(p => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  let z = Math.floor(20 - Math.log2(Math.max((x1 - x0) / (W - rx - 90), (y1 - y0) / (H - ty0 - by0 - 90), 1e-6))); z = Math.max(4, Math.min(17, z));
+  const k = Math.pow(2, z - 20), ox = (x0 + x1) / 2 * k - (W - rx) / 2, oy = (y0 + y1) / 2 * k - (ty0 + (H - ty0 - by0) / 2), n = Math.pow(2, z); let im = "";
+  for(let ty = Math.floor(oy / 256); ty <= Math.floor((oy + H) / 256); ty++) for(let tx = Math.floor(ox / 256); tx <= Math.floor((ox + W) / 256); tx++){
+    if(ty < 0 || ty >= n) continue; im += `<image href="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty}/${((tx % n) + n) % n}" x="${(tx * 256 - ox).toFixed(1)}" y="${(ty * 256 - oy).toFixed(1)}" width="256" height="256"/>`;
+  }
+  const pt = q.map(p => [p[0] * k - ox, p[1] * k - oy]), d = pt.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(""), e = pt[pt.length - 1];
+  const tx = "font-size=\"15\" fill=\"#fff\" stroke=\"#000\" stroke-width=\"3\" paint-order=\"stroke\" font-family=\"sans-serif\"";
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(real ? "Route" : t("mapVirt"))}">${im}<path d="${d}" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><path id="hzMapR" d="${d}" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path id="hzMapP" d="${d}" fill="none" style="stroke:var(--acc,#ff9d00)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="0 99999"/><circle cx="${e[0].toFixed(1)}" cy="${e[1].toFixed(1)}" r="8" fill="#ef4444" stroke="#fff" stroke-width="3"/><circle id="hzMapD" cx="${pt[0][0].toFixed(1)}" cy="${pt[0][1].toFixed(1)}" r="11" fill="#fff" style="stroke:var(--acc,#ff9d00)" stroke-width="5"/><text x="${W - 8}" y="${H - 8}" text-anchor="end" ${tx} font-size="13">Imagery © Esri</text>${real ? "" : `<text x="10" y="22" ${tx}>${esc(t("mapVirt"))}</text>`}</svg>`;
+  MAP.path = box.querySelector("#hzMapR"); MAP.prog = box.querySelector("#hzMapP"); MAP.dot = box.querySelector("#hzMapD"); MAP.len = 0; MAP.sig = -1;
+}
+async function mapLoad(tok){
+  const R = RUN, nm = (R.cur && R.cur.name) || "", ck = colKey(R.cur); let co = null;
+  if(ck) co = await mapRoute(ck, R.steps.reduce((a, x) => a + (x.m || 0), 0) / 1000);
+  if(tok !== MAP.tok) return;
+  const real = !!co && R.steps.some(x => x.m > 0); if(!co) co = mapFake(R.cur ? R.cur.id : nm);
+  MAP.real = real; const full = !!ck && real; $("runS2").classList.toggle("mapfull", full); // col avec vrai tracé : carte satellite plein écran, sans route animée
+  mapBuild(co, real, full);
+}
+function mapFrac(){ // avancement sur le tracé : cols = distance parcourue sur les tronçons en pente (échauffement au départ, retour au calme au sommet) ; autres séances = avancement de la séance
+  const R = RUN; if(!MAP.real) return R.total ? runProg() / R.total : 0; let M = 0, done = 0;
+  R.steps.forEach((x, k) => { if(x.m > 0){ M += x.m; if(k < R.i) done += x.m; else if(k === R.i) done += x.m - Math.max(0, R.mleft); } });
+  return M ? done / M : 0;
+}
+function mapSync(has){
+  const box = $("hzMap"); if(!box) return;
+  if(!has || store.get("si_rm_map") === "0"){ box.hidden = true; $("runS2").classList.remove("mapfull"); return; }
+  const R = RUN, key = (R.cur ? R.cur.id : "") + "|" + R.steps.length;
+  if(key !== MAP.key){ MAP.key = key; MAP.path = null; box.hidden = true; $("runS2").classList.remove("mapfull"); mapLoad(++MAP.tok); return; }
+  if(!MAP.path) return; box.hidden = false;
+  if(!MAP.len){ try{ MAP.len = MAP.path.getTotalLength(); }catch(e){} if(!MAP.len) return; }
+  const f = Math.max(0, Math.min(1, mapFrac())), sg = Math.round(f * 2000); if(sg === MAP.sig) return; MAP.sig = sg;
+  try{ MAP.prog.setAttribute("stroke-dasharray", (MAP.len * f).toFixed(1) + " " + (MAP.len + 10)); const pt = MAP.path.getPointAtLength(MAP.len * f); MAP.dot.setAttribute("cx", pt.x.toFixed(1)); MAP.dot.setAttribute("cy", pt.y.toFixed(1)); }catch(e){}
+}
+function roadFrame(now){
+  RS.raf = requestAnimationFrame(roadFrame);
+  const cv = $("runRd"), cw = cv.clientWidth, chh = cv.clientHeight, mf = $("runS2").classList.contains("mapfull"); if(!mf && (!cw || !chh)) return; // en mode carte plein écran le canvas est masqué (taille 0) : on continue quand même pour mettre à jour la carte et le HUD
+  const dt = Math.min(.1, (now - RS.t) / 1000); RS.t = now;
+  const P = typeof RUN !== "undefined" && RUN && !RUN.paused ? (+RUN.ap || 0) : 0, target = runSpeed(P, RUN.steps[RUN.i] && RUN.steps[RUN.i].g != null ? RUN.steps[RUN.i].g : 0); // m/s (même modèle que la distance des étapes en pente : puissance, pente, poids)
+  RS.v += (target - RS.v) * Math.min(1, dt * 1.5); if(!target && RS.v < .02) RS.v = 0; RS.dist += RS.v * dt;
+  RS.acc += dt; if(RS.acc < .028) return; RS.acc = 0; // ~35 images/s au maximum
+  if($("runS2").classList.contains("mapfull")){ hzUpdate(); return; } // cols : carte satellite seule, la route animée n'est pas dessinée
+  const t0 = performance.now(), sc = Math.min(1, 800 / cw), w = Math.round(cw * sc), h = Math.round(chh * sc);
+  if(cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; }
+  const th = document.documentElement.dataset.theme, dark = th ? th === "dark" : matchMedia("(prefers-color-scheme:dark)").matches, key = w + "x" + h + (dark ? "d" : "l");
+  if(RC.key !== key){ RC.key = key; RC.C = rdBuild(w, h, dark); }
+  if(RS.dist === RS.ld && key === RS.lk){ hzUpdate(); return; } // à l'arrêt : rien à redessiner, seules les valeurs du HUD changent
+  RS.ld = RS.dist; RS.lk = key;
+  const C = RC.C, g = cv.getContext("2d"), yh = C.yh, H = C.H, dist = RS.dist, K = C.K, curve = Math.sin(dist / 260) * .6 + Math.sin(dist / 97) * .15;
+  g.drawImage(C.sky, 0, 0);
+  const o = (((dist * .05 - curve * w * .04) % C.TW) + C.TW) % C.TW; g.drawImage(C.cl, -o, 0); g.drawImage(C.cl, C.TW - o, 0);
+  g.drawImage(C.hl, (C.HW - w) / 2 + curve * w * .2, 0, w, C.hh, 0, Math.round(yh + 1 - C.hh), w, C.hh);
+  const step = (h > 560 ? 3 : 2) + (RS.cost > 11 ? 1 : 0) + (RS.cost > 20 ? 1 : 0), rows = C.rows[step] || (C.rows[step] = rdRows(C, step));
+  for(let i = 0; i < rows.length; i++){
+    const r = rows[i], q = r.zd + dist, wv = Math.sin(q * .9) * .035 + Math.sin(q * .23 + 1) * .05;
+    let l = ((wv + .1) / .2 * (RDL - 1) + .5) | 0; l = l < 0 ? 0 : l > RDL - 1 ? RDL - 1 : l;
+    const cx = w / 2 + curve * r.ck, rw = r.rw, y = r.y;
+    g.fillStyle = r.gc[l]; g.fillRect(0, y, w, step);
+    g.fillStyle = r.sh; g.fillRect(cx - rw * 1.1, y, rw * 2.2, step);
+    g.fillStyle = r.rc[l]; g.fillRect(cx - rw, y, rw * 2, step);
+    const lw = Math.max(1, rw * .018); g.fillStyle = r.ln; g.fillRect(cx - rw * .93, y, lw, step); g.fillRect(cx + rw * .93 - lw, y, lw, step);
+    if(r.tt > .04 && (Math.floor(q / 5) & 1) === 0) g.fillRect(cx - lw / 2, y, lw, step);
+  }
+  g.drawImage(C.hz, 0, Math.round(yh - h * .05));
+  // brins d'herbe (deux tracés groupés)
+  [[1.35, d => d > .5], [.7, d => d <= .5]].forEach(([k, pick]) => {
+    g.strokeStyle = rdRgb(rdSc(K.gB, k)); g.lineWidth = 1; g.beginPath();
+    RDS.blades.forEach(b => { if(!pick(b.k)) return; const a = ((b.z - dist) % 480 + 480) % 480 + 14, tt = 14 / a; if(tt < .06) return;
+      const x = w / 2 + curve * (1 - tt) * (1 - tt) * w * .38 + b.x * (tt * w * .42 + 1), by = yh + tt * H; g.moveTo(x, by); g.lineTo(x + (b.k - .5) * tt * 6, by - b.l * tt * h * .035); });
+    g.stroke();
   });
-  // arbres (du plus loin au plus proche), avec ombre au sol et reflet côté soleil
+  // arbres : sprites en cache, du plus loin au plus proche ; la brume = transparence croissante avec la distance
   const tr = RDS.trees.map(t => ({t, a: ((t.z - dist) % 480 + 480) % 480 + 14})).sort((p, q) => q.a - p.a);
   tr.forEach(({t, a}) => {
-    const tt = 14 / a; if(tt < .035 || tt > 1) return;
-    const cx = cxAt(tt), rw = rwAt(tt), x = cx + t.side * rw * t.off, by = yh + tt * H, ht = tt * h * .46 * t.s, f = fogAt(tt);
-    const dk = dark ? [14, 40, 28] : (t.k > .5 ? [36, 88, 50] : [52, 98, 44]), lt = dark ? [26, 62, 44] : (t.k > .5 ? [70, 128, 70] : [94, 140, 62]);
-    g.fillStyle = "rgba(0,0,0,.16)"; g.beginPath(); g.ellipse(x, by, ht * .22, ht * .035, 0, 0, 7); g.fill();
-    g.fillStyle = rdRgb(rdMix(dark ? [40, 30, 26] : [84, 62, 42], haze, f)); g.fillRect(x - ht * .03, by - ht * .38, ht * .06, ht * .38);
-    g.fillStyle = rdRgb(rdMix(dk, haze, f)); g.beginPath(); g.ellipse(x, by - ht * .62, ht * .2, ht * .34, 0, 0, 7); g.fill();
-    g.fillStyle = rdRgb(rdMix(lt, haze, f)); g.beginPath(); g.ellipse(x + ht * .05, by - ht * .68, ht * .12, ht * .24, 0, 0, 7); g.fill();
+    const tt = 14 / a; if(tt < .05 || tt > 1) return;
+    const x = w / 2 + curve * (1 - tt) * (1 - tt) * w * .38 + t.side * (tt * w * .42 + 1) * t.off, by = yh + tt * H, k = tt * h * .46 * t.s / 180;
+    g.globalAlpha = 1 - rdFog(tt) * .85; g.drawImage(C.tree[t.k], x - 50 * k, by - 190 * k, 100 * k, 200 * k);
   });
-  // vignettage léger
-  const vg = g.createRadialGradient(w / 2, h * .5, Math.min(w, h) * .35, w / 2, h * .5, Math.max(w, h) * .75); vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,.3)");
-  g.fillStyle = vg; g.fillRect(0, 0, w, h);
+  g.globalAlpha = 1;
   hzUpdate();
+  RS.cost = RS.cost * .85 + (performance.now() - t0) * .15; // coût moyen d'une image : sert à baisser la qualité si besoin
 }
 // second écran du lecteur : bouton ●○, balayage horizontal ou flèches du clavier
 function runScr(n){
@@ -6598,10 +6852,12 @@ function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simpl
 // ---- ERG : contrôle du home trainer via le Fitness Machine Control Point FTMS (0x2AD9) : 0x00 prise de contrôle, 0x05 puissance cible (W), 0x07 démarrer/reprendre, 0x08 arrêt/pause, 0x01 reset
 const FEC = "6e40fec1-b5a3-f393-e0a9-e50e24dcca9e";
 // Tacx FE-C over BLE : messages ANT+ (sync A4, longueur 9, id 4E, canal 5, 8 octets, checksum XOR). Page 0x31 = puissance cible (0,25 W), page 0x30 = résistance de base (0 % = libre)
-function fecMsg(b){ let d = null; if(b[0] === 0x05){ const q = Math.min(0xFFFF, (b[1] | b[2] << 8) * 4); d = [0x31, 255, 255, 255, 255, 255, q & 255, q >> 8]; } else if(b[0] === 0x01 || b[0] === 0x08) d = [0x30, 255, 255, 255, 255, 255, 255, 0]; if(!d) return null; const m = [0xA4, 9, 0x4E, 5, ...d]; m.push(m.reduce((a, x) => a ^ x, 0)); return new Uint8Array(m); }
+function fecMsg(b){ let d = null; if(b[0] === 0x05){ const q = Math.min(0xFFFF, (b[1] | b[2] << 8) * 4); d = [0x31, 255, 255, 255, 255, 255, q & 255, q >> 8]; } else if(b[0] === 0x11){ let gr = b[3] | b[4] << 8; if(gr > 32767) gr -= 65536; const raw = Math.max(0, Math.min(0xFFFF, gr + 20000)); d = [0x33, 255, 255, 255, 255, raw & 255, raw >> 8, 80]; } /* page 0x33 : pente (0,01 %, décalage −200 %) + coefficient de roulement */ else if(b[0] === 0x01 || b[0] === 0x08) d = [0x30, 255, 255, 255, 255, 255, 255, 0]; if(!d) return null; const m = [0xA4, 9, 0x4E, 5, ...d]; m.push(m.reduce((a, x) => a ^ x, 0)); return new Uint8Array(m); }
 function runCpSend(b){ const R = RUN; if(!R.cp) return; const ch = R.cp, u = R.fec ? fecMsg(b) : new Uint8Array(b); if(!u) return; R.cpq = (R.cpq || Promise.resolve()).then(() => ch.writeValueWithResponse ? ch.writeValueWithResponse(u) : ch.writeValue(u)).catch(e => console.warn("ERG CP", e)); } // écritures GATT sérialisées
-function runErgTarget(w){ const R = RUN; if(!R.cp || !$("runErg").checked || R.paused) return; w = Math.max(0, Math.round(w)); if(R.sentW === w) return; R.sentW = w; runCpSend([0x05, w & 255, (w >> 8) & 255]); }
-function runErgPause(pause){ const R = RUN; if(!R.cp || !$("runErg").checked) return; R.sentW = null; runCpSend(pause ? [0x08, 0x02] : [0x07]); }
+function runErgTarget(w){ const R = RUN; if(!R.cp || !$("runErg").checked || R.paused) return; w = Math.max(0, Math.round(w)); if(R.sentW === w) return; R.sentW = w; R.sentG = null; runCpSend([0x05, w & 255, (w >> 8) & 255]); }
+// mode PENTE (FTMS 0x11 « paramètres de simulation » : vent 0, pente en 0,01 %, Crr 0,004, Cw 0,51) : remplace la cible de puissance, donc l'ERG est suspendu pendant ces étapes
+function runErgGrade(g){ const R = RUN; if(!R.cp || !$("runErg").checked || R.paused) return; const gr = Math.round(Math.max(-40, Math.min(40, g)) * 100); if(R.sentG === gr) return; R.sentG = gr; R.sentW = null; runCpSend([0x11, 0, 0, gr & 255, (gr >> 8) & 255, 40, 51]); }
+function runErgPause(pause){ const R = RUN; if(!R.cp || !$("runErg").checked) return; R.sentW = null; R.sentG = null; runCpSend(pause ? [0x08, 0x02] : [0x07]); }
 // ---- enregistrement : une mesure par seconde, uniquement avec de vraies données Bluetooth (jamais la simulation)
 function runTcx(){
   const R = RUN, pts = R.rec, iso8 = x => new Date(x).toISOString(), P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0;
@@ -6638,7 +6894,7 @@ function runOn(on){
   if(!on) runFs(false);
   if(!on && RUN.tm){ clearInterval(RUN.tm); RUN.tm = 0; if(!RUN.paused) runErgPause(true); RUN.paused = true; runUI(); }
 }
-function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; RUN.left = RUN.steps[k].dur; RUN.el = RUN.steps.slice(0, k).reduce((a, s) => a + s.dur, 0); runUI(); }
+function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; runEnter(); RUN.el = RUN.steps.slice(0, k).reduce((a, s) => a + s.dur, 0); runUI(); }
 // ---- bips : 3 courts bips pendant les 3 dernières secondes d'une étape, un bip long au changement d'étape (contexte audio séparé, créé lors d'un geste utilisateur)
 let RUN_BC = null;
 const runBeepOn = () => store.get("si_rm_beep") !== "0"; // activé par défaut
@@ -6665,10 +6921,17 @@ function runTick(){
   else { RUN.acc = (RUN.acc || 0) + (now - (RUN.last || now)); RUN.last = now; n = Math.min(Math.floor(RUN.acc / 1000), 86400); RUN.acc -= n * 1000; }
   let chg = false;
   for(let k = 0; k < n && !RUN.paused; k++){
-    if(RUN.left > 0){ RUN.left--; RUN.el++; }
-    if(RUN.left > 0) continue;
+    const s0 = RUN.steps[RUN.i];
+    if(s0.m > 0){ // étape en pente définie par sa distance : on cumule la distance avec la vitesse du modèle (puissance réelle, pente, poids) ; plus de pédalage = plus de distance
+      RUN.el++; RUN.vs += (runSpeed(RUN.ap, s0.g) - RUN.vs) * .5; RUN.mleft -= RUN.vs;
+      RUN.left = RUN.vs > .5 ? Math.ceil(Math.max(0, RUN.mleft) / RUN.vs) : Math.ceil(s0.dur * Math.max(0, RUN.mleft) / s0.m); // temps restant estimé à la vitesse actuelle (compte à rebours sonore)
+      if(RUN.mleft > 0) continue; RUN.left = 0;
+    }else{
+      if(RUN.left > 0){ RUN.left--; RUN.el++; }
+      if(RUN.left > 0) continue;
+    }
     chg = true;
-    if(RUN.i < RUN.steps.length - 1){ RUN.i++; RUN.left = RUN.steps[RUN.i].dur; }
+    if(RUN.i < RUN.steps.length - 1){ RUN.i++; runEnter(); }
     else { $("msg").textContent = t("runDone"); runFinish(); break; }
   }
   if(n > 0 && n <= 2){ // pas de bips après un rattrapage (page restée en arrière-plan)
@@ -6682,7 +6945,7 @@ function runTick(){
   RUN.ap = L.p != null ? L.p : (RUN.paused ? 0 : RUN.ap + (tgt - RUN.ap) * .35 + (Math.random() * 6 - 3));
   RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
   RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
-  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i}); // seulement de vraies données
+  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i, x: Math.round(runProg())}); // seulement de vraies données
   runUI(); runSave();
 }
 // ---- maintien en vie : un son quasi inaudible en boucle + une notification média (comme un lecteur de musique) ; Android garde alors la page active et la décharge beaucoup moins
@@ -6812,7 +7075,7 @@ document.addEventListener("visibilitychange", () => { if(!document.hidden && typ
 const RUN_SAVE = "si_runsess";
 function runSave(force){
   if(!RUN || !RUN.began || !RUN.cur) return; const now = Date.now(); if(!force && now - (RUN.sv || 0) < 4000) return; RUN.sv = now;
-  try{ localStorage.setItem(RUN_SAVE, JSON.stringify({v: 1, at: now, cur: {id: RUN.cur.id, name: RUN.cur.name, st: RUN.cur.st}, i: RUN.i, left: RUN.left, el: RUN.el, nudge: RUN.nudge, paused: RUN.paused, last: RUN.last || now, done: !$("runEnd").hidden, rec: (RUN.rec || []).slice(-20000)})); }catch(e){}
+  try{ localStorage.setItem(RUN_SAVE, JSON.stringify({v: 1, at: now, cur: {id: RUN.cur.id, name: RUN.cur.name, st: RUN.cur.st}, i: RUN.i, left: RUN.left, ml: RUN.mleft, el: RUN.el, nudge: RUN.nudge, paused: RUN.paused, last: RUN.last || now, done: !$("runEnd").hidden, rec: (RUN.rec || []).slice(-20000)})); }catch(e){}
 }
 const runSaveClear = () => { try{ localStorage.removeItem(RUN_SAVE); }catch(e){} };
 function runRestore(){
@@ -6821,6 +7084,7 @@ function runRestore(){
   RUN.touched = true; RUN.cur = sn.cur; runLoad(sn.cur);
   $("runWkName").textContent = $("runFsName").textContent = sn.cur.name; $("runLs").open = false;
   Object.assign(RUN, {began: true, i: Math.min(sn.i || 0, RUN.steps.length - 1), left: sn.left, el: sn.el, nudge: sn.nudge || 0, paused: !!sn.paused, rec: sn.rec || [], last: sn.last, acc: 0}); // le premier tick rattrape le temps écoulé depuis la dernière sauvegarde
+  { const sr = RUN.steps[RUN.i]; RUN.mleft = sr && sr.m > 0 ? (sn.ml != null ? sn.ml : sr.m) : 0; }
   runUI(); if(sn.done) runFinish();
   runFs(true); runWant(true); runSave(true); // lecteur directement à l'écran ; le plein écran natif revient au premier toucher
 }
@@ -6858,10 +7122,10 @@ function runUI(){
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
   $("runBar").style.setProperty("--rzc", runZC(st.z));
-  $("runTimer").textContent = runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = runFmt(RUN.total);
-  runErgTarget(tgt); $("runTP").textContent = tgt; $("runPct").textContent = Math.round(tgt / ftp * 100) + "% FTP" + (RUN.nudge ? " (" + (RUN.nudge > 0 ? "+" : "") + RUN.nudge + " W)" : "") + (st.pw !== st.pw2 ? " ↗" : "");
+  $("runTimer").textContent = st.m > 0 ? fmtDistShort(RUN.mleft) : runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = (RUN.hasM ? "~" : "") + runFmt(RUN.total);
+  if(st.g != null) runErgGrade(st.g); else runErgTarget(tgt); $("runTP").textContent = tgt; $("runPct").textContent = Math.round(tgt / ftp * 100) + "% FTP" + (RUN.nudge ? " (" + (RUN.nudge > 0 ? "+" : "") + RUN.nudge + " W)" : "") + (st.pw !== st.pw2 ? " ↗" : "") + (st.g != null ? " · ⛰ " + st.g.toFixed(1) + "%" : "");
   $("runAP").textContent = ap; $("runZone").textContent = "Z" + st.z;
-  const vb = $("runVar"), ok = Math.abs(d) <= 10; vb.textContent = t(ok ? "runOn" : d > 0 ? "runHi" : "runLo"); vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
+  const vb = $("runVar"), ok = Math.abs(d) <= 10; const gd = st.g != null; vb.textContent = t((ok ? "runOn" : d > 0 ? "runHi" : "runLo") + (gd ? "G" : "")); $("runTgtL").textContent = t(gd ? "runGuide" : "runTgt"); $("runTP").title = gd ? t("edGuideT") : ""; vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
   $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
   runErgBadge(); runMxUI(); runDraw();
@@ -6871,7 +7135,7 @@ function runDraw(){
   c.width = r.width; c.height = r.height; const g = c.getContext("2d"), cs = getComputedStyle(document.documentElement), dim = cs.getPropertyValue("--line").trim() || "#8884", ink = cs.getPropertyValue("--ink").trim() || "#000", H = c.height;
   const mx = (Math.max(...RUN.steps.map(s => Math.max(s.pw, s.pw2))) + Math.max(0, RUN.nudge)) * 1.15; let x = 0;
   // courbe de FC en arrière-plan (uniquement avec de vraies mesures Bluetooth) ; temps = secondes de séance (e), repli sur l'index pour les anciennes sauvegardes
-  const hp = []; (RUN.rec || []).forEach((q, k) => { if(q.h > 0) hp.push([q.e != null ? q.e : k, q.h]); });
+  const hp = []; (RUN.rec || []).forEach((q, k) => { if(q.h > 0) hp.push([q.x != null ? q.x : q.e != null ? q.e : k, q.h]); });
   const hasHr = hp.length > 1;
   if(hasHr){
     const hs = hp.map(q => q[1]), lo = Math.max(30, Math.min(...hs) - 10), hi = Math.max(...hs) + 10, y = v => H * .94 - (v - lo) / (hi - lo) * H * .86;
@@ -6886,7 +7150,7 @@ function runDraw(){
     g.fillStyle = k === RUN.i ? runZC(s.z) : dim; g.fill(); if(k === RUN.i){ g.strokeStyle = ink; g.lineWidth = 2; g.stroke(); } x += w;
   });
   g.globalAlpha = 1;
-  const cx = RUN.el / RUN.total * c.width; g.fillStyle = ink; g.fillRect(cx - 1.5, 0, 3, H);
+  const cx = runProg() / RUN.total * c.width; g.fillStyle = ink; g.fillRect(cx - 1.5, 0, 3, H);
 }
 // ---- Bluetooth (Web Bluetooth) : ceinture FC = service 0x180D ; home trainer = FTMS 0x1826 (Indoor Bike Data 0x2AD2) ----
 function runBtUI(){
@@ -6910,7 +7174,7 @@ function runErgBadge(){
     else if(RUN.paused){ k = "ergRdy"; c = "#3b82f6"; }
     else { k = "ergOn"; c = "#22c55e"; }
   }
-  b.hidden = !k; b.textContent = k ? t(k) : ""; b.style.color = c;
+  const sg = RUN.steps && RUN.steps[RUN.i]; b.hidden = !k; b.textContent = k ? (k === "ergOn" && sg && sg.g != null ? t("simOn") + " " + sg.g.toFixed(1) + "%" : t(k)) : ""; b.style.color = c;
 }
 function runDevGone(kind){ // nettoyage commun : événement GATT de déconnexion ou bouton « Déconnecter »
   const R = RUN; delete R.dev[kind];
@@ -6971,7 +7235,7 @@ async function runPair(kind){
           cp.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; if(v.byteLength < 3 || v.getUint8(0) !== 0x80) return; const op = v.getUint8(1), res = v.getUint8(2); if(res === 1) return;
             console.warn("FTMS CP refus", op, res); // seul un refus de la prise de contrôle coupe l'ERG ; l'échec d'une autre commande (ex. « démarrer » déjà actif) est toléré
             if(op === 0x00){ RUN.cp = null; $("runErgL").hidden = true; say(t("runErgNo") + " (code " + res + ")"); runErgBadge(); }
-            else if(op === 0x05 && res === 5 && (RUN.reqN = (RUN.reqN || 0) + 1) <= 3){ runCpSend([0x00]); RUN.sentW = null; } // contrôle perdu : on le redemande (3 fois max)
+            else if((op === 0x05 || op === 0x11) && res === 5 && (RUN.reqN = (RUN.reqN || 0) + 1) <= 3){ runCpSend([0x00]); RUN.sentW = null; RUN.sentG = null; } // contrôle perdu : on le redemande (3 fois max)
           });
           await cp.startNotifications(); RUN.cp = cp; RUN.cpq = null; RUN.sentW = null; $("runErgL").hidden = false; runCpSend([0x00]); if(!RUN.paused){ runCpSend([0x07]); }
         }catch(e){ console.warn("ERG indisponible", e); note = t("runErgFail", e.name + ": " + e.message); }
@@ -7008,6 +7272,9 @@ function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par d
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
 $("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); renderLibraryKeepOpen(); prevPlayBtn(); };
+{ const rk = $("riderKg"); rk.value = store.get("si_rider_kg"); rk.placeholder = String(riderKg()); rk.onfocus = () => { rk.placeholder = String(riderKg()); };
+  rk.onchange = () => { const v = parseFloat(String(rk.value).replace(",", ".")); store.set("si_rider_kg", v >= 30 && v <= 200 ? String(v) : ""); if(!(v >= 30 && v <= 200)) rk.value = ""; rk.placeholder = String(riderKg()); try{ renderChart(); }catch(e){} }; }
+$("pm_map").checked = store.get("si_rm_map") !== "0"; $("pm_map").onchange = e => { store.set("si_rm_map", e.target.checked ? "1" : "0"); MAP.key = ""; };
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
@@ -7351,7 +7618,7 @@ async function sesShow(again){ // again === true : second pass once the device f
   const a = (SES.list || []).find(x => String(x.id) === $("sesSel").value), box = $("sesBox"); if(!a) return;
   store.set("si_sesid", String(a.id)); SES.cur = String(a.id); if(again !== true) SES.ai = null; document.querySelectorAll("#sesCal button[data-id]").forEach(x => x.classList.toggle("on", x.dataset.id === SES.cur)); const tok = ++SES.tok;
   // l'en-tête (nom, type, date, lien) s'affiche tout de suite et reste seul quand l'activité n'a ni puissance ni FC (ping-pong, course…)
-  const hdr = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 class="ses-title">${esc(a.name || actT(a.type) || a.type || "")}</h3><button type="button" class="alt small aibtn" id="sesAi"${SES.ai && SES.ai.a === a ? "" : " disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span>${esc(t("lastAi"))}</span></button></div><div class="hint ses-meta">${esc(actT(a.type))} · ${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a>${isBike(a.type) ? ` · <a href="#" data-rebuild="${esc(String(a.id))}">${esc(t("sesRebuild"))}</a>` : ""}</div>`;
+  const hdr = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><h3 class="ses-title">${esc(a.name || actT(a.type) || a.type || "")}</h3><button type="button" class="alt small aibtn" id="sesAi"${SES.ai && SES.ai.a === a ? "" : " disabled"}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span>${esc(t("lastAi"))}</span></button></div><div class="hint ses-meta">${esc(actT(a.type))} · ${esc(new Date(a.start_date_local).toLocaleDateString(loc(), {weekday: "long", day: "numeric", month: "long", year: "numeric"}))} · <a href="https://intervals.icu/activities/${encodeURIComponent(a.id)}" target="_blank" rel="noopener">${esc(t("sesOpen"))}</a>${isBike(a.type) ? ` · <a href="#" data-rebuild="${esc(String(a.id))}">${esc(t("sesRebuild"))}</a>` : ""} · <a href="#" data-export="${esc(String(a.id))}" title="${esc(t("sesExpT"))}">${esc(t("sesExp"))}</a></div>`;
   const isSpd = /Run|Swim/.test(a.type || ""), noData = !(isSpd && a.average_speed) && !(a.icu_average_watts || a.average_watts || a.icu_weighted_avg_watts || a.average_heartrate || a.max_heartrate);
   if(again !== true){
     // affichage immédiat : les indicateurs viennent du résumé de l'activité (déjà en mémoire), le graphe est remplacé par un gabarit de même taille en attendant les flux
@@ -7451,6 +7718,20 @@ async function sesOpenAct(a){
 // lien « Reconstruire cette séance » de l'analyse : reconstruction dans l'aperçu (onglet « Depuis une activité »)
 $("sesBox").addEventListener("click", async e => {
   const ai = e.target.closest && e.target.closest("#sesAi"); if(ai){ const x = SES.ai; if(x) analyzeAct(x.a, x.w, x.hr, ai); return; }
+  const ex = e.target.closest && e.target.closest("[data-export]"); // export FIT : fichier généré par intervals.icu (repli : fichier d'origine)
+  if(ex){
+    e.preventDefault(); if(ex.dataset.busy) return; const a = (SES.list || []).find(x => String(x.id) === ex.dataset.export), txt = ex.textContent; ex.dataset.busy = "1"; ex.textContent = "…";
+    try{
+      let r = null;
+      for(const u of ["fit-file", "file"]){ try{ const q = await fetch(`https://intervals.icu/api/v1/activity/${encodeURIComponent(ex.dataset.export)}/${u}`, {headers: icuAuth()}); if(q.ok){ r = q; break; } }catch(err){} }
+      if(!r) throw new Error("export");
+      const b = await r.blob(), u8 = new Uint8Array(await b.slice(0, 2).arrayBuffer()), gz = u8[0] === 0x1f && u8[1] === 0x8b;
+      const nm = ((a && a.start_date_local ? String(a.start_date_local).slice(0, 10) + " " : "") + ((a && (a.name || a.type)) || "activity")).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
+      const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = nm + (gz ? ".fit.gz" : ".fit"); document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(l.href), 4000);
+      ex.textContent = txt;
+    }catch(err){ ex.textContent = t("sesExpErr"); setTimeout(() => { ex.textContent = txt; }, 5000); }
+    delete ex.dataset.busy; return;
+  }
   const l = e.target.closest && e.target.closest("[data-rebuild]"); if(!l) return; e.preventDefault();
   const a = (SES.list || []).find(x => String(x.id) === l.dataset.rebuild); if(!a) return;
   if(mode !== "act"){ mode = "act"; store.set("si_mode", mode); applyMode(); }
