@@ -525,6 +525,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #runS2.mapfull #runHz .hzt,#runS2.mapfull #runHz .hzr,#runS2.mapfull #runHz .hzbt{position:relative;z-index:1}
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
 #runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
+#runHz .hzx{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(.8rem,2.7vmin,1.1rem);line-height:1.2;font-weight:600}#runHz .hzx div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzx div:empty{display:none}#runHz #hzNx{opacity:.85;font-weight:500}
+.run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx[hidden]{display:none}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
 #runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
 .run.rfs.rs2 .rhud{display:none!important}
 @keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
@@ -759,7 +761,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="cfg-sec" data-cfgp="player" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
 <div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label>
-<label><input type="checkbox" id="pm_map"><span data-i="pmMap"></span></label></div>
+<label><input type="checkbox" id="pm_map"><span data-i="pmMap"></span></label>
+<label><input type="checkbox" id="pm_mus"><span data-i="pmMus"></span></label></div>
 <div class="hint" data-i="pmHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr">
 <label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
@@ -768,6 +771,12 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <label><input type="checkbox" id="pm_dec"><span data-i="runMxDec"></span></label>
 </div>
 <div class="hint" data-i="pmDecHint"></div>
+<label for="pm_lead" style="margin-top:16px" data-i="pmLead"></label>
+<input id="pm_lead" type="number" min="0" max="10" step="0.5" inputmode="decimal" placeholder="0" style="max-width:140px">
+<div class="hint" data-i="pmLeadH"></div>
+<label for="pm_ap" style="margin-top:16px" data-i="pmAp"></label>
+<select id="pm_ap" style="max-width:200px"><option value="0" data-i="apOff"></option><option value="10">10 s</option><option value="20">20 s</option><option value="30">30 s</option><option value="60">60 s</option><option value="120">120 s</option></select>
+<div class="hint" data-i="pmApH"></div>
 <label for="riderKg" style="margin-top:16px" data-i="riderKgL"></label>
 <input id="riderKg" type="number" min="30" max="200" step="0.5" inputmode="decimal" style="max-width:140px">
 <div class="hint" data-i="riderKgH"></div>
@@ -1088,7 +1097,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
 <div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
-<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div></div>
+<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span><div><small id="runClock" data-ia="title:runClk"></small></div></div></div><div id="runNx" class="rnx" hidden><span class="rlbl" data-i="runNx"></span> <b id="runNxT"></b></div><div id="runAutoP" class="rbadge" hidden></div></div>
 <div class="rgrid rhud">
 <div class="rcard"><div class="rlbl"><span id="runTgtL" data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
@@ -1110,9 +1119,10 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="hk hzp" id="hzPw"><div class="hl" data-i="runAct"></div><div class="hv"><span id="hzAp">--</span><small>W</small></div><div class="hl" id="hzTg"></div></div>
 <div class="hk"><div class="hl">♥ bpm</div><div class="hv" id="hzHr">--</div></div>
 <div class="hk"><div class="hl">rpm</div><div class="hv" id="hzCd">--</div></div>
-<div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div></div>
+<div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div>
+<div class="hk"><div class="hl" data-i="runClk"></div><div class="hv" id="hzClk">--:--</div></div></div>
 <div class="hzr"><div id="hzList"></div></div>
-<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div></div><div id="hzMap" hidden></div></div></div>
+<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div><div class="hzx"><div id="hzSt"></div><div id="hzNx"></div></div></div><div id="hzMap" hidden></div></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 </section>
@@ -1585,7 +1595,17 @@ jamTagL:["Music genre","Genre musical"], jamTagAny:["Any genre","Tous les genres
 musStart:["Start music","Lancer la musique"], musStop:["Stop music","Arrêter la musique"], musNext:["Next track","Piste suivante"], musVol:["Music volume","Volume de la musique"],
 musNeed:["Add your Jamendo client ID in Settings → Beta to enable music.","Ajoute ton client ID Jamendo dans Réglages → Bêta pour activer la musique."],
 musLoad:["Loading tracks…","Chargement des pistes…"], musNone:["No track found for this intensity. Try another genre.","Aucune piste pour cette intensité. Essaie un autre genre."],
-musErr:["Jamendo: {0}","Jamendo : {0}"], musT1:["calm","calme"], musT2:["steady","régulier"], musT3:["fast","rapide"], musT4:["very fast","très rapide"]
+musErr:["Jamendo: {0}","Jamendo : {0}"], musT1:["calm","calme"], musT2:["steady","régulier"], musT3:["fast","rapide"], musT4:["very fast","très rapide"],
+pmMus:["Show the music controls in the player","Afficher la musique dans le lecteur"],
+pmLead:["Sound delay compensation (seconds)","Compensation du décalage du son (secondes)"],
+pmLeadH:["For casting (Chromecast) or a Bluetooth speaker: the countdown beeps and the step-change beep are played this many seconds early, so they reach you on time. 0 = off. Cast audio is usually 1 to 4 s late; adjust by 0.5 s until the beeps match the step change.","Pour la diffusion (Chromecast) ou une enceinte Bluetooth : les bips du compte à rebours et du changement d'étape sont joués avec cette avance (en secondes) pour vous parvenir à l'heure. 0 = désactivé. Le son diffusé a en général 1 à 4 s de retard ; ajustez par pas de 0,5 s jusqu'à ce que les bips coïncident avec le changement d'étape."],
+pmAp:["Auto-pause when there is no power","Pause automatique sans puissance"], apOff:["Off","Désactivée"],
+pmApH:["Pauses the player when the trainer reports 0 W for this long (real Bluetooth data only, never in simulation). Press Resume to carry on.","Met le lecteur en pause quand le home trainer indique 0 W pendant cette durée (données Bluetooth réelles uniquement, jamais en simulation). Appuyez sur Reprendre pour continuer."],
+runAutoP:["Auto-paused: no power for {0} s","Pause automatique : aucune puissance depuis {0} s"],
+runNx:["Next","Ensuite"], runClk:["Time of day","Heure"], hzStep:["Step {0}/{1}","Étape {0}/{1}"], hzFtp:["FTP {0} W","FTP {0} W"],
+runFtpIn:["FTP used for % targets: {0} W (indoor FTP)","FTP utilisée pour les cibles en % : {0} W (FTP indoor)"],
+runFtpOut:["FTP used for % targets: {0} W (outdoor FTP, no indoor FTP set)","FTP utilisée pour les cibles en % : {0} W (FTP extérieur, pas de FTP indoor)"],
+runFtpDef:["FTP used for % targets: {0} W (default, no FTP loaded from intervals.icu)","FTP utilisée pour les cibles en % : {0} W (valeur par défaut, aucune FTP chargée depuis intervals.icu)"]
 });
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -6452,6 +6472,8 @@ function runFtp(){ let f = 0; try{ f = +ftpFor("VirtualRide"); }catch(e){} retur
 const runFmt = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 const runZC = z => ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444", "#a855f7", "#ec4899"][Math.min(7, Math.max(1, z)) - 1];
 // description intervals.icu → étapes du lecteur (même analyseur que le reste de l'app : %, watts, zones, rampes, répétitions « 3x », durées et distances)
+// le nom d'une étape = le texte de sa ligne SANS valeur de puissance (%, W, % LTHR) : ces valeurs (écrites à la création, par l'IA ou à la main, avec la FTP du moment) peuvent ne pas correspondre à la cible calculée par le lecteur
+const runNoPw = s => s.replace(/\d+(?:[.,]\d+)?(?:\s*-\s*\d+(?:[.,]\d+)?)?\s*(?:%\s*(?:lthr|ftp)?|w(?:atts?)?\b)/gi, "").replace(/\bramp\b/gi, "").replace(/\(\s*[~≈]?\s*\)/g, "").replace(/\s@(?=\s|$)/g, "").replace(/\s{2,}/g, " ").replace(/^[\s,;:@·–—-]+|[\s,;:@·–—-]+$/g, "").trim();
 function runSteps(desc, ftp){
   const raw = parseWorkout(desc || "", "Ride", ftp); if(!raw.length) return [];
   const lines = desc.split("\n"), hdr = [], rx = /\d(?:[.,]\d+)?\s*%|\d(?:[.,]\d+)?\s*w\b|\bz[1-7]\b/i; let cur = "";
@@ -6460,7 +6482,7 @@ function runSteps(desc, ftp){
   return raw.map(x => {
     const k = x.line, n = (seen[k] = (seen[k] || 0) + 1), txt = (lines[k] || "").replace(/^\s*-\s*/, "").trim(), cm = txt.match(/(\d+)(?:\s*-\s*(\d+))?\s*rpm/i);
     const h = (hdr[k] || "").replace(/\s*\d+\s*x\s*$/i, "").trim();
-    return {name: [h, txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, "").trim()].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
+    return {name: [h, runNoPw(txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, ""))].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
   });
 }
 // séance de la bibliothèque → étapes du lecteur ; pour les cols, chaque étape porte sa pente (g, en %) et son libellé (km, pente)
@@ -6604,7 +6626,8 @@ function hzUpdate(){
     if(R.i !== HZ.i){ HZ.i = R.i; [...$("hzList").children].forEach((c, k) => { c.classList.toggle("past", k < R.i); c.classList.toggle("cur", k === R.i); }); $("hzList").style.transform = `translateY(${-Math.max(0, HZ.tops[R.i] - 8)}px)`; }
   }else if(HZ.key){ HZ.key = ""; $("hzList").innerHTML = ""; }
   const ap = has ? Math.round(R.ap || 0) : 0, tg = has ? runTgt(st, R.left) : 0, pr = has ? Math.round((st.m > 0 ? 1 - Math.max(0, R.mleft) / st.m : 1 - R.left / st.dur) * 100) : 0;
-  const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + Math.round(R.mleft) + "|" + R.i : "", pr].join("~");
+  const clk = runClock(), sa = has && R.sa && R.sa.i === R.i && R.sa.n ? Math.round(R.sa.s / R.sa.n) : 0;
+  const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + Math.round(R.mleft) + "|" + R.i : "", pr, clk, sa].join("~");
   try{ mapSync(has); }catch(e){}
   if(sig === RS.sig) return; RS.sig = sig;
   $("hzSp").textContent = Math.round(RS.v * 3.6); $("hzAp").textContent = has ? ap : "--"; $("hzHr").textContent = $("runHRv").textContent; $("hzCd").textContent = $("runCV").textContent;
@@ -6614,6 +6637,9 @@ function hzUpdate(){
   $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) : "";
   $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
   $("hzPr").style.width = has ? Math.round(runProg() / R.total * 100) + "%" : "0";
+  $("hzClk").textContent = clk;
+  $("hzSt").textContent = has ? [t("hzStep", R.i + 1, R.steps.length), "Z" + st.z, Math.round(tg / ftp * 100) + "% · " + t("hzFtp", ftp), st.cad && st.cad !== "—" ? st.cad + " rpm" : "", st.g != null ? "⛰ " + st.g.toFixed(1) + "%" : "", sa ? "⌀ " + sa + " W" : ""].filter(Boolean).join("  ·  ") : "";
+  $("hzNx").textContent = has && R.steps[R.i + 1] ? t("runNx") + (lang === "fr" ? " : " : ": ") + runNxTxt(R.steps[R.i + 1]) : "";
   if(has){ const c = $("hzList").children[R.i]; if(c) c.firstChild.style.height = pr + "%"; }
 }
 function roadStart(){ if(RS.raf) return; RS.t = performance.now(); RS.raf = requestAnimationFrame(roadFrame); }
@@ -6874,7 +6900,7 @@ function runTcx(){
 }
 function runFinish(){
   musStop(); const R = RUN; R.paused = true; runErgPause(true); runUI();
-  const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; runLaunchUI();
+  const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; $("runDis").hidden = false; runLaunchUI();
   const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
   const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
@@ -6890,6 +6916,7 @@ async function runUpload(){
       await fetch("https://intervals.icu/api/v1/activity/" + encodeURIComponent(id), {method: "PUT", headers: {"Content-Type": "application/json", ...icuAuth()}, body: JSON.stringify(body)});
     }catch(e){ console.warn(e); } }
     m.innerHTML = esc(t("runUpOk")) + (id ? ` · <a href="https://intervals.icu/activities/${encodeURIComponent(id)}" target="_blank" rel="noopener">intervals.icu ↗</a>` : "");
+    R.upDone = true; $("runDis").hidden = true; // envoyée : plus rien à abandonner
     R.at = 0; runSaveClear(); if(typeof loadCal === "function") loadCal(true).catch(() => {});
   }catch(e){ b.disabled = false; m.textContent = t("errI", errText(e)); }
 }
@@ -6905,6 +6932,8 @@ function runJump(k){ if(k < 0 || k >= RUN.steps.length) return; RUN.i = k; runEn
 // ---- bips : 3 courts bips pendant les 3 dernières secondes d'une étape, un bip long au changement d'étape (contexte audio séparé, créé lors d'un geste utilisateur)
 let RUN_BC = null;
 const runBeepOn = () => store.get("si_rm_beep") !== "0"; // activé par défaut
+const runLead = () => { const v = parseFloat(String(store.get("si_rm_lead")).replace(",", ".")); return isFinite(v) ? Math.max(0, Math.min(10, v)) : 0; }; // avance des bips (s) pour compenser le retard du son diffusé
+const runAutoPause = () => { const v = parseInt(store.get("si_rm_ap"), 10); return isFinite(v) ? Math.max(0, Math.min(600, v)) : 30; }; // secondes sans puissance avant la pause automatique (0 = désactivée, 30 par défaut)
 function runBeepCtx(){
   try{
     if(!RUN_BC){ const C = window.AudioContext || window.webkitAudioContext; if(!C) return null; RUN_BC = new C(); }
@@ -6942,9 +6971,23 @@ function runTick(){
     else { $("msg").textContent = t("runDone"); runFinish(); break; }
   }
   if(n > 0 && n <= 2){ // pas de bips après un rattrapage (page restée en arrière-plan)
-    const bk = RUN.i + ":" + RUN.left;
-    if(chg){ RUN.bk = bk; runBeep(1320, .5); }
-    else if(!RUN.paused && RUN.left >= 1 && RUN.left <= 3 && RUN.left < RUN.steps[RUN.i].dur && RUN.bk !== bk){ RUN.bk = bk; runBeep(880, .12); }
+    const lead = runLead();
+    if(lead > 0){ // son diffusé (Chromecast, enceinte Bluetooth) : il arrive en retard, donc les bips sont joués avec `lead` secondes d'avance. Les ticks durent 1 s : on déclenche au tick entier précédent et le reste est un délai audio
+      if(!RUN.paused){
+        const lc = Math.ceil(lead), dl = lc - lead; let T = RUN.left; // T = secondes avant la fin de l'étape k
+        for(let k = RUN.i; k < RUN.steps.length; k++){
+          if(k > RUN.i) T += RUN.steps[k].dur;
+          const x = T - lc; if(x > 3) break; if(x < 0) continue;
+          const bk = "L" + k + ":" + x;
+          if(RUN.bk !== bk){ RUN.bk = bk; if(x === 0) runBeep(1320, .5, dl); else runBeep(880, .12, dl); }
+          break;
+        }
+      }
+    }else{
+      const bk = RUN.i + ":" + RUN.left;
+      if(chg){ RUN.bk = bk; runBeep(1320, .5); }
+      else if(!RUN.paused && RUN.left >= 1 && RUN.left <= 3 && RUN.left < RUN.steps[RUN.i].dur && RUN.bk !== bk){ RUN.bk = bk; runBeep(880, .12); }
+    }
   }
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
   // télémétrie : valeurs réelles Bluetooth si présentes, sinon simulation
@@ -6953,6 +6996,13 @@ function runTick(){
   RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
   RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
   if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i, x: Math.round(runProg())}); // seulement de vraies données
+  if(!RUN.paused && L.p != null){ const sa = RUN.sa && RUN.sa.i === RUN.i ? RUN.sa : (RUN.sa = {i: RUN.i, s: 0, n: 0}); sa.s += L.p; sa.n++; } // moyenne de l'étape en cours (écran de diffusion)
+  // pause automatique : le home trainer indique 0 W depuis N secondes (vraies données Bluetooth seulement)
+  { const lim = runAutoPause();
+    if(!RUN.paused && RUN.began && L.p != null){
+      if(L.p > 0) RUN.zs = 0; else if(!RUN.zs) RUN.zs = now;
+      if(lim > 0 && RUN.zs && now - RUN.zs >= lim * 1000 && tgt > 0){ RUN.zs = 0; RUN.apz = lim; $("runPlay").click(); }
+    }else RUN.zs = 0; }
   runUI(); runSave();
 }
 // ---- maintien en vie : un son quasi inaudible en boucle + une notification média (comme un lecteur de musique) ; Android garde alors la page active et la décharge beaucoup moins
@@ -6997,6 +7047,7 @@ function runMedia(){ // notification média : nom de la séance, étape en cours
 const MUS = {on: false, a: null, tier: 0, q: {}, seen: new Set(), seq: 0, f: 1, ft: 0, since: 0, hold: false, err: 0, cur: null, msg: ""};
 const MUS_SPEED = {1: "low", 2: "medium", 3: "high", 4: "veryhigh"};
 const musKey = () => store.get("si_jamkey").trim();
+const musShown = () => store.get("si_rm_mus") !== "0"; // réglage Lecteur : afficher (ou masquer) la section musique
 const musTier = z => z <= 1 ? 1 : z <= 3 ? 2 : z === 4 ? 3 : 4;
 const musVol = () => { const v = parseInt(store.get("si_musvol"), 10); return isFinite(v) ? Math.min(100, Math.max(0, v)) / 100 : .7; };
 const musZone = () => RUN && RUN.steps && RUN.steps[RUN.i] ? RUN.steps[RUN.i].z : 2;
@@ -7057,7 +7108,7 @@ function musSync(){ // appelé à chaque tick du lecteur : pause avec la séance
 function musUI(){
   const b = $("musGo"); if(!b) return;
   const key = !!musKey(), n = $("musNext");
-  $("runMus").hidden = !key; // visible seulement si un client ID Jamendo est renseigné
+  $("runMus").hidden = !key || !musShown(); // visible seulement si un client ID Jamendo est renseigné et si le réglage « afficher la musique » est coché
   b.textContent = MUS.on ? "⏹ " + t("musStop") : "▶ " + t("musStart"); b.disabled = !MUS.on && !key;
   n.hidden = !MUS.on; n.title = t("musNext"); n.setAttribute("aria-label", t("musNext"));
   $("musInfo").textContent = MUS.msg || (!key ? t("musNeed") : MUS.on && MUS.cur ? "♪ " + MUS.cur.name + " — " + MUS.cur.artist_name + " · " + t("musT" + MUS.tier) : "");
@@ -7125,7 +7176,8 @@ function runMxUI(){
 function runUI(){
   runLaunchUI();
   if(!RUN || !RUN.steps.length) return;
-  runWake((!RUN.paused || document.querySelector('[data-block="run"]').classList.contains("rfs")) && !!RUN.tm); // écran maintenu allumé aussi pendant l'attente avant le départ runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
+  runWake((!RUN.paused || document.querySelector('[data-block="run"]').classList.contains("rfs")) && !!RUN.tm); // écran maintenu allumé aussi pendant l'attente avant le départ
+  runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
   $("runBar").style.setProperty("--rzc", runZC(st.z));
@@ -7135,8 +7187,16 @@ function runUI(){
   const vb = $("runVar"), ok = Math.abs(d) <= 10; const gd = st.g != null; vb.textContent = t((ok ? "runOn" : d > 0 ? "runHi" : "runLo") + (gd ? "G" : "")); $("runTgtL").textContent = t(gd ? "runGuide" : "runTgt"); $("runTP").title = gd ? t("edGuideT") : ""; vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
   $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
+  $("runPct").title = runFtpTxt(); $("runClock").textContent = "🕐 " + runClock();
+  const nx = RUN.steps[RUN.i + 1]; $("runNx").hidden = !nx; if(nx) $("runNxT").textContent = runNxTxt(nx);
+  if(!RUN.paused) RUN.apz = 0; const ab = $("runAutoP"); ab.hidden = !(RUN.paused && RUN.apz); if(!ab.hidden) ab.textContent = "⏸ " + t("runAutoP", RUN.apz);
   runErgBadge(); runMxUI(); runDraw();
 }
+const runClock = () => new Date().toLocaleTimeString(loc(), {hour: "2-digit", minute: "2-digit"});
+// FTP utilisée par le lecteur pour toutes les cibles en % : FTP indoor (home trainer), à défaut FTP extérieur, à défaut 250 W
+function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0; return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
+// étape suivante : durée · puissance cible (avec l'ajustement ± W) · nom
+function runNxTxt(s){ const n = RUN.nudge || 0, a = Math.max(0, s.pw + n), b = Math.max(0, s.pw2 + n); return (s.m > 0 ? fmtDistShort(s.m) : runFmt(s.dur)) + " · " + (s.g != null ? "≈ " : "") + (a === b ? a + " W" : a + "→" + b + " W") + (s.g != null ? " · ⛰ " + s.g.toFixed(1) + "%" : "") + (s.name ? " · " + s.name : ""); }
 function runDraw(){
   const c = $("runCv"); if(!c || !RUN || !RUN.steps.length) return; const r = c.getBoundingClientRect(); if(!r.width) return;
   c.width = r.width; c.height = r.height; const g = c.getContext("2d"), cs = getComputedStyle(document.documentElement), dim = cs.getPropertyValue("--line").trim() || "#8884", ink = cs.getPropertyValue("--ink").trim() || "#000", H = c.height;
@@ -7282,6 +7342,9 @@ $("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").o
 { const rk = $("riderKg"); rk.value = store.get("si_rider_kg"); rk.placeholder = String(riderKg()); rk.onfocus = () => { rk.placeholder = String(riderKg()); };
   rk.onchange = () => { const v = parseFloat(String(rk.value).replace(",", ".")); store.set("si_rider_kg", v >= 30 && v <= 200 ? String(v) : ""); if(!(v >= 30 && v <= 200)) rk.value = ""; rk.placeholder = String(riderKg()); try{ renderChart(); }catch(e){} }; }
 $("pm_map").checked = store.get("si_rm_map") !== "0"; $("pm_map").onchange = e => { store.set("si_rm_map", e.target.checked ? "1" : "0"); MAP.key = ""; };
+$("pm_mus").checked = musShown(); $("pm_mus").onchange = e => { store.set("si_rm_mus", e.target.checked ? "1" : "0"); if(!e.target.checked) musStop(); musUI(); }; // masquer la musique l'arrête
+{ const ld = $("pm_lead"); ld.value = runLead() || ""; ld.onchange = () => { const v = Math.max(0, Math.min(10, Math.round(parseFloat(String(ld.value).replace(",", ".")) * 2) / 2)); store.set("si_rm_lead", v > 0 ? String(v) : ""); ld.value = v > 0 ? v : ""; if(v > 0) runBeep(880, .12); }; }
+$("pm_ap").value = String(runAutoPause()); $("pm_ap").onchange = e => store.set("si_rm_ap", e.target.value);
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
