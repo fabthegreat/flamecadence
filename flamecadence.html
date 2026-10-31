@@ -532,6 +532,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 @keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.run.rfs.rs2 #runS2{animation:none}}
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
+.run #musMin{flex:0 0 auto;margin-left:6px}.run .rmus.min{padding:4px 8px}.run .rmus.min #musIc,.run .rmus.min #musVol,.run .rmus.min #musTag,.run .rmus.min #musInfo{display:none}.run .rmus.min #musMin{margin-left:auto}
 .run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
 .run #musIc{flex:0 0 auto;display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);color:var(--acc)}.run #musIc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run #musTag{width:100%;margin:8px 0 0}
@@ -1092,6 +1093,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <button type="button" id="musGo" class="alt small"></button>
 <button type="button" id="musNext" class="alt small" hidden>⏭</button>
 <input type="range" id="musVol" min="0" max="100" step="5" data-ia="aria-label:musVol">
+<button type="button" id="musMin" class="alt small icon"></button>
 </div><select id="musTag" data-ia="aria-label:jamTagL"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select><div class="hint" id="musInfo"></div></div>
 <div id="runFsHint" hidden data-i="runFsHint"></div>
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
@@ -1595,6 +1597,7 @@ jamTagL:["Music genre","Genre musical"], jamTagAny:["Any genre","Tous les genres
 musStart:["Start music","Lancer la musique"], musStop:["Stop music","Arrêter la musique"], musNext:["Next track","Piste suivante"], musVol:["Music volume","Volume de la musique"],
 musNeed:["Add your Jamendo client ID in Settings → Beta to enable music.","Ajoute ton client ID Jamendo dans Réglages → Bêta pour activer la musique."],
 musLoad:["Loading tracks…","Chargement des pistes…"], musNone:["No track found for this intensity. Try another genre.","Aucune piste pour cette intensité. Essaie un autre genre."],
+musMin:["Minimize music","Réduire la musique"], musMax:["Expand music","Agrandir la musique"],
 musErr:["Jamendo: {0}","Jamendo : {0}"], musT1:["calm","calme"], musT2:["steady","régulier"], musT3:["fast","rapide"], musT4:["very fast","très rapide"],
 pmMus:["Show the music controls in the player","Afficher la musique dans le lecteur"],
 pmLead:["Sound delay compensation (seconds)","Compensation du décalage du son (secondes)"],
@@ -7047,6 +7050,7 @@ function runMedia(){ // notification média : nom de la séance, étape en cours
 const MUS = {on: false, a: null, tier: 0, q: {}, seen: new Set(), seq: 0, f: 1, ft: 0, since: 0, hold: false, err: 0, cur: null, msg: ""};
 const MUS_SPEED = {1: "low", 2: "medium", 3: "high", 4: "veryhigh"};
 const musKey = () => store.get("si_jamkey").trim();
+const musMini = () => store.get("si_rm_musmin") === "1"; // section musique réduite au minimum (lecture / suivant)
 const musShown = () => store.get("si_rm_mus") !== "0"; // réglage Lecteur : afficher (ou masquer) la section musique
 const musTier = z => z <= 1 ? 1 : z <= 3 ? 2 : z === 4 ? 3 : 4;
 const musVol = () => { const v = parseInt(store.get("si_musvol"), 10); return isFinite(v) ? Math.min(100, Math.max(0, v)) / 100 : .7; };
@@ -7108,6 +7112,7 @@ function musSync(){ // appelé à chaque tick du lecteur : pause avec la séance
 function musUI(){
   const b = $("musGo"); if(!b) return;
   const key = !!musKey(), n = $("musNext");
+  { const mm = musMini(), bm = $("musMin"), l = t(mm ? "musMax" : "musMin"); $("runMus").classList.toggle("min", mm); bm.textContent = mm ? "▴" : "▾"; bm.title = l; bm.setAttribute("aria-label", l); b.title = MUS.on && MUS.cur ? MUS.cur.name + " — " + MUS.cur.artist_name : ""; }
   $("runMus").hidden = !key || !musShown(); // visible seulement si un client ID Jamendo est renseigné et si le réglage « afficher la musique » est coché
   b.textContent = MUS.on ? "⏹ " + t("musStop") : "▶ " + t("musStart"); b.disabled = !MUS.on && !key;
   n.hidden = !MUS.on; n.title = t("musNext"); n.setAttribute("aria-label", t("musNext"));
@@ -7115,6 +7120,7 @@ function musUI(){
   $("musVol").value = Math.round(musVol() * 100); $("musTag").value = store.get("si_jamtag");
 }
 function musBind(){
+  $("musMin").onclick = () => { store.set("si_rm_musmin", musMini() ? "0" : "1"); musUI(); };
   $("musGo").onclick = () => MUS.on ? musStop() : musStart();
   $("musNext").onclick = () => { if(MUS.on) musPlay(musTier(musZone())); };
   $("musTag").onchange = e => { store.set("si_jamtag", e.target.value); if($("jamtag")) $("jamtag").value = e.target.value; if(MUS.on) musPlay(musTier(musZone())); }; // nouveau genre : on enchaîne tout de suite
