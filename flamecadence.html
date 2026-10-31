@@ -851,8 +851,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <button type="button" role="tab" data-m="shift"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5"/><path d="M12 7l5 5-5 5"/></svg><span data-i="tabShift"></span></button>
 <button type="button" role="tab" data-m="ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span data-i="tabSes"></span></button>
 <button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
-<button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
 <button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
+<button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
 </div>
 
 <section data-block="req">
@@ -1275,7 +1275,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.4.0"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.4.1"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -7348,7 +7348,7 @@ async function runPair(kind){
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "cmp", "per"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "per", "cmp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
