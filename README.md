@@ -94,7 +94,8 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
 ### ⚙️ Settings, privacy and install
 
 * **No backend, no account:** everything runs in your browser from `flamecadence.html`. API calls go directly from your browser to intervals.icu and to the AI provider you chose.
-* **Settings tabs:** AI, intervals.icu, profile, widgets, appearance (choice of site font), **Beta** and, once the beta option is ticked, **Player**. The **Player** tab holds the sound, optional-metric and music (Jamendo) settings; the keep-alive option sits in the Beta tab. Both only show when the beta option is on.
+* **Anonymous visit statistics:** the hosted app and the page itself include a [GoatCounter](https://www.goatcounter.com) snippet that only counts page views. GoatCounter is a privacy-friendly analytics service: **no cookies, no personal data and no cross-site tracking**, and it never sees your API keys, workouts or activities, which stay in your browser. A short notice about it is shown in the page footer. If you host your own copy and do not want it, delete the `<script data-goatcounter=…>` line from `flamecadence.html`.
+* **Settings tabs:** intervals.icu (first, as it is the main connection), AI, profile, widgets, appearance (choice of site font), **Beta** and, once the beta option is ticked, **Player**. The **Player** tab holds the sound, optional-metric and music (Jamendo) settings; the keep-alive option sits in the Beta tab. Both only show when the beta option is on.
 * API keys and preferences are stored in your browser's local storage only. A button clears all saved keys, and settings (including the widget order) can be exported / imported as JSON.
 * **Install on your phone:** the **…** menu has an **Install app** entry. On Android it opens the browser's install prompt (or tells you where to find "Install app" / "Add to Home screen" in your browser's menu). The **guided tour** is in the same menu.
 * Built-in help dialog and keyboard-friendly tabs and controls.
@@ -106,7 +107,7 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
 > **👉 The easiest way: use the hosted app at [flamecadence.lutix.org](https://flamecadence.lutix.org).** Nothing to download or install, it is always up to date, and it can be installed on your phone from there. Your keys and settings stay in your own browser.
 
 1. Open **[flamecadence.lutix.org](https://flamecadence.lutix.org)** (or open `flamecadence.html` directly in any modern web browser if you prefer to run your own copy).
-2. Click the **⚙ Settings** button in the header.
+2. On a first visit a **welcome card** explains the three steps and offers a **Connect intervals.icu** button, which opens the Settings on the right tab. The page opens on the **Library**, which works without any key. You can also click the **⚙ Settings** button in the header at any time.
 3. In the **intervals.icu** tab, enter your **API key** and **Athlete ID** (found under *Developer Settings* on [intervals.icu/settings](https://intervals.icu/settings)).
 4. In the **AI** tab, choose a provider and enter its key:
    * **Gemini** (free tier): get a key from [Google AI Studio](https://aistudio.google.com/apikey).
@@ -114,7 +115,7 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
    * **OpenAI-compatible:** use the base URL and key of your provider (e.g. [Groq](https://console.groq.com/keys), [OpenRouter](https://openrouter.ai/keys)).
 5. Under **Generate**, pick a mode (**Library**, **Manual editor**, **AI generator**, **Import**, **From activity** or **Plan builder**), build your session, check the preview and send it to your calendar. Under **Analyze**, look at a single session, compare several or export a batch of activities.
 
-The AI features need a provider key; everything else (library, manual editor, import, export) works without one. Features that read or write your calendar and training data need your intervals.icu key. If you open the **…** menu, you can take a guided tour of the main areas at any time.
+The AI features need a provider key; everything else (library, manual editor, import, export) works without one. Features that read or write your calendar and training data need your intervals.icu key. The **guided tour** (welcome card, or **…** menu → **Tour**) walks through every area in turn: connecting intervals.icu, the Generate tools (library, editor, AI, import, from an activity, plan builder, reschedule), the Analyze tools (single session, periods, compare, export), the sidebar widgets and the **…** menu. You can replay it whenever you like.
 
 ### 📲 Installing it as an app
 

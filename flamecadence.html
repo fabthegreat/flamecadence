@@ -265,6 +265,8 @@ details.fold[open]>summary{margin-bottom:6px}
 #lsvg{display:block;width:100%;height:110px;border-radius:6px;background:var(--bg);margin-top:8px;touch-action:none}
 #lsvg .lp{fill:var(--acc);fill-opacity:.3;stroke:var(--acc);stroke-width:1.2;vector-effect:non-scaling-stroke}
 #lsvg .lh{fill:none;stroke:#d6336c;stroke-width:1.2;vector-effect:non-scaling-stroke}
+#welcome{border-color:var(--acc);border-width:2px}#welcome h2{margin:0 0 6px;font-size:1.15rem}#welcome p{margin:0 0 6px}#welcome ol{margin:6px 0 0;padding-left:22px;line-height:1.5}#welcome li{margin-bottom:4px}#welcome .actions{margin-top:12px}
+.privnote{max-width:640px;text-align:center;font-size:.8rem;line-height:1.4}
 footer{display:flex;flex-direction:column;align-items:center;gap:12px;padding:12px 0 32px;color:var(--mute);font-size:.9rem}
 footer a{color:var(--acc);text-decoration:none}
 footer a:hover{text-decoration:underline}
@@ -840,6 +842,12 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <div class="layout">
 <div class="col">
 
+<section id="welcome" hidden>
+<h2 data-i="wlcT"></h2>
+<p data-i="wlcP"></p>
+<ol><li data-i="wlc1"></li><li data-i="wlc2"></li><li data-i="wlc3"></li></ol>
+<div class="actions"><button type="button" id="wlcConn" data-i="wlcConn"></button><button type="button" class="alt" id="wlcTour" data-i="wlcTour"></button><button type="button" class="alt" id="wlcX" data-i="wlcLater"></button></div>
+</section>
 <div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button><button type="button" role="tab" data-g="run" data-i="grpRun" hidden style="display:none"></button></div>
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
 <button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
@@ -1291,12 +1299,13 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <footer>
   <a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a>
   <div>Many thanks to <a href="https://intervals.icu" target="_blank" rel="noopener">intervals.icu</a> — Open training analytics & calendar</div>
+  <div class="privnote" data-i="privNote"></div>
   <div class="cacheinfo" hidden></div>
   <div class="appver" id="appVer"></div>
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.4.1"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.5.0"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -1493,9 +1502,23 @@ zvTem:["Tempo-heavy: a lot of time in the middle zones.","Riche en tempo : beauc
 zvHard:["Intensity-heavy: not much easy riding.","Riche en intensité : peu d'endurance facile."],
 heatCap:["{0} active days · {1} · {2} TSS over the last 12 months","{0} jours actifs · {1} · {2} TSS sur les 12 derniers mois"], heatStreak:["Longest streak: {0} days · longest break: {1} days","Plus longue série : {0} jours · plus longue pause : {1} jours"],
 heatNone:["No activities in the last 12 months.","Aucune activité sur les 12 derniers mois."], heatLess:["Less","Moins"], heatMore:["More","Plus"], heatAria:["Daily training load over the last 12 months","Charge d'entraînement quotidienne sur les 12 derniers mois"],
+wlcT:["Welcome to FlameCadence 🔥","Bienvenue dans FlameCadence 🔥"], wlcP:["Three steps to get going:","Trois étapes pour démarrer :"],
+wlc1:["Connect intervals.icu (API key + athlete ID): it unlocks your calendar, fitness widgets, session analysis, export and sending workouts to your calendar.","Connecte intervals.icu (clé API + identifiant athlète) : cela débloque ton calendrier, tes widgets de forme, l'analyse des séances, l'export et l'envoi de séances vers ton calendrier."],
+wlc2:["No key is needed to browse the workout library, use the manual editor or import a workout file.","Aucune clé n'est nécessaire pour parcourir la bibliothèque, utiliser l'éditeur manuel ou importer un fichier de séance."],
+wlc3:["Optional: add an AI provider key later to generate workouts from a text description.","Facultatif : ajoute plus tard la clé d'un fournisseur d'IA pour générer des séances à partir d'une description."],
+wlcConn:["Connect intervals.icu","Connecter intervals.icu"], wlcTour:["Take the tour","Faire la visite"], wlcLater:["Not now","Plus tard"],
+privNote:["Privacy: your keys and data stay in your browser. This site only counts visits with GoatCounter, a privacy-friendly analytics service: no cookies, no personal data, no cross-site tracking.","Confidentialité : tes clés et tes données restent dans ton navigateur. Ce site ne fait que compter les visites avec GoatCounter, un outil de statistiques respectueux de la vie privée : pas de cookies, pas de données personnelles, pas de suivi entre sites."],
+tr13T:["Groups","Groupes"], tr13:["Generate holds everything that builds a workout; Analyze everything that studies what you rode: single session, periods, comparison and export.","Générer regroupe tout ce qui construit une séance ; Analyser tout ce qui étudie ce que tu as roulé : séance seule, périodes, comparaison et export."],
+tr14T:["Import a workout","Importer une séance"], tr14:["Pick or drop a Zwift .zwo, Garmin .fit, trainer .mrc / .erg, a FlameCadence .json or a text workout. It opens as an editable preview.","Choisis ou dépose un fichier Zwift .zwo, Garmin .fit, home trainer .mrc / .erg, un .json FlameCadence ou une séance en texte. Elle s'ouvre dans un aperçu modifiable."],
+tr15T:["Rebuild an activity","Reconstruire une activité"], tr15:["Pick one of your recent rides and turn it back into a workout: the original plan if one was paired in intervals.icu, otherwise the intervals you actually rode, detected from the power data.","Choisis une de tes sorties récentes et retransforme-la en séance : le plan d'origine s'il était associé dans intervals.icu, sinon les intervalles réellement roulés, détectés à partir de la puissance."],
+tr16T:["Reschedule","Décaler"], tr16:["Move every planned workout from a date onwards by days or weeks, with a preview, or open the maximised calendar to drag single sessions to another day.","Décale toutes les séances prévues à partir d'une date de quelques jours ou semaines, avec un aperçu, ou ouvre le calendrier agrandi pour glisser les séances une par une vers un autre jour."],
+tr17T:["Single session","Séance seule"], tr17:["Pick a ride in the month calendar to see power and heart rate on a chart with an interval table below. Click a row to highlight it on the chart, export the ride as a FIT file or rebuild it as a workout.","Choisis une sortie dans le calendrier du mois pour voir puissance et FC sur un graphique, avec le tableau des intervalles dessous. Clique une ligne pour la mettre en évidence, exporte la sortie en FIT ou reconstruis-la en séance."],
+tr18T:["Periods","Périodes"], tr18:["Weekly or monthly totals: sessions, time, distance and load, with the load still planned in the current period shown lighter on top of the bars.","Totaux par semaine ou par mois : séances, durée, distance et charge, avec la charge encore prévue de la période en cours affichée plus clair au-dessus des barres."],
+tr19T:["Export activities","Exporter des activités"], tr19:["Download a range of activities as FIT files in one .zip, ready for Strava, Garmin or TrainingPeaks. Pick the dates and the activity type; Max files (15 by default, newest first) respects Strava's upload limit and the end date moves back for the next batch.","Télécharge une période d'activités en fichiers FIT dans un .zip, prêts pour Strava, Garmin ou TrainingPeaks. Choisis les dates et le type d'activité ; le nombre max de fichiers (15 par défaut, les plus récents d'abord) respecte la limite d'envoi de Strava et la date de fin recule pour le lot suivant."],
+tr20T:["More options","Autres options"], tr20:["Replay this tour, install FlameCadence as an app on your phone, contact the author or open the GitHub page. The buttons next to it switch theme and language.","Rejoue cette visite, installe FlameCadence comme une appli sur ton téléphone, contacte l'auteur ou ouvre la page GitHub. Les boutons à côté changent le thème et la langue."],
 tourBtn:["Tour","Visite"], tourTip:["Take a guided tour of FlameCadence","Faire une visite guidée de FlameCadence"], tourNext:["Next","Suivant"], tourPrev:["Back","Précédent"], tourSkip:["Skip","Passer"], tourDone:["Done","Terminer"], tourOf:["{0} / {1}","{0} / {1}"],
 tr0T:["Welcome to FlameCadence","Bienvenue dans FlameCadence"], tr0:["A quick tour of the main areas: the workout tools on the left, your intervals.icu dashboard on the right. Use the arrow keys or the buttons; Esc leaves the tour.","Un petit tour des principales zones : les outils de séance à gauche, ton tableau de bord intervals.icu à droite. Utilise les flèches du clavier ou les boutons ; Échap quitte la visite."],
-tr1T:["Seven ways to get a workout","Sept façons d'obtenir une séance"], tr1:["Library, manual editor, AI generator, file import, rebuild from a past activity, plan builder and session comparison. Each tab shows its own tool below.","Bibliothèque, éditeur manuel, générateur IA, import de fichier, reconstruction depuis une activité, plan d'entraînement et comparaison de séances. Chaque onglet affiche son outil juste dessous."],
+tr1T:["Ways to get a workout","Façons d'obtenir une séance"], tr1:["Library, manual editor, AI generator, file import, rebuild from a past activity, plan builder and a reschedule tool. Only the selected tab shows its name; hover an icon to read the others.","Bibliothèque, éditeur manuel, générateur IA, import de fichier, reconstruction depuis une activité, plan d'entraînement et outil de décalage. Seul l'onglet sélectionné affiche son nom ; survole une icône pour lire les autres."],
 tr2T:["AI generator","Générateur IA"], tr2:["Pick the sport, duration and units, describe the session you want and press the generate button. The result appears as an editable preview that you can send to intervals.icu.","Choisis le sport, la durée et les unités, décris la séance voulue et lance la génération. Le résultat s'affiche en aperçu modifiable que tu peux envoyer vers intervals.icu."],
 tr3T:["Workout library","Bibliothèque de séances"], tr3:["Ready-made workouts sorted by theme. Search, filter by duration, star your favourites; intensities are scaled to your FTP.","Des séances prêtes à l'emploi classées par thème. Recherche, filtre par durée, favoris ; les intensités sont calées sur ta FTP."],
 tr4T:["Manual editor","Éditeur manuel"], tr4:["Write or tweak a workout step by step and see the chart update as you type.","Écris ou ajuste une séance étape par étape et vois le graphique se mettre à jour au fil de la saisie."],
@@ -1505,7 +1528,7 @@ tr7T:["Calendar","Calendrier"], tr7:["Your intervals.icu calendar: planned and c
 tr8T:["Next planned workout","Prochaine séance planifiée"], tr8:["The next session on your calendar, with its steps charted and the full programme one click away. When it is planned for today, a readiness hint compares it with your form, HRV, resting HR and sleep.","La prochaine séance de ton calendrier, avec ses étapes en graphique et le programme complet à portée de clic. Quand elle est prévue aujourd'hui, un conseil de récupération la compare à ta forme, ta VFC, ta FC de repos et ton sommeil."],
 tr9T:["Fitness and training load","Forme et charge"], tr9:["Fitness, fatigue and form over time, your last workout with its power and heart-rate curves, and the last two weeks of load.","Forme, fatigue et fraîcheur dans le temps, ta dernière séance avec ses courbes de puissance et de FC, et la charge des deux dernières semaines."],
 tr10T:["Zones and year view","Zones et vue annuelle"], tr10:["Time in each zone over recent weeks, and a heatmap of your daily load over the last year to spot gaps and consistency.","Le temps passé dans chaque zone ces dernières semaines, et une carte de chaleur de ta charge quotidienne sur un an pour repérer les trous et la régularité."],
-tr11T:["Settings","Réglages"], tr11:["Add your AI provider and intervals.icu keys here, and choose which sidebar widgets to show. You can also move widgets up or down from their headers.","Renseigne ici ton fournisseur d'IA et tes clés intervals.icu, et choisis les widgets à afficher. Tu peux aussi les monter ou descendre depuis leur en-tête."],
+tr11T:["Connect intervals.icu","Connecter intervals.icu"], tr11:["Start here: open Settings and, in the intervals.icu tab, paste your API key and athlete ID. It unlocks your calendar, fitness widgets, analysis and sending workouts. The AI tab is optional. You can also choose which sidebar widgets to show and move them up or down from their headers.","Commence ici : ouvre les Réglages et, dans l'onglet intervals.icu, colle ta clé API et ton identifiant athlète. Cela débloque ton calendrier, tes widgets de forme, l'analyse et l'envoi de séances. L'onglet IA est facultatif. Tu peux aussi choisir les widgets à afficher et les monter ou descendre depuis leur en-tête."],
 rdHL:["Hard session planned, but readiness looks low ({0}). Consider easing it or moving it.","Séance dure prévue, mais la récupération semble basse ({0}). Pense à l'alléger ou à la décaler."],
 rdHM:["Hard session planned and one readiness signal is off ({0}). Warm up well and adjust if it feels heavy.","Séance dure prévue et un signal de récupération est au rouge ({0}). Échauffe-toi bien et adapte si tu as les jambes lourdes."],
 rdHO:["Hard session planned and readiness looks good: go for it.","Séance dure prévue et la récupération semble bonne : fonce."],
@@ -7438,7 +7461,7 @@ async function runPair(kind){
   }catch(err){ console.warn("BLE:", err); try{ dev.gatt.disconnect(); }catch(e){} say(t("runBtFail", dev.name || "BLE", err.name + ": " + err.message)); }
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
-let mode = store.get("si_mode") || "ai";
+let mode = store.get("si_mode") || "lib"; // première visite : la bibliothèque fonctionne sans aucune clé
 const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "per", "cmp", "exp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
@@ -8197,23 +8220,31 @@ $("date").value = iso(new Date()); refreshDateBtn();
 loadWidgets(); loadOrder(); applyOrder(); applyBlocks(); applyMode(); loadSettings(); applyLang(); syncUnit(); $("edsport").value = $("sport").value; edRender(); renderLibrary();
 $("bkind").value = store.get("si_bkind") || "VirtualRide"; $("actper").value = store.get("si_actper") || "14"; $("actout").value = store.get("si_actout") || "w"; $("actftpbox").hidden = $("actout").value !== "pct";
 $("fper").value = store.get("si_fper") || "60"; $("vo2per").value = ["7", "14", "42"].includes(store.get("si_vo2per")) ? store.get("si_vo2per") : "7"; $("zper").value = ["4", "8", "12"].includes(store.get("si_zper")) ? store.get("si_zper") : "8"; $("zbas").value = store.get("si_zbas") === "hr" ? "hr" : "power"; $("edunit").value = $("unit").value; $("punit").value = $("unit").value;
-if(!store.get("si_gkey") && !store.get("si_hfkey") && !store.get("si_oakey") || !KEY()) $("cfg").showModal();
+// (plus d'ouverture automatique des réglages au chargement : la carte d'accueil guide la première visite, et les clés d'IA sont facultatives)
 
 // ---------- Visite guidée : surbrillance d'un élément + bulle explicative, étape par étape ----------
 const TOUR_STEPS = [
   {k: 0},
+  {k: 11, sel: ["#open"]},
+  {k: 13, sel: ["#grp"]},
   {k: 1, sel: [".layout .mode"]},
-  {k: 2, mode: "ai", sel: ['[data-block="req"]']},
   {k: 3, mode: "lib", sel: ['[data-block="lib"]']},
   {k: 4, mode: "edit", sel: ['[data-block="edit"]']},
+  {k: 2, mode: "ai", sel: ['[data-block="req"]']},
+  {k: 14, mode: "imp", sel: ['[data-block="imp"]']},
+  {k: 15, mode: "act", sel: ['[data-block="act"]']},
   {k: 5, mode: "plan", sel: ['[data-block="plan"]']},
+  {k: 16, mode: "shift", sel: ['[data-block="shift"]']},
+  {k: 17, mode: "ses", sel: ['[data-block="ses"]']},
+  {k: 18, mode: "per", sel: ['[data-block="per"]']},
   {k: 6, mode: "cmp", sel: ['[data-block="cmp"]']},
+  {k: 19, mode: "exp", sel: ['[data-block="exp"]']},
   {k: 7, w: ["cal"]},
   {k: 8, w: ["next"]},
   {k: 9, w: ["fit", "last", "load"]},
   {k: 10, w: ["zon", "heat"]},
   {k: 12, w: ["vo2"]},
-  {k: 11, sel: ["#open"]}
+  {k: 20, sel: ["#more"]}
 ];
 const TOUR = {on: false, i: 0, list: [], mode0: null, y0: 0, hl: null, bub: null, ov: null};
 function tourEl(st){
@@ -8294,6 +8325,12 @@ function tourStart(){
   tourShow(0, 1);
 }
 $("tourbtn").onclick = tourStart;
+// Première visite : carte d'accueil tant qu'aucune clé intervals.icu n'est enregistrée (masquable)
+function welcomeUpdate(){ const w = $("welcome"); if(w) w.hidden = !!KEY() || store.get("si_welcome") === "1"; }
+$("wlcConn").onclick = () => { $("open").click(); cfgTab("icu"); setTimeout(() => { try{ $("ikey").focus(); }catch(e){} }, 50); };
+$("wlcTour").onclick = tourStart;
+$("wlcX").onclick = () => { store.set("si_welcome", "1"); welcomeUpdate(); };
+$("cfg").addEventListener("close", welcomeUpdate); welcomeUpdate();
 // Installation sur l'écran d'accueil (Android / Chrome et dérivés) : l'invite native si le navigateur la propose, sinon le mode d'emploi
 let DEFER_INSTALL = null;
 window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); DEFER_INSTALL = e; });
