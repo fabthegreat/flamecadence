@@ -7830,14 +7830,14 @@ function moveWidget(k, dir){
   const pref = sec && (sec.querySelector(`.mv[data-dir="${dir < 0 ? "up" : "dn"}"]:not(:disabled)`) || sec.querySelector(".mv:not(:disabled)"));
   if(pref) pref.focus(); // le déplacement du nœud fait perdre le focus clavier : on le rend
 }
-let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act" && k !== "plan" && k !== "cmp"); }catch(e){}
+let off = []; try{ const so = store.get("si_off"); if(so) off = JSON.parse(so).filter(k => k !== "req" && k !== "edit" && k !== "lib" && k !== "imp" && k !== "act" && k !== "plan" && k !== "cmp" && k !== "run"); }catch(e){}
 function applyBlocks(){
   document.querySelectorAll("[data-block]").forEach(sec => {
     const closed = off.includes(sec.dataset.block); sec.classList.toggle("off", closed);
     const b = sec.querySelector(".tgl"); if(b) b.setAttribute("aria-expanded", String(!closed));
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="ses"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="ses"]):not([data-block="run"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
