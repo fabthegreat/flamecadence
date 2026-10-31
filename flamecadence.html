@@ -520,7 +520,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #hzList .hs .hf{position:absolute;left:0;top:0;width:100%;height:0;background:rgba(0,0,0,.45)}
 #hzList .hs.past{opacity:.3}#hzList .hs.cur{outline:2px solid #fff;outline-offset:-2px;opacity:1}
 #hzMap{grid-column:1;grid-row:2;align-self:end;justify-self:start;width:clamp(150px,44%,320px);max-height:100%;aspect-ratio:4/3;border:2px solid rgba(255,255,255,.85);border-radius:8px;overflow:hidden;background:#1b2430;box-shadow:0 2px 10px rgba(0,0,0,.5)}#hzMap svg{display:block;width:100%;height:100%}
-#runS2.mapfull #runRd{display:none}
+#runS2.mapfull{background:#1b2430}#runS2.mapfull #runRd{display:none}.run #runPg[hidden],.run.rfs #runPg[hidden]{display:none}
 #runS2.mapfull #hzMap{position:absolute;inset:0;grid-column:1/-1;grid-row:1/-1;align-self:stretch;justify-self:stretch;margin:-8px;z-index:0;width:auto;max-height:none;aspect-ratio:auto;border:0;border-radius:0;box-shadow:none}
 #runS2.mapfull #runHz .hzt,#runS2.mapfull #runHz .hzr,#runS2.mapfull #runHz .hzbt{position:relative;z-index:1}
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
@@ -6531,7 +6531,7 @@ function runPick(e, auto){
 function runLoad(e){
   const ftp = runFtp();
   RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2), g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI();
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI(); try{ mapSync(true); }catch(err){}
 }
 function runProg(){ // avancement de la séance en « secondes équivalentes » : une étape à distance avance selon les mètres parcourus
   const R = RUN; if(!R || !R.steps.length) return 0; let p = 0; for(let k = 0; k < R.i; k++) p += R.steps[k].dur;
@@ -6700,7 +6700,7 @@ function colKey(cur){
   const k = ks.find(x => id.indexOf("lib:" + x + " (") === 0); if(k) return k;
   return ks.find(x => nm.indexOf(x.split(" — ")[0] + " — ") === 0) || null;
 }
-const MAP = {key: "", tok: 0, real: false, len: 0, path: null, prog: null, dot: null, sig: -1}, MAP_FAKE = [41.93, 2.97];
+const MAP = {key: "", fail: "", tok: 0, real: false, len: 0, path: null, prog: null, dot: null, sig: -1}, MAP_FAKE = [41.93, 2.97];
 function mapMerc(lat, lon, z){ const n = 256 * Math.pow(2, z), r = lat * Math.PI / 180; return [(lon + 180) / 360 * n, (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n]; }
 function mapFake(seed){ // route sinueuse reproductible (même séance = même parcours), longueur ≈ 6,5 km
   let h = 2166136261; for(const ch of String(seed)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
@@ -6750,13 +6750,20 @@ function mapBuild(co, real, full){
   box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(real ? "Route" : t("mapVirt"))}">${im}<path d="${d}" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/><path id="hzMapR" d="${d}" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><path id="hzMapP" d="${d}" fill="none" style="stroke:var(--acc,#ff9d00)" stroke-width="5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="0 99999"/><circle cx="${e[0].toFixed(1)}" cy="${e[1].toFixed(1)}" r="8" fill="#ef4444" stroke="#fff" stroke-width="3"/><circle id="hzMapD" cx="${pt[0][0].toFixed(1)}" cy="${pt[0][1].toFixed(1)}" r="11" fill="#fff" style="stroke:var(--acc,#ff9d00)" stroke-width="5"/><text x="${W - 8}" y="${H - 8}" text-anchor="end" ${tx} font-size="13">Imagery © Esri</text>${real ? "" : `<text x="10" y="22" ${tx}>${esc(t("mapVirt"))}</text>`}</svg>`;
   MAP.path = box.querySelector("#hzMapR"); MAP.prog = box.querySelector("#hzMapP"); MAP.dot = box.querySelector("#hzMapD"); MAP.len = 0; MAP.sig = -1;
 }
+function mapKey(){ const R = RUN; return R && R.cur ? R.cur.id + "|" + R.steps.length : ""; }
+function mapWanted(){ const R = typeof RUN !== "undefined" ? RUN : null; return !!(R && R.cur && R.steps && R.steps.some(x => x.m > 0) && colKey(R.cur) && store.get("si_rm_map") !== "0"); } // second écran = carte satellite d'un col uniquement
+function runHas2(){ return mapWanted() && MAP.fail !== mapKey(); }
+function runPgUI(){ const b = $("runPg"); if(b) b.hidden = !runHas2(); }
 async function mapLoad(tok){
-  const R = RUN, nm = (R.cur && R.cur.name) || "", ck = colKey(R.cur); let co = null;
+  const R = RUN, ck = colKey(R.cur), key = mapKey(); let co = null;
   if(ck) co = await mapRoute(ck, R.steps.reduce((a, x) => a + (x.m || 0), 0) / 1000);
   if(tok !== MAP.tok) return;
-  const real = !!co && R.steps.some(x => x.m > 0); if(!co) co = mapFake(R.cur ? R.cur.id : nm);
-  MAP.real = real; const full = !!ck && real; $("runS2").classList.toggle("mapfull", full); // col avec vrai tracé : carte satellite plein écran, sans route animée
-  mapBuild(co, real, full);
+  if(!co){ // pas de tracé : pas de second écran
+    MAP.fail = key; MAP.real = false; MAP.path = null; $("runS2").classList.remove("mapfull"); $("hzMap").hidden = true; runPgUI();
+    if(document.querySelector('[data-block="run"]').classList.contains("rs2")) runScr(1);
+    return;
+  }
+  MAP.real = true; $("runS2").classList.add("mapfull"); mapBuild(co, true, true); runPgUI();
 }
 function mapFrac(){ // avancement sur le tracé : cols = distance parcourue sur les tronçons en pente (échauffement au départ, retour au calme au sommet) ; autres séances = avancement de la séance
   const R = RUN; if(!MAP.real) return R.total ? runProg() / R.total : 0; let M = 0, done = 0;
@@ -6765,9 +6772,9 @@ function mapFrac(){ // avancement sur le tracé : cols = distance parcourue sur 
 }
 function mapSync(has){
   const box = $("hzMap"); if(!box) return;
-  if(!has || store.get("si_rm_map") === "0"){ box.hidden = true; $("runS2").classList.remove("mapfull"); return; }
-  const R = RUN, key = (R.cur ? R.cur.id : "") + "|" + R.steps.length;
-  if(key !== MAP.key){ MAP.key = key; MAP.path = null; box.hidden = true; $("runS2").classList.remove("mapfull"); mapLoad(++MAP.tok); return; }
+  if(!has || !mapWanted() || MAP.fail === mapKey()){ box.hidden = true; $("runS2").classList.remove("mapfull"); runPgUI(); return; }
+  const key = mapKey();
+  if(key !== MAP.key){ MAP.key = key; MAP.path = null; MAP.real = false; box.hidden = true; $("runS2").classList.add("mapfull"); runPgUI(); mapLoad(++MAP.tok); return; } // pendant le chargement : fond sombre, pas de route animée
   if(!MAP.path) return; box.hidden = false;
   if(!MAP.len){ try{ MAP.len = MAP.path.getTotalLength(); }catch(e){} if(!MAP.len) return; }
   const f = Math.max(0, Math.min(1, mapFrac())), sg = Math.round(f * 2000); if(sg === MAP.sig) return; MAP.sig = sg;
@@ -6823,7 +6830,7 @@ function roadFrame(now){
 }
 // second écran du lecteur : bouton ●○, balayage horizontal ou flèches du clavier
 function runScr(n){
-  const el = document.querySelector('[data-block="run"]'), two = n === 2 && el.classList.contains("rfs");
+  const el = document.querySelector('[data-block="run"]'), two = n === 2 && el.classList.contains("rfs") && runHas2();
   el.classList.toggle("rs2", two); if(two) roadStart(); else roadStop();
   const b = $("runPg"), l = t(two ? "runScrP" : "runScrN"); b.textContent = two ? "○●" : "●○"; b.title = l; b.setAttribute("aria-label", l);
   if(typeof RUN !== "undefined" && RUN) setTimeout(() => { runFit(); runDraw(); }, 0); // le profil se redessine à son retour
@@ -6842,7 +6849,7 @@ function runScr(n){
 })();
 function runFs(on){ // plein écran natif si disponible, sinon (iPhone…) simple recouvrement de la page
   const el = document.querySelector('[data-block="run"]'), cur = el.classList.contains("rfs"); on = on === undefined ? !cur : on; if(on === cur) return;
-  el.classList.toggle("rfs", on); runWant(false); runScr(1); // on revient toujours au premier écran
+  el.classList.toggle("rfs", on); runWant(false); runScr(1); try{ runPgUI(); }catch(err){} // on revient toujours au premier écran
   if(on){ const ph = el.querySelector(".phead"); ph.append($("runPlay"), $("runFin"), $("runFs")); } // Démarrer / Terminer et enregistrer / bouton quitter : ligne du haut ; ERG et nom du trainer ne sont plus affichés en plein écran
   else{ $("runPrev").after($("runPlay")); $("runNext").after($("runFin")); $("runWkName").after($("runFs")); }
   if(on && el.requestFullscreen && !runPwaFs()) el.requestFullscreen().then(() => { RUN.fsApi = true; }).catch(() => {});
