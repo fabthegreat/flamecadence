@@ -663,15 +663,15 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <dialog id="cfg" aria-labelledby="cfgt">
 <h2 id="cfgt" data-i="settingsTitle"></h2>
 <div class="mode cfg-tabs" role="tablist" data-ia="aria-label:settingsTitle">
-<button type="button" role="tab" data-cfg="ai" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
-<button type="button" role="tab" data-cfg="icu" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span></button>
+<button type="button" role="tab" data-cfg="icu" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg><span data-i="secIcu"></span></button>
+<button type="button" role="tab" data-cfg="ai" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
 <button type="button" role="tab" data-cfg="user" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></button>
 <button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
 <button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
 <button type="button" role="tab" data-cfg="beta" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></button>
 <button type="button" role="tab" data-cfg="player" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></button>
 </div>
-<div class="cfg-sec" data-cfgp="ai">
+<div class="cfg-sec" data-cfgp="ai" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
 <label for="prov" data-i="provider"></label>
 <select id="prov"><option value="gemini">Gemini</option><option value="hf">Hugging Face</option><option value="oa" data-i="provOA"></option></select>
@@ -705,8 +705,8 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <div class="hint" data-i="oaHint"></div>
 </div>
 </div>
-<div class="cfg-sec" data-cfgp="icu" hidden>
-<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="secIcu"></span><span id="bicu" class="badge"></span></h3>
+<div class="cfg-sec" data-cfgp="icu">
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg><span data-i="secIcu"></span><span id="bicu" class="badge"></span></h3>
 <div class="lbl"><label for="ikey" data-i="iKey"></label><span id="bi" class="badge"></span></div>
 <div class="pw"><input id="ikey" type="password" autocomplete="off"><button class="alt tog" data-for="ikey" type="button" data-i="show"></button></div>
 <a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
