@@ -18,7 +18,7 @@
     try{
       const mk = (size, pad) => { const c = document.createElement("canvas"); c.width = c.height = size; const g = c.getContext("2d"); g.fillStyle = "#141b24"; g.fillRect(0, 0, size, size); const p = size * pad; g.drawImage(img, p, p, size - 2 * p, size - 2 * p); return c.toDataURL("image/png"); };
       const path = location.pathname, m = {
-        name: "FlameCadence", short_name: "FlameCadence", description: "Forge, send and analyse structured cycling workouts with intervals.icu",
+        name: "FlameCadence", short_name: "FlameCadence", description: "Build, analyse and export structured cycling workouts with intervals.icu",
         start_url: location.origin + path, scope: location.origin + path.replace(/[^\/]*$/, ""), id: location.origin + path,
         display: "fullscreen", display_override: ["fullscreen", "standalone"], background_color: "#141b24", theme_color: "#141b24",
         icons: [{src: mk(192, 0), sizes: "192x192", type: "image/png", purpose: "any"}, {src: mk(512, 0), sizes: "512x512", type: "image/png", purpose: "any"}, {src: mk(512, .12), sizes: "512x512", type: "image/png", purpose: "maskable"}]
@@ -581,7 +581,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 /* comparateur de séances passées */
-html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 .run #runWkChart{margin-top:8px}.run #runWkChart:empty{display:none}.run #runWkChart svg{display:block;width:100%;height:56px;border-radius:6px;background:var(--bg)}
 #lsvg{cursor:pointer}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
@@ -853,6 +853,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
 <button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
 <button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
+<button type="button" role="tab" data-m="exp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span data-i="tabExp"></span></button>
 </div>
 
 <section data-block="req">
@@ -1036,6 +1037,26 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
 <div id="sesBox"></div>
 </section>
+<section data-block="exp" hidden>
+<div class="phead"><h2 data-i="expT"></h2></div>
+<p class="hint" data-i="expDesc"></p>
+<div class="actions" style="align-items:center;gap:6px;margin:6px 0">
+<button type="button" class="alt small" data-expp="30" data-i="expP30"></button><button type="button" class="alt small" data-expp="90" data-i="expP90"></button><button type="button" class="alt small" data-expp="ytd" data-i="expPY"></button>
+</div>
+<div class="row">
+<div><label for="expFrom" data-i="expFrom"></label><input type="date" id="expFrom"></div>
+<div><label for="expTo" data-i="expTo"></label><input type="date" id="expTo"></div>
+</div>
+<div class="row">
+<div><label for="expMax" data-i="expMax"></label><input type="number" id="expMax" min="0" max="500" step="1" value="15" inputmode="numeric"></div>
+<div></div>
+</div>
+<div class="row one">
+<div><label for="expType" data-i="expType"></label><select id="expType"><option value="all" data-i="expAll"></option><option value="bike" data-i="expBike"></option><option value="ride" data-i="expOut"></option><option value="rideIn" data-i="expIn"></option><option value="run" data-i="expRun"></option><option value="swim" data-i="expSwim"></option><option value="other" data-i="expOth"></option></select></div>
+</div>
+<div class="actions" style="align-items:center;gap:8px;margin:10px 0"><button type="button" id="expGo" data-i="expGo"></button><button type="button" class="alt" id="expStop" data-i="stopGen" hidden></button></div>
+<div class="hint" id="expMsg" role="status"></div>
+</section>
 <section data-block="per" hidden>
 <div class="phead"><h2 data-i="perT"></h2><button class="alt small" id="perRef" type="button" data-i="refresh"></button></div>
 <div class="actions" style="align-items:center;gap:8px;margin:6px 0 12px">
@@ -1137,7 +1158,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="hzr"><div id="hzList"></div></div>
 <div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div><div class="hzx"><div id="hzSt"></div><div id="hzNx"></div></div></div><div id="hzMap" hidden></div></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
-<div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
+<div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDlF" data-i="runDlF"></button><button type="button" class="alt small" id="runDl" data-i="runDl"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 </section>
 
 <section id="prev" data-block="prev" hidden>
@@ -1352,7 +1373,7 @@ pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissa
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
 docTitle:["FlameCadence — Fire up your next workout","FlameCadence — Allume ta prochaine séance"],
 title:["FlameCadence","FlameCadence"],
-subtitle:["Forge your next session from the library, the editor or AI, then send it straight to intervals.icu.","Forge ta prochaine séance avec la bibliothèque, l'éditeur ou l'IA, puis envoie-la directement dans intervals.icu."],
+subtitle:["Build, analyse and export your cycling workouts, all connected to intervals.icu.","Crée, analyse et exporte tes séances de vélo, le tout relié à intervals.icu."],
 settings:["⚙ Settings","⚙ Réglages"], settingsTitle:["Settings","Réglages"],
 more:["More","Plus"], contact:["Contact me","Me contacter"], github:["GitHub repository","Dépôt GitHub"], soon:["Coming soon","Bientôt disponible"], coffee:["Buy me a coffee","Offrez-moi un café"],
 provider:["AI provider","Fournisseur d'IA"], provOA:["OpenAI-compatible","Compatible OpenAI"],
@@ -1543,6 +1564,12 @@ actFtpHint:["Percentages are scaled to the FTP of the ride's type (indoor or out
 actDesc:["Pick one of your recent activities below: its power data is analyzed to rebuild the intervals you actually rode as an editable workout in the preview.","Choisis une de tes activités récentes ci-dessous : ses données de puissance sont analysées pour reconstruire les intervalles réellement effectués, en séance modifiable dans l'aperçu."],
 actW:["Activities range","Période d'activités"], w2:["2 weeks","2 semaines"], w4:["4 weeks","4 semaines"], w8:["8 weeks","8 semaines"],
 stopGen:["Stop","Arrêter"], actNres:["{0} matching sessions — tap one to rebuild it.","{0} séances correspondantes — touche-en une pour la reconstruire."], actNone:["No activity with power data in this period.","Aucune activité avec données de puissance sur cette période."],
+tabExp:["Export","Export"], expT:["Export activities","Exporter des activités"], expDesc:["Download your activities from a date range as FIT files in one .zip, ready for Strava, Garmin or TrainingPeaks. Power, heart rate and cadence curves are included; activities with no data and no original file are skipped.","Télécharge tes activités d'une période en fichiers FIT dans un seul .zip, prêts pour Strava, Garmin ou TrainingPeaks. Les courbes de puissance, de FC et de cadence sont incluses ; les activités sans données ni fichier d'origine sont ignorées."],
+expMax:["Max files (newest first, 0 = no limit)","Nombre max de fichiers (les plus récents d'abord, 0 = sans limite)"], expMore:[" · {0} older activities left: click again for the next batch"," · {0} activités plus anciennes restantes : clique à nouveau pour le lot suivant"],
+expP30:["Last 30 days","30 derniers jours"], expP90:["Last 90 days","90 derniers jours"], expPY:["This year","Cette année"], expFrom:["From","Du"], expTo:["To","Au"], expType:["Activity type","Type d'activité"],
+expAll:["All activities","Toutes les activités"], expBike:["Cycling (indoor + outdoor)","Vélo (home trainer + extérieur)"], expOut:["Outdoor rides","Sorties vélo en extérieur"], expIn:["Indoor rides","Sorties vélo en intérieur"], expRun:["Run","Course à pied"], expSwim:["Swim","Natation"], expOth:["Other sports","Autres sports"],
+expGo:["Export as .zip","Exporter en .zip"], expBad:["Pick a valid date range.","Choisis une période valide."], expNone:["No matching activity in this range.","Aucune activité correspondante sur cette période."], expProg:["Exporting {0}/{1}…","Export {0}/{1}…"],
+expDone:["{0} file(s) exported{1}.","{0} fichier(s) exporté(s){1}."], expSkip:[", {0} skipped (no data)",", {0} ignorée(s) (sans données)"], expStopped:[" (stopped)"," (arrêté)"], expNoFile:["Nothing to export: none of these activities has data or a file.","Rien à exporter : aucune de ces activités n'a de données ni de fichier."],
 tabCmp:["Compare","Comparer"], cmpLbl:["Compare past sessions","Comparer des séances passées"],
 cmpP6:["6 months","6 mois"], cmpP12:["12 months","12 mois"], cmpP24:["2 years","2 ans"], cmpP36:["3 years","3 ans"], cmpP60:["5 years","5 ans"],
 cmpDesc:["Describe a session shape, e.g. 10x1'/1' — FlameCadence scans your intervals.icu activities, finds the ones that roughly match that shape, and superimposes watts, heart rate and cadence.","Décris une forme de séance, ex. 10x1'/1' — FlameCadence analyse tes activités intervals.icu, repère celles qui correspondent à peu près à cette forme, et superpose puissance, fréquence cardiaque et cadence."],
@@ -1581,7 +1608,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to Generate and Analyze. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté de Générer et Analyser. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDlF:["Download .fit (Strava, Garmin)","Télécharger .fit (Strava, Garmin)"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -3946,9 +3973,13 @@ function buildZwo(steps){
   return `<?xml version="1.0" encoding="UTF-8"?>\n<workout_file>\n  <author>FlameCadence</author>\n  <name>${esc(($("name").value || "Workout").trim())}</name>\n  <workout>\n      ${body}\n  </workout>\n</workout_file>`;
 }
 // --- FIT binaire (workout) ---
-function fitCrc(bytes){
+function fitCrc(bytes){ // CRC-16 du SDK FIT (CRC-16/ARC, algorithme à quartets) — et non CRC-CCITT
+  const T = [0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401, 0xA001, 0x6C00, 0x7800, 0xB401, 0x5000, 0x9C01, 0x8801, 0x4400];
   let crc = 0;
-  for(const b of bytes){ crc ^= b << 8; for(let i = 0; i < 8; i++) crc = crc & 0x8000 ? ((crc << 1) ^ 0x1021) & 0xffff : (crc << 1) & 0xffff; }
+  for(const b of bytes){
+    crc = (crc >> 4 & 0x0FFF) ^ T[crc & 0xF] ^ T[b & 0xF];
+    crc = (crc >> 4 & 0x0FFF) ^ T[crc & 0xF] ^ T[b >> 4 & 0xF];
+  }
   return crc;
 }
 function fitDef(local, global, fields){
@@ -3983,13 +4014,68 @@ function buildFit(steps){
     records.push([2, ...u16(i), 0, ...u32(Math.round(s.d) * 1000), 4, ...u32(0), ...u32(pm), ...u32(pm), intensity]);
   });
   const data = records.flat();
-  const head = [12, 0x10, 0xB6, 0x0B, ...u32(data.length), 0x2E, 0x46, 0x49, 0x54];
+  const head = [14, 0x10, 0xB6, 0x0B, ...u32(data.length), 0x2E, 0x46, 0x49, 0x54];
   const headCrc = fitCrc(head);
   const file = [...head, headCrc & 0xff, (headCrc >> 8) & 0xff, ...data];
   const crc = fitCrc(file);
   file.push(crc & 0xff, (crc >> 8) & 0xff);
   return file;
 }
+// --- FIT binaire (activité enregistrée) : file_id, event, record (puissance, FC, cadence, distance, vitesse, altitude), lap, session, activity ---
+// pts : [{t: secondes epoch, p: W, h: bpm, c: rpm, d: mètres cumulés, s: m/s, a: altitude m}] ; o : {sport, sub, name}
+function buildActFit(pts, o){
+  o = o || {};
+  const FT = x => Math.max(0, Math.round(x) - 631065600), cl = (v, mx) => Math.max(0, Math.min(mx, Math.round(v)));
+  const ok = v => v != null && isFinite(v);
+  const b8 = v => ok(v) ? cl(v, 254) : 0xFF, b16 = v => ok(v) ? cl(v, 65534) : 0xFFFF, b32 = v => ok(v) ? cl(v, 4294967294) : 0xFFFFFFFF;
+  const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, mx = a => a.length ? Math.max(...a) : null;
+  const t0 = pts[0].t, t1 = pts[pts.length - 1].t, dur = Math.max(1, t1 - t0), ms = Math.round(dur * 1000);
+  const P = pts.filter(x => ok(x.p)).map(x => x.p), H = pts.filter(x => ok(x.h) && x.h > 0).map(x => x.h), C = pts.filter(x => ok(x.c)).map(x => x.c);
+  
+  const sport = o.sport != null ? o.sport : 2, sub = o.sub != null ? o.sub : 0;
+  const rec = [];
+  // file_id (0) : type(0)=4 activité, manufacturer(1)=255 développement, product(2), serial_number(3), time_created(4)
+  rec.push(fitDef(0, 0, [[0, 1, 0], [1, 2, 132], [2, 2, 132], [3, 4, 140], [4, 4, 134]]));
+  rec.push([0, 4, ...u16(255), ...u16(0), ...u32(FT(t0)), ...u32(FT(t0))]);
+  // event (21) : timestamp(253), event(0)=0 minuteur, event_type(1)=0 démarrage / 4 arrêt
+  rec.push(fitDef(1, 21, [[253, 4, 134], [0, 1, 0], [1, 1, 0]]));
+  rec.push([1, ...u32(FT(t0)), 0, 0]);
+  // record (20) : seuls les champs réellement présents sont déclarés (aucune valeur « invalide »), distance et vitesse toujours renseignées et croissantes
+  const hasH = pts.some(x => ok(x.h) && x.h > 0), hasP = pts.some(x => ok(x.p)), hasC = pts.some(x => ok(x.c)), hasA = pts.some(x => ok(x.a));
+  const rf = [[253, 4, 134]]; if(hasH) rf.push([3, 1, 2]); if(hasC) rf.push([4, 1, 2]); rf.push([5, 4, 134], [6, 2, 132]); if(hasP) rf.push([7, 2, 132]); if(hasA) rf.push([2, 2, 132]);
+  rec.push(fitDef(2, 20, rf));
+  // sortie home trainer sans vitesse ni distance : Strava n'affiche alors aucune courbe (graphes tracés sur la distance) ; on estime une vitesse « virtuelle »
+  // à partir de la puissance (route plate, 85 kg rider + vélo, Crr 0,004, CdA 0,35 m², rendement 97,5 %), comme le font les applis d'entraînement virtuel
+  const virt = sport === 2 && pts.some(x => ok(x.p) && x.p > 0) && !pts.some(x => ok(x.d) && x.d > 0) && !pts.some(x => ok(x.s) && x.s > 0);
+  const vOf = pw => { const P = pw * 0.975; if(!(P > 0)) return 0; let lo = 0, hi = 30; for(let k = 0; k < 40; k++){ const v = (lo + hi) / 2; (v * (0.004 * 85 * 9.81 + 0.5 * 1.2 * 0.35 * v * v) > P ? hi = v : lo = v); } return lo; };
+  let lastT = -1, dAcc = 0, lastD = 0, ph = 0, pc = 0, pa = 500;
+  pts.forEach((x, i) => {
+    let ts = FT(x.t); if(ts <= lastT) ts = lastT + 1; const dt = lastT < 0 ? 0 : ts - lastT; lastT = ts;
+    let sp = virt ? vOf(ok(x.p) ? x.p : 0) : ok(x.s) ? Math.max(0, x.s) : null;
+    if(ok(x.d)){ dAcc = Math.max(dAcc, x.d); if(sp == null) sp = dt > 0 ? Math.max(0, (dAcc - lastD) / dt) : 0; } else dAcc += (sp || 0) * dt;
+    lastD = dAcc; if(sp == null) sp = 0;
+    if(ok(x.h) && x.h > 0) ph = x.h; if(ok(x.c)) pc = x.c; if(ok(x.a)) pa = x.a;
+    rec.push([2, ...u32(ts), ...(hasH ? [cl(ph, 254)] : []), ...(hasC ? [cl(pc, 254)] : []), ...u32(cl(dAcc * 100, 4294967294)), ...u16(cl(sp * 1000, 65534)), ...(hasP ? u16(cl(ok(x.p) ? x.p : 0, 65534)) : []), ...(hasA ? u16(cl((pa + 500) * 5, 65534)) : [])]);
+  });
+  const dist2 = dAcc;
+  rec.push([1, ...u32(FT(t1)), 0, 4]);
+  // lap (19) : timestamp(253), event(0)=9, event_type(1)=1, start_time(2), total_elapsed_time(7), total_timer_time(8), total_distance(9), avg_heart_rate(15), max_heart_rate(16), avg_cadence(17), avg_power(19), max_power(20), sport(25), sub_sport(39)
+  const tot = [[7, 4, 134], [8, 4, 134], [9, 4, 134]];
+  rec.push(fitDef(3, 19, [[253, 4, 134], [0, 1, 0], [1, 1, 0], [2, 4, 134], ...tot, [15, 1, 2], [16, 1, 2], [17, 1, 2], [19, 2, 132], [20, 2, 132], [25, 1, 0], [39, 1, 0]]));
+  rec.push([3, ...u32(FT(t1)), 9, 1, ...u32(FT(t0)), ...u32(ms), ...u32(ms), ...u32(cl(dist2 * 100, 4294967294)), b8(avg(H)), b8(mx(H)), b8(avg(C)), ...u16(b16(avg(P))), ...u16(b16(mx(P))), sport, sub]);
+  // session (18) : timestamp(253), message_index(254), event(0)=8, event_type(1)=1, start_time(2), sport(5), sub_sport(6), totaux(7,8,9), first_lap_index(25), num_laps(26), avg_heart_rate(16), max_heart_rate(17), avg_cadence(18), avg_power(20), max_power(21)
+  rec.push(fitDef(4, 18, [[253, 4, 134], [254, 2, 132], [0, 1, 0], [1, 1, 0], [2, 4, 134], [5, 1, 0], [6, 1, 0], ...tot, [25, 2, 132], [26, 2, 132], [16, 1, 2], [17, 1, 2], [18, 1, 2], [20, 2, 132], [21, 2, 132]]));
+  rec.push([4, ...u32(FT(t1)), ...u16(0), 8, 1, ...u32(FT(t0)), sport, sub, ...u32(ms), ...u32(ms), ...u32(cl(dist2 * 100, 4294967294)), ...u16(0), ...u16(1), b8(avg(H)), b8(mx(H)), b8(avg(C)), ...u16(b16(avg(P))), ...u16(b16(mx(P)))]);
+  // activity (34) : timestamp(253), total_timer_time(0), num_sessions(1), type(2)=0, event(3)=26, event_type(4)=1
+  rec.push(fitDef(5, 34, [[253, 4, 134], [0, 4, 134], [1, 2, 132], [2, 1, 0], [3, 1, 0], [4, 1, 0]]));
+  rec.push([5, ...u32(FT(t1)), ...u32(ms), ...u16(1), 0, 26, 1]);
+  const data = rec.flat();
+  const head = [14, 0x10, 0xB6, 0x0B, ...u32(data.length), 0x2E, 0x46, 0x49, 0x54], hc = fitCrc(head);
+  const file = [...head, hc & 0xff, (hc >> 8) & 0xff, ...data], crc = fitCrc(file);
+  file.push(crc & 0xff, (crc >> 8) & 0xff);
+  return Uint8Array.from(file);
+}
+function saveBlob(blob, name){ const l = document.createElement("a"); l.href = URL.createObjectURL(blob); l.download = name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(l.href), 4000); }
 // --- ERG / MRC : points « minutes valeur » (rampes = deux points, paliers = saut vertical) ---
 function buildErgPoints(steps, val){
   const rows = []; let t = 0;
@@ -6589,7 +6675,7 @@ function runInit(){
   const pick = e => { const r = e.target.closest(".wr"); if(r) runPick(RUN.items[+r.dataset.k]); };
   $("runRows").onclick = pick; $("runRows").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(e); } };
   $("runFs").onclick = () => runFs(); $("runGo").onclick = runGo;
-  $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload;
+  $("runFin").onclick = runFinish; $("runUp").onclick = runUpload; $("runDl").onclick = runDownload; $("runDlF").onclick = runDownloadFit;
   $("runDis").onclick = () => { RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runFs(false); runLaunchUI(); }; // abandon : on quitte le lecteur plein écran
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
   document.addEventListener("fullscreenchange", () => {
@@ -6916,7 +7002,7 @@ function runTcx(){
 function runFinish(){
   musStop(); const R = RUN; R.paused = true; runErgPause(true); runUI();
   const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; $("runDis").hidden = false; runLaunchUI();
-  const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
+  const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok; $("runDlF").hidden = !ok;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
   const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
   $("runEndS").textContent = t("runSum", fmtDur((pts[pts.length - 1].t - pts[0].t) / 1000), av(P), av(H), Math.round(P.reduce((x, y) => x + y, 0) / 1000)) + ((pts[pts.length - 1].d || 0) > 100 ? " \u00b7 " + (pts[pts.length - 1].d / 1000).toFixed(1) + " km" : "");
@@ -6934,6 +7020,11 @@ async function runUpload(){
     R.upDone = true; $("runDis").hidden = true; // envoyée : plus rien à abandonner
     R.at = 0; runSaveClear(); if(typeof loadCal === "function") loadCal(true).catch(() => {});
   }catch(e){ b.disabled = false; m.textContent = t("errI", errText(e)); }
+}
+function runDownloadFit(){
+  const R = RUN, rec = R.rec || []; if(rec.length < 2) return;
+  const pts = rec.map(x => ({t: x.t / 1000, p: x.p, h: x.h, c: x.c, d: x.d}));
+  saveBlob(new Blob([buildActFit(pts, {sport: 2, sub: 6})], {type: "application/octet-stream"}), "flamecadence-" + iso(new Date()) + ".fit");
 }
 function runDownload(){ const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([runTcx()], {type: "application/vnd.garmin.tcx+xml"})); a.download = "flamecadence-" + iso(new Date()) + ".tcx"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); }
 function runOn(on){
@@ -7348,7 +7439,7 @@ async function runPair(kind){
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "per", "cmp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "per", "cmp", "exp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
@@ -7500,6 +7591,7 @@ function applyMode(){
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
+  document.querySelector('[data-block="exp"]').hidden = mode !== "exp";
   document.querySelector('[data-block="per"]').hidden = mode !== "per"; if(mode === "per") perLoad();
   document.querySelector('[data-block="ses"]').hidden = mode !== "ses"; if(mode === "ses") sesInit();
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
@@ -7512,6 +7604,7 @@ function applyMode(){
     document.querySelectorAll(".mode:not(.cfg-tabs) button").forEach(b => { b.hidden = !GRP[g].includes(b.dataset.m); }); }
   document.documentElement.classList.toggle("m-cmp", mode === "cmp");
   document.documentElement.classList.toggle("m-ses", mode === "ses");
+  document.documentElement.classList.toggle("m-exp", mode === "exp");
   document.documentElement.classList.toggle("m-plan", mode === "plan");
   document.documentElement.classList.toggle("m-run", mode === "run");
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
@@ -7847,6 +7940,22 @@ async function sesShow(again){ // again === true : second pass once the device f
     if(lapPending) lapP.then(() => { if(tok === SES.tok) sesShow(true); }); // second passage : tableau et bandes issus du fichier FIT (repli sur intervals.icu seulement s'il n'y a pas de fichier exploitable)
   }catch(e){ if(tok === SES.tok) box.innerHTML = `<div class="hint">${esc(errText(e))}</div>`; }
 }
+// Construit un FIT d'activité (avec courbes) depuis les flux intervals.icu ; null si l'activité n'a ni puissance ni FC
+async function sesBuildFit(a){
+  if(!a) return null;
+  let j = null;
+  for(const u of [`https://intervals.icu/api/v1/activity/${encodeURIComponent(a.id)}/streams?types=time,watts,heartrate,cadence,distance,velocity_smooth,fixed_altitude,altitude`, `https://intervals.icu/api/v1/activity/${encodeURIComponent(a.id)}/streams`]){
+    try{ j = await icuFetch(u); if(j) break; }catch(e){}
+  }
+  const list = Array.isArray(j) ? j : (j && j.streams) || [], get = (...tys) => { for(const ty of tys){ const d = (list.find(x => x.type === ty) || {}).data; if(d && d.length) return d; } return null; };
+  const w = get("watts", "power"), h = get("heartrate", "hr"), c = get("cadence"), d = get("distance"), v = get("velocity_smooth"), al = get("fixed_altitude", "altitude"), tm = get("time");
+  const N = Math.max(...[w, h, c, d, v, al].map(x => x ? x.length : 0)); if(!N || (!(w && w.some(x => x > 0)) && !(h && h.some(x => x > 0)))) return null;
+  const sd = a.start_date || (a.start_date_local ? String(a.start_date_local) : ""), iso = /(Z|[+-]\d\d:?\d\d)$/.test(sd) ? sd : sd.replace(/\.\d+$/, "") + "Z", st0 = Date.parse(iso) / 1000; if(!isFinite(st0)) return null;
+  const pts = []; for(let i = 0; i < N; i++) pts.push({t: st0 + (tm && tm[i] != null ? tm[i] : i), p: w ? w[i] : null, h: h ? h[i] : null, c: c ? c[i] : null, d: d ? d[i] : null, s: v ? v[i] : null, a: al ? al[i] : null});
+  if(pts.length < 2) return null;
+  const bike = isBike(a.type || ""), indoor = !!a.trainer || /Virtual/.test(a.type || "");
+  return buildActFit(pts, {sport: bike ? 2 : /Run/.test(a.type || "") ? 1 : /Swim/.test(a.type || "") ? 5 : 0, sub: bike && indoor ? 6 : 0});
+}
 // Ouvre une activité donnée dans l'analyse d'une séance (depuis le calendrier) : bon mois, bonne activité, onglet « Séance seule »
 async function sesOpenAct(a){
   if(CAL.big) setCalMax(false); // le calendrier agrandi recouvre l'analyse
@@ -7866,11 +7975,14 @@ $("sesBox").addEventListener("click", async e => {
   if(ex){
     e.preventDefault(); if(ex.dataset.busy) return; const a = (SES.list || []).find(x => String(x.id) === ex.dataset.export), txt = ex.textContent; ex.dataset.busy = "1"; ex.textContent = "…";
     try{
+      const nm = ((a && a.start_date_local ? String(a.start_date_local).slice(0, 10) + " " : "") + ((a && (a.name || a.type)) || "activity")).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
+      // fichier généré ici à partir des flux (puissance, FC, cadence…) : l'export d'intervals.icu n'embarque pas toujours ces courbes, et Strava n'affiche alors rien
+      let built = null; try{ built = await sesBuildFit(a); }catch(err){ console.warn("FIT", err); }
+      if(built){ saveBlob(new Blob([built], {type: "application/octet-stream"}), nm + ".fit"); ex.textContent = txt; delete ex.dataset.busy; return; }
       let r = null;
       for(const u of ["fit-file", "file"]){ try{ const q = await fetch(`https://intervals.icu/api/v1/activity/${encodeURIComponent(ex.dataset.export)}/${u}`, {headers: icuAuth()}); if(q.ok){ r = q; break; } }catch(err){} }
       if(!r) throw new Error("export");
       const b = await r.blob(), u8 = new Uint8Array(await b.slice(0, 2).arrayBuffer()), gz = u8[0] === 0x1f && u8[1] === 0x8b;
-      const nm = ((a && a.start_date_local ? String(a.start_date_local).slice(0, 10) + " " : "") + ((a && (a.name || a.type)) || "activity")).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
       const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = nm + (gz ? ".fit.gz" : ".fit"); document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(l.href), 4000);
       ex.textContent = txt;
     }catch(err){ ex.textContent = t("sesExpErr"); setTimeout(() => { ex.textContent = txt; }, 5000); }
@@ -7881,6 +7993,70 @@ $("sesBox").addEventListener("click", async e => {
   if(mode !== "act"){ mode = "act"; store.set("si_mode", mode); applyMode(); }
   buildFromAct(a, {disabled: false});
 });
+// ---------- Export en lot : activités d'une période en fichiers FIT dans un .zip ----------
+const CRC32T = (() => { const q = []; for(let n = 0; n < 256; n++){ let c = n; for(let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; q[n] = c >>> 0; } return q; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for(let i = 0; i < u8.length; i++) c = CRC32T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){ // archive ZIP sans compression (les FIT sont déjà compacts) : aucun module externe
+  const enc = new TextEncoder(), parts = [], cen = [], l16 = v => [v & 255, v >> 8 & 255], l32 = v => [v & 255, v >> 8 & 255, v >> 16 & 255, v >>> 24 & 255]; let off = 0;
+  files.forEach(f => {
+    const nm = enc.encode(f.name), crc = crc32(f.data), n = f.data.length, d = f.date instanceof Date && !isNaN(f.date) && f.date.getFullYear() >= 1980 ? f.date : new Date();
+    const dt = d.getHours() << 11 | d.getMinutes() << 5 | d.getSeconds() >> 1, dd = (d.getFullYear() - 1980) << 9 | (d.getMonth() + 1) << 5 | d.getDate();
+    const lh = Uint8Array.from([0x50, 0x4b, 3, 4, ...l16(20), ...l16(0x0800), ...l16(0), ...l16(dt), ...l16(dd), ...l32(crc), ...l32(n), ...l32(n), ...l16(nm.length), ...l16(0)]);
+    parts.push(lh, nm, f.data);
+    cen.push(Uint8Array.from([0x50, 0x4b, 1, 2, ...l16(20), ...l16(20), ...l16(0x0800), ...l16(0), ...l16(dt), ...l16(dd), ...l32(crc), ...l32(n), ...l32(n), ...l16(nm.length), ...l16(0), ...l16(0), ...l16(0), ...l16(0), ...l32(0), ...l32(off)]), nm);
+    off += lh.length + nm.length + n;
+  });
+  const cl = cen.reduce((x, y) => x + y.length, 0);
+  return new Blob([...parts, ...cen, Uint8Array.from([0x50, 0x4b, 5, 6, 0, 0, 0, 0, ...l16(files.length), ...l16(files.length), ...l32(cl), ...l32(off), 0, 0])], {type: "application/zip"});
+}
+const EXP = {run: false, stop: false};
+const expMatch = (k, f) => f === "all" || (f === "bike" ? k === "ride" || k === "rideIn" : f === "other" ? k === "other" || k === "pong" : k === f);
+async function expOriginal(a){ // repli : fichier FIT d'origine (décompressé s'il est en .gz)
+  for(const u of ["fit-file", "file"]){
+    try{
+      const q = await fetch(`https://intervals.icu/api/v1/activity/${encodeURIComponent(a.id)}/${u}`, {headers: icuAuth()}); if(!q.ok) continue;
+      let buf = new Uint8Array(await q.arrayBuffer());
+      if(buf[0] === 0x1f && buf[1] === 0x8b){ if(typeof DecompressionStream === "undefined") continue; buf = new Uint8Array(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer()); }
+      if(buf.length > 14 && String.fromCharCode(buf[8], buf[9], buf[10], buf[11]) === ".FIT") return buf;
+    }catch(e){}
+  }
+  return null;
+}
+async function expRun(){
+  const msg = $("expMsg"), go = $("expGo"), stop = $("expStop"), from = $("expFrom").value, to = $("expTo").value, f = $("expType").value;
+  if(EXP.run) return;
+  if(!KEY()){ msg.textContent = t("needI"); return; }
+  if(!from || !to || from > to){ msg.textContent = t("expBad"); return; }
+  EXP.run = true; EXP.stop = false; go.disabled = true; stop.hidden = false; msg.textContent = "…";
+  try{
+    let acts = await icu(`/activities?oldest=${from}&newest=${to}`);
+    acts = (Array.isArray(acts) ? acts : []).filter(a => a.id != null && expMatch(sesKind(a), f)).sort((x, y) => (x.start_date_local || "") < (y.start_date_local || "") ? 1 : -1); // du plus récent au plus ancien
+    if(!acts.length){ msg.textContent = t("expNone"); return; }
+    const mx = Math.max(0, Math.floor(+$("expMax").value || 0)), rest = mx && acts.length > mx ? acts.slice(mx) : []; if(mx) acts = acts.slice(0, mx); // Strava limite le nombre de fichiers par envoi
+    const files = [], used = {}; let skip = 0, i = 0;
+    for(const a of acts){
+      if(EXP.stop) break;
+      msg.textContent = t("expProg", ++i, acts.length);
+      let data = null; try{ data = await sesBuildFit(a); }catch(e){ console.warn("FIT", e); }
+      if(!data) data = await expOriginal(a);
+      if(!data){ skip++; continue; }
+      let nm = ((a.start_date_local ? String(a.start_date_local).slice(0, 10) + " " : "") + (a.name || a.type || "activity")).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80);
+      used[nm] = (used[nm] || 0) + 1; if(used[nm] > 1) nm += " (" + used[nm] + ")";
+      files.push({name: nm + ".fit", data, date: new Date(a.start_date_local || Date.now())});
+    }
+    if(!files.length){ msg.textContent = t("expNoFile"); return; }
+    saveBlob(zipStore(files), `flamecadence-${from}_${to}.zip`);
+    const last = acts[Math.min(acts.length, i) - 1], ld = ((last && last.start_date_local) || "").slice(0, 10);
+    if(!EXP.stop && rest.length && ld){ // lot suivant : la date de fin recule sous la dernière activité exportée (même jour : on la garde pour ne rien oublier)
+      const same = rest.some(a => (a.start_date_local || "").slice(0, 10) === ld), d = new Date(ld + "T12:00:00"); if(!same) d.setDate(d.getDate() - 1); $("expTo").value = iso(d);
+    }
+    msg.textContent = t("expDone", files.length, (skip ? t("expSkip", skip) : "") + (EXP.stop ? t("expStopped") : "") + (!EXP.stop && rest.length ? t("expMore", rest.length) : ""));
+  }catch(e){ msg.textContent = t("errI", errText(e)); }
+  finally{ EXP.run = false; go.disabled = false; stop.hidden = true; }
+}
+{ $("expFrom").value = daysAgo(364); $("expTo").value = daysAgo(0);
+  $("expGo").onclick = expRun; $("expStop").onclick = () => { EXP.stop = true; };
+  document.querySelectorAll("[data-expp]").forEach(b => b.onclick = () => { const v = b.dataset.expp, n = new Date(); $("expTo").value = daysAgo(0); $("expFrom").value = v === "ytd" ? n.getFullYear() + "-01-01" : daysAgo(+v - 1); }); }
 $("sesRef").onclick = () => sesMonth(false);
 $("sesToday").onclick = () => { const n = new Date(); SES.m = new Date(n.getFullYear(), n.getMonth(), 1); sesMonth(false); };
 $("sesPrev").onclick = () => { SES.m = new Date(SES.m.getFullYear(), SES.m.getMonth() - 1, 1); sesMonth(false, -1); };
@@ -7974,7 +8150,7 @@ function applyBlocks(){
     const b = sec.querySelector(".tgl"); if(b) b.setAttribute("aria-expanded", String(!closed));
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="per"]):not([data-block="ses"]):not([data-block="run"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="per"]):not([data-block="ses"]):not([data-block="exp"]):not([data-block="run"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };

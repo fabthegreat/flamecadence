@@ -5,7 +5,7 @@
 <h1 align="center">FlameCadence</h1>
 
 <p align="center">
-  <b>Fire up your next session: describe it, let AI build it, then send it straight to intervals.icu.</b>
+  <b>Fire up your next session: build, analyse and export your cycling workouts, all connected to intervals.icu.</b>
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
 
 ## 🚀 Overview
 
-**FlameCadence** is a single-file web app that combines a structured-workout designer, a session analysis tool and a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. Then **ride it** with the built-in activity player (beta) connected to your Bluetooth trainer and heart-rate strap. Afterwards, analyze what you actually rode, and keep your calendar, fitness, recent load and best efforts in view with the sidebar widgets.
+**FlameCadence** is a single-file web app that combines a structured-workout designer, a session analysis tool and a training dashboard for **intervals.icu**. Build a session with AI, by hand, from a library of 300+ templates, from a `.zwo` / `.fit` file, or from a ride you already did. Review it on an interactive chart, then send it to your calendar or export it for your head unit or trainer software. Then **ride it** with the built-in activity player (beta) connected to your Bluetooth trainer and heart-rate strap. Afterwards, analyze what you actually rode, export your activities as FIT files for Strava or Garmin, and keep your calendar, fitness, recent load and best efforts in view with the sidebar widgets.
 
 The interface is available in **English and French**, follows your system **light / dark** theme (or a manual choice), and can be **installed as an app** on your phone.
 
@@ -41,6 +41,7 @@ The main navigation has two groups: **Generate** (everything that builds a worko
 * **📈 Single session:** Pick a session from a small month calendar (each day shows a mini power profile of its rides, with ‹ › to change month) and get an intervals.icu-style view: key figures (time, distance, average power, normalized power, intensity, load, average heart rate, climb), a chart of power and heart rate with the FTP line and the work intervals shaded, and an **interval table** at the bottom with time, average and max power, normalized power, % FTP, average and max heart rate and cadence for each interval. Click a row to highlight the interval on the chart. It uses the intervals defined in intervals.icu, or detects them when there are none, and links back to the activity on intervals.icu.
 * **📊 Periods:** Weekly or monthly training summary from your intervals.icu calendar: choose **weeks** or **months** and how many to show. A bar chart shows the training load done per period (with the load still planned in the current period lighter on top), and a table lists sessions, time, distance and load per period, with totals.
 * **🧬 Compare:** Describe a session shape such as `10x1'/1'`; FlameCadence scans your intervals.icu activities, finds the ones that roughly match, and superimposes watts, heart rate and cadence so you can see how the same workout evolved. Filter by workout type, period and name.
+* **📦 Export:** Download your activities from a date range as **FIT files in one `.zip`**, ready to upload to Strava, Garmin or TrainingPeaks. Pick the **dates** (with *Last 30 days*, *Last 90 days* and *This year* shortcuts) and the **activity type** (all, cycling, outdoor rides, indoor rides, run, swim, other sports). A **Max files** field (15 by default, newest first) respects upload limits such as Strava's; after each export the end date moves back so the next click gives the next batch. Power, heart-rate and cadence curves are written into the file, and trainer rides without a speed sensor get an estimated speed and distance so Strava can draw its charts. Activities with no data and no original file are skipped.
 
 ### 🚴 Run activity (beta): ride the session in the app
 
@@ -55,7 +56,7 @@ An experimental activity player, **off by default**. Tick **Beta: "Run activity"
 * **Optional metrics:** In the **Player** settings tab, tick the extra cards you want to see while riding: **step average power**, **session average power**, **energy (kJ)**, **decoupling** and an approximate **distance** (power-to-heart-rate drift between the first and second half of the session, shown after 10 minutes of data). They use real Bluetooth data only (the distance is estimated from your power with the same physics model as the route steps: speed from power, rider and bike weight; it is always recorded and sent to intervals.icu with the ride, whether or not its card is shown).
 * **Built for long sessions on a phone:** The screen stays awake, the session is saved and resumed if the page is reloaded, and the layout adapts when you switch to another app and Android shows its navigation bar (a tap brings back native full screen). An optional **keep-alive** mode (inaudible sound or media notification) stops Android from freezing the page in the background, and the media notification gives lock-screen play / pause and step controls.
 * **Music (optional):** With a free Jamendo client ID, a music button plays a playlist whose tempo follows the intensity zone of the current step. Enter the client ID and pick a genre in the **Player** settings tab.
-* **When you finish:** A ride summary (duration, average power and heart rate, kJ, time in each zone). **Upload to intervals.icu** or **download a `.tcx`** file. At least 30 seconds of real power or heart-rate data is needed to save a ride.
+* **When you finish:** A ride summary (duration, average power and heart rate, kJ, time in each zone). **Upload to intervals.icu**, **download a `.fit`** (accepted by Strava and Garmin, with power, heart-rate and cadence curves) or **download a `.tcx`** file. At least 30 seconds of real power or heart-rate data is needed to save a ride.
 
 ### 📈 Interactive preview
 
@@ -71,6 +72,7 @@ An experimental activity player, **off by default**. Tick **Beta: "Run activity"
 
 * **Send to intervals.icu** with one click, as a single workout or as a whole plan.
 * **Export** to Zwift (`.zwo`), Garmin (`.fit`), smart-trainer files (`.erg` in watts, `.mrc` in % FTP) or `.json` for backup and sharing.
+* **Export recorded activities** as `.fit` files, one by one from **Single session** (*Export (.fit)*) or in bulk from the **Export** tab (see above).
 
 ### 📊 Dashboard widgets (intervals.icu)
 
@@ -110,7 +112,7 @@ The sidebar groups its widgets into three tabs so it stays short: **Agenda**, **
    * **Gemini** (free tier): get a key from [Google AI Studio](https://aistudio.google.com/apikey).
    * **Hugging Face:** create a token in your [HF settings](https://huggingface.co/settings/tokens).
    * **OpenAI-compatible:** use the base URL and key of your provider (e.g. [Groq](https://console.groq.com/keys), [OpenRouter](https://openrouter.ai/keys)).
-5. Under **Generate**, pick a mode (**Library**, **Manual editor**, **AI generator**, **Import**, **From activity** or **Plan builder**), build your session, check the preview and send it to your calendar. Under **Analyze**, look at a single session or compare several.
+5. Under **Generate**, pick a mode (**Library**, **Manual editor**, **AI generator**, **Import**, **From activity** or **Plan builder**), build your session, check the preview and send it to your calendar. Under **Analyze**, look at a single session, compare several or export a batch of activities.
 
 The AI features need a provider key; everything else (library, manual editor, import, export) works without one. Features that read or write your calendar and training data need your intervals.icu key. If you open the **…** menu, you can take a guided tour of the main areas at any time.
 
