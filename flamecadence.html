@@ -487,8 +487,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run #runFsHint{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:99px;background:var(--acc);color:var(--on);font-size:.8rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:.92}.run:not(.rfs) #runFsHint{display:none!important}
 .run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run:not(.rfs) .phead,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}.run #runGo::before{content:"\25B6";margin-right:10px;font-size:.9em}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
-.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto auto minmax(0,1fr);grid-template-areas:"nm nm ex" "pl fn pg"}
-.run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn}
+.run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"nm nm ex" "pl fn pg"}
+.run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn;justify-self:start;min-width:0;max-width:100%;white-space:normal;line-height:1.15;text-align:center}.run.rfs #runPlay{white-space:nowrap;justify-self:start}
 .run #runFsDev,.run.rfs #runFsDev,.run.rfs #runErgL,.run.rfs #runDevs{display:none!important}
 .run.rfs .phead #runPlay,.run.rfs .phead #runFin{margin:0;width:auto;padding:7px 12px}
 @media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:"nm pl fn pg ex"}}
