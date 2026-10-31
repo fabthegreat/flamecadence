@@ -473,7 +473,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rctl button,.run .rtop button,.run .rtop select{margin:0;width:auto}
 .run .rbadge{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}
 .run .rbt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.run #runChips button{margin:0 4px 6px 0;width:auto}.run #runChips button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
+.run #runChips button{margin:0 4px 6px 0;width:auto}.run #runChips button[aria-pressed="true"],[data-block="per"] [data-pu][aria-pressed="true"]{background:var(--acc);color:var(--on)}
 .run #runRows{max-height:420px;overflow:auto}
 .run .wr{display:flex;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:10px;margin:6px 0;cursor:pointer;background:var(--bg)}
 .run .wr:hover,.run .wr:focus-visible{border-color:var(--acc)}.run .wr.sel{outline:2px solid var(--acc);outline-offset:-2px}
@@ -485,7 +485,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;gap:6px;box-sizing:border-box;overflow:hidden;background:var(--bg);padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
 /* plein écran : uniquement les données (pas de liste ni d'appairage) ; tout tient dans l'écran, en portrait comme en paysage */
 .run #runFsHint{position:absolute;top:calc(env(safe-area-inset-top,0px) + 4px);left:50%;transform:translateX(-50%);z-index:5;padding:5px 12px;border-radius:99px;background:var(--acc);color:var(--on);font-size:.8rem;font-weight:600;white-space:nowrap;pointer-events:none;opacity:.92}.run:not(.rfs) #runFsHint{display:none!important}
-.run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run:not(.rfs) .phead,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}.run #runGo::before{content:"\25B6";margin-right:10px;font-size:.9em}
+.run:not(.rfs) .rhud,.run:not(.rfs) #runFs,.run:not(.rfs) .phead,.run.rfs #runLaunch{display:none!important}.run #runLaunch{margin:10px 0;padding:0;border:0;background:none}.run #runGo{width:100%;margin:0;padding:18px 12px;font-size:1.15rem;font-weight:700}
 .run.rfs #runLs,.run.rfs .rtop,.run.rfs .phead h2,.run.rfs [data-i="runProf"]{display:none}
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"nm nm ex" "pl fn pg"}
 .run.rfs #runFsName{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn;justify-self:start;min-width:0;max-width:100%;white-space:normal;line-height:1.15;text-align:center}.run.rfs #runPlay{white-space:nowrap;justify-self:start}
@@ -532,7 +532,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 @keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.run.rfs.rs2 #runS2{animation:none}}
 .run .rmus .rctl{justify-content:flex-start;flex-wrap:nowrap}.run .rmus #musGo{flex:0 0 auto;white-space:nowrap}
-.run #musMin{flex:0 0 auto;margin-left:6px}.run .rmus.min{padding:4px 8px}.run .rmus.min #musIc,.run .rmus.min #musVol,.run .rmus.min #musTag,.run .rmus.min #musInfo{display:none}.run .rmus.min #musMin{margin-left:auto}
+.pertbl{width:100%;border-collapse:collapse;font-size:.9rem}.pertbl th,.pertbl td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}.pertbl th:first-child,.pertbl td:first-child{text-align:left}.pertbl tr.cur td{font-weight:700}.pertbl tfoot td{font-weight:700}.perleg{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--mute);margin:4px 0 10px}.perleg i{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+.run #musMin{flex:0 0 auto;margin-left:6px}.run:not(.rfs) #musMin{display:none}.run.rfs .rmus.min{padding:4px 8px}.run.rfs .rmus.min #musIc,.run.rfs .rmus.min #musVol,.run.rfs .rmus.min #musTag,.run.rfs .rmus.min #musInfo{display:none}.run.rfs .rmus.min #musMin{margin-left:auto}
 .run #musVol{width:110px;height:auto;margin:0 0 0 auto;padding:0;accent-color:var(--acc)}
 .run #musIc{flex:0 0 auto;display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;border:1px solid var(--line);color:var(--acc)}.run #musIc svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .run #musTag{width:100%;margin:8px 0 0}
@@ -770,6 +771,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <label><input type="checkbox" id="pm_avgS"><span data-i="runMxAvgS"></span></label>
 <label><input type="checkbox" id="pm_kj"><span data-i="runMxKj"></span></label>
 <label><input type="checkbox" id="pm_dec"><span data-i="runMxDec"></span></label>
+<label><input type="checkbox" id="pm_dist"><span data-i="runMxDist"></span></label>
 </div>
 <div class="hint" data-i="pmDecHint"></div>
 <label for="pm_lead" style="margin-top:16px" data-i="pmLead"></label>
@@ -850,6 +852,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <button type="button" role="tab" data-m="ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span data-i="tabSes"></span></button>
 <button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
 <button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
+<button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
 </div>
 
 <section data-block="req">
@@ -1033,6 +1036,14 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
 <div id="sesBox"></div>
 </section>
+<section data-block="per" hidden>
+<div class="phead"><h2 data-i="perT"></h2><button class="alt small" id="perRef" type="button" data-i="refresh"></button></div>
+<div class="actions" style="align-items:center;gap:8px;margin:6px 0 12px">
+<span class="seg"><button type="button" class="alt small" data-pu="w" aria-pressed="true" data-i="perWeeks"></button><button type="button" class="alt small" data-pu="m" aria-pressed="false" data-i="perMonths"></button></span>
+<select id="perN" aria-label="N"></select>
+</div>
+<div id="perBox"></div>
+</section>
 <section data-block="cmp" hidden>
 <div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="cmpLbl"></span></h2>
 </div>
@@ -1105,7 +1116,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
 <div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
 <div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
-<div class="rmx rhud" id="runMx" hidden><div class="rcard" id="runMx_avg" hidden><div class="rlbl" data-i="runMxAvg"></div><div class="rbig" id="runMxV_avg">--</div><small id="runMxS_avg"></small></div><div class="rcard" id="runMx_avgS" hidden><div class="rlbl" data-i="runMxAvgS"></div><div class="rbig" id="runMxV_avgS">--</div><small id="runMxS_avgS"></small></div><div class="rcard" id="runMx_kj" hidden><div class="rlbl" data-i="runMxKj"></div><div class="rbig" id="runMxV_kj">--</div><small id="runMxS_kj"></small></div><div class="rcard" id="runMx_dec" hidden><div class="rlbl" data-i="runMxDec"></div><div class="rbig" id="runMxV_dec">--</div><small id="runMxS_dec"></small></div></div>
+<div class="rmx rhud" id="runMx" hidden><div class="rcard" id="runMx_avg" hidden><div class="rlbl" data-i="runMxAvg"></div><div class="rbig" id="runMxV_avg">--</div><small id="runMxS_avg"></small></div><div class="rcard" id="runMx_avgS" hidden><div class="rlbl" data-i="runMxAvgS"></div><div class="rbig" id="runMxV_avgS">--</div><small id="runMxS_avgS"></small></div><div class="rcard" id="runMx_kj" hidden><div class="rlbl" data-i="runMxKj"></div><div class="rbig" id="runMxV_kj">--</div><small id="runMxS_kj"></small></div><div class="rcard" id="runMx_dec" hidden><div class="rlbl" data-i="runMxDec"></div><div class="rbig" id="runMxV_dec">--</div><small id="runMxS_dec"></small></div><div class="rcard" id="runMx_dist" hidden><div class="rlbl" data-i="runMxDist"></div><div class="rbig" id="runMxV_dist">--</div><small id="runMxS_dist"></small></div></div>
 <div class="rcard rhud"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
 <div class="rcard rhud"><div class="rctl">
 <button type="button" class="alt small" data-rn="-10">-10 W</button><button type="button" class="alt small" data-rn="-5">-5 W</button>
@@ -1264,7 +1275,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #pr
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.2.1"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.4.0"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -1334,6 +1345,7 @@ calEdSkip:["Loaded. {0} line(s) the editor cannot represent were left out; check
 calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules les séances de vélo peuvent être ouvertes dans l'éditeur manuel."], calEdEmpty:["This workout has no steps the editor can read.","Cette séance n'a aucune étape que l'éditeur sait lire."],
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
 secPlayer:["Player","Lecteur"], sesExp:["Export (.fit)","Exporter (.fit)"], sesExpT:["Download this activity as a FIT file, readable by Garmin, Strava, TrainingPeaks, Zwift…","Télécharger cette activité au format FIT, lisible par Garmin, Strava, TrainingPeaks, Zwift…"], sesExpErr:["Export unavailable (no file for this activity, e.g. synced from Strava)","Export impossible (pas de fichier pour cette activité, ex. synchronisée depuis Strava)"], hSlope:["Drag up or down to change the slope (the power is only a guide)","Glisse vers le haut ou le bas pour changer la pente (la puissance n'est qu'un guide)"], pmMap:["Show a satellite map of the route on the animation screen (needs an internet connection)","Afficher une carte satellite du parcours sur l'écran d'animation (connexion internet requise)"], mapVirt:["Virtual route","Parcours virtuel"], runGuide:["Effort guide","Puissance guide"], runOnG:["In the guide","Dans le guide"], runHiG:["Above guide","Au-dessus du guide"], runLoG:["Below guide","Sous le guide"], edGuideT:["Slope step: the trainer follows the slope, not a power target. This intensity is only an effort guide (zone, load, estimated duration).","Étape en pente : le home trainer suit la pente, pas une puissance cible. Cette intensité n'est qu'un guide d'effort (zone, charge, durée estimée)."], riderKgL:["Rider weight (kg) for slope sections","Poids du coureur (kg) pour les tronçons en pente"], riderKgH:["Used to compute your speed, hence the distance covered, on slope steps (8 kg bike added). Leave empty to use the weight from intervals.icu, or 75 kg. Set the same weight in your trainer's app so the resistance matches.","Sert à calculer ta vitesse, donc la distance parcourue, sur les étapes en pente (vélo de 8 kg ajouté). Laisse vide pour utiliser le poids d'intervals.icu, ou 75 kg. Renseigne le même poids dans l'appli de ton home trainer pour que la résistance corresponde."], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
+runMxDist:["Distance (km)","Distance (km)"], tabPer:["Periods","Périodes"], perT:["Training by week and month","Entraînement par semaine et par mois"], perWeeks:["Weeks","Semaines"], perMonths:["Months","Mois"], perCol:["Period","Période"], perSess:["Sessions","Séances"], perTime:["Time","Durée"], perDist:["Distance","Distance"], perLoadC:["Load","Charge"], perPlan:["Planned","Prévu"], perTotal:["Total","Total"], perLegDone:["Load done","Charge réalisée"], perLegPlan:["Load still planned","Charge encore prévue"], perNow:["now","en cours"], perNone:["No activity in these periods.","Aucune activité sur ces périodes."], perLoading:["Loading…","Chargement…"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
@@ -6556,7 +6568,7 @@ function runPick(e, auto){
 function runLoad(e){
   const ftp = runFtp();
   RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2), g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0}));
-  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI(); try{ mapSync(true); }catch(err){}
+  RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.dist = 0; RUN.began = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI(); try{ mapSync(true); }catch(err){}
 }
 function runProg(){ // avancement de la séance en « secondes équivalentes » : une étape à distance avance selon les mètres parcourus
   const R = RUN; if(!R || !R.steps.length) return 0; let p = 0; for(let k = 0; k < R.i; k++) p += R.steps[k].dur;
@@ -6566,7 +6578,7 @@ function runProg(){ // avancement de la séance en « secondes équivalentes » 
 function runEnter(){ const st = RUN.steps[RUN.i]; RUN.left = st.dur; RUN.mleft = st.m > 0 ? st.m : 0; } // entrée dans une étape
 const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / st.dur)) + RUN.nudge; // rampes : la cible suit la progression dans l'étape
 function runInit(){
-  RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], cp: null, crk: null, cadSrc: "", cadAt: 0};
+  RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], dist: 0, cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
   $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
@@ -6897,9 +6909,9 @@ function runErgPause(pause){ const R = RUN; if(!R.cp || !$("runErg").checked) re
 // ---- enregistrement : une mesure par seconde, uniquement avec de vraies données Bluetooth (jamais la simulation)
 function runTcx(){
   const R = RUN, pts = R.rec, iso8 = x => new Date(x).toISOString(), P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0;
-  const tp = pts.map(x => `<Trackpoint><Time>${iso8(x.t)}</Time>${x.h != null ? `<HeartRateBpm><Value>${Math.round(x.h)}</Value></HeartRateBpm>` : ""}${x.c != null ? `<Cadence>${Math.round(x.c)}</Cadence>` : ""}${x.p != null ? `<Extensions><ns3:TPX><ns3:Watts>${Math.round(x.p)}</ns3:Watts></ns3:TPX></Extensions>` : ""}</Trackpoint>`).join("");
+  const tp = pts.map(x => `<Trackpoint><Time>${iso8(x.t)}</Time>${x.d != null ? `<DistanceMeters>${x.d}</DistanceMeters>` : ""}${x.h != null ? `<HeartRateBpm><Value>${Math.round(x.h)}</Value></HeartRateBpm>` : ""}${x.c != null ? `<Cadence>${Math.round(x.c)}</Cadence>` : ""}${x.p != null ? `<Extensions><ns3:TPX><ns3:Watts>${Math.round(x.p)}</ns3:Watts></ns3:TPX></Extensions>` : ""}</Trackpoint>`).join("");
   const tot = Math.round((pts[pts.length - 1].t - pts[0].t) / 1000), kj = Math.round(P.reduce((x, y) => x + y, 0) / 1000);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Activities><Activity Sport="Biking"><Id>${iso8(pts[0].t)}</Id><Lap StartTime="${iso8(pts[0].t)}"><TotalTimeSeconds>${tot}</TotalTimeSeconds><DistanceMeters>0</DistanceMeters><Calories>${kj}</Calories>${H.length ? `<AverageHeartRateBpm><Value>${av(H)}</Value></AverageHeartRateBpm><MaximumHeartRateBpm><Value>${Math.round(Math.max(...H))}</Value></MaximumHeartRateBpm>` : ""}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod><Track>${tp}</Track></Lap><Notes>${esc((R.cur && R.cur.name) || "FlameCadence")}</Notes></Activity></Activities></TrainingCenterDatabase>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Activities><Activity Sport="Biking"><Id>${iso8(pts[0].t)}</Id><Lap StartTime="${iso8(pts[0].t)}"><TotalTimeSeconds>${tot}</TotalTimeSeconds><DistanceMeters>${Math.round(pts[pts.length - 1].d || 0)}</DistanceMeters><Calories>${kj}</Calories>${H.length ? `<AverageHeartRateBpm><Value>${av(H)}</Value></AverageHeartRateBpm><MaximumHeartRateBpm><Value>${Math.round(Math.max(...H))}</Value></MaximumHeartRateBpm>` : ""}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod><Track>${tp}</Track></Lap><Notes>${esc((R.cur && R.cur.name) || "FlameCadence")}</Notes></Activity></Activities></TrainingCenterDatabase>`;
 }
 function runFinish(){
   musStop(); const R = RUN; R.paused = true; runErgPause(true); runUI();
@@ -6907,7 +6919,7 @@ function runFinish(){
   const ok = pts.length >= 30; $("runUp").hidden = !ok || !KEY(); $("runUp").disabled = false; $("runDl").hidden = !ok;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
   const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
-  $("runEndS").textContent = t("runSum", fmtDur((pts[pts.length - 1].t - pts[0].t) / 1000), av(P), av(H), Math.round(P.reduce((x, y) => x + y, 0) / 1000));
+  $("runEndS").textContent = t("runSum", fmtDur((pts[pts.length - 1].t - pts[0].t) / 1000), av(P), av(H), Math.round(P.reduce((x, y) => x + y, 0) / 1000)) + ((pts[pts.length - 1].d || 0) > 100 ? " \u00b7 " + (pts[pts.length - 1].d / 1000).toFixed(1) + " km" : "");
 }
 async function runUpload(){
   const R = RUN, b = $("runUp"), m = $("runEndM"); b.disabled = true; m.textContent = "…";
@@ -6961,6 +6973,7 @@ function runTick(){
   let chg = false;
   for(let k = 0; k < n && !RUN.paused; k++){
     const s0 = RUN.steps[RUN.i];
+    { const v1 = runSpeed(RUN.ap, s0.g); RUN.dist = (RUN.dist || 0) + (s0.m > 0 ? RUN.vs + (v1 - RUN.vs) * .5 : v1); } // distance approximative : vitesse du modèle physique (puissance, pente, poids), 1 s par tour
     if(s0.m > 0){ // étape en pente définie par sa distance : on cumule la distance avec la vitesse du modèle (puissance réelle, pente, poids) ; plus de pédalage = plus de distance
       RUN.el++; RUN.vs += (runSpeed(RUN.ap, s0.g) - RUN.vs) * .5; RUN.mleft -= RUN.vs;
       RUN.left = RUN.vs > .5 ? Math.ceil(Math.max(0, RUN.mleft) / RUN.vs) : Math.ceil(s0.dur * Math.max(0, RUN.mleft) / s0.m); // temps restant estimé à la vitesse actuelle (compte à rebours sonore)
@@ -6998,7 +7011,7 @@ function runTick(){
   RUN.ap = L.p != null ? L.p : (RUN.paused ? 0 : RUN.ap + (tgt - RUN.ap) * .35 + (Math.random() * 6 - 3));
   RUN.hr = L.h != null ? L.h : (sim && !RUN.paused ? RUN.hr + ((105 + Math.min(st.z, 6) * 14) - RUN.hr) * .05 + (Math.random() - .5) : RUN.hr);
   RUN.cad = L.c != null ? L.c : (sim && !RUN.paused ? 92 + Math.random() * 6 - 3 : 0);
-  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i, x: Math.round(runProg())}); // seulement de vraies données
+  if(!RUN.paused && (L.p != null || L.h != null)) RUN.rec.push({t: Date.now(), p: L.p, h: L.h, c: L.c, e: RUN.el, i: RUN.i, x: Math.round(runProg()), d: Math.round(RUN.dist || 0)}); // seulement de vraies données
   if(!RUN.paused && L.p != null){ const sa = RUN.sa && RUN.sa.i === RUN.i ? RUN.sa : (RUN.sa = {i: RUN.i, s: 0, n: 0}); sa.s += L.p; sa.n++; } // moyenne de l'étape en cours (écran de diffusion)
   // pause automatique : le home trainer indique 0 W depuis N secondes (vraies données Bluetooth seulement)
   { const lim = runAutoPause();
@@ -7147,7 +7160,7 @@ function runRestore(){
   if(!sn || sn.v !== 1 || !sn.cur || !Array.isArray(sn.cur.st) || !sn.cur.st.length || Date.now() - sn.at > 12 * 3600 * 1000) return;
   RUN.touched = true; RUN.cur = sn.cur; runLoad(sn.cur);
   $("runWkName").textContent = $("runFsName").textContent = sn.cur.name; $("runLs").open = false;
-  Object.assign(RUN, {began: true, i: Math.min(sn.i || 0, RUN.steps.length - 1), left: sn.left, el: sn.el, nudge: sn.nudge || 0, paused: !!sn.paused, rec: sn.rec || [], last: sn.last, acc: 0}); // le premier tick rattrape le temps écoulé depuis la dernière sauvegarde
+  Object.assign(RUN, {began: true, i: Math.min(sn.i || 0, RUN.steps.length - 1), left: sn.left, el: sn.el, nudge: sn.nudge || 0, paused: !!sn.paused, rec: sn.rec || [], dist: ((sn.rec || []).length ? (sn.rec[sn.rec.length - 1].d || 0) : 0), last: sn.last, acc: 0}); // le premier tick rattrape le temps écoulé depuis la dernière sauvegarde
   { const sr = RUN.steps[RUN.i]; RUN.mleft = sr && sr.m > 0 ? (sn.ml != null ? sn.ml : sr.m) : 0; }
   runUI(); if(sn.done) runFinish();
   runFs(true); runWant(true); runSave(true); // lecteur directement à l'écran ; le plein écran natif revient au premier toucher
@@ -7164,7 +7177,7 @@ function runGo(){
   RUN.touched = true;
   runUI();
 }
-const RUNMX = ["avg", "avgS", "kj", "dec"]; // mesures optionnelles du lecteur, cochées dans Réglages > Lecteur (clé si_rm_<id>)
+const RUNMX = ["avg", "avgS", "kj", "dec", "dist"]; // mesures optionnelles du lecteur, cochées dans Réglages > Lecteur (clé si_rm_<id>)
 function runMxUI(){
   if(typeof RUN === "undefined" || !RUN || !$("runMx")) return;
   const on = {}; RUNMX.forEach(k => { on[k] = store.get("si_rm_" + k) === "1"; $("runMx_" + k).hidden = !on[k]; });
@@ -7173,6 +7186,7 @@ function runMxUI(){
   if(on.avgS) set("avgS", avg(P.map(x => x.p)), "W");
   if(on.avg) set("avg", avg(P.filter(x => x.i === RUN.i).map(x => x.p)), "W");
   if(on.kj){ const kj = sum(P.map(x => x.p)) / 1000; set("kj", P.length ? kj.toFixed(kj < 100 ? 1 : 0) : "--", "kJ"); }
+  if(on.dist) set("dist", ((RUN.dist || 0) / 1000).toFixed(2), "km"); // approximative : modèle physique à partir de la puissance
   if(on.dec){
     const B = rec.filter(x => x.p != null && x.h > 0), h = B.length >> 1, ef = a => sum(a.map(x => x.p)) / sum(a.map(x => x.h)); // efficacité = puissance / FC
     const e1 = B.length >= 600 ? ef(B.slice(0, h)) : 0, e2 = B.length >= 600 ? ef(B.slice(h)) : 0;
@@ -7334,7 +7348,7 @@ async function runPair(kind){
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "ai";
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "cmp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "cmp", "per"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
@@ -7352,7 +7366,7 @@ $("pm_mus").checked = musShown(); $("pm_mus").onchange = e => { store.set("si_rm
 { const ld = $("pm_lead"); ld.value = runLead() || ""; ld.onchange = () => { const v = Math.max(0, Math.min(10, Math.round(parseFloat(String(ld.value).replace(",", ".")) * 2) / 2)); store.set("si_rm_lead", v > 0 ? String(v) : ""); ld.value = v > 0 ? v : ""; if(v > 0) runBeep(880, .12); }; }
 $("pm_ap").value = String(runAutoPause()); $("pm_ap").onchange = e => store.set("si_rm_ap", e.target.value);
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
-["avg", "avgS", "kj", "dec"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
+["avg", "avgS", "kj", "dec", "dist"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
 // ---------- Décaler les séances planifiées : toutes les séances du calendrier intervals.icu à partir d'une date, de N jours / semaines ----------
@@ -7423,6 +7437,59 @@ function setShTool(k){
 }
 $("shTabs").querySelectorAll("[data-sh]").forEach(b => b.onclick = () => setShTool(b.dataset.sh));
 $("shCalOpen").onclick = openCalMax;
+// ---------- Périodes : bilan de l'entraînement par semaine ou par mois (activités réalisées + séances encore prévues au calendrier) ----------
+const PER = {unit: store.get("si_per_u") === "m" ? "m" : "w", n: 0, tok: 0};
+function perPeriods(unit, n){
+  const out = [], now = new Date(); now.setHours(12, 0, 0, 0);
+  for(let i = n - 1; i >= 0; i--){
+    let a, b;
+    if(unit === "w"){ a = new Date(now); a.setDate(a.getDate() - ((a.getDay() + 6) % 7) - i * 7); b = new Date(a); b.setDate(b.getDate() + 6); }
+    else { a = new Date(now.getFullYear(), now.getMonth() - i, 1, 12); b = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 12); }
+    const A = iso(a), B = iso(b), cur = A <= iso(now) && iso(now) <= B;
+    out.push({a: A, b: B, cur, label: unit === "w" ? a.toLocaleDateString(loc(), {day: "numeric", month: "short"}) : a.toLocaleDateString(loc(), {month: "short", year: "2-digit"}), n: 0, sec: 0, dist: 0, load: 0, plan: 0, planN: 0});
+  }
+  return out;
+}
+function perFillN(){
+  const opts = PER.unit === "w" ? [8, 12, 26, 52] : [6, 12, 24], sel = $("perN"), keep = parseInt(store.get("si_per_n_" + PER.unit), 10);
+  PER.n = opts.includes(keep) ? keep : (PER.unit === "w" ? 12 : 12);
+  sel.innerHTML = opts.map(v => `<option value="${v}">${v} ${esc(t(PER.unit === "w" ? "perWeeks" : "perMonths").toLowerCase())}</option>`).join(""); sel.value = String(PER.n);
+  document.querySelectorAll('[data-block="per"] [data-pu]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.pu === PER.unit)));
+}
+async function perLoad(){
+  const box = $("perBox"); perFillN();
+  if(!KEY()){ box.innerHTML = `<div class="hint">${esc(t("needI"))}</div>`; return; }
+  const tok = ++PER.tok, P = perPeriods(PER.unit, PER.n), today = iso(new Date()), oldest = P[0].a, newest = P[P.length - 1].b;
+  box.innerHTML = `<div class="hint">${esc(t("perLoading"))}</div>`;
+  try{
+    const [acts, evs] = await Promise.all([icu(`/activities?oldest=${oldest}&newest=${newest}`), icu(`/events?oldest=${today}&newest=${newest}&category=WORKOUT`).catch(() => [])]);
+    if(tok !== PER.tok) return;
+    const at = d => P.find(q => d >= q.a && d <= q.b);
+    (Array.isArray(acts) ? acts : []).forEach(a => { const q = at((a.start_date_local || "").slice(0, 10)); if(!q) return; q.n++; q.sec += a.moving_time || 0; q.dist += a.distance || 0; q.load += a.icu_training_load || 0; });
+    (Array.isArray(evs) ? evs : []).forEach(e => { if(e.paired_activity_id) return; const q = at((e.start_date_local || "").slice(0, 10)); if(!q) return; q.planN++; q.plan += e.icu_training_load || 0; });
+    perRender(P);
+  }catch(err){ if(tok === PER.tok) box.innerHTML = `<div class="hint" style="color:var(--err)">${esc(t("errI", errText(err)))}</div>`; }
+}
+function perRender(P){
+  const box = $("perBox"), f = Math.round;
+  if(!P.some(q => q.n || q.planN)){ box.innerHTML = `<div class="hint">${esc(t("perNone"))}</div>`; return; }
+  const W = 600, H = 150, pad = 22, mx = Math.max(10, ...P.map(q => q.load + q.plan)), bw = (W - 10) / P.length, gap = Math.min(8, bw * .25);
+  const bars = P.map((q, i) => {
+    const x = 5 + i * bw + gap / 2, w = bw - gap, hd = (H - pad) * q.load / mx, hp = (H - pad) * q.plan / mx;
+    return `<rect x="${x.toFixed(1)}" y="${(H - hd).toFixed(1)}" width="${w.toFixed(1)}" height="${hd.toFixed(1)}" fill="var(--acc)"/>` +
+      (q.plan ? `<rect x="${x.toFixed(1)}" y="${(H - hd - hp).toFixed(1)}" width="${w.toFixed(1)}" height="${hp.toFixed(1)}" fill="var(--acc)" opacity=".35"/>` : "") +
+      (P.length <= 26 || i % 2 === 0 ? `<text x="${(x + w / 2).toFixed(1)}" y="${H + 14}" text-anchor="middle" font-size="10" fill="var(--mute)">${esc(q.label)}</text>` : "");
+  }).join("");
+  const tot = P.reduce((a, q) => ({n: a.n + q.n, sec: a.sec + q.sec, dist: a.dist + q.dist, load: a.load + q.load, plan: a.plan + q.plan}), {n: 0, sec: 0, dist: 0, load: 0, plan: 0});
+  const row = q => `<tr${q.cur ? ' class="cur"' : ""}><td>${esc(q.label)}${q.cur ? " (" + esc(t("perNow")) + ")" : ""}</td><td>${q.n}</td><td>${q.sec ? hm(q.sec) : "\u2014"}</td><td>${q.dist ? (q.dist / 1000).toFixed(0) + " km" : "\u2014"}</td><td>${q.load ? f(q.load) : "\u2014"}</td><td>${q.plan ? f(q.plan) + " (" + q.planN + ")" : ""}</td></tr>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H + 20}" style="width:100%;height:auto" role="img">${bars}</svg>` +
+    `<div class="perleg"><span><i style="background:var(--acc)"></i>${esc(t("perLegDone"))}</span><span><i style="background:var(--acc);opacity:.35"></i>${esc(t("perLegPlan"))}</span></div>` +
+    `<div style="overflow-x:auto"><table class="pertbl"><thead><tr><th>${esc(t("perCol"))}</th><th>${esc(t("perSess"))}</th><th>${esc(t("perTime"))}</th><th>${esc(t("perDist"))}</th><th>${esc(t("perLoadC"))}</th><th>${esc(t("perPlan"))}</th></tr></thead><tbody>${P.slice().reverse().map(row).join("")}</tbody>` +
+    `<tfoot><tr><td>${esc(t("perTotal"))}</td><td>${tot.n}</td><td>${hm(tot.sec)}</td><td>${(tot.dist / 1000).toFixed(0)} km</td><td>${f(tot.load)}</td><td>${tot.plan ? f(tot.plan) : ""}</td></tr></tfoot></table></div>`;
+}
+document.querySelectorAll('[data-block="per"] [data-pu]').forEach(b => b.onclick = () => { PER.unit = b.dataset.pu; store.set("si_per_u", PER.unit); perLoad(); });
+$("perN").onchange = e => { store.set("si_per_n_" + PER.unit, e.target.value); perLoad(); };
+$("perRef").onclick = perLoad;
 function applyMode(){
   if(mode !== "plan" && typeof PLAN !== "undefined" && PLAN.edit){ planEdEnd(); } // quitter le plan met fin à la modification d'une de ses séances
   if(mode !== "edit" && CALEDIT){ CALEDIT = null; calEdUI(); } // quitter l'éditeur manuel met fin à la modification d'une séance du calendrier
@@ -7433,6 +7500,7 @@ function applyMode(){
   document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
+  document.querySelector('[data-block="per"]').hidden = mode !== "per"; if(mode === "per") perLoad();
   document.querySelector('[data-block="ses"]').hidden = mode !== "ses"; if(mode === "ses") sesInit();
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
   document.querySelector('[data-block="shift"]').hidden = mode !== "shift"; if(mode === "shift"){ if($("shTabs").querySelector('[data-sh="bulk"]').getAttribute("aria-selected") === "true") shiftPreview(); }
@@ -7906,7 +7974,7 @@ function applyBlocks(){
     const b = sec.querySelector(".tgl"); if(b) b.setAttribute("aria-expanded", String(!closed));
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="ses"]):not([data-block="run"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="per"]):not([data-block="ses"]):not([data-block="run"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
