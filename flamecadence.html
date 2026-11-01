@@ -514,7 +514,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #runHz .hk{background:rgba(8,12,20,.62);padding:6px 10px;min-width:70px;line-height:1.1}
 #runHz .hl{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
 #runHz .hv{font-size:clamp(1.3rem,5.5vmin,2.4rem);font-weight:800;line-height:1.05}#runHz .hv small{font-size:.45em;margin-left:3px;opacity:.8}
-#runHz .hzp{border-top:4px solid var(--zc,#22c55e);min-width:120px}#runHz .hzp .hv{font-size:clamp(2rem,9vmin,4rem)}#runHz .hzp .hl:last-child{font-weight:700;opacity:1;color:var(--tc,#fff)}
+#runHz .hk.zk{border:3px solid var(--zc);padding:3px 7px;background:color-mix(in srgb,var(--zc) 24%,rgba(8,12,20,.62))}
+.hzp{border-top:4px solid var(--zc,#22c55e);min-width:120px}#runHz .hzp .hv{font-size:clamp(2rem,9vmin,4rem)}#runHz .hzp .hl:last-child{font-weight:700;opacity:1;color:var(--tc,#fff)}
 #runHz .hzr{grid-column:2;grid-row:1/4;position:relative;overflow:hidden;background:rgba(8,12,20,.38);min-height:0}
 #hzList{position:absolute;left:0;right:0;top:0;padding:8px 6px;transition:transform .6s ease}
 #hzList .hs{position:relative;margin-bottom:4px;padding:3px 8px;overflow:hidden;background:color-mix(in srgb,var(--c) 70%,#0b1018);border-left:5px solid var(--c);opacity:.95;display:flex;flex-direction:column;justify-content:center;line-height:1.15}
@@ -1158,11 +1159,11 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <button type="button" class="alt small" id="runFin" data-i="runFin"></button></div></div>
 <div id="runS2"><canvas id="runRd" aria-hidden="true"></canvas><div id="runHz"><div class="hzt">
 <div class="hk"><div class="hl" data-i="runTotal"></div><div class="hv" id="hzEl">00:00</div><div class="hl" id="hzTot"></div></div>
-<div class="hk hzp" id="hzPw"><div class="hl" data-i="runAct"></div><div class="hv"><span id="hzAp">--</span><small>W</small></div><div class="hl" id="hzTg"></div></div>
-<div class="hk"><div class="hl">♥ bpm</div><div class="hv" id="hzHr">--</div></div>
+<div class="hk hzp zk" id="hzPw"><div class="hl" data-i="runAct"></div><div class="hv"><span id="hzAp">--</span><small>W</small></div><div class="hl" id="hzTg"></div></div>
+<div class="hk" id="hzHk"><div class="hl">♥ bpm</div><div class="hv" id="hzHr">--</div></div>
 <div class="hk"><div class="hl">rpm</div><div class="hv" id="hzCd">--</div></div>
 <div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div>
-<div class="hk"><div class="hl" data-i="runClk"></div><div class="hv" id="hzClk">--:--</div></div></div>
+<div class="hk"><div class="hl" data-i="runClk"></div><div class="hv" id="hzClk">--:--</div><div class="hl" id="hzBat"></div></div></div>
 <div class="hzr"><div id="hzList"></div></div>
 <div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div><div class="hzx"><div id="hzSt"></div><div id="hzNx"></div></div></div><div id="hzMap" hidden></div></div></div>
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
@@ -6741,7 +6742,7 @@ const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / s
 function runInit(){
   RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], dist: 0, cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
-  $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
+  $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused && !$("runEnd").hidden){ $("runEnd").hidden = true; runLaunchUI(); } /* reprise après « Terminer » par erreur : la carte de fin (dont Abandonner) disparaît */ if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
   // le graphique du profil n'est plus cliquable : un toucher accidentel changeait d'étape ; on utilise les boutons Précédent / Suivant
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
@@ -6806,10 +6807,10 @@ function hzUpdate(){
   const sig = [Math.round(RS.v * 3.6), ap, tg, $("runHRv").textContent, $("runCV").textContent, has ? R.el + "|" + R.total + "|" + R.left + "|" + Math.round(R.mleft) + "|" + R.i : "", pr, clk, sa].join("~");
   try{ mapSync(has); }catch(e){}
   if(sig === RS.sig) return; RS.sig = sig;
-  $("hzSp").textContent = Math.round(RS.v * 3.6); $("hzAp").textContent = has ? ap : "--"; $("hzHr").textContent = $("runHRv").textContent; $("hzCd").textContent = $("runCV").textContent;
+  $("hzSp").textContent = Math.round(RS.v * 3.6); $("hzAp").textContent = has ? ap : "--"; $("hzHr").textContent = $("runHRv").textContent; runHrZone(); $("hzCd").textContent = $("runCV").textContent;
   const pw = $("hzPw"), dv = ap - tg, near = Math.abs(dv) <= Math.max(5, tg * .05);
-  pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", !has || !tg ? "#fff" : near ? "#4ade80" : dv > 0 ? "#fb923c" : "#60a5fa");
-  $("hzTg").textContent = has ? (st.g != null ? "≈ " : "▶ ") + tg + " W" : "";
+  pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", has && tg ? runZC(zoneOf(tg / ftp * 100)) : "#fff");
+  $("hzTg").textContent = has ? (st.g != null ? "≈ " : "▶ ") + tg + " W" + (ap > 0 && tg && !near ? (dv > 0 ? " ▲" : " ▼") : "") : "";
   $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) : "";
   $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
   $("hzPr").style.width = has ? Math.round(runProg() / R.total * 100) + "%" : "0";
@@ -7373,12 +7374,21 @@ function runUI(){
   const vb = $("runVar"), ok = Math.abs(d) <= 10; const gd = st.g != null; vb.textContent = t((ok ? "runOn" : d > 0 ? "runHi" : "runLo") + (gd ? "G" : "")); $("runTgtL").textContent = t(gd ? "runGuide" : "runTgt"); $("runTP").title = gd ? t("edGuideT") : ""; vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
   $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
-  $("runPct").title = runFtpTxt(); $("runClock").textContent = "🕐 " + runClock();
+  $("runPct").title = runFtpTxt(); $("runClock").textContent = "🕐 " + runClock() + batTxt();
   const nx = RUN.steps[RUN.i + 1]; $("runNx").hidden = !nx; if(nx) $("runNxT").textContent = runNxTxt(nx);
   if(!RUN.paused) RUN.apz = 0; const ab = $("runAutoP"); ab.hidden = !(RUN.paused && RUN.apz); if(!ab.hidden) ab.textContent = "⏸ " + t("runAutoP", RUN.apz);
   runErgBadge(); runMxUI(); runDraw();
 }
 const runClock = () => new Date().toLocaleTimeString(loc(), {hour: "2-digit", minute: "2-digit"});
+function runHrZone(){ // cadre FC coloré par zone ; neutre sans FC mesurée ou sans FC seuil (LTHR) dans le profil
+  const b = parseInt($("hzHr").textContent, 10), L = +ICU.lthr || 0, k = $("hzHk"); if(!k) return;
+  if(!(b > 0 && L > 0)){ k.classList.remove("zk"); return; }
+  const x = b / L * 100, z = x < 68 ? 1 : x < 83 ? 2 : x < 94 ? 3 : x < 105 ? 4 : x < 115 ? 5 : x < 130 ? 6 : 7;
+  k.style.setProperty("--zc", runZC(z)); k.classList.add("zk");
+}
+// niveau de batterie de l'appareil (Battery Status API : Chrome, Edge, Android ; absent de Safari et Firefox, alors rien ne s'affiche)
+const BAT = {t: ""}, batTxt = () => BAT.t ? "  " + BAT.t : "";
+try{ if(navigator.getBattery) navigator.getBattery().then(b => { const u = () => { const p = Math.round(b.level * 100); BAT.t = (b.charging ? "⚡ " : "🔋 ") + p + "%"; const e = $("hzBat"); if(e){ e.textContent = BAT.t; e.style.color = !b.charging && p <= 20 ? "#ef4444" : ""; } }; b.addEventListener("levelchange", u); b.addEventListener("chargingchange", u); u(); }).catch(() => {}); }catch(e){}
 // FTP utilisée par le lecteur pour toutes les cibles en % : FTP indoor (home trainer), à défaut FTP extérieur, à défaut 250 W
 function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0; return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
 // étape suivante : durée · puissance cible (avec l'ajustement ± W) · nom
