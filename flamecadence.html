@@ -410,7 +410,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .phead .small:not(.icon){padding:0 10px!important}
 .phead .icon svg{width:14px;height:14px;stroke-width:2.2}
 .phead .ext svg{width:14px;height:14px}
-@media (max-width:560px){.phead{flex-wrap:wrap;row-gap:6px;gap:6px}.phead>*{flex:0 0 auto}.phead .badge{min-width:0!important;margin:0 2px!important}.phead #caltoday,.phead #caltoday2{font-size:.7rem!important;font-weight:600;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis}} /* téléphone, tous les looks : l'en-tête du calendrier (mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) passe à la ligne au lieu de déborder */
+@media (max-width:560px){p.sub{display:none}.phead{flex-wrap:wrap;row-gap:6px;gap:6px}.phead>*{flex:0 0 auto}.phead .badge{min-width:0!important;margin:0 2px!important}.phead #caltoday,.phead #caltoday2{font-size:.7rem!important;font-weight:600;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis}} /* téléphone, tous les looks : l'en-tête du calendrier (mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) passe à la ligne au lieu de déborder */
 .phead select{height:26px;padding:0 24px 0 8px;font-size:.8rem;border-radius:6px}
 .seg{display:inline-flex}
 .seg>button{margin:0!important;border-radius:0;min-width:24px}
@@ -704,7 +704,7 @@ html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run 
 :root[data-look="sport"] .lang button{padding:4px 8px;font-size:.8rem}
 :root[data-look="sport"] .gbar{width:100%;min-width:0;gap:2px;padding:3px}
 :root[data-look="sport"] header .brand{order:1}:root[data-look="sport"] header .tools{order:2;margin-left:auto}:root[data-look="sport"] header .gbar{order:3;flex:1 0 100%} /* ligne 1 : logo + outils ; ligne 2 : menus principaux sur toute la largeur */
-:root[data-look="sport"] .gbar button,:root[data-look="sport"] header .gbar button{flex:1 1 0;min-width:0;padding:9px 4px;font-size:.8rem;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-look="sport"] .gbar button,:root[data-look="sport"] header .gbar button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 4px;font-size:.88rem;line-height:1.15;text-align:center;white-space:normal} /* au moins aussi haut que le sous-menu ; les libellés longs passent sur 2 lignes au lieu d'être coupés */
 :root[data-look="sport"] .mode{min-width:0;gap:2px;padding:3px}
 :root[data-look="sport"] .mode button{padding:8px 4px}
 :root[data-look="sport"] .phead{flex-wrap:wrap;row-gap:6px;gap:6px} /* en-têtes de widgets (calendrier : mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) : passent à la ligne au lieu de se chevaucher */
