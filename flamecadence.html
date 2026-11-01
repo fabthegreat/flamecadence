@@ -435,7 +435,39 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
-#calbox,#dcalbox{position:relative}
+#calbox,#dcalbox,#calbox2{position:relative}
+#calbox2 .cal-d:not(.empty){cursor:pointer}#calbox2 .cal-d:not(.empty):hover{border-color:var(--acc)}#calbox2 .cal-ev{cursor:grab}#calbox2.nav-l{box-shadow:inset 8px 0 0 var(--acc)}#calbox2.nav-r{box-shadow:inset -8px 0 0 var(--acc)}#calprev2.dragnav,#calnext2.dragnav{background:var(--acc);color:var(--on)}
+.cal-page .cal{gap:4px}.cal-page .cal-x{display:none}html.m-calp .mode:not(.cfg-tabs){display:none}
+.calw{display:flex;flex-direction:column;gap:0;font-size:.75rem}
+.calw .cw-head,.calw .cw{display:grid;grid-template-columns:118px repeat(7,minmax(0,1fr));gap:0}.calw .cw{border-top:1px solid var(--line)}
+.calw .cw-head div{text-align:center;color:var(--mute);font-size:.7rem;padding:2px 0}
+.calw .cw-sum{display:flex;flex-direction:column;gap:2px;padding:6px 4px;color:var(--mute)}
+.calw .cw-sum .wk{color:var(--ink);font-size:.95rem}.calw .cw-sum b{color:var(--ink);font-weight:600}.calw .cw-sum .pl{margin-top:4px;color:var(--acc)}
+.calw .cal-d{min-height:132px;padding:3px;gap:4px;border:0;border-right:1px solid var(--line);border-radius:0}.calw .cal-d.today{box-shadow:inset 0 0 0 2px var(--acc)}
+.calw .cal-d.empty{min-height:0;background:color-mix(in srgb,var(--bg) 55%,transparent)}
+.calw .cal-ev.cw-card{--cc:var(--acc);display:block;padding:0;background:none;color:var(--ink);opacity:1;border-radius:6px;overflow:hidden;border:1px solid color-mix(in srgb,var(--cc) 50%,var(--line));box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer}
+.calw .cal-ev.cw-card:not(.done){cursor:grab}
+.calw .cw-card.lv1{--cc:#43a047}.calw .cw-card.lv2{--cc:#c9a000}.calw .cw-card.lv3{--cc:#ef6c00}.calw .cw-card.lv4{--cc:#d32f2f}
+.cw-hd{display:flex;align-items:center;gap:5px;padding:3px 6px;background:var(--cc);color:#fff;font-weight:600;font-size:.78rem}
+.cw-hd svg{width:13px;height:13px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cw-hd i{margin-left:auto;font-style:normal;font-weight:500}
+.cw-bd{display:flex;flex-direction:column;gap:3px;padding:4px 6px 6px;text-align:center;font-size:.72rem;background:color-mix(in srgb,var(--cc) 13%,var(--card))}
+.cw-card.plan .cw-hd{background:color-mix(in srgb,var(--cc) 32%,var(--card));color:var(--ink)}
+.cw-card.plan .cw-bd{background:var(--card)}
+.cw-st{font-weight:600}.cw-st .hr{color:#8e24aa}.cw-st .pw{color:var(--cc)}
+.cw-ld{font-weight:600}
+.cw-nm{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25;font-weight:500}
+.cw-cp{font-weight:600}.cw-cp.ok{color:var(--ok)}.cw-cp.warn{color:#ef6c00}.cw-cp.bad{color:var(--err)}
+.cw-card.missed{border-color:var(--err)}.cw-card.missed .cw-hd{background:color-mix(in srgb,var(--err) 25%,var(--card))}
+.calw .cal-mini{height:34px}.calw .cal-meta{display:none}
+.calw .cal-wd{display:none}
+
+.calw.fit{overflow:hidden}.calw.fit .cw-head{flex:none}.calw.fit .cw{flex:1 1 0;min-height:0;grid-template-rows:minmax(0,1fr)}
+.calw.fit .cal-d{min-height:0;overflow-y:auto;scrollbar-width:thin}.calw.fit .cal-ev.cw-card{flex:0 0 auto}.calw.fit .cw-sum{overflow:hidden;min-height:0}
+.calw .cw-st{display:flex;justify-content:center;gap:8px;white-space:nowrap;overflow:hidden}
+.calw .x1 .cw-nm{display:none}.calw .x2 .cw-cp{display:none}.calw .x3 .cw-st{display:none}.calw .x4 .cw-ld{display:none}.calw .x5 .cw-bd{padding:2px 5px 3px;gap:2px}.calw .x5 .cw-hd{padding:2px 5px}.calw .x5 .cal-mini{height:26px}.calw .x6 .cal-mini{height:16px}.calw .x6 .cw-bd{padding:2px 4px;gap:1px}.calw .x7 .cal-mini{display:none}.calw .x7 .cw-bd{padding:1px 4px}.calw .x8 .cw-bd{display:none}.calw .x8 .cw-hd{padding:1px 5px}.calw .x6 .cal-n,.calw .x7 .cal-n,.calw .x8 .cal-n{line-height:1}
+@media (max-width:900px){.calw{gap:6px}.calw .cw{border-top:0}.calw .cal-d{border:1px solid var(--line);border-radius:5px}.calw .cw-head{display:none}.calw .cw{grid-template-columns:1fr}.calw .cal-d.empty,.calw .cal-d:not(:has(.cal-ev)){display:none}.calw .cal-d{min-height:0}.calw .cal-wd{display:inline}.calw .cw-sum{flex-direction:row;flex-wrap:wrap;gap:2px 12px;align-items:baseline}}
+
 .tip .cal-prev{display:block;width:210px;height:46px;margin:6px 0 2px;border-radius:4px;background:var(--bg)}
 .tip .cal-prev svg{display:block;width:100%;height:100%}
 .tip b{display:block;margin-bottom:2px}
@@ -567,6 +599,11 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
   .cal-max .cal.big .cal-wd{display:inline}
   .cal.big .cal-mini{height:56px}
   .cal.big .cal-n{font-size:.8rem}
+  .cal-page .cal.big{display:block}
+  .cal-page .cal.big .cal-h,.cal-page .cal.big .cal-d.empty{display:none}
+  .cal-page .cal.big .cal-d{min-height:0;margin-bottom:6px}
+  .cal-page .cal.big .cal-d:not(:has(.cal-ev)){display:none}
+  .cal-page .cal.big .cal-wd{display:inline}
 }
 #aiBody{line-height:1.6}
 #aiBody p{margin:8px 0}
@@ -584,7 +621,9 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 .lib-grid .lib-card{margin:0;min-width:0}
 .lib-theme .theme-icon{font-size:1.15rem}
 /* comparateur de séances passées */
-html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+html.m-calp [data-block="ses"] .ses-pick,html.m-calp [data-block="ses"] .ses-lbl:not(.ses-lbl2){display:none} /* sous le calendrier, le calendrier fait office de sélecteur */
+html:not(.m-calp) #sesClose{display:none}
+html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 .run #runWkChart{margin-top:8px}.run #runWkChart:empty{display:none}.run #runWkChart svg{display:block;width:100%;height:56px;border-radius:6px;background:var(--bg)}
 #lsvg{cursor:pointer}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
@@ -628,8 +667,69 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 .cmp-leg i{display:inline-block;width:10px;height:10px;border-radius:2px}
 #cmpinfo{min-height:1.2em}
 #cmpinfo b{font-weight:600}
+
+/* ===== Look « Sport » : tableau de bord moderne, accent flamme (réglage Aspect ; décoché = look classique) ===== */
+:root[data-look="sport"]:not([data-theme="dark"]){--bg:#f1f4f8;--card:#fff;--ink:#0f1720;--mute:#566474;--line:#d5dbe3;--acc:#c93b06;--on:#fff;--top:#c93b06;--top-on:#fff}
+:root[data-look="sport"][data-theme="dark"]{--bg:#0b0f14;--card:#141a22;--ink:#f2f5f8;--mute:#8fa0b3;--line:#232b36;--acc:#ff5a1f;--on:#0b0f14;--top:#ff5a1f;--top-on:#0b0f14;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root[data-look="sport"]:not([data-theme="light"]){--bg:#0b0f14;--card:#141a22;--ink:#f2f5f8;--mute:#8fa0b3;--line:#232b36;--acc:#ff5a1f;--on:#0b0f14;--top:#ff5a1f;--top-on:#0b0f14;color-scheme:dark}}
+:root[data-look="sport"] body{background:var(--bg)}
+:root[data-look="sport"][data-theme="dark"] body{background:radial-gradient(900px 360px at 50% -8%,rgba(255,90,31,.13),transparent 65%),#0b0f14}
+@media (prefers-color-scheme:dark){:root[data-look="sport"]:not([data-theme="light"]) body{background:radial-gradient(900px 360px at 50% -8%,rgba(255,90,31,.13),transparent 65%),#0b0f14}}
+:root[data-look="sport"] h1{font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+:root[data-look="sport"] section{border-radius:16px;padding:20px}
+:root[data-look="sport"] section>h2,:root[data-look="sport"] .phead h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--mute)}
+:root[data-look="sport"] input,:root[data-look="sport"] select,:root[data-look="sport"] textarea{border-radius:12px;padding:11px 12px}
+:root[data-look="sport"] input:focus-visible,:root[data-look="sport"] select:focus-visible,:root[data-look="sport"] textarea:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+:root[data-look="sport"] button,:root[data-look="sport"] a.alt{border-radius:12px;font-weight:700}
+:root[data-look="sport"] .gbar,:root[data-look="sport"] .mode{border-radius:999px;border-color:var(--line)}
+:root[data-look="sport"] .gbar button,:root[data-look="sport"] .mode button{border-radius:999px;font-weight:600}
+:root[data-look="sport"] .hk{border-radius:16px}
+:root[data-look="sport"] .hv{font-weight:700;font-variant-numeric:tabular-nums}
+:root[data-look="sport"]{--fn:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif}
+:root[data-look="sport"] header{gap:16px 24px;padding-bottom:14px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+:root[data-look="sport"] header h1{font-family:var(--fn);font-size:1.75rem;font-weight:700}
+:root[data-look="sport"] header .gbar{margin:0}
+:root[data-look="sport"] .gbar button{padding:10px 22px;font-size:.9rem}
+:root[data-look="sport"] .hv,:root[data-look="sport"] .rbig,:root[data-look="sport"] #hzLf{font-family:var(--fn);letter-spacing:.01em}
+:root[data-look="sport"] .hl{text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+/* barre latérale (écrans larges) : logo, menus principaux en colonne, outils en bas ; en dessous de 901 px on garde la barre du haut */
+@media (min-width:901px){
+:root[data-look="sport"] main{max-width:1500px;margin:0 0 0 240px;padding:24px 28px}
+:root[data-look="sport"] header{position:fixed;left:0;top:0;bottom:0;width:240px;z-index:15;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:22px;margin:0;padding:24px 16px;border-bottom:0;border-right:1px solid var(--line);background:var(--card)}
+:root[data-look="sport"] header h1{font-size:1.4rem}
+:root[data-look="sport"] header .gbar{flex-direction:column;border-radius:16px;padding:6px;gap:4px}
+:root[data-look="sport"] header .gbar button{width:100%;text-align:left;padding:12px 16px;border-radius:12px}
+:root[data-look="sport"] header .tools{margin-top:auto;flex-wrap:wrap}
+:root[data-look="sport"] header .tools{position:relative}
+:root[data-look="sport"] header .more{position:static}
+/* menu « … » : ancré à la barre latérale (et non au petit bouton), il s'ouvre vers le haut sur toute sa largeur, sans déborder ni être coupé */
+:root[data-look="sport"] header .menu{left:0;right:0;top:auto;bottom:calc(100% + 8px);min-width:0;border-radius:14px}
+/* menu latéral sans cadre : seul l'élément actif est mis en évidence, les autres sont du simple texte */
+:root[data-look="sport"] header .gbar{border:0;background:transparent;padding:0;border-radius:0}
+:root[data-look="sport"] header .gbar button:not([aria-selected="true"]):hover,:root[data-look="sport"] header .gbar button:not([aria-selected="true"]):focus-visible{background:rgba(127,127,127,.14)}
+/* colonne des widgets plus étroite que la colonne principale, et cartes un peu plus compactes */
+:root[data-look="sport"] main{max-width:none} /* la page occupe toute la largeur : les widgets viennent se coller au bord droit */
+:root[data-look="sport"] .layout{grid-template-columns:minmax(0,1400px) clamp(300px,34%,480px);justify-content:space-between;gap:20px} /* colonne centrale : occupe la place disponible (jusqu'à 1400 px), widgets collés à droite */ /* colonne centrale : grandit jusqu'à 900 px quand la place existe ; widgets : 480 px au plus, comme avant */
+:root[data-look="sport"] aside section{padding:16px}
+/* sous-menu (Bibliothèque, Éditeur, IA…) dans la barre latérale, sous les groupes : une entrée par ligne, icône + nom */
+:root[data-look="sport"] header .mode{flex-direction:column;gap:2px;margin:0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;overflow:visible}
+:root[data-look="sport"] header .mode button,:root[data-look="sport"] header .mode button:not([aria-selected="true"]){flex:none;width:100%;justify-content:flex-start;gap:12px;padding:9px 14px;border-radius:12px;font-size:.88rem;font-weight:600;text-align:left}
+:root[data-look="sport"] header .mode button span,:root[data-look="sport"] header .mode button:not([aria-selected="true"]) span{display:inline}
+:root[data-look="sport"] header .mode button:not([aria-selected="true"]){color:var(--ink)}
+:root[data-look="sport"] header .mode button:not([aria-selected="true"]):hover,:root[data-look="sport"] header .mode button:not([aria-selected="true"]):focus-visible{background:rgba(127,127,127,.14);color:var(--acc)}
+:root[data-look="sport"] header .mode button[aria-selected="true"]{background:rgba(201,59,6,.12);background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+:root[data-look="sport"] header{overflow-y:auto}
+:root[data-look="sport"] header .sub{margin:-10px 0 0;padding:0 4px;font-size:.78rem;line-height:1.4}
+:root[data-look="sport"] main{padding-top:20px}
+}
+/* sélecteur de langue : cadre et pastilles partagent la même forme (capsule), les pastilles épousent le cadre */
+:root[data-look="sport"] .lang{border-radius:999px;padding:2px;gap:2px;overflow:visible;align-items:center}
+:root[data-look="sport"] .lang button{border-radius:999px;padding:5px 11px;line-height:1.2}
+:root[data-look="sport"] .more>summary{border-radius:12px}
+/* petits sélecteurs des en-têtes de widgets (« 2 mois », « 7 jours ») : le padding vertical du look Sport décalait le texte vers le bas */
+:root[data-look="sport"] .phead select{height:30px;padding:0 26px 0 12px;line-height:normal;font-size:.8rem}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";}catch(e){}</script>
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}</script>
 <script data-goatcounter="https://flamecadence.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -746,6 +846,9 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 </div>
 <div class="cfg-sec" data-cfgp="look" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></h3>
+<div style="padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)"><h4 style="margin:6px 0 0;font-size:.95rem" data-i="thmT"></h4>
+<label for="themesel" data-i="thmLbl"></label><select id="themesel"><option value="classic" data-i="lkClassic"></option><option value="sport" data-i="lkSport"></option></select>
+<div class="hint" data-i="thmHint"></div></div>
 <label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
 <div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
 <div class="hint" data-i="fontHint"></div>
@@ -849,7 +952,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <ol><li data-i="wlc1"></li><li data-i="wlc2"></li><li data-i="wlc3"></li></ol>
 <div class="actions"><button type="button" id="wlcConn" data-i="wlcConn"></button><button type="button" class="alt" id="wlcTour" data-i="wlcTour"></button><button type="button" class="alt" id="wlcX" data-i="wlcLater"></button></div>
 </section>
-<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button><button type="button" role="tab" data-g="run" data-i="grpRun" hidden style="display:none"></button></div>
+<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen" data-i="grpGen"></button><button type="button" role="tab" data-g="ana" data-i="grpAna"></button><button type="button" role="tab" data-g="cal" data-i="grpCal"></button><button type="button" role="tab" data-g="run" data-i="grpRun" hidden style="display:none"></button></div>
 <div class="mode" role="tablist" data-ia="aria-label:modeLbl">
 <button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
 <button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
@@ -858,7 +961,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 <button type="button" role="tab" data-m="act"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="tabAct"></span></button>
 <button type="button" role="tab" data-m="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="tabPlan"></span></button>
 <button type="button" role="tab" data-m="shift"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5"/><path d="M12 7l5 5-5 5"/></svg><span data-i="tabShift"></span></button>
-<button type="button" role="tab" data-m="ses"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg><span data-i="tabSes"></span></button>
+<button type="button" role="tab" data-m="calp"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i="grpCal"></span></button>
 <button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
 <button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
 <button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
@@ -1035,17 +1138,6 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 </section>
 
 <!-- Section Comparateur de séances -->
-<section data-block="ses" hidden>
-<div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button></div>
-<div class="ses-pick">
-<div class="ses-lbl" data-i="sesPick"></div>
-<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button><button class="alt small" id="sesToday" type="button" data-i="today"></button></div>
-<div id="sesCal"></div>
-</div>
-<select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
-<div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
-<div id="sesBox"></div>
-</section>
 <section data-block="exp" hidden>
 <div class="phead"><h2 data-i="expT"></h2></div>
 <p class="hint" data-i="expDesc"></p>
@@ -1065,6 +1157,28 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 </div>
 <div class="actions" style="align-items:center;gap:8px;margin:10px 0"><button type="button" id="expGo" data-i="expGo"></button><button type="button" class="alt" id="expStop" data-i="stopGen" hidden></button></div>
 <div class="hint" id="expMsg" role="status"></div>
+</section>
+<section data-block="calp" class="cal-page" hidden>
+<div class="phead"><h2 data-i="calT"></h2>
+<button class="alt small icon" id="calprev2" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+<span id="calmonth2" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
+<button class="alt small icon" id="calnext2" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+<button class="alt small" id="caltoday2" type="button" data-i="today"></button>
+<button class="alt small icon" id="rcal2" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+</div>
+<div id="calbox2"></div>
+<div id="calsum2" class="calsum"></div>
+</section>
+<section data-block="ses" hidden>
+<div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button><button class="alt small" id="sesClose" type="button" data-ia="title:close;aria-label:close">✕</button></div>
+<div class="ses-pick">
+<div class="ses-lbl" data-i="sesPick"></div>
+<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button><button class="alt small" id="sesToday" type="button" data-i="today"></button></div>
+<div id="sesCal"></div>
+</div>
+<select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
+<div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
+<div id="sesBox"></div>
 </section>
 <section data-block="per" hidden>
 <div class="phead"><h2 data-i="perT"></h2><button class="alt small" id="perRef" type="button" data-i="refresh"></button></div>
@@ -1306,7 +1420,7 @@ html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.5.0"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.6.4"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
@@ -1377,8 +1491,9 @@ calEdSport:["Only cycling workouts can be opened in the manual editor.","Seules 
 calEdCfm:["Replace the current content of the manual editor with this workout?","Remplacer le contenu actuel de l'éditeur manuel par cette séance ?"],
 secPlayer:["Player","Lecteur"], sesExp:["Export (.fit)","Exporter (.fit)"], sesExpT:["Download this activity as a FIT file, readable by Garmin, Strava, TrainingPeaks, Zwift…","Télécharger cette activité au format FIT, lisible par Garmin, Strava, TrainingPeaks, Zwift…"], sesExpErr:["Export unavailable (no file for this activity, e.g. synced from Strava)","Export impossible (pas de fichier pour cette activité, ex. synchronisée depuis Strava)"], hSlope:["Drag up or down to change the slope (the power is only a guide)","Glisse vers le haut ou le bas pour changer la pente (la puissance n'est qu'un guide)"], pmMap:["Show a satellite map of the route on the animation screen (needs an internet connection)","Afficher une carte satellite du parcours sur l'écran d'animation (connexion internet requise)"], mapVirt:["Virtual route","Parcours virtuel"], runGuide:["Effort guide","Puissance guide"], runOnG:["In the guide","Dans le guide"], runHiG:["Above guide","Au-dessus du guide"], runLoG:["Below guide","Sous le guide"], edGuideT:["Slope step: the trainer follows the slope, not a power target. This intensity is only an effort guide (zone, load, estimated duration).","Étape en pente : le home trainer suit la pente, pas une puissance cible. Cette intensité n'est qu'un guide d'effort (zone, charge, durée estimée)."], riderKgL:["Rider weight (kg) for slope sections","Poids du coureur (kg) pour les tronçons en pente"], riderKgH:["Used to compute your speed, hence the distance covered, on slope steps (8 kg bike added). Leave empty to use the weight from intervals.icu, or 75 kg. Set the same weight in your trainer's app so the resistance matches.","Sert à calculer ta vitesse, donc la distance parcourue, sur les étapes en pente (vélo de 8 kg ajouté). Laisse vide pour utiliser le poids d'intervals.icu, ou 75 kg. Renseigne le même poids dans l'appli de ton home trainer pour que la résistance corresponde."], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 runMxDist:["Distance (km)","Distance (km)"], tabPer:["Periods","Périodes"], perT:["Training by week and month","Entraînement par semaine et par mois"], perWeeks:["Weeks","Semaines"], perMonths:["Months","Mois"], perCol:["Period","Période"], perSess:["Sessions","Séances"], perTime:["Time","Durée"], perDist:["Distance","Distance"], perLoadC:["Load","Charge"], perPlan:["Planned","Prévu"], perTotal:["Total","Total"], perLegDone:["Load done","Charge réalisée"], perLegPlan:["Load still planned","Charge encore prévue"], perNow:["now","en cours"], perNone:["No activity in these periods.","Aucune activité sur ces périodes."], perLoading:["Loading…","Chargement…"],
+grpCal:["Calendar","Calendrier"], calWeek:["Week {0}","Semaine {0}"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
-fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
+fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], thmT:["Theme","Thème"], thmLbl:["Appearance theme","Thème d'apparence"], lkClassic:["Classic","Classique"], lkSport:["Sport (dashboard, flame accent)","Sport (tableau de bord, accent flamme)"], thmHint:["Changes colors, shapes and layout. Light or dark stays on the 🌓 button. The Sport theme loads one font (Barlow Condensed) from Google Fonts.","Change les couleurs, les formes et la mise en page. Clair ou sombre reste sur le bouton 🌓. Le thème Sport charge une police (Barlow Condensed) depuis Google Fonts."], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
 pgClimb:["Climbing (sustained efforts)","Grimpeur (efforts soutenus)"], pgCrit:["Criterium / race punch","Critérium / course (relances)"], pgMaint:["Maintain fitness (light load)","Entretien (charge légère)"], pgReturn:["Return after a break","Reprise après une pause"],
 docTitle:["FlameCadence — Fire up your next workout","FlameCadence — Allume ta prochaine séance"],
@@ -1773,6 +1888,8 @@ $("impjsonin").onchange = () => {
     if(j.weatherLocation && isFinite(j.weatherLocation.lat) && isFinite(j.weatherLocation.lon)){ store.set("si_wxloc", JSON.stringify({name: String(j.weatherLocation.name || "").slice(0, 80), lat: +j.weatherLocation.lat, lon: +j.weatherLocation.lon})); store.set("si_wxcache", ""); wxCurText(); loadWx(true); n++; }
     if(typeof j.font === "string" && FONTS.some(f => f[0] === j.font)){ font = j.font; store.set("si_font", font); fontUI(); n++; }
     if(typeof j.square === "boolean"){ store.set("si_square", j.square ? "1" : "0"); applySquare(); n++; }
+    if(typeof j.theme === "string" && /^[a-z]+$/.test(j.theme)){ store.set("si_look", j.theme); applyLook(); n++; }
+    else if(typeof j.sport === "boolean"){ store.set("si_look", j.sport ? "sport" : "classic"); applyLook(); n++; }
     if(!n) return jnote("jsonEmpty", "err");
     provUI(); badges();
     jnote("jsonImpOk", "ok", f.name);
@@ -1782,7 +1899,7 @@ $("expjson").onclick = () => {
   const o = {}; FIELDS.forEach(k => o[k] = $(k).value.trim());
   const stArr = stars(); if(stArr.length) o.starred = stArr;
   o.widgetOrder = WORDER.slice(); // ordre des widgets de la colonne de droite
-  o.font = font; o.square = store.get("si_square") === "1";
+  o.font = font; o.square = store.get("si_square") === "1"; o.theme = lookId();
   if(wxLoc()) o.weatherLocation = wxLoc();
   // listes de modèles disponibles par fournisseur (chargées via « Charger la liste »)
   if(modelList.length) o.geminiModels = modelList;
@@ -5286,7 +5403,7 @@ function calMiniLoad(box){
   const els = Array.from(box.querySelectorAll(".cal-mini[data-aid]")); if(!els.length) return;
   const fill = el => {
     if(el.dataset.ld) return; el.dataset.ld = "1";
-    actStreams(el.dataset.aid).then(sw => { const ev = (CAL.acts || []).find(x => String(x.id) === el.dataset.aid); const svg = actPrevSvg(sw) || actFallbackSvg(ev, sw); if(svg) el.innerHTML = svg; else el.remove(); });
+    actStreams(el.dataset.aid).then(sw => { const ev = (CAL.acts || []).find(x => String(x.id) === el.dataset.aid); const svg = actPrevSvg(sw) || actFallbackSvg(ev, sw); if(svg) el.innerHTML = svg; else el.remove(); calFitSoon(); });
   };
   if(!("IntersectionObserver" in window)){ els.forEach(fill); return; }
   const io = CAL.io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ io.unobserve(en.target); fill(en.target); } }), {rootMargin: "300px"});
@@ -5436,7 +5553,7 @@ function bindCalTips(box, getEv){
   if(box._tipped) return; box._tipped = true;
   box.addEventListener("pointermove", e => {
     const tip = getTip(), el = e.target.closest ? e.target.closest(".cal-ev") : null;
-    if(!el || !box.contains(el) || box.closest(".cal-max")){ tip.hidden = true; return; }
+    if(!el || !box.contains(el) || box.closest(".cal-max, .cal-page")){ tip.hidden = true; return; }
     if(tip.dataset.eid !== el.dataset.eid){
       tip.dataset.eid = el.dataset.eid;
       const isAct = el.dataset.eid[0] === "a";
@@ -5539,7 +5656,82 @@ async function calPrefetch(m){
   const worker = async () => { while(i < ids.length && live()){ await idle(); if(!live()) return; const id = ids[i++]; if(STREAM_CACHE[id] === undefined) await actStreams(id).catch(() => {}); } };
   await Promise.all([worker(), worker()]);
 }
-function renderCal(){
+function renderCal(){ renderCalW(); renderCalP(); }
+// ---------- Calendrier de la page « Calendrier » : lignes de semaines avec résumé, cartes de séances teintées (style intervals.icu) ----------
+function calAllEv(){ const c = CAL_CACHE[CAL.m], raw = c && c.ev ? c.ev.filter(e => !e.paired_activity_id) : []; return raw.length ? raw : (CAL.ev || []); } // séances planifiées non réalisées, y compris les passées (manquées)
+const CAL_SVG = {bike: '<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l3 8"/>', run: '<circle cx="14" cy="4.5" r="1.8"/><path d="M12 9l-3 3-3 1M12 9l3 3 2 5M12 9l1 5-3 5"/>', other: '<circle cx="12" cy="12" r="4"/>'};
+const calIcon = ty => `<svg viewBox="0 0 24 24" aria-hidden="true">${/Ride/.test(ty || "") ? CAL_SVG.bike : /Run|Walk|Hike/.test(ty || "") ? CAL_SVG.run : CAL_SVG.other}</svg>`;
+function isoWeek(d){ const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), dn = x.getUTCDay() || 7; x.setUTCDate(x.getUTCDate() + 4 - dn); return Math.ceil(((x - Date.UTC(x.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); }
+function calCardDone(a){
+  const npi = calNP(a, true), lv = npi ? npi.lv : 0, hr = Math.round(a.average_heartrate || 0), w = Math.round(a.icu_weighted_avg_watts || a.icu_average_watts || a.average_watts || 0), c = a.compliance;
+  const st = [hr ? `<span class="hr">${hr}bpm</span>` : "", w ? `<span class="pw">${w}w</span>` : ""].filter(Boolean).join(" ");
+  const cp = typeof c === "number" && isFinite(c) ? `<div class="cw-cp ${c >= 85 && c <= 120 ? "ok" : c > 0 ? "warn" : "bad"}">${c > 0 ? (c >= 85 && c <= 120 ? "\u2713" : "\u25CF") : "\u2715"} ${Math.round(c)}%</div>` : "";
+  return `<div class="cal-ev done cw-card lv${lv}" data-eid="a${esc(String(a.id))}" title="${esc(a.name || a.type || "")}"><div class="cw-hd">${calIcon(a.type)}<span>${a.moving_time ? hm(a.moving_time) : ""}</span>${a.distance ? `<i>${Math.round(a.distance / 1000)} km</i>` : ""}</div><div class="cw-bd">${st ? `<div class="cw-st">${st}</div>` : ""}${a.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(a.icu_training_load)}</div>` : ""}<div class="cal-mini" data-aid="${esc(String(a.id))}"></div><div class="cw-nm">${esc(a.name || a.type || "--")}</div>${cp}</div></div>`;
+}
+function calCardPlan(e, missed){
+  const sport = e.type || "Ride", ftp = ftpFor(sport); let steps = []; try{ steps = plannedSteps(e, ftp); }catch(_){}
+  const svg = steps.length ? stepsSvg(steps) : "", k = steps.length ? stepsStats(steps) : null, dur = k ? k.total : (e.moving_time || (e.workout_doc && e.workout_doc.duration) || 0), npi = calNP(e, false), lv = npi ? npi.lv : 0;
+  return `<div class="cal-ev cw-card plan lv${lv}${missed ? " missed" : ""}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><div class="cw-hd">${calIcon(sport)}<span>${dur ? hm(dur) : ""}</span></div><div class="cw-bd">${e.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(e.icu_training_load)}</div>` : ""}${svg ? `<div class="cal-mini">${svg}</div>` : ""}<div class="cw-nm">${esc(e.name || "--")}</div>${missed ? `<div class="cw-cp bad">\u2715 0%</div>` : ""}</div></div>`;
+}
+function calWeeksHtml(off, evList, actList){
+  const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date()), dim = new Date(y, m + 1, 0).getDate();
+  const cur = new Date(y, m, 1, 12); cur.setDate(1 - ((cur.getDay() + 6) % 7)); const last = new Date(y, m, dim, 12);
+  const by = {}, byA = {}, byStart = (a, b) => (a.start_date_local || "") < (b.start_date_local || "") ? -1 : 1;
+  (evList || []).forEach(e => { const k = (e.start_date_local || "").slice(0, 10); (by[k] = by[k] || []).push(e); });
+  (actList || []).forEach(a => { const k = (a.start_date_local || "").slice(0, 10); (byA[k] = byA[k] || []).push(a); });
+  const heads = lang === "fr" ? ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"] : ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  let html = `<div class="calw"><div class="cw-head"><div></div>${heads.map(h => `<div>${esc(h)}</div>`).join("")}</div>`, n = 0;
+  while(cur <= last){
+    const wk = isoWeek(cur); let sec = 0, ld = 0, km = 0, ns = 0, psec = 0, pld = 0, pn = 0, cells = "";
+    for(let i = 0; i < 7; i++){
+      const k = iso(cur), day = cur.getDate();
+      if(cur.getMonth() !== m || cur.getFullYear() !== y) cells += `<div class="cal-d empty"></div>`;
+      else{
+        const evs = (by[k] || []).slice().sort(byStart), acts = (byA[k] || []).slice().sort(byStart); n += evs.length + acts.length;
+        acts.forEach(a => { sec += a.moving_time || 0; ld += a.icu_training_load || 0; km += (a.distance || 0) / 1000; ns++; });
+        evs.forEach(e => { if(k >= today){ pn++; pld += e.icu_training_load || 0; psec += e.moving_time || (e.workout_doc && e.workout_doc.duration) || 0; } });
+        cells += `<div class="cal-d${k === today ? " today" : ""}" data-date="${k}"><span class="cal-n">${day === 1 ? esc(cur.toLocaleDateString(loc(), {day: "numeric", month: "short"})) : day}<span class="cal-wd"> \u00b7 ${esc(cur.toLocaleDateString(loc(), {weekday: "short"}))}</span></span>` + evs.map(e => calCardPlan(e, k < today)).join("") + acts.map(calCardDone).join("") + `</div>`;
+      }
+      cur.setDate(cur.getDate() + 1);
+    }
+    html += `<div class="cw"><div class="cw-sum"><b class="wk">${esc(t("calWeek", wk))}</b>` +
+      (ns ? `<span><b>${hm(sec)}</b></span><span>${esc(t("perLoadC"))} <b>${Math.round(ld)}</b></span>${km >= 1 ? `<span>${Math.round(km)} km</span>` : ""}<span>${esc(ns === 1 ? t("calSess1") : t("calSessN", ns))}</span>` : "") +
+      (pn ? `<span class="pl">${esc(t("perPlan"))} <b>${pn}</b>${psec ? " \u00b7 " + hm(psec) : ""}${pld ? " \u00b7 " + Math.round(pld) : ""}</span>` : "") + `</div>${cells}</div>`;
+  }
+  return {html: html + `</div>`, n};
+}
+function calFitP(){ // ajuste la hauteur du calendrier de la page à la fenêtre : tout le mois est visible, les cartes se compactent si les lignes sont courtes
+  const box = $("calbox2"), w = box && box.querySelector(".calw"); if(!w || document.querySelector('[data-block="calp"]').hidden) return;
+  if(innerWidth <= 900){ w.style.height = ""; w.classList.remove("fit"); w.querySelectorAll(".cal-d").forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8")); return; }
+  const top = box.getBoundingClientRect().top + scrollY, sum = ($("calsum2").offsetHeight || 0) + 22, h = Math.max(360, Math.round(innerHeight - top - sum - 10));
+  w.classList.add("fit"); w.style.height = h + "px";
+  // une carte ne déborde jamais de sa case : on retire d'abord le nom, puis la conformité, FC / puissance, la charge ; le graphique est conservé
+  if(!box.offsetParent || w.clientHeight < 100) return; // calendrier pas (encore) affiché : toute mesure serait nulle et compacterait les cartes au maximum
+  w.querySelectorAll(".cal-d:not(.empty)").forEach(c => {
+    if(!c.clientHeight) return;
+    c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8");
+    const over = () => { if(c.scrollHeight > c.clientHeight + 1) return true; const cb = c.getBoundingClientRect().bottom; let b = 0; c.querySelectorAll(":scope>.cal-ev").forEach(e => { b = Math.max(b, e.getBoundingClientRect().bottom); }); return b > 0 && b > cb - 2; };
+    for(let l = 1; l <= 8 && over(); l++) c.classList.add("x" + l);
+  });
+}
+window.addEventListener("resize", () => { try{ calFitP(); }catch(_){} });
+let CALFIT_T = 0;
+function calFitSoon(){ clearTimeout(CALFIT_T); CALFIT_T = setTimeout(() => { try{ calFitP(); }catch(_){} }, 200); } // regroupe les demandes : les vignettes et les polices arrivent en différé
+try{ if(document.fonts && document.fonts.ready) document.fonts.ready.then(calFitSoon); }catch(_){}
+function calFitWatch(){ const box = $("calbox2"); if(!box || box._fw || !window.ResizeObserver) return; box._fw = new ResizeObserver(calFitSoon); box._fw.observe(box); }
+function renderCalP(){ // grand calendrier de la page « Calendrier » : mêmes données que le widget (CAL), toujours en vue agrandie
+  const box = $("calbox2"); if(!box || document.querySelector('[data-block="calp"]').hidden) return;
+  if(!KEY()){ box.textContent = ""; $("calmonth2").textContent = ""; $("calsum2").textContent = ""; return; }
+  calLabel($("calmonth2"), CAL.m);
+  const r = calWeeksHtml(CAL.m, calAllEv(), CAL.acts || []);
+  box.innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
+  bindCalChips(box);
+  calMiniLoad(box);
+  renderCalSum($("calsum2"));
+  calFitP(); calFitSoon(); calFitWatch();
+  updateIcuLinks();
+}
+function renderCalW(){
   const box = $("calbox"); if(!box) return;
   if(!KEY()){ box.textContent = ""; $("calmonth").textContent = ""; return; }
   calLabel($("calmonth"), CAL.m);
@@ -5552,8 +5744,8 @@ function renderCal(){
   updateIcuLinks();
 }
 // Totaux du mois affiché : réalisé (activités) et reste à faire (séances planifiées à venir, hors jours déjà faits) ; un seul trait, pas de requête en plus
-function renderCalSum(){
-  const el = $("calsum"); if(!el) return;
+function renderCalSum(el = $("calsum")){
+  if(!el) return;
   if(!KEY()){ el.textContent = ""; return; }
   const sum = (L, f) => L.reduce((x, e) => x + (f(e) || 0), 0), A = CAL.acts || [], E = CAL.ev || [];
   const seg = (lbl, L, dist) => {
@@ -5568,6 +5760,22 @@ function renderCalSum(){
 $("calprev").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
 $("calnext").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
 $("rcal").onclick = () => loadCal(true).catch(() => {});
+$("calprev2").onclick = () => { CAL.m--; loadCal().catch(() => {}); };
+$("calnext2").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
+// molette sur le calendrier de la page : mois précédent / suivant (une case qui défile elle-même garde la molette ; Ctrl + molette = zoom, inchangé)
+{ let acc = 0, lock = 0, last = 0;
+  $("calbox2").addEventListener("wheel", e => {
+    if(e.ctrlKey || e.metaKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    const c = e.target.closest && e.target.closest(".cal-d");
+    if(c && c.scrollHeight > c.clientHeight + 1 && (e.deltaY > 0 ? c.scrollTop + c.clientHeight < c.scrollHeight - 1 : c.scrollTop > 0)) return;
+    e.preventDefault();
+    const now = Date.now(); if(now - last > 250) acc = 0; last = now;
+    if(now - lock < 500) return; // un cran de molette = un mois, même avec l'inertie du pavé tactile
+    acc += e.deltaY; if(Math.abs(acc) < 40) return;
+    const d = acc > 0 ? 1 : -1; acc = 0; lock = now; CAL.m += d; loadCal().catch(() => {});
+  }, {passive: false}); }
+$("rcal2").onclick = () => loadCal(true).catch(() => {});
+$("caltoday2").onclick = () => { CAL.m = 0; loadCal().catch(() => {}); setTimeout(() => { const td = document.querySelector("#calbox2 .cal-d.today"); if(td) td.scrollIntoView({block: "center", behavior: "smooth"}); }, 80); };
 $("caltoday").onclick = () => { CAL.m = 0; loadCal().catch(() => {}); if(CAL.big) setTimeout(() => { const td = document.querySelector("#calbox .cal-d.today"); if(td) td.scrollIntoView({block: "center", behavior: "smooth"}); }, 80); };
 const CAL_ICON = {
   max: '<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>',
@@ -5588,9 +5796,9 @@ function setCalMax(on){
 }
 $("calmax").onclick = () => setCalMax(!CAL.big);
 // glisser une séance vers le bord gauche / droit du calendrier (ou sur les flèches ‹ ›) change de mois, pour déplacer une séance d'un mois à l'autre
-(() => {
-  const sec = document.querySelector('[data-block="cal"]'), box = $("calbox"); let timer = null, dir = 0, last = 0;
-  const mark = d => { box.classList.toggle("nav-l", d < 0); box.classList.toggle("nav-r", d > 0); $("calprev").classList.toggle("dragnav", d < 0); $("calnext").classList.toggle("dragnav", d > 0); };
+function calEdgeNav(sec, box, prevB, nextB){
+  let timer = null, dir = 0, last = 0;
+  const mark = d => { box.classList.toggle("nav-l", d < 0); box.classList.toggle("nav-r", d > 0); prevB.classList.toggle("dragnav", d < 0); nextB.classList.toggle("dragnav", d > 0); };
   const stop = () => { clearTimeout(timer); timer = null; dir = 0; mark(0); };
   const arm = d => {
     if(dir === d && timer) return; stop(); dir = d; mark(d);
@@ -5599,20 +5807,22 @@ $("calmax").onclick = () => setCalMax(!CAL.big);
   sec.addEventListener("dragover", e => {
     if(!CALDRAG.ev) return; last = Date.now();
     const r = box.getBoundingClientRect(), z = Math.min(90, r.width * .12);
-    const d = e.target.closest("#calprev") ? -1 : e.target.closest("#calnext") ? 1 : (e.clientY >= r.top && e.clientY <= r.bottom ? (e.clientX < r.left + z ? -1 : e.clientX > r.right - z ? 1 : 0) : 0);
+    const d = e.target.closest("#" + prevB.id) ? -1 : e.target.closest("#" + nextB.id) ? 1 : (e.clientY >= r.top && e.clientY <= r.bottom ? (e.clientX < r.left + z ? -1 : e.clientX > r.right - z ? 1 : 0) : 0);
     if(d) arm(d); else stop();
   });
   ["drop", "dragend"].forEach(n => document.addEventListener(n, () => { stop(); if(n === "dragend") CALDRAG.ev = null; }, true));
-})();
+}
+calEdgeNav(document.querySelector('[data-block="cal"]'), $("calbox"), $("calprev"), $("calnext"));
+calEdgeNav(document.querySelector('[data-block="calp"]'), $("calbox2"), $("calprev2"), $("calnext2"));
 document.addEventListener("keydown", e => { if(e.key === "Escape" && CAL.big && !document.querySelector("dialog[open]")) setCalMax(false); });
 // clic sur un jour vide : ouvre l'éditeur manuel avec cette date
-setupCalBox($("calbox"), () => CAL.ev, () => loadCal(true).catch(() => {}), k => {
+[$("calbox"), $("calbox2")].forEach(bx => setupCalBox(bx, bx.id === "calbox2" ? calAllEv : () => CAL.ev, () => loadCal(true).catch(() => {}), k => {
   if(CAL.big) setCalMax(false);
   mode = "edit"; store.set("si_mode", mode); applyMode();
   $("date").value = k; refreshDateBtn();
   const ed = document.querySelector('[data-block="edit"]');
   if(ed) ed.scrollIntoView({behavior: "smooth", block: "start"});
-});
+}));
 // sélecteur de date (popup)
 let DT = "date"; // champ ciblé par le popup calendrier : "date" (séance) ou "pstart" (début du plan)
 function refreshDateBtn(){
@@ -6232,19 +6442,19 @@ function edFill(){
 }
 $("edfillb").onclick = edFill;
 // clic sur une séance planifiée du calendrier : ouverture dans l'éditeur manuel
-$("calbox").addEventListener("click", e => {
+[$("calbox"), $("calbox2")].forEach(bx => bx.addEventListener("click", e => {
   if(e.target.closest(".cal-x")) return;
   const el = e.target.closest(".cal-ev:not(.done)"); if(!el) return;
-  const ev = (CAL.ev || []).find(v => String(v.id) === el.dataset.eid); if(ev) calEdit(ev);
-});
+  const ev = calAllEv().find(v => String(v.id) === el.dataset.eid); if(ev) calEdit(ev);
+}));
 // clic sur une séance réalisée du calendrier : ouverture dans l'analyse d'une séance (tous les sports) ;
 // la reconstruction de la séance se fait depuis un lien de l'analyse (vélo uniquement)
-$("calbox").addEventListener("click", e => {
+[$("calbox"), $("calbox2")].forEach(bx => bx.addEventListener("click", e => {
   if(e.target.closest(".cal-x")) return;
   const el = e.target.closest(".cal-ev.done"); if(!el) return;
   const a = (CAL.acts || []).find(v => "a" + v.id === el.dataset.eid); if(!a) return;
   sesOpenAct(a);
-});
+}));
 
 // ---------- Constructeur de plan d'entraînement ----------
 // Génère un plan à partir de la bibliothèque : jours + séances/semaine + durée + objectif + date de début,
@@ -7524,7 +7734,9 @@ async function runPair(kind){
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "lib"; // première visite : la bibliothèque fonctionne sans aucune clé
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["ses", "per", "cmp", "exp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.run.includes(mode) ? "run" : "gen";
+if(mode === "ses") mode = "calp"; // l'analyse d'une séance s'ouvre maintenant sous le calendrier (plus d'onglet dédié)
+let sesUnder = false; // analyse de séance affichée sous le calendrier (après un clic sur une séance réalisée)
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["per", "cmp", "exp"], cal: ["calp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.cal.includes(mode) ? "cal" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
@@ -7678,7 +7890,8 @@ function applyMode(){
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="exp"]').hidden = mode !== "exp";
   document.querySelector('[data-block="per"]').hidden = mode !== "per"; if(mode === "per") perLoad();
-  document.querySelector('[data-block="ses"]').hidden = mode !== "ses"; if(mode === "ses") sesInit();
+  document.querySelector('[data-block="calp"]').hidden = mode !== "calp"; // le rendu (et l'ajustement à la fenêtre) se fait en fin de fonction, une fois les autres blocs masqués
+  if(mode !== "calp") sesUnder = false; { const sv = mode === "calp" && sesUnder; document.querySelector('[data-block="ses"]').hidden = !sv; if(sv) sesInit(); } // l'analyse n'apparaît que sous le calendrier, une fois une séance réalisée cliquée
   document.querySelector('[data-block="plan"]').hidden = mode !== "plan";
   document.querySelector('[data-block="shift"]').hidden = mode !== "shift"; if(mode === "shift"){ if($("shTabs").querySelector('[data-sh="bulk"]').getAttribute("aria-selected") === "true") shiftPreview(); }
   document.querySelector('[data-block="run"]').hidden = mode !== "run"; if(typeof runOn === "function") runOn(mode === "run"); // le lecteur ne tourne que sur son onglet
@@ -7692,7 +7905,9 @@ function applyMode(){
   document.documentElement.classList.toggle("m-exp", mode === "exp");
   document.documentElement.classList.toggle("m-plan", mode === "plan");
   document.documentElement.classList.toggle("m-run", mode === "run");
+  document.documentElement.classList.toggle("m-calp", mode === "calp");
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
+  if(mode === "calp"){ renderCalP(); loadCal().catch(() => {}); requestAnimationFrame(() => { try{ calFitP(); }catch(_){} }); } // après le masquage des autres blocs (sinon la hauteur est mesurée sous la page précédente) ; 2e passage une fois la mise en page stabilisée
 }
 document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => {
   b.onclick = () => { mode = b.dataset.m; store.set("si_mode", mode); applyMode(); };
@@ -8047,12 +8262,16 @@ async function sesOpenAct(a){
   const d = new Date((a.start_date_local || "").slice(0, 10) + "T12:00:00");
   SES.m = new Date(d.getFullYear(), d.getMonth(), 1); // défini avant applyMode : sesInit() ne recharge alors pas le mois courant
   store.set("si_sesid", String(a.id));
-  mode = "ses"; store.set("si_mode", mode); applyMode();
+  const now = new Date(), off = (d.getFullYear() - now.getFullYear()) * 12 + d.getMonth() - now.getMonth();
+  sesUnder = true;
+  if(mode === "calp" && CAL.m === off) document.querySelector('[data-block="ses"]').hidden = false; // déjà sur le bon mois : le calendrier n'est pas redessiné
+  else{ CAL.m = off; mode = "calp"; store.set("si_mode", mode); applyMode(); }
   const toBox = () => { const l = document.querySelector('[data-block="ses"] .ses-lbl2'); if(l) l.scrollIntoView({behavior: "smooth", block: "start"}); };
   toBox();
   await sesMonth(true);
   toBox(); setTimeout(toBox, 400); // le détail de la séance est ciblé, pas le calendrier
 }
+$("sesClose").onclick = () => { sesUnder = false; document.querySelector('[data-block="ses"]').hidden = true; scrollTo({top: 0, behavior: "smooth"}); };
 // lien « Reconstruire cette séance » de l'analyse : reconstruction dans l'aperçu (onglet « Depuis une activité »)
 $("sesBox").addEventListener("click", async e => {
   const ai = e.target.closest && e.target.closest("#sesAi"); if(ai){ const x = SES.ai; if(x) analyzeAct(x.a, x.w, x.hr, ai); return; }
@@ -8267,7 +8486,7 @@ function applyLang(){
   document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === lang)));
   applyTheme(); fontUI(); calEdUI(); try{ feelUI(); }catch(e){} try{ musUI(); }catch(e){} // le texte du mode Auto suit la langue
   setLinks(); fillFtp(); profText(); wxCurText(); renderWx(); cacheTick(0); badges(); refreshDateBtn(); renderChart(); renderBest(); renderLoad(); renderZon(); renderHeat(); renderVo2(); renderLast(); renderNext(); renderFit(); renderCal(); edRender(); renderLibrary(); renderActs(); planDays(); planRender(); applyMode(); updateIcuLinks(); if(RUN){ runBtUI(); runUI(); }
-  if(mode === "ses" && SES.m){ // « Séance seule » : mois, calendrier et tableaux suivent la langue
+  if((mode === "ses" || (mode === "calp" && sesUnder)) && SES.m){ // analyse d'une séance : mois, calendrier et tableaux suivent la langue
     try{ $("sesMT").textContent = SES.m.toLocaleDateString(loc(), {month: "long", year: "numeric"}); if(SES.list.length) sesGrid(++SES.mt); if($("sesSel").value) sesShow(); }catch(e){}
   }
   if(MSG) say(MSG.k, MSG.cls, ...MSG.a);
@@ -8275,6 +8494,27 @@ function applyLang(){
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 function applySquare(){ const on = store.get("si_square") === "1"; document.documentElement.toggleAttribute("data-square", on); const c = $("sqCorners"); if(c) c.checked = on; }
 $("sqCorners").onchange = e => { store.set("si_square", e.target.checked ? "1" : "0"); applySquare(); };
+// thèmes d'aspect : « classic » = aucun attribut ; chaque autre thème = un bloc CSS :root[data-look="id"] + une option dans #themesel + ses textes (lk…). nav : la barre Générer/Analyser passe dans l'en-tête ; font : police Google chargée seulement avec ce thème
+const LOOKS = {sport: {nav: true, font: "Barlow+Condensed:wght@600;700"}};
+const MODE_HOME = (() => { const m = document.querySelector(".layout .mode:not(.cfg-tabs)"); return {m, p: m && m.parentNode, n: m && m.nextSibling}; })(); // emplacement d'origine du sous-menu
+const SUB_HOME = (() => { const m = document.querySelector("p.sub"); return {m, p: m && m.parentNode, n: m && m.nextSibling}; })(); // emplacement d'origine du slogan
+const GRP_HOME = {p: $("grp").parentNode, n: MODE_HOME.m || $("grp").nextSibling}; // emplacement d'origine de la barre Générer / Analyser
+function lookId(){ const v = store.get("si_look"); return v === "0" || v === "classic" ? "classic" : /^[a-z]+$/.test(v || "") ? v : "sport"; }
+function applyLook(){
+  const id = lookId(), L = LOOKS[id] || {}, r = document.documentElement, g = $("grp"), h = document.querySelector("header");
+  if(id === "classic") delete r.dataset.look; else r.dataset.look = id;
+  if(L.font && !document.getElementById("fl-look-" + id)){ const l = document.createElement("link"); l.id = "fl-look-" + id; l.rel = "stylesheet"; l.href = "https://fonts.googleapis.com/css2?family=" + L.font + "&display=swap"; document.head.appendChild(l); }
+  const mm = MODE_HOME.m, side = !!L.nav && matchMedia("(min-width:901px)").matches; // sous-menu : dans la barre latérale (écran large), sinon à sa place d'origine
+  const sb = SUB_HOME.m; if(sb && sb.parentNode === h) SUB_HOME.p.insertBefore(sb, SUB_HOME.n); // slogan : sous le logo dans la barre latérale, sinon à sa place d'origine
+  if(mm && mm.parentNode === h) MODE_HOME.p.insertBefore(mm, MODE_HOME.n);
+  if(g && h){ if(L.nav){ if(g.parentNode !== h) h.insertBefore(g, h.querySelector(".tools")); } else if(g.parentNode === h) GRP_HOME.p.insertBefore(g, GRP_HOME.n); }
+  if(mm && h && side) h.insertBefore(mm, g.nextSibling);
+  if(sb && h && side) h.insertBefore(sb, h.querySelector(".brand").nextSibling);
+  const s = $("themesel"); if(s) s.value = id;
+}
+$("themesel").onchange = e => { store.set("si_look", e.target.value); applyLook(); };
+matchMedia("(min-width:901px)").addEventListener("change", () => applyLook()); // le sous-menu change d'emplacement quand on passe sous / sur 901 px
+applyLook();
 applySquare();
 $("fontsel").onchange = e => { font = e.target.value; store.set("si_font", font); applyFont(); };
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
@@ -8289,7 +8529,7 @@ const TOUR_STEPS = [
   {k: 0},
   {k: 11, sel: ["#open"]},
   {k: 13, sel: ["#grp"]},
-  {k: 1, sel: [".layout .mode"]},
+  {k: 1, sel: [".mode:not(.cfg-tabs)"]},
   {k: 3, mode: "lib", sel: ['[data-block="lib"]']},
   {k: 4, mode: "edit", sel: ['[data-block="edit"]']},
   {k: 2, mode: "ai", sel: ['[data-block="req"]']},
@@ -8297,7 +8537,6 @@ const TOUR_STEPS = [
   {k: 15, mode: "act", sel: ['[data-block="act"]']},
   {k: 5, mode: "plan", sel: ['[data-block="plan"]']},
   {k: 16, mode: "shift", sel: ['[data-block="shift"]']},
-  {k: 17, mode: "ses", sel: ['[data-block="ses"]']},
   {k: 18, mode: "per", sel: ['[data-block="per"]']},
   {k: 6, mode: "cmp", sel: ['[data-block="cmp"]']},
   {k: 19, mode: "exp", sel: ['[data-block="exp"]']},
