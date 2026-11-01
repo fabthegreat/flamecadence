@@ -410,6 +410,8 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .phead .small:not(.icon){padding:0 10px!important}
 .phead .icon svg{width:14px;height:14px;stroke-width:2.2}
 .phead .ext svg{width:14px;height:14px}
+#fullMenu{display:none}
+@media (max-width:560px){html.pm-only #fullMenu{display:inline-flex;align-items:center;gap:6px;margin-left:auto;order:2}html.pm-only header .gbar,html.pm-only header .tools,html.pm-only .mode:not(.cfg-tabs),html.pm-only aside,html.pm-only p.sub{display:none!important}} /* téléphone : vue « lecteur seul » (logo + lecteur) */
 @media (max-width:560px){p.sub{display:none}.phead{flex-wrap:wrap;row-gap:6px;gap:6px}.phead>*{flex:0 0 auto}.phead .badge{min-width:0!important;margin:0 2px!important}.phead #caltoday,.phead #caltoday2{font-size:.7rem!important;font-weight:600;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis}} /* téléphone, tous les looks : l'en-tête du calendrier (mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) passe à la ligne au lieu de déborder */
 .phead select{height:26px;padding:0 24px 0 8px;font-size:.8rem;border-radius:6px}
 .seg{display:inline-flex}
@@ -750,7 +752,8 @@ html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run 
 /* petits sélecteurs des en-têtes de widgets (« 2 mois », « 7 jours ») : le padding vertical du look Sport décalait le texte vers le bas */
 :root[data-look="sport"] .phead select{height:30px;padding:0 26px 0 12px;line-height:normal;font-size:.8rem}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}</script>
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
+try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
 <script data-goatcounter="https://flamecadence.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"></script>
 </head>
@@ -768,11 +771,13 @@ html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run 
   </svg>
   <h1 data-i="title"></h1>
 </div>
+<button type="button" class="alt small" id="fullMenu"><span aria-hidden="true">☰</span> <span data-i="fullMenu"></span></button>
 <div class="tools">
 <a class="coffee top" id="coffeeTop" data-ia="title:coffee"><span aria-hidden="true">☕</span><span class="lbl" data-i="coffee"></span></a>
 <button class="alt small icon" id="theme" type="button" data-ia="title:thAuto;aria-label:thAuto">🌓</button>
 <div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
 <details class="more" id="more"><summary class="alt small icon" data-ia="title:more;aria-label:more"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></summary><div class="menu">
+<a class="mi" id="pmBack" role="button" tabindex="0" hidden><span aria-hidden="true">▶</span><span data-i="pmBack"></span></a>
 <a class="mi" id="tourbtn" role="button" tabindex="0" data-ia="title:tourTip"><span aria-hidden="true">🧭</span><span data-i="tourBtn"></span></a>
 <a class="mi" id="installbtn" role="button" tabindex="0" hidden><span aria-hidden="true">📲</span><span data-i="installApp"></span></a>
 <a class="mi" id="mail" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
@@ -1796,6 +1801,7 @@ jamTagL:["Music genre","Genre musical"], jamTagAny:["Any genre","Tous les genres
 musStart:["Start music","Lancer la musique"], musStop:["Stop music","Arrêter la musique"], musNext:["Next track","Piste suivante"], musVol:["Music volume","Volume de la musique"],
 musNeed:["Add your Jamendo client ID in Settings → Beta to enable music.","Ajoute ton client ID Jamendo dans Réglages → Bêta pour activer la musique."],
 musLoad:["Loading tracks…","Chargement des pistes…"], musNone:["No track found for this intensity. Try another genre.","Aucune piste pour cette intensité. Essaie un autre genre."],
+fullMenu:["Full menu","Menu complet"], pmBack:["Player-only view","Vue lecteur seul"],
 musMin:["Minimize music","Réduire la musique"], musMax:["Expand music","Agrandir la musique"],
 musErr:["Jamendo: {0}","Jamendo : {0}"], musT1:["calm","calme"], musT2:["steady","régulier"], musT3:["fast","rapide"], musT4:["very fast","très rapide"],
 pmMus:["Show the music controls in the player","Afficher la musique dans le lecteur"],
@@ -7759,15 +7765,22 @@ if(mode === "ses") mode = "calp"; // l'analyse d'une séance s'ouvre maintenant 
 let sesUnder = false; // analyse de séance affichée sous le calendrier (après un clic sur une séance réalisée)
 const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["per", "cmp", "exp"], cal: ["calp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.cal.includes(mode) ? "cal" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
+// téléphone : le lecteur est prioritaire à l'ouverture — seuls le logo et le lecteur sont affichés, un bouton ramène au menu complet (pour la durée de la session)
+const pmCan = () => matchMedia("(max-width:560px)").matches && betaRunOn();
+const pmFull = () => { try{ return sessionStorage.getItem("si_fullmenu") === "1"; }catch(_){ return false; } };
+const pmOn = () => pmCan() && !pmFull();
+function pmApply(){ document.documentElement.classList.toggle("pm-only", pmOn()); const b = $("pmBack"); if(b) b.hidden = !(pmCan() && pmFull()); }
+if(pmOn()) mode = "run";
 if(mode === "run" && !betaRunOn()) mode = store.get("si_g_gen") || "ai"; // option désactivée : on ne reste pas sur un onglet masqué
 function applyBeta(){ // menu « Lancer une activité » (bêta) : masqué par défaut
+  try{ pmApply(); }catch(_){}
   const on = betaRunOn(), b = document.querySelector('#grp [data-g="run"]'); b.hidden = !on; b.style.display = on ? "" : "none";
   $("kaCfg").hidden = !on; // maintien en vie du lecteur : seulement si le lecteur est coché
   const pt = document.querySelector('.cfg-tabs [data-cfg="player"]'); pt.hidden = !on; pt.style.display = on ? "" : "none"; // réglages du lecteur proposés seulement si l'option bêta est cochée
   if(!on && pt.getAttribute("aria-selected") === "true") cfgTab("beta");
   if(!on && mode === "run"){ mode = store.get("si_g_gen") || "ai"; store.set("si_mode", mode); applyMode(); }
 }
-$("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); applyBeta(); renderLibraryKeepOpen(); prevPlayBtn(); };
+$("betaRun").checked = betaRunOn(); $("runKa").value = runKaMode(); $("runKa").onchange = e => { store.set("si_runka", e.target.value); if(typeof RUN !== "undefined" && RUN) { RUN.mk = ""; runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); } }; $("betaRun").onchange = e => { store.set("si_beta_run", e.target.checked ? "1" : "0"); if(e.target.checked){ try{ sessionStorage.setItem("si_fullmenu", "1"); }catch(_){} } /* on règle les options : le menu complet reste affiché pour cette session */ applyBeta(); renderLibraryKeepOpen(); prevPlayBtn(); };
 { const rk = $("riderKg"); rk.value = store.get("si_rider_kg"); rk.placeholder = String(riderKg()); rk.onfocus = () => { rk.placeholder = String(riderKg()); };
   rk.onchange = () => { const v = parseFloat(String(rk.value).replace(",", ".")); store.set("si_rider_kg", v >= 30 && v <= 200 ? String(v) : ""); if(!(v >= 30 && v <= 200)) rk.value = ""; rk.placeholder = String(riderKg()); try{ renderChart(); }catch(e){} }; }
 $("pm_map").checked = store.get("si_rm_map") !== "0"; $("pm_map").onchange = e => { store.set("si_rm_map", e.target.checked ? "1" : "0"); MAP.key = ""; };
@@ -7777,6 +7790,10 @@ $("pm_ap").value = String(runAutoPause()); $("pm_ap").onchange = e => store.set(
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec", "dist"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
+$("fullMenu").onclick = () => { try{ sessionStorage.setItem("si_fullmenu", "1"); }catch(_){} pmApply(); scrollTo(0, 0); };
+$("pmBack").onclick = () => { try{ sessionStorage.removeItem("si_fullmenu"); }catch(_){} const mo = $("more"); if(mo) mo.open = false; mode = "run"; store.set("si_mode", mode); applyMode(); pmApply(); scrollTo(0, 0); };
+matchMedia("(max-width:560px)").addEventListener("change", () => pmApply());
+pmApply();
 document.querySelectorAll("#grp button").forEach(b => b.onclick = () => { const l = store.get("si_g_" + b.dataset.g); mode = GRP[b.dataset.g].includes(l) ? l : GRP[b.dataset.g][b.dataset.g === "gen" ? 2 : 0]; store.set("si_mode", mode); applyMode(); });
 // ---------- Décaler les séances planifiées : toutes les séances du calendrier intervals.icu à partir d'une date, de N jours / semaines ----------
 const SHIFT = {evs: [], tok: 0, busy: false, lbl: "", sig: ""};
