@@ -411,7 +411,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .phead .icon svg{width:14px;height:14px;stroke-width:2.2}
 .phead .ext svg{width:14px;height:14px}
 #fullMenu{display:none}
-@media (max-width:560px){html.pm-only #fullMenu{display:inline-flex;align-items:center;gap:6px;margin-left:auto;order:2}html.pm-only header .gbar,html.pm-only header .tools,html.pm-only .mode:not(.cfg-tabs),html.pm-only aside,html.pm-only p.sub{display:none!important}} /* téléphone : vue « lecteur seul » (logo + lecteur) */
+@media (max-width:560px){html.pm-only #fullMenu{display:inline-flex;align-items:center;gap:6px;margin-left:auto;order:2}html.pm-only #grp,html.pm-only header .gbar,html.pm-only header .tools,html.pm-only .mode:not(.cfg-tabs),html.pm-only aside,html.pm-only p.sub{display:none!important}} /* téléphone : vue « lecteur seul » (logo + lecteur) */
 @media (max-width:560px){p.sub{display:none}.phead{flex-wrap:wrap;row-gap:6px;gap:6px}.phead>*{flex:0 0 auto}.phead .badge{min-width:0!important;margin:0 2px!important}.phead #caltoday,.phead #caltoday2{font-size:.7rem!important;font-weight:600;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis}} /* téléphone, tous les looks : l'en-tête du calendrier (mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) passe à la ligne au lieu de déborder */
 .phead select{height:26px;padding:0 24px 0 8px;font-size:.8rem;border-radius:6px}
 .seg{display:inline-flex}
@@ -714,6 +714,24 @@ html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run 
 :root[data-look="sport"] .phead h2{letter-spacing:.08em}
 :root[data-look="sport"] .phead .badge{min-width:0!important;margin:0 2px!important}
 :root[data-look="sport"] .phead #caltoday,:root[data-look="sport"] .phead #caltoday2{font-size:.7rem!important;font-weight:600;letter-spacing:0;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis} /* « Aujourd'hui » / « Today » : bouton plus compact */
+}
+/* téléphone : ergonomie (menus principaux en bas à portée du pouce, cibles tactiles plus grandes, pas de zoom à la saisie, marges réduites) ; l'affichage ordinateur n'est pas modifié */
+@media (max-width:560px){
+html body{padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+html.pm-only body{padding-bottom:0}
+html #grp{position:fixed!important;left:0;right:0;bottom:0;top:auto;width:auto!important;z-index:30;margin:0!important;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))!important;border-width:1px 0 0!important;border-radius:0!important;background:var(--card)!important;box-shadow:0 -2px 12px rgba(0,0,0,.14)}
+html #grp button{flex:1 1 0;min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;padding:6px 4px!important;font-size:.82rem;line-height:1.15;white-space:normal;text-align:center;border-radius:12px}
+html body:has(input:focus,select:focus,textarea:focus) #grp{display:none!important} /* clavier ouvert : la barre du bas ne masque pas le champ */
+html .mode:not(.cfg-tabs){overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+html .mode:not(.cfg-tabs)::-webkit-scrollbar{display:none}
+html .mode:not(.cfg-tabs) button{min-height:42px}
+html .phead .icon,html .phead .small{height:36px;min-width:36px}
+html .actions>button:not(.small){min-height:44px}
+html input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),html select,html textarea{font-size:16px!important} /* iOS zoome sur les champs en dessous de 16 px */
+html button,html a,html select,html summary,html label{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html:root section:not(.cal-max){padding:14px}
+html:root[data-look="sport"] section:not(.cal-max){padding:14px}
+html:root main{padding-left:12px;padding-right:12px}
 }
 /* barre latérale (écrans larges) : logo, menus principaux en colonne, outils en bas ; en dessous de 901 px on garde la barre du haut */
 @media (min-width:901px){
