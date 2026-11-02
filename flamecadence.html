@@ -51,7 +51,7 @@ body{margin:0;min-height:100vh;background:radial-gradient(1100px 480px at 50% 11
 .cal-ev:not(.done){cursor:pointer}
 :root[data-theme="dark"] body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(1100px 480px at 50% 115%,rgba(255,120,0,.22),transparent 62%),radial-gradient(900px 420px at 8% 112%,rgba(255,45,0,.15),transparent 65%),radial-gradient(700px 380px at 93% 108%,rgba(255,200,60,.08),transparent 60%),linear-gradient(180deg,#0c1116 0%,var(--bg) 40%,#1b130d 100%);background-attachment:fixed}}
-main{max-width:1240px;margin:0 auto;padding:20px 16px 24px}
+main{max-width:max(1240px,calc(var(--mainw,760px) + 440px));margin:0 auto;padding:20px 16px 24px}
 h1{font-size:1.65rem;margin:0;font-weight:600;letter-spacing:-0.02em}
 p.sub{color:var(--mute);margin:6px 0 20px}
 section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
@@ -107,7 +107,7 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:cen
 #theme{line-height:1.2!important;font-size:1.05rem}
 .lang button{margin:0;padding:6px 10px;border-radius:0;background:transparent;color:var(--acc);font-size:.85rem}
 .lang button[aria-pressed="true"]{background:var(--acc);color:var(--on)}
-.layout{display:grid;grid-template-columns:minmax(0,760px) minmax(0,1fr);gap:16px;align-items:start}
+.layout{display:grid;grid-template-columns:minmax(0,var(--mainw,760px)) minmax(0,1fr);gap:16px;align-items:start}
 @media (max-width:900px){.layout{grid-template-columns:minmax(0,1fr)}}
 .phead{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .phead h2{margin:0 auto 0 0}
@@ -442,7 +442,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
-#calbox,#dcalbox,#calbox2{position:relative}
+#calbox,#dcalbox,#calbox2{position:relative}#calbox.loading,#calbox2.loading{opacity:.55;transition:opacity .15s .12s}
 #calbox2 .cal-d:not(.empty){cursor:pointer}#calbox2 .cal-d:not(.empty):hover{border-color:var(--acc)}#calbox2 .cal-ev{cursor:grab}#calbox2.nav-l{box-shadow:inset 8px 0 0 var(--acc)}#calbox2.nav-r{box-shadow:inset -8px 0 0 var(--acc)}#calprev2.dragnav,#calnext2.dragnav{background:var(--acc);color:var(--on)}
 .cal-page .cal{gap:4px}.cal-page .cal-x{display:none}html.m-calp .mode:not(.cfg-tabs){display:none}
 .calw{display:flex;flex-direction:column;gap:0;font-size:.75rem}
@@ -469,8 +469,10 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .calw .cal-mini{height:34px}.calw .cal-meta{display:none}
 .calw .cal-wd{display:none}
 
+#chatLog{min-height:240px;max-height:58vh;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.cm{max-width:90%;padding:8px 11px;border-radius:10px;font-size:.92rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.cm.u{align-self:flex-end;background:var(--acc);color:var(--on)}.cm.a{align-self:flex-start;background:var(--card);border:1px solid var(--line)}.cm.e{align-self:flex-start;color:var(--err);border:1px solid var(--err);background:var(--card)}
 .calw.fit{overflow:hidden}.calw.fit .cw-head{flex:none}.calw.fit .cw{flex:1 1 0;min-height:0;grid-template-rows:minmax(0,1fr)}
-.calw.fit .cal-d{min-height:0;overflow-y:auto;scrollbar-width:thin}.calw.fit .cal-ev.cw-card{flex:0 0 auto}.calw.fit .cw-sum{overflow:hidden;min-height:0}
+.calw.fit .cal-d{min-height:0;overflow-y:auto;scrollbar-width:none}.calw .cal-d::-webkit-scrollbar{display:none}.calw.fit .cal-ev.cw-card{flex:0 0 auto}.calw.fit .cw-sum{overflow:hidden;min-height:0}
 .calw .cw-st{display:flex;justify-content:center;gap:8px;white-space:nowrap;overflow:hidden}
 .calw .x1 .cw-nm{display:none}.calw .x2 .cw-cp{display:none}.calw .x3 .cw-st{display:none}.calw .x4 .cw-ld{display:none}.calw .x5 .cw-bd{padding:2px 5px 3px;gap:2px}.calw .x5 .cw-hd{padding:2px 5px}.calw .x5 .cal-mini{height:26px}.calw .x6 .cal-mini{height:16px}.calw .x6 .cw-bd{padding:2px 4px;gap:1px}.calw .x7 .cal-mini{display:none}.calw .x7 .cw-bd{padding:1px 4px}.calw .x8 .cw-bd{display:none}.calw .x8 .cw-hd{padding:1px 5px}.calw .x6 .cal-n,.calw .x7 .cal-n,.calw .x8 .cal-n{line-height:1}
 @media (max-width:900px){.calw{gap:6px}.calw .cw{border-top:0}.calw .cal-d{border:1px solid var(--line);border-radius:5px}.calw .cw-head{display:none}.calw .cw{grid-template-columns:1fr}.calw .cal-d.empty,.calw .cal-d:not(:has(.cal-ev)){display:none}.calw .cal-d{min-height:0}.calw .cal-wd{display:inline}.calw .cw-sum{flex-direction:row;flex-wrap:wrap;gap:2px 12px;align-items:baseline}}
@@ -778,7 +780,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 /* petits sélecteurs des en-têtes de widgets (« 2 mois », « 7 jours ») : le padding vertical du look Sport décalait le texte vers le bas */
 :root[data-look="sport"] .phead select{height:30px;padding:0 26px 0 12px;line-height:normal;font-size:.8rem}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w))document.documentElement.style.setProperty("--mainw",_w+"px");var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
 <script>/* compteur de visites (GoatCounter) : pas chargé quand le fichier est ouvert en local (file://), où « //gc.zgo.at » devenait « file:///count.js » et échouait */try{if(location.protocol==="http:"||location.protocol==="https:"){var _g=document.createElement("script");_g.async=true;_g.dataset.goatcounter="https://flamecadence.goatcounter.com/count";_g.src="https://gc.zgo.at/count.js";document.head.appendChild(_g);}}catch(e){}</script>
 </head>
@@ -805,7 +807,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <a class="mi" id="pmBack" role="button" tabindex="0" hidden><span aria-hidden="true">▶</span><span data-i="pmBack"></span></a>
 <a class="mi" id="tourbtn" role="button" tabindex="0" data-ia="title:tourTip"><span aria-hidden="true">🧭</span><span data-i="tourBtn"></span></a>
 <a class="mi" id="installbtn" role="button" tabindex="0" hidden><span aria-hidden="true">📲</span><span data-i="installApp"></span></a>
-<a class="mi" id="mail" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
+<a class="mi" id="mail" role="button" tabindex="0" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
 <a class="mi" id="gh" data-ia="title:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span data-i="github"></span></a>
 </div></details>
 <button class="alt small" id="open" type="button" data-i="settings"></button>
@@ -905,6 +907,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="hint" data-i="fontHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr;margin-top:14px"><label><input type="checkbox" id="sqCorners"><span data-i="sqLbl"></span></label></div>
 <div class="hint" data-i="sqHint"></div>
+<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1040" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
 </div>
 <div class="cfg-sec" data-cfgp="beta" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
@@ -920,8 +923,10 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="cfg-sec" data-cfgp="player" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
 <div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label>
+<label><input type="checkbox" id="pm_voice"><span data-i="pmVoice"></span></label>
 <label><input type="checkbox" id="pm_map"><span data-i="pmMap"></span></label>
 <label><input type="checkbox" id="pm_mus"><span data-i="pmMus"></span></label></div>
+<div class="actions" style="margin:0 0 10px"><button type="button" class="alt small" id="pm_forget" data-i="pmForget"></button></div>
 <div class="hint" data-i="pmHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr">
 <label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
@@ -964,6 +969,14 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 </dialog>
 
 <!-- Modal d'Aide -->
+<dialog id="contactDlg" aria-labelledby="ctTt"><h2 id="ctTt" data-i="ctT"></h2>
+<label for="ctName" data-i="ctName"></label><input id="ctName" autocomplete="name">
+<label for="ctEmail" data-i="ctEmail"></label><input id="ctEmail" type="email" autocomplete="email">
+<label for="ctMsg" data-i="ctMsg"></label><textarea id="ctMsg" rows="5"></textarea>
+<input type="checkbox" id="ctBot" tabindex="-1" autocomplete="off" style="display:none">
+<div class="hint" id="ctOut" style="min-height:1.2em"></div>
+<div class="actions" style="margin-top:12px"><button type="button" id="ctSend" data-i="ctSend"></button><button type="button" class="alt" id="ctClose" data-i="close"></button></div>
+</dialog>
 <dialog id="helpDlg" aria-labelledby="helpt">
 <h2 id="helpt" data-i="helpTitle"></h2>
 <div id="helpBody" style="font-size:.9rem; line-height:1.5; margin-top:10px"></div>
@@ -1020,6 +1033,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
 <button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
 <button type="button" role="tab" data-m="exp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span data-i="tabExp"></span></button>
+<button type="button" role="tab" data-m="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span data-i="tabChat"></span></button>
 </div>
 
 <section data-block="req">
@@ -1192,6 +1206,12 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 </section>
 
 <!-- Section Comparateur de séances -->
+<section data-block="chat" hidden>
+<div class="phead"><h2 data-i="chatT"></h2><button class="alt small" id="chatExp" type="button" data-i="chatExport"></button><button class="alt small" id="chatClr" type="button" data-i="chatClear"></button></div>
+<p class="hint" data-i="chatHint"></p>
+<div id="chatLog" aria-live="polite"></div>
+<div class="actions" style="align-items:flex-end;margin-top:10px;flex-wrap:nowrap"><textarea id="chatIn" rows="2" style="flex:1;margin:0" data-ia="placeholder:chatPh"></textarea><button type="button" id="chatSend" data-i="chatSend"></button></div>
+</section>
 <section data-block="exp" hidden>
 <div class="phead"><h2 data-i="expT"></h2></div>
 <p class="hint" data-i="expDesc"></p>
@@ -1474,12 +1494,12 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 </footer>
 </main>
 <script>
-const APP_VERSION = "1.6.4"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.7.1"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);
 const store = {get(k){ try{ return localStorage.getItem(k) || ""; }catch(e){ return ""; } }, set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }};
-const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/flamecadence", mail: "mailto:workout@lutix.org?subject=Workout%20generator"};
+const LINKS = {coffee: "https://ko-fi.com/ftg99999", github: "https://github.com/fabthegreat/flamecadence"};
 let lang = store.get("si_lang") === "fr" ? "fr" : "en";
 
 // ---------- Thème clair / sombre / auto ----------
@@ -1546,6 +1566,13 @@ calEdCfm:["Replace the current content of the manual editor with this workout?",
 secPlayer:["Player","Lecteur"], sesExp:["Export (.fit)","Exporter (.fit)"], sesExpT:["Download this activity as a FIT file, readable by Garmin, Strava, TrainingPeaks, Zwift…","Télécharger cette activité au format FIT, lisible par Garmin, Strava, TrainingPeaks, Zwift…"], sesExpErr:["Export unavailable (no file for this activity, e.g. synced from Strava)","Export impossible (pas de fichier pour cette activité, ex. synchronisée depuis Strava)"], hSlope:["Drag up or down to change the slope (the power is only a guide)","Glisse vers le haut ou le bas pour changer la pente (la puissance n'est qu'un guide)"], pmMap:["Show a satellite map of the route on the animation screen (needs an internet connection)","Afficher une carte satellite du parcours sur l'écran d'animation (connexion internet requise)"], mapVirt:["Virtual route","Parcours virtuel"], runGuide:["Effort guide","Puissance guide"], runOnG:["In the guide","Dans le guide"], runHiG:["Above guide","Au-dessus du guide"], runLoG:["Below guide","Sous le guide"], edGuideT:["Slope step: the trainer follows the slope, not a power target. This intensity is only an effort guide (zone, load, estimated duration).","Étape en pente : le home trainer suit la pente, pas une puissance cible. Cette intensité n'est qu'un guide d'effort (zone, charge, durée estimée)."], riderKgL:["Rider weight (kg) for slope sections","Poids du coureur (kg) pour les tronçons en pente"], riderKgH:["Used to compute your speed, hence the distance covered, on slope steps (8 kg bike added). Leave empty to use the weight from intervals.icu, or 75 kg. Set the same weight in your trainer's app so the resistance matches.","Sert à calculer ta vitesse, donc la distance parcourue, sur les étapes en pente (vélo de 8 kg ajouté). Laisse vide pour utiliser le poids d'intervals.icu, ou 75 kg. Renseigne le même poids dans l'appli de ton home trainer pour que la résistance corresponde."], pmBeep:["Sounds: start / resume, countdown and step change","Sons : départ / reprise, compte à rebours et changement d'étape"], pmHint:["Extra metrics shown in the player during an activity. They use real Bluetooth data only and show -- until data is available.","Mesures supplémentaires affichées dans le lecteur pendant une activité. Elles utilisent uniquement les vraies données Bluetooth et affichent -- tant qu'il n'y en a pas."], pmDecHint:["Decoupling compares power-to-heart-rate between the first and second half of the session; it is most meaningful on long steady efforts.","Le découplage compare le rapport puissance/FC entre la première et la seconde moitié de la séance ; il est surtout pertinent sur les efforts longs et réguliers."], runMxAvg:["Step avg (W)","Moy. étape (W)"], runMxAvgS:["Session avg (W)","Moy. séance (W)"], runMxKj:["Energy (kJ)","Énergie (kJ)"], runMxDec:["Decoupling","Découplage"], runMxDecS:["Pw:HR drift","Dérive P:FC"], runMxDecW:["needs 10 min of data","10 min de données requises"],
 runMxDist:["Distance (km)","Distance (km)"], tabPer:["Periods","Périodes"], perT:["Training by week and month","Entraînement par semaine et par mois"], perWeeks:["Weeks","Semaines"], perMonths:["Months","Mois"], perCol:["Period","Période"], perSess:["Sessions","Séances"], perTime:["Time","Durée"], perDist:["Distance","Distance"], perLoadC:["Load","Charge"], perPlan:["Planned","Prévu"], perTotal:["Total","Total"], perLegDone:["Load done","Charge réalisée"], perLegPlan:["Load still planned","Charge encore prévue"], perNow:["now","en cours"], perNone:["No activity in these periods.","Aucune activité sur ces périodes."], perLoading:["Loading…","Chargement…"],
 grpCal:["Calendar","Calendrier"], calWeek:["Week {0}","Semaine {0}"],
+mwLbl:["Width of the main section","Largeur de la section principale"], mwHint:["Adjust it if the right-hand widgets take too much or too little room in your browser.","À ajuster si les widgets de droite prennent trop ou trop peu de place dans ton navigateur."], mwReset:["Reset","Par défaut"],
+pmVoice:["Voice announcements: next interval, 10 s before it starts","Annonces vocales : intervalle suivant, 10 s avant son début"], pmForget:["Forget remembered trainer and heart-rate strap","Oublier le trainer et la ceinture cardio mémorisés"], pmForgot:["Remembered devices forgotten.","Appareils mémorisés oubliés."],
+vNext:["Next: {0} at {1} watts","Prochain : {0} à {1} watts"], vRamp:["Next: {0}, from {1} to {2} watts","Prochain : {0}, de {1} à {2} watts"], vDone:["Workout complete. Well done!","Séance terminée. Bravo !"], vTest:["Voice announcements enabled","Annonces vocales activées"], runBtSearch:["Looking for {0}… (switch it on or pedal to wake it)","Recherche de {0}… (allume-le ou pédale pour le réveiller)"], runBtGiveUp:["{0} not found. Switch it on, then use “Pair” to choose it again.","{0} introuvable. Allume-le, puis utilise « Associer » pour le choisir à nouveau."],
+runBtNoAuto:["Automatic reconnection needs a browser that remembers Bluetooth devices (Chrome / Edge: enable chrome://flags/#enable-web-bluetooth-new-permissions-backend). Use the pair buttons for now.","La reconnexion automatique demande un navigateur qui mémorise les appareils Bluetooth (Chrome / Edge : activer chrome://flags/#enable-web-bluetooth-new-permissions-backend). Utilise les boutons d'association pour l'instant."],
+runBtAuto:["Reconnecting to {0}…","Reconnexion à {0}…"],
+ctT:["Contact FlameCadence","Contacter FlameCadence"], ctName:["Your name","Ton nom"], ctEmail:["Your email (to reply)","Ton e-mail (pour répondre)"], ctMsg:["Message","Message"], ctSend:["Send","Envoyer"], ctSending:["Sending…","Envoi…"], ctOk:["Message sent, thank you!","Message envoyé, merci !"], ctErr:["The message could not be sent: {0}","Le message n'a pas pu être envoyé : {0}"], ctNoKey:["The contact form is not configured yet (Web3Forms access key missing).","Le formulaire de contact n'est pas encore configuré (clé d'accès Web3Forms manquante)."], ctNeed:["Please enter a valid email and a message.","Renseigne un e-mail valide et un message."],
+tabChat:["AI coach","Coach IA"], chatT:["Talk with your AI coach","Parle avec ton coach IA"], chatHint:["Ask about your past training, your current form or what to do next. The coach sees your recent activities, fitness and planned workouts from intervals.icu. The whole conversation is kept in this browser's database.","Pose des questions sur ton entraînement passé, ta forme actuelle ou la suite. Le coach voit tes activités récentes, ta forme et tes séances planifiées d'intervals.icu. Toute la conversation est conservée dans la base de ce navigateur."], chatPh:["Ask your coach…","Pose ta question au coach…"], chatSend:["Send","Envoyer"], chatClear:["Clear","Effacer"], chatExport:["Export","Exporter"], chatSure:["Delete the whole conversation?","Supprimer toute la conversation ?"], chatThink:["The coach is thinking…","Le coach réfléchit…"], chatEmpty:["No message yet. Try: \"How was my last week?\"","Aucun message. Essaie : « Comment s'est passée ma dernière semaine ? »"],
 secLook:["Appearance","Apparence"], secBeta:["Beta","Bêta"], runFsHint:["Tap the screen for full screen","Touchez l'écran pour le plein écran"], runKaL:["Keep the player alive in the background","Garder le lecteur actif en arrière-plan"], runKaM:["Mix with my music (recommended)","Compatible avec ma musique (recommandé)"], runKaS:["Strong: media notification (pauses other music)","Renforcé : notification média (met la musique en pause)"], runKaO:["Off","Désactivé"], runKaH:["Uses an inaudible sound so Android keeps the page running during a session. The strong mode behaves like a music player, so it takes over the audio and pauses other apps.","Utilise un son inaudible pour qu'Android garde la page active pendant la séance. Le mode renforcé se comporte comme un lecteur de musique : il prend le son et met les autres applications en pause."], runGoT:["Launch activity","Lancer l'activité"], runBack:["Back to player","Retour au lecteur"], fontLbl:["Site font","Police du site"], fontSys:["System default","Police du système"],
 fontSample:["Fire up your next workout","Allume ta prochaine séance"], sqLbl:["Square corners (no rounded edges)","Angles droits (sans coins arrondis)"], thmT:["Theme","Thème"], thmLbl:["Appearance theme","Thème d'apparence"], lkClassic:["Classic","Classique"], lkSport:["Sport (dashboard, flame accent)","Sport (tableau de bord, accent flamme)"], thmHint:["Changes colors, shapes and layout. Light or dark stays on the 🌓 button. The Sport theme loads one font (Barlow Condensed) from Google Fonts.","Change les couleurs, les formes et la mise en page. Clair ou sombre reste sur le bouton 🌓. Le thème Sport charge une police (Barlow Condensed) depuis Google Fonts."], sqHint:["Removes the rounded corners everywhere in the app. Remembered on this device.","Supprime les coins arrondis partout dans l'appli. Mémorisé sur cet appareil."], fontHint:["Applied immediately and remembered on this device. Fonts are downloaded only when you pick them.","Appliquée immédiatement et mémorisée sur cet appareil. Une police n'est téléchargée que si tu la choisis."],
 pgSweet:["Sweet spot block","Bloc sweet spot"], pgThr:["Threshold power","Puissance au seuil"], pgPol:["Polarized (easy + very hard)","Polarisé (facile + très dur)"], pgGran:["Gran fondo / long distance","Cyclosportive / longue distance"],
@@ -5476,14 +5503,15 @@ function calBigExtra(e, isAct){
   if(e.distance) bits.push((Math.round(e.distance / 100) / 10) + " km");
   if(e.icu_weighted_avg_watts) bits.push("NP " + Math.round(e.icu_weighted_avg_watts) + " W");
   else if(e.icu_average_watts || e.average_watts) bits.push(Math.round(e.icu_average_watts || e.average_watts) + " W");
-  return `<div class="cal-mini" data-aid="${esc(String(e.id))}"></div>` + (bits.length ? `<div class="cal-meta">${esc(bits.join(" · "))}</div>` : "");
+  return calMiniHtml(e.id) + (bits.length ? `<div class="cal-meta">${esc(bits.join(" · "))}</div>` : "");
 }
+const CAL_SVGC = {}; // id d'activité → vignette SVG déjà calculée ("" = aucune) : un redessin du calendrier ne repasse plus par les promesses
 function calMiniLoad(box){
   if(CAL.io){ CAL.io.disconnect(); CAL.io = null; }
   const els = Array.from(box.querySelectorAll(".cal-mini[data-aid]")); if(!els.length) return;
   const fill = el => {
     if(el.dataset.ld) return; el.dataset.ld = "1";
-    actStreams(el.dataset.aid).then(sw => { const ev = (CAL.acts || []).find(x => String(x.id) === el.dataset.aid); const svg = actPrevSvg(sw) || actFallbackSvg(ev, sw); if(svg) el.innerHTML = svg; else el.remove(); calFitSoon(); });
+    actStreams(el.dataset.aid).then(sw => { const ev = (CAL.acts || []).find(x => String(x.id) === el.dataset.aid); const svg = actPrevSvg(sw) || actFallbackSvg(ev, sw); if(!sw.transient) CAL_SVGC[el.dataset.aid] = svg; if(svg) el.innerHTML = svg; else el.remove(); }).catch(() => {}).then(() => { el.dataset.done = "1"; calFitSoon(); calReveal(); });
   };
   if(!("IntersectionObserver" in window)){ els.forEach(fill); return; }
   const io = CAL.io = new IntersectionObserver(es => es.forEach(en => { if(en.isIntersecting){ io.unobserve(en.target); fill(en.target); } }), {rootMargin: "300px"});
@@ -5718,23 +5746,28 @@ async function loadCal(fresh){
   if(fresh || CAL_CACHE_KEY !== KEY()){ Object.keys(CAL_CACHE).forEach(k => delete CAL_CACHE[k]); CAL_CACHE_KEY = KEY(); }
   if(fresh && widgets.includes("next")) loadNext().catch(e => { $("nextbox").textContent = t("errI", errText(e)); });
   const m = CAL.m, c = CAL_CACHE[m]; let sig = "";
+  calLabel($("calmonth"), m); calLabel($("calmonth2"), m); // le nouveau mois s'affiche tout de suite, même si ses données arrivent après
+  const veil = on => ["calbox", "calbox2"].forEach(id => { const b = $(id); if(b) b.classList.toggle("loading", on); });
+  veil(!c);
   if(c){ CAL.ev = mergeCal(c.ev, c.acts); CAL.acts = c.acts; sig = calSig(CAL.ev, CAL.acts); renderCal(); } // affichage immédiat depuis le cache
   const r = await calFetch(m);
   if(CAL.m !== m) return; // l'utilisateur a déjà changé de mois
+  veil(false);
   const ev = mergeCal(r.ev, r.acts);
   if(!c || calSig(ev, r.acts) !== sig){ CAL.ev = ev; CAL.acts = r.acts; renderCal(); }
   calPrefetch(m);
 }
 async function calPrefetch(m){
   const tok = CAL.pfTok = (CAL.pfTok || 0) + 1, live = () => tok === CAL.pfTok && !!KEY();
-  for(const mm of [m - 1, m + 1]){ if(!live()) return; if(!CAL_CACHE[mm]) await calFetch(mm).catch(() => {}); }
+  await Promise.all([m + 1, m - 1].map(mm => CAL_CACHE[mm] ? 0 : calFetch(mm).catch(() => {})));
+  if(!live()) return;
   if(!live() || (navigator.connection && navigator.connection.saveData)) return;
   // streams : mois courant d'abord, puis précédent, puis suivant ; 2 requêtes max en parallèle pour laisser de la place à l'affichage
   const ids = [m, m - 1, m + 1].flatMap(k => ((CAL_CACHE[k] || {}).acts || []).slice().sort((x, y) => (y.start_date_local || "") < (x.start_date_local || "") ? -1 : 1).map(a => String(a.id)))
     .filter((id, i, arr) => id && arr.indexOf(id) === i && STREAM_CACHE[id] === undefined);
   let i = 0;
   const idle = async () => { while(STREAM_ACTIVE > 1 || STREAM_Q.length){ if(!live()) return; await new Promise(r => setTimeout(r, 300)); } };
-  const worker = async () => { while(i < ids.length && live()){ await idle(); if(!live()) return; const id = ids[i++]; if(STREAM_CACHE[id] === undefined) await actStreams(id).catch(() => {}); } };
+  const worker = async () => { while(i < ids.length && live()){ await idle(); if(!live()) return; const id = ids[i++]; if(STREAM_CACHE[id] === undefined) await actStreams(id).catch(() => {}); calSvgWarm(id); } };
   await Promise.all([worker(), worker()]);
 }
 function renderCal(){ renderCalW(); renderCalP(); }
@@ -5743,11 +5776,16 @@ function calAllEv(){ const c = CAL_CACHE[CAL.m], raw = c && c.ev ? c.ev.filter(e
 const CAL_SVG = {bike: '<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l3 8"/>', run: '<circle cx="14" cy="4.5" r="1.8"/><path d="M12 9l-3 3-3 1M12 9l3 3 2 5M12 9l1 5-3 5"/>', swim: '<circle cx="17" cy="6.5" r="1.8"/><path d="M4 12.5l6-3.2 4 2 2.6-1.6M3 16.5c1.5 0 1.5 1.2 3 1.2s1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2M3 20.5c1.5 0 1.5 1.2 3 1.2s1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2"/>', pingpong: '<circle cx="10" cy="10" r="5.5"/><path d="M14 14l6 6"/><circle cx="19" cy="5" r="1.4"/>', other: '<circle cx="12" cy="12" r="4"/>'};
 const calIcon = ty => `<svg viewBox="0 0 24 24" aria-hidden="true">${/Ride/.test(ty || "") ? CAL_SVG.bike : /Run|Walk|Hike/.test(ty || "") ? CAL_SVG.run : /Swim/.test(ty || "") ? CAL_SVG.swim : /Table.?Tennis|Ping/i.test(ty || "") ? CAL_SVG.pingpong : CAL_SVG.other}</svg>`;
 function isoWeek(d){ const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), dn = x.getUTCDay() || 7; x.setUTCDate(x.getUTCDate() + 4 - dn); return Math.ceil(((x - Date.UTC(x.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); }
+function calSvgWarm(id){ // calcule la vignette d'une activité dont les flux sont arrivés (préchargement) pour que son mois s'affiche sans attente
+  if(CAL_SVGC[id] !== undefined || !STREAM_CACHE[id]) return;
+  STREAM_CACHE[id].then(sw => { if(!sw || sw.transient || CAL_SVGC[id] !== undefined) return; let ev = null; Object.values(CAL_CACHE).some(c => ev = (c.acts || []).find(x => String(x.id) === String(id))); CAL_SVGC[id] = actPrevSvg(sw) || actFallbackSvg(ev, sw); }).catch(() => {});
+}
+function calMiniHtml(id){ const c = CAL_SVGC[id]; return c === undefined ? `<div class="cal-mini" data-aid="${esc(String(id))}"></div>` : c ? `<div class="cal-mini" data-done="1">${c}</div>` : ""; }
 function calCardDone(a){
   const npi = calNP(a, true), lv = npi ? npi.lv : 0, hr = Math.round(a.average_heartrate || 0), w = Math.round(a.icu_weighted_avg_watts || a.icu_average_watts || a.average_watts || 0), c = a.compliance;
   const st = [hr ? `<span class="hr">${hr}bpm</span>` : "", w ? `<span class="pw">${w}w</span>` : ""].filter(Boolean).join(" ");
   const cp = typeof c === "number" && isFinite(c) ? `<div class="cw-cp ${c >= 85 && c <= 120 ? "ok" : c > 0 ? "warn" : "bad"}">${c > 0 ? (c >= 85 && c <= 120 ? "\u2713" : "\u25CF") : "\u2715"} ${Math.round(c)}%</div>` : "";
-  return `<div class="cal-ev done cw-card lv${lv}" data-eid="a${esc(String(a.id))}" title="${esc(a.name || a.type || "")}"><div class="cw-hd">${calIcon(a.type)}<span>${a.moving_time ? hm(a.moving_time) : ""}</span>${a.distance ? `<i>${Math.round(a.distance / 1000)} km</i>` : ""}</div><div class="cw-bd">${st ? `<div class="cw-st">${st}</div>` : ""}${a.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(a.icu_training_load)}</div>` : ""}<div class="cal-mini" data-aid="${esc(String(a.id))}"></div><div class="cw-nm">${esc(a.name || a.type || "--")}</div>${cp}</div></div>`;
+  return `<div class="cal-ev done cw-card lv${lv}" data-eid="a${esc(String(a.id))}" title="${esc(a.name || a.type || "")}"><div class="cw-hd">${calIcon(a.type)}<span>${a.moving_time ? hm(a.moving_time) : ""}</span>${a.distance ? `<i>${Math.round(a.distance / 1000)} km</i>` : ""}</div><div class="cw-bd">${st ? `<div class="cw-st">${st}</div>` : ""}${a.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(a.icu_training_load)}</div>` : ""}${calMiniHtml(a.id)}<div class="cw-nm">${esc(a.name || a.type || "--")}</div>${cp}</div></div>`;
 }
 function calCardPlan(e, missed){
   const sport = e.type || "Ride", ftp = ftpFor(sport); let steps = []; try{ steps = plannedSteps(e, ftp); }catch(_){}
@@ -5788,16 +5826,18 @@ function calFitP(){ // ajuste la hauteur du calendrier de la page à la fenêtre
   w.classList.add("fit"); w.style.height = h + "px";
   // une carte ne déborde jamais de sa case : on retire d'abord le nom, puis la conformité, FC / puissance, la charge ; le graphique est conservé
   if(!box.offsetParent || w.clientHeight < 100) return; // calendrier pas (encore) affiché : toute mesure serait nulle et compacterait les cartes au maximum
-  w.querySelectorAll(".cal-d:not(.empty)").forEach(c => {
-    if(!c.clientHeight) return;
-    c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8");
-    const over = () => { if(c.scrollHeight > c.clientHeight + 1) return true; const cb = c.getBoundingClientRect().bottom; let b = 0; c.querySelectorAll(":scope>.cal-ev").forEach(e => { b = Math.max(b, e.getBoundingClientRect().bottom); }); return b > 0 && b > cb - 2; };
-    for(let l = 1; l <= 8 && over(); l++) c.classList.add("x" + l);
-  });
+  // par passes (une lecture de toutes les cases, puis une écriture) : une mise en page par niveau au lieu d'une par case et par niveau
+  const cells = Array.from(w.querySelectorAll(".cal-d:not(.empty)")); cells.forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"));
+  const over = c => { if(c.scrollHeight > c.clientHeight + 1) return true; const cb = c.getBoundingClientRect().bottom; let b = 0; c.querySelectorAll(":scope>.cal-ev").forEach(e => { b = Math.max(b, e.getBoundingClientRect().bottom); }); return b > 0 && b > cb - 2; };
+  let todo = cells.filter(c => c.clientHeight);
+  for(let l = 1; l <= 8 && todo.length; l++){
+    const hit = todo.filter(over); if(!hit.length) break;
+    hit.forEach(c => c.classList.add("x" + l)); todo = hit;
+  }
 }
 window.addEventListener("resize", () => { try{ calFitP(); }catch(_){} });
 let CALFIT_T = 0;
-function calFitSoon(){ clearTimeout(CALFIT_T); CALFIT_T = setTimeout(() => { try{ calFitP(); }catch(_){} }, 200); } // regroupe les demandes : les vignettes et les polices arrivent en différé
+function calFitSoon(){ clearTimeout(CALFIT_T); CALFIT_T = setTimeout(() => { try{ calFitP(); }catch(_){} }, 80); } // regroupe les demandes : les vignettes et les polices arrivent en différé
 try{ if(document.fonts && document.fonts.ready) document.fonts.ready.then(calFitSoon); }catch(_){}
 function calFitWatch(){ const box = $("calbox2"); if(!box || box._fw || !window.ResizeObserver) return; box._fw = new ResizeObserver(calFitSoon); box._fw.observe(box); }
 function renderCalP(){ // grand calendrier de la page « Calendrier » : mêmes données que le widget (CAL), toujours en vue agrandie
@@ -5805,12 +5845,20 @@ function renderCalP(){ // grand calendrier de la page « Calendrier » : mêmes 
   if(!KEY()){ box.textContent = ""; $("calmonth2").textContent = ""; $("calsum2").textContent = ""; return; }
   calLabel($("calmonth2"), CAL.m);
   const r = calWeeksHtml(CAL.m, calAllEv(), CAL.acts || []);
+  const first = !box.querySelector(".calw"); // vignettes en attente : cadres de hauteur fixe, elles apparaissent sans décaler la mise en page ; seule la toute première image est masquée jusqu'à sa mesure
   box.innerHTML = r.html + (r.n ? "" : `<div class="hint">${esc(t("calNone"))}</div>`);
   bindCalChips(box);
   calMiniLoad(box);
   renderCalSum($("calsum2"));
-  calFitP(); calFitSoon(); calFitWatch();
+  { const w = box.querySelector(".calw"); if(w && first && box.querySelector(".cal-mini[data-aid]")){ w.style.visibility = "hidden"; clearTimeout(CAL_REV_T); CAL_REV_T = setTimeout(() => calReveal(true), 220); } } // jamais d'image non ajustée : le calendrier n'apparaît qu'une fois mesuré (vignettes chargées ou 220 ms au plus)
+  calFitP(); calFitSoon(); calFitWatch(); calReveal();
   updateIcuLinks();
+}
+let CAL_REV_T = 0;
+function calReveal(force){
+  const box = $("calbox2"), w = box && box.querySelector(".calw"); if(!w || w.style.visibility !== "hidden") return;
+  if(!force && box.querySelectorAll(".cal-mini[data-aid]:not([data-done])").length) return;
+  try{ calFitP(); }catch(_){} w.style.visibility = ""; clearTimeout(CAL_REV_T);
 }
 function renderCalW(){
   const box = $("calbox"); if(!box) return;
@@ -5851,7 +5899,7 @@ $("calnext2").onclick = () => { CAL.m++; loadCal().catch(() => {}); };
     if(c && c.scrollHeight > c.clientHeight + 1 && (e.deltaY > 0 ? c.scrollTop + c.clientHeight < c.scrollHeight - 1 : c.scrollTop > 0)) return;
     e.preventDefault();
     const now = Date.now(); if(now - last > 250) acc = 0; last = now;
-    if(now - lock < 500) return; // un cran de molette = un mois, même avec l'inertie du pavé tactile
+    if(now - lock < 350) return; // un cran de molette = un mois, même avec l'inertie du pavé tactile
     acc += e.deltaY; if(Math.abs(acc) < 40) return;
     const d = acc > 0 ? 1 : -1; acc = 0; lock = now; CAL.m += d; loadCal().catch(() => {});
   }, {passive: false}); }
@@ -7033,7 +7081,7 @@ const runTgt = (st, left) => Math.round(st.pw + (st.pw2 - st.pw) * (1 - left / s
 function runInit(){
   RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, sim: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], dist: 0, cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
-  $("runPlay").onclick = () => { runBeepCtx(); RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused && !$("runEnd").hidden){ $("runEnd").hidden = true; runLaunchUI(); } /* reprise après « Terminer » par erreur : la carte de fin (dont Abandonner) disparaît */ if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
+  $("runPlay").onclick = () => { runBeepCtx(); if(runVoiceOn()){ try{ speechSynthesis.speak(new SpeechSynthesisUtterance("")); }catch(e){} } /* le premier son vocal doit être déclenché par un geste (iOS) */ RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused && !$("runEnd").hidden){ $("runEnd").hidden = true; runLaunchUI(); } /* reprise après « Terminer » par erreur : la carte de fin (dont Abandonner) disparaît */ if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
   // le graphique du profil n'est plus cliquable : un toucher accidentel changeait d'étape ; on utilise les boutons Précédent / Suivant
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
@@ -7062,7 +7110,7 @@ function runInit(){
   document.addEventListener("keydown", e => { if(e.key === "Escape" && RUN && !RUN.fsApi) runFs(false); }); // Échap en mode recouvrement
   $("runPairT").onclick = () => runPair("trainer"); $("runPairH").onclick = () => runPair("hr");
   $("runSimB").onclick = () => Object.keys(RUN.dev).forEach(runUnpair);
-  $("runDevs").onclick = e => { const b = e.target.closest("[data-dc]"); if(b) runUnpair(b.dataset.dc); }; // un bouton « Déconnecter » par appareil
+  $("runDevs").onclick = e => { const b = e.target.closest("[data-dc]"); if(b){ runUnpair(b.dataset.dc); return; } const q = e.target.closest("[data-ds]"); if(q){ AUTO.stop[q.dataset.ds] = true; runBtUI(); } }; // un bouton « Déconnecter » par appareil
   window.addEventListener("pagehide", () => runSave(true)); window.addEventListener("resize", () => RUN && mode === "run" && (runFit(), runDraw())); window.addEventListener("orientationchange", () => [150, 500].forEach(d => setTimeout(() => RUN && mode === "run" && (runFit(), runDraw()), d))); if(window.visualViewport) visualViewport.addEventListener("resize", () => RUN && mode === "run" && runFit()); // rotation du téléphone
   runAssemble(); $("runWkName").textContent = "—"; $("runPlay").textContent = "▶ " + t("runStart"); $("runPlay").disabled = true; runBtUI(); runRestore(); musBind();
 }
@@ -7397,7 +7445,7 @@ function runDownload(){ const a = document.createElement("a"); a.href = URL.crea
 function runOn(on){
   if(on && !RUN) runInit();
   if(!RUN) return;
-  if(on){ runList(false); if(!RUN.tm){ RUN.tm = setInterval(runTick, 1000); runUI(); } }
+  if(on){ runList(false); if(!RUN.tm){ RUN.tm = setInterval(runTick, 1000); runUI(); } setTimeout(() => runAutoConnect().catch(() => {}), 600); }
   if(!on) runFs(false);
   if(!on && RUN.tm){ clearInterval(RUN.tm); RUN.tm = 0; if(!RUN.paused) runErgPause(true); RUN.paused = true; runUI(); }
 }
@@ -7423,6 +7471,20 @@ function runBeep(freq, dur, delay = 0){
     o.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0 + dur + .05);
   }catch(e){}
 }
+// ---------- Annonces vocales (synthèse vocale du navigateur) : l'intervalle suivant est annoncé 10 s avant son début ----------
+const runVoiceOn = () => store.get("si_rm_voice") === "1";
+function runSpeak(txt){
+  try{ if(!window.speechSynthesis) return; speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(txt); u.lang = lang === "fr" ? "fr-FR" : "en-US"; speechSynthesis.speak(u); }catch(e){}
+}
+function runSpokenDur(sec){
+  const m = Math.floor(sec / 60), r = Math.round(sec % 60), fr = lang === "fr", p = [];
+  if(m) p.push(m + " " + (m > 1 || fr && false ? "minutes" : "minute")); if(r) p.push(r + " " + (fr ? (r > 1 ? "secondes" : "seconde") : (r > 1 ? "seconds" : "second")));
+  return p.join(" ");
+}
+function runVoiceText(st){
+  const d = runSpokenDur(st.dur), a = Math.round(st.pw + (RUN.nudge || 0)), b = Math.round(st.pw2 + (RUN.nudge || 0));
+  return Math.abs(b - a) >= 10 ? t("vRamp", d, a, b) : t("vNext", d, a);
+}
 function runTick(){
   // horloge basée sur l'heure réelle : un navigateur en arrière-plan ralentit ou gèle les minuteurs, on rattrape donc les secondes manquées
   const now = Date.now(); let n = 0;
@@ -7442,7 +7504,7 @@ function runTick(){
     }
     chg = true;
     if(RUN.i < RUN.steps.length - 1){ RUN.i++; runEnter(); }
-    else { $("msg").textContent = t("runDone"); runFinish(); break; }
+    else { $("msg").textContent = t("runDone"); if(runVoiceOn()) runSpeak(t("vDone")); runFinish(); break; }
   }
   if(n > 0 && n <= 2){ // pas de bips après un rattrapage (page restée en arrière-plan)
     const lead = runLead();
@@ -7463,6 +7525,11 @@ function runTick(){
       else if(!RUN.paused && RUN.left >= 1 && RUN.left <= 3 && RUN.left < RUN.steps[RUN.i].dur && RUN.bk !== bk){ RUN.bk = bk; runBeep(880, .12); }
     }
   }
+  if(n > 0 && n <= 2 && !RUN.paused && runVoiceOn()){ // annonce vocale de l'intervalle suivant, 10 s avant son début (étapes de plus de 15 s)
+    const nx = RUN.steps[RUN.i + 1], vk = "v" + RUN.i;
+    if(nx && RUN.left === 10 && RUN.steps[RUN.i].dur > 15 && RUN.vk !== vk){ RUN.vk = vk; runSpeak(runVoiceText(nx)); }
+  }
+  if(!RUN.steps[RUN.i]) return; // aucune séance chargée : rien à faire tourner (évitait une erreur à chaque seconde)
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left);
   // télémétrie : valeurs réelles Bluetooth si présentes, sinon simulation
   const L = RUN.live, sim = RUN.sim;
@@ -7712,7 +7779,8 @@ function runBtUI(){
   $("runFsDev").textContent = !dv.trainer && !dv.hr ? "● " + sm : "🚴 " + (dv.trainer ? nm("trainer") : sm) + " · ❤ " + (dv.hr ? nm("hr") : sm); // résumé des appareils appariés pour le plein écran
   $("runDot").classList.toggle("on", RUN.sim || !!kinds.length); $("runBtTxt").textContent = RUN.sim ? sm : "";
   // un chip par appareil connecté, avec son propre bouton « Déconnecter » ; le bouton d'appairage correspondant disparaît tant que l'appareil est connecté
-  $("runDevs").innerHTML = kinds.map(k => { const lb = esc(t("runDiscT", nm(k))); return `<span class="rchip"><span>${k === "hr" ? "❤" : "🚴"} ${esc(nm(k))}</span><button type="button" class="alt small" data-dc="${k}" title="${lb}" aria-label="${lb}">✕ ${esc(t("runDisc"))}</button></span>`; }).join("");
+  const srch = ["trainer", "hr"].filter(k => AUTO.busy[k] && !dv[k]).map(k => `<span class="rchip"><span>🔎 ${esc(t("runBtSearch", devNm(k)))}</span><button type="button" class="alt small" data-ds="${k}">${esc(t("stopGen"))}</button></span>`).join("");
+  $("runDevs").innerHTML = srch + kinds.map(k => { const lb = esc(t("runDiscT", nm(k))); return `<span class="rchip"><span>${k === "hr" ? "❤" : "🚴"} ${esc(nm(k))}</span><button type="button" class="alt small" data-dc="${k}" title="${lb}" aria-label="${lb}">✕ ${esc(t("runDisc"))}</button></span>`; }).join("");
   [["runPairT", "trainer"], ["runPairH", "hr"]].forEach(([id, k]) => { const b = $(id); b.hidden = !!dv[k]; b.style.display = dv[k] ? "none" : ""; });
   $("runSimB").hidden = RUN.sim || kinds.length < 2; // « retour à la simulation » = tout déconnecter, utile seulement avec deux appareils
   const m = $("runBtMsg"); m.hidden = !!navigator.bluetooth; if(!navigator.bluetooth) m.textContent = t("runNoBT");
@@ -7738,7 +7806,7 @@ function runDevGone(kind){ // nettoyage commun : événement GATT de déconnexio
   runBtUI();
 }
 async function runUnpair(kind){
-  const R = RUN, d = R.dev[kind]; if(!d) return;
+  const R = RUN, d = R.dev[kind]; if(!d) return; AUTO.manual[kind] = true; // déconnexion volontaire : pas de reconnexion automatique
   if(kind !== "hr" && R.cp){ runCpSend([0x01]); try{ await R.cpq; }catch(e){} } // rend d'abord le trainer à l'état libre (sortie d'ERG)
   try{ if(d.gatt && d.gatt.connected) d.gatt.disconnect(); }catch(e){}
   setTimeout(() => { if(R.dev[kind] === d) runDevGone(kind); }, 500); // filet de sécurité si l'événement de déconnexion n'arrive pas
@@ -7756,15 +7824,63 @@ function runCrank(v, extra){
   if(extra && R.cadSrc === "FTMS" && now - (R.cadAt || 0) < 3000) return; // FTMS fournit déjà la cadence : elle prime
   R.live.c = k.rpm; R.cadAt = now; R.cadSrc = "Power";
 }
-async function runPair(kind){
+// Appareil déjà connu (autorisé auparavant) : retrouvé par getDevices() puis réveillé par sa publicité Bluetooth, sans ouvrir le sélecteur
+// Renvoie l'appareil, null s'il n'a pas encore été vu (éteint, hors de portée), ou false si le navigateur ne le connaît plus (autorisation retirée).
+async function runKnownDevice(kind){
+  const id = store.get("si_dev_" + kind); if(!id || !navigator.bluetooth || !navigator.bluetooth.getDevices) return false;
+  let dev = null; try{ dev = (await navigator.bluetooth.getDevices()).find(d => d.id === id) || null; }catch(e){ return false; }
+  if(!dev) return false;
+  if(dev.watchAdvertisements){ // Chrome exige d'avoir vu l'appareil annoncer sa présence avant de s'y connecter
+    try{
+      const ac = new AbortController();
+      await new Promise((res, rej) => { const to = setTimeout(() => { ac.abort(); rej(new Error("timeout")); }, 8000); dev.addEventListener("advertisementreceived", () => { clearTimeout(to); ac.abort(); res(); }, {once: true}); dev.watchAdvertisements({signal: ac.signal}).catch(rej); });
+    }catch(e){ return null; }
+  }
+  return dev;
+}
+// Reconnexion automatique : trainer et ceinture cherchés en parallèle, en boucle jusqu'à 3 minutes (on peut allumer le trainer ou mettre la ceinture après l'ouverture du lecteur) ;
+// elle reprend aussi toute seule si un appareil décroche pendant la séance, sauf après un « Déconnecter » volontaire.
+const AUTO = {busy: {}, stop: {}, manual: {}};
+const devNm = k => store.get("si_devn_" + k) || t(k === "hr" ? "runPairH" : "runPairT");
+async function runAutoKind(k){
+  if(AUTO.busy[k] || !RUN) return; AUTO.busy[k] = true; AUTO.stop[k] = false; runBtUI();
+  const end = Date.now() + 180000; let gone = false;
+  try{
+    while(RUN && !RUN.dev[k] && !AUTO.stop[k] && Date.now() < end && mode === "run" && store.get("si_dev_" + k)){
+      let r = null; try{ r = await runPair(k, true); }catch(e){}
+      if(r === true) break;
+      if(r === "gone"){ gone = true; break; }
+      await new Promise(res => setTimeout(res, 3000));
+    }
+  }finally{
+    AUTO.busy[k] = false;
+    if(RUN && !RUN.dev[k] && !AUTO.stop[k] && mode === "run" && store.get("si_dev_" + k)){
+      const m = $("runBtMsg"); m.hidden = false; m.textContent = t("runBtGiveUp", devNm(k));
+      if(gone){ store.set("si_dev_" + k, ""); store.set("si_devn_" + k, ""); } // le navigateur ne connaît plus cet appareil : on oublie, le bouton « Associer » reprend la main
+    }
+    runBtUI();
+  }
+}
+async function runAutoConnect(){ // à l'ouverture du lecteur (et au retour dans l'appli) : reconnexion silencieuse aux appareils mémorisés
+  if(!navigator.bluetooth || !RUN) return;
+  const known = ["trainer", "hr"].filter(k => store.get("si_dev_" + k) && !RUN.dev[k]); if(!known.length) return;
+  if(!navigator.bluetooth.getDevices){ const m = $("runBtMsg"); m.hidden = false; m.textContent = t("runBtNoAuto"); return; }
+  known.forEach(k => runAutoKind(k)); // en parallèle
+}
+document.addEventListener("visibilitychange", () => { if(!document.hidden && typeof RUN !== "undefined" && RUN && mode === "run") runAutoConnect().catch(() => {}); });
+async function runPair(kind, auto){
   const m = $("runBtMsg"), say = x => { m.hidden = false; m.textContent = x; };
-  if(!navigator.bluetooth){ runBtUI(); return; }
+  if(!navigator.bluetooth){ runBtUI(); return false; }
   const svcs = kind === "hr" ? ["heart_rate"] : ["fitness_machine", "cycling_power"], opt = kind === "hr" ? svcs : svcs.concat(FEC);
   // un trainer n'annonce pas toujours son service dans sa publicité Bluetooth (Tacx Neo…) : on accepte aussi par nom ; la case « tous les appareils » ne filtre plus rien
   const names = ["Tacx", "NEO", "KICKR", "Wahoo", "Elite", "Saris", "Zwift", "Wattbike", "JetBlack"];
   const opts = $("runAll").checked ? {acceptAllDevices: true, optionalServices: opt} : {filters: svcs.map(x => ({services: [x]})).concat(kind === "hr" ? [] : names.map(n => ({namePrefix: n}))), optionalServices: opt};
-  let dev; try{ dev = await navigator.bluetooth.requestDevice(opts); }
-  catch(err){ console.warn("BLE:", err); say(err.name === "NotFoundError" ? t("runBtNone") : err.name + ": " + err.message); return; }
+  let dev = null;
+  if(auto){ dev = await runKnownDevice(kind); if(dev === false) return "gone"; if(!dev) return false; say(t("runBtAuto", dev.name || "BLE")); }
+  else{
+    try{ dev = await navigator.bluetooth.requestDevice(opts); }
+    catch(err){ console.warn("BLE:", err); say(err.name === "NotFoundError" ? t("runBtNone") : err.name + ": " + err.message); return false; }
+  }
   let note = "";
   try{
     const srv = await dev.gatt.connect();
@@ -7808,16 +7924,18 @@ async function runPair(kind){
         }catch(e){ console.warn("FE-C indisponible", e); note = t("runNoFtms", (sErr || "—") + " / FE-C: " + e.name + ": " + e.message); }
       }
     }
-    RUN.dev[kind] = dev; RUN.sim = false; dev.addEventListener("gattserverdisconnected", () => { if(RUN.dev[kind] === dev) runDevGone(kind); });
+    RUN.dev[kind] = dev; RUN.sim = false; AUTO.manual[kind] = false; try{ store.set("si_dev_" + kind, dev.id); store.set("si_devn_" + kind, dev.name || ""); }catch(e){}
+    dev.addEventListener("gattserverdisconnected", () => { if(RUN.dev[kind] === dev){ runDevGone(kind); if(!AUTO.manual[kind] && mode === "run") runAutoKind(kind); } }); // décrochage involontaire : on relance la recherche
     if(kind !== "hr") setTimeout(() => { if(RUN.dev.trainer === dev && !RUN.cadSrc) say(t("runNoCad")); }, 10000); // ni FTMS ni Cycling Power n'annoncent de cadence
     runBtUI(); if(note) say(note);
-  }catch(err){ console.warn("BLE:", err); try{ dev.gatt.disconnect(); }catch(e){} say(t("runBtFail", dev.name || "BLE", err.name + ": " + err.message)); }
+    return true;
+  }catch(err){ console.warn("BLE:", err); try{ dev.gatt.disconnect(); }catch(e){} if(!auto) say(t("runBtFail", dev.name || "BLE", err.name + ": " + err.message)); return false; }
 }
 // ---------- Bascule des modes (AI / Edit / Lib) ----------
 let mode = store.get("si_mode") || "lib"; // première visite : la bibliothèque fonctionne sans aucune clé
 if(mode === "ses") mode = "calp"; // l'analyse d'une séance s'ouvre maintenant sous le calendrier (plus d'onglet dédié)
 let sesUnder = false; // analyse de séance affichée sous le calendrier (après un clic sur une séance réalisée)
-const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["per", "cmp", "exp"], cal: ["calp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.cal.includes(mode) ? "cal" : GRP.run.includes(mode) ? "run" : "gen";
+const GRP = {gen: ["lib", "edit", "ai", "imp", "act", "plan", "shift"], ana: ["per", "cmp", "exp", "chat"], cal: ["calp"], run: ["run"]}, curGrp = () => GRP.ana.includes(mode) ? "ana" : GRP.cal.includes(mode) ? "cal" : GRP.run.includes(mode) ? "run" : "gen";
 const betaRunOn = () => store.get("si_beta_run") === "1";
 // téléphone : le lecteur est prioritaire à l'ouverture — seuls le logo et le lecteur sont affichés, un bouton ramène au menu complet (pour la durée de la session)
 const pmCan = () => matchMedia("(max-width:560px)").matches && betaRunOn();
@@ -7841,6 +7959,8 @@ $("pm_map").checked = store.get("si_rm_map") !== "0"; $("pm_map").onchange = e =
 $("pm_mus").checked = musShown(); $("pm_mus").onchange = e => { store.set("si_rm_mus", e.target.checked ? "1" : "0"); if(!e.target.checked) musStop(); musUI(); }; // masquer la musique l'arrête
 { const ld = $("pm_lead"); ld.value = runLead() || ""; ld.onchange = () => { const v = Math.max(0, Math.min(10, Math.round(parseFloat(String(ld.value).replace(",", ".")) * 2) / 2)); store.set("si_rm_lead", v > 0 ? String(v) : ""); ld.value = v > 0 ? v : ""; if(v > 0) runBeep(880, .12); }; }
 $("pm_ap").value = String(runAutoPause()); $("pm_ap").onchange = e => store.set("si_rm_ap", e.target.value);
+$("pm_voice").checked = runVoiceOn(); $("pm_voice").onchange = e => { store.set("si_rm_voice", e.target.checked ? "1" : "0"); if(e.target.checked) runSpeak(t("vTest")); };
+$("pm_forget").onclick = () => { ["trainer", "hr"].forEach(k => store.set("si_dev_" + k, "")); say("pmForgot", "ok"); };
 $("pm_beep").checked = runBeepOn(); $("pm_beep").onchange = e => { store.set("si_rm_beep", e.target.checked ? "1" : "0"); if(e.target.checked) runBeep(880, .12); }; // coché : un bip d'essai
 ["avg", "avgS", "kj", "dec", "dist"].forEach(k => { const el = $("pm_" + k); el.checked = store.get("si_rm_" + k) === "1"; el.onchange = () => { store.set("si_rm_" + k, el.checked ? "1" : "0"); runMxUI(); }; });
 applyBeta();
@@ -7971,6 +8091,91 @@ function perRender(P){
 document.querySelectorAll('[data-block="per"] [data-pu]').forEach(b => b.onclick = () => { PER.unit = b.dataset.pu; store.set("si_per_u", PER.unit); perLoad(); });
 $("perN").onchange = e => { store.set("si_per_n_" + PER.unit, e.target.value); perLoad(); };
 $("perRef").onclick = perLoad;
+// ---------- Contact (Web3Forms) ----------
+const WEB3FORMS_KEY = "0e7a22a5-8bd9-41af-9f2f-e7a7454f0f55"; // clé d'accès Web3Forms (web3forms.com) : conçue pour être publique côté navigateur ; les messages arrivent à l'adresse associée à la clé
+// l'entrée « Me contacter » du menu « … » ouvre ce formulaire
+$("mail").addEventListener("click", e => { e.preventDefault(); $("ctOut").textContent = ""; $("contactDlg").showModal(); }); // plus de lien mailto : le bouton ouvre seulement le formulaire
+$("mail").addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); $("mail").click(); } });
+$("ctClose").onclick = () => $("contactDlg").close();
+$("ctSend").onclick = async () => {
+  const name = $("ctName").value.trim(), email = $("ctEmail").value.trim(), msg = $("ctMsg").value.trim(), out = $("ctOut"), b = $("ctSend");
+  if(!msg || !/^\S+@\S+\.\S+$/.test(email)){ out.textContent = t("ctNeed"); return; }
+  if(!WEB3FORMS_KEY){ out.textContent = t("ctNoKey"); return; }
+  b.disabled = true; out.textContent = t("ctSending");
+  try{
+    const r = await fetch("https://api.web3forms.com/submit", {method: "POST", headers: {"Content-Type": "application/json", Accept: "application/json"},
+      body: JSON.stringify({access_key: WEB3FORMS_KEY, subject: "FlameCadence : message de " + (name || email), from_name: name || "FlameCadence", name, email, botcheck: $("ctBot").checked, message: msg + "\n\n--\nFlameCadence v" + APP_VERSION + " (" + lang + ")"})});
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || j.success === false) throw new Error(j.message || "HTTP " + r.status);
+    out.textContent = t("ctOk"); $("ctMsg").value = "";
+  }catch(err){ out.textContent = t("ctErr", err.name === "TypeError" ? t("cors") : err.message); }
+  b.disabled = false;
+};
+// ---------- Coach IA : conversation complète conservée dans une base IndexedDB du navigateur (repli : stockage local) ----------
+const CHAT = {msgs: [], db: null, loaded: false, busy: false, ctx: "", ctxAt: 0};
+function chatOpenDb(){ return new Promise(res => { try{ if(!window.indexedDB){ res(null); return; } const r = indexedDB.open("flamecadence", 1); r.onupgradeneeded = () => { r.result.createObjectStore("chat", {keyPath: "id", autoIncrement: true}); }; r.onsuccess = () => res(r.result); r.onerror = () => res(null); }catch(e){ res(null); } }); }
+async function chatInit(){
+  if(!CHAT.loaded){
+    CHAT.loaded = true; CHAT.db = await chatOpenDb();
+    if(CHAT.db) CHAT.msgs = await new Promise(res => { const q = CHAT.db.transaction("chat").objectStore("chat").getAll(); q.onsuccess = () => res(q.result || []); q.onerror = () => res([]); });
+    else{ try{ CHAT.msgs = JSON.parse(store.get("si_chat") || "[]") || []; }catch(e){ CHAT.msgs = []; } }
+  }
+  chatRender();
+}
+function chatAdd(m){
+  CHAT.msgs.push(m);
+  if(CHAT.db){ const rq = CHAT.db.transaction("chat", "readwrite").objectStore("chat").add(m); rq.onsuccess = () => { m.id = rq.result; }; }
+  else store.set("si_chat", JSON.stringify(CHAT.msgs.slice(-300)));
+}
+const chatFmt = x => esc(x).replace(/\*\*([^*\n]+)\*\*/g, "<b>$1</b>");
+function chatRender(extra){
+  const log = $("chatLog");
+  log.innerHTML = CHAT.msgs.length ? CHAT.msgs.map(m => `<div class="cm ${m.role === "user" ? "u" : "a"}">${m.role === "user" ? esc(m.text) : chatFmt(m.text)}</div>`).join("") : `<div class="hint">${esc(t("chatEmpty"))}</div>`;
+  if(extra) log.insertAdjacentHTML("beforeend", extra);
+  log.scrollTop = log.scrollHeight;
+}
+// Contexte d'entraînement résumé pour le coach (8 semaines, 14 derniers jours, 3 semaines à venir, forme) ; mis en cache 10 minutes
+async function chatContext(){
+  if(CHAT.ctx && Date.now() - CHAT.ctxAt < 600000) return CHAT.ctx;
+  const f = Math.round, today = iso(new Date()), fut = new Date(); fut.setDate(fut.getDate() + 21);
+  const [acts, evs, well] = await Promise.all([icu(`/activities?oldest=${daysAgo(56)}&newest=${today}`).catch(() => []), icu(`/events?oldest=${today}&newest=${iso(fut)}&category=WORKOUT`).catch(() => []), icu(`/wellness?oldest=${daysAgo(42)}&newest=${today}`).catch(() => [])]);
+  const A = (Array.isArray(acts) ? acts : []).filter(x => x.moving_time > 0), out = [`Today is ${today}.`];
+  const prof = [ICU.ftpIn ? `FTP indoor ${ICU.ftpIn} W` : "", ICU.ftpOut ? `FTP outdoor ${ICU.ftpOut} W` : "", ICU.weight ? `weight ${ICU.weight} kg` : "", ICU.maxHr ? `max HR ${ICU.maxHr}` : "", ICU.lthr ? `LTHR ${ICU.lthr}` : ""].filter(Boolean);
+  if(prof.length) out.push("Athlete: " + prof.join(", "));
+  const W = (Array.isArray(well) ? well : []).filter(w => w.ctl != null).sort((x, y) => x.id < y.id ? -1 : 1);
+  if(W.length){ const l = W[W.length - 1], o = W[0]; out.push(`Fitness on ${l.id}: CTL ${f(l.ctl)}, ATL ${f(l.atl || 0)}, form ${f(l.ctl - (l.atl || 0))}` + (o !== l ? ` (CTL was ${f(o.ctl)} on ${o.id})` : "")); }
+  const wk = {}; A.forEach(a => { const d = new Date((a.start_date_local || "").slice(0, 10) + "T12:00:00"); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); const k = iso(d); const q = wk[k] = wk[k] || {n: 0, sec: 0, load: 0}; q.n++; q.sec += a.moving_time || 0; q.load += a.icu_training_load || 0; });
+  const wks = Object.keys(wk).sort(); if(wks.length) out.push("Weekly totals (week starting Monday): " + wks.map(k => `${k}: ${wk[k].n} sessions, ${hm(wk[k].sec)}, load ${f(wk[k].load)}`).join(" | "));
+  const line = x => `${(x.start_date_local || "").slice(0, 10)} ${x.type || ""} "${x.name || ""}" ${hm(x.moving_time || 0)}` + (x.icu_training_load ? `, load ${f(x.icu_training_load)}` : "") + (x.icu_weighted_avg_watts ? `, NP ${f(x.icu_weighted_avg_watts)} W` : "") + (x.average_heartrate ? `, avg HR ${f(x.average_heartrate)}` : "");
+  const rec = A.filter(x => (x.start_date_local || "").slice(0, 10) >= daysAgo(14)).sort((x, y) => (x.start_date_local || "") < (y.start_date_local || "") ? -1 : 1);
+  if(rec.length) out.push("Sessions of the last 14 days:\n" + rec.map(line).join("\n"));
+  const pl = (Array.isArray(evs) ? evs : []).filter(e => !e.paired_activity_id).sort((x, y) => (x.start_date_local || "") < (y.start_date_local || "") ? -1 : 1).slice(0, 20);
+  out.push(pl.length ? "Planned workouts (next 3 weeks):\n" + pl.map(e => `${(e.start_date_local || "").slice(0, 10)} "${e.name || ""}"` + (e.moving_time ? " " + hm(e.moving_time) : "") + (e.icu_training_load ? `, planned load ${f(e.icu_training_load)}` : "")).join("\n") : "No workout planned in the next 3 weeks.");
+  CHAT.ctx = out.join("\n"); CHAT.ctxAt = Date.now(); return CHAT.ctx;
+}
+async function chatSend(){
+  const inp = $("chatIn"), txt = inp.value.trim(); if(!txt || CHAT.busy) return;
+  CHAT.busy = true; $("chatSend").disabled = true; inp.value = "";
+  chatAdd({role: "user", text: txt, at: Date.now()}); chatRender(`<div class="cm a" style="opacity:.7">${esc(t("chatThink"))}</div>`);
+  try{
+    const ctx = KEY() ? await chatContext() : "(intervals.icu is not connected: no training data available)";
+    const hist = CHAT.msgs.slice(-25, -1).map(m => `${m.role === "user" ? "Athlete" : "Coach"}: ${String(m.text).slice(0, 1500)}`).join("\n");
+    const sys = `You are an experienced endurance cycling coach chatting with an athlete about their training: the past (what the data shows), the present (current form, fatigue) and the future (what to do next, planned workouts). Reply in ${lang === "fr" ? "French" : "English"}. Base every factual statement on the training data given; if something is not in the data, say so instead of guessing. Never invent sessions or numbers. Be concise, practical and specific; when proposing a workout give durations and intensities (% FTP or watts) and explain why. Plain text, short paragraphs, **bold** allowed, no tables.`;
+    const reply = aiAnswer(await aiComplete(sys, `TRAINING DATA (from intervals.icu)\n${ctx}\n\nCONVERSATION SO FAR\n${hist || "(none)"}\n\nAthlete: ${txt}\n\nCoach:`));
+    chatAdd({role: "assistant", text: reply || "…", at: Date.now()}); chatRender();
+  }catch(err){ chatRender(`<div class="cm e">${esc(errText(err))}</div>`); }
+  CHAT.busy = false; $("chatSend").disabled = false; inp.focus();
+}
+$("chatSend").onclick = chatSend;
+$("chatIn").addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey && !e.isComposing){ e.preventDefault(); chatSend(); } });
+$("chatClr").onclick = async () => {
+  if(!CHAT.msgs.length || !confirm(t("chatSure"))) return;
+  CHAT.msgs = []; if(CHAT.db){ CHAT.db.transaction("chat", "readwrite").objectStore("chat").clear(); } else store.set("si_chat", ""); chatRender();
+};
+$("chatExp").onclick = () => {
+  const blob = new Blob([JSON.stringify(CHAT.msgs.map(m => ({role: m.role, text: m.text, at: new Date(m.at).toISOString()})), null, 2)], {type: "application/json"}), a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "flamecadence-coach-" + iso(new Date()) + ".json"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+};
 function applyMode(){
   if(mode !== "plan" && typeof PLAN !== "undefined" && PLAN.edit){ planEdEnd(); } // quitter le plan met fin à la modification d'une de ses séances
   if(mode !== "edit" && CALEDIT){ CALEDIT = null; calEdUI(); } // quitter l'éditeur manuel met fin à la modification d'une séance du calendrier
@@ -7982,6 +8187,7 @@ function applyMode(){
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="exp"]').hidden = mode !== "exp";
+  document.querySelector('[data-block="chat"]').hidden = mode !== "chat"; if(mode === "chat") chatInit();
   document.querySelector('[data-block="per"]').hidden = mode !== "per"; if(mode === "per") perLoad();
   document.querySelector('[data-block="calp"]').hidden = mode !== "calp"; // le rendu (et l'ajustement à la fenêtre) se fait en fin de fonction, une fois les autres blocs masqués
   if(mode !== "calp") sesUnder = false; { const sv = mode === "calp" && sesUnder; document.querySelector('[data-block="ses"]').hidden = !sv; if(sv) sesInit(); } // l'analyse n'apparaît que sous le calendrier, une fois une séance réalisée cliquée
@@ -8547,7 +8753,7 @@ function applyBlocks(){
     const b = sec.querySelector(".tgl"); if(b) b.setAttribute("aria-expanded", String(!closed));
   });
 }
-document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="per"]):not([data-block="ses"]):not([data-block="exp"]):not([data-block="run"]) > .phead').forEach(h => {
+document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block="edit"]):not([data-block="lib"]):not([data-block="imp"]):not([data-block="act"]):not([data-block="plan"]):not([data-block="shift"]):not([data-block="cmp"]):not([data-block="per"]):not([data-block="ses"]):not([data-block="exp"]):not([data-block="chat"]):not([data-block="run"]) > .phead').forEach(h => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "alt small icon tgl"; b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>'; b.dataset.ia = "title:collapse;aria-label:collapse";
   b.onclick = () => { const k = h.parentNode.dataset.block; off = off.includes(k) ? off.filter(x => x !== k) : [...off, k]; store.set("si_off", JSON.stringify(off)); applyBlocks(); };
@@ -8564,7 +8770,6 @@ document.querySelectorAll('[data-block]:not([data-block="req"]):not([data-block=
   grp.appendChild(b); h.appendChild(grp);
 });
 function setLinks(){
-  $("mail").href = LINKS.mail;
   [["gh", LINKS.github], ["coffee", LINKS.coffee], ["coffeeTop", LINKS.coffee]].forEach(([id, url]) => {
     const a = $(id);
     if(url){ a.href = url; a.target = "_blank"; a.rel = "noopener"; a.classList.remove("soon"); }
@@ -8586,6 +8791,9 @@ function applyLang(){
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 function applySquare(){ const on = store.get("si_square") === "1"; document.documentElement.toggleAttribute("data-square", on); const c = $("sqCorners"); if(c) c.checked = on; }
+function applyMainW(){ const v = parseInt(store.get("si_mainw"), 10) || 760; document.documentElement.style.setProperty("--mainw", v + "px"); $("mainW").value = v; $("mainWv").textContent = v + " px"; }
+$("mainW").oninput = e => { store.set("si_mainw", e.target.value); applyMainW(); try{ calFitP(); }catch(_){} };
+$("mainWr").onclick = () => { store.set("si_mainw", ""); applyMainW(); try{ calFitP(); }catch(_){} };
 $("sqCorners").onchange = e => { store.set("si_square", e.target.checked ? "1" : "0"); applySquare(); };
 // thèmes d'aspect : « classic » = aucun attribut ; chaque autre thème = un bloc CSS :root[data-look="id"] + une option dans #themesel + ses textes (lk…). nav : la barre Générer/Analyser passe dans l'en-tête ; font : police Google chargée seulement avec ce thème
 const LOOKS = {sport: {nav: true, font: "Barlow+Condensed:wght@600;700"}};
@@ -8608,7 +8816,7 @@ function applyLook(){
 $("themesel").onchange = e => { store.set("si_look", e.target.value); applyLook(); };
 matchMedia("(min-width:901px)").addEventListener("change", () => applyLook()); // le sous-menu change d'emplacement quand on passe sous / sur 901 px
 applyLook();
-applySquare();
+applySquare(); applyMainW();
 $("fontsel").onchange = e => { font = e.target.value; store.set("si_font", font); applyFont(); };
 $("theme").onclick = () => { theme = THEME_ORDER[(THEME_ORDER.indexOf(theme) + 1) % 3]; store.set("si_theme", theme); applyTheme(); };
 $("date").value = iso(new Date()); refreshDateBtn();
