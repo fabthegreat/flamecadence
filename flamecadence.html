@@ -780,8 +780,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
-<script data-goatcounter="https://flamecadence.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+<script>/* compteur de visites (GoatCounter) : pas chargé quand le fichier est ouvert en local (file://), où « //gc.zgo.at » devenait « file:///count.js » et échouait */try{if(location.protocol==="http:"||location.protocol==="https:"){var _g=document.createElement("script");_g.async=true;_g.dataset.goatcounter="https://flamecadence.goatcounter.com/count";_g.src="https://gc.zgo.at/count.js";document.head.appendChild(_g);}}catch(e){}</script>
 </head>
 <body>
 <main>
@@ -1869,7 +1868,7 @@ function progEnd(){
 }
 $("stopGen").onclick = () => { if(abortGen) abortGen.abort(); };
 
-const ACT = {Ride: ["Ride", "Vélo"], VirtualRide: ["Virtual ride", "Vélo virtuel"], Run: ["Run", "Course à pied"], VirtualRun: ["Virtual run", "Course virtuelle"], TrailRun: ["Trail run", "Trail"], Swim: ["Swim", "Natation"], WeightTraining: ["Strength", "Renforcement"], Walk: ["Walk", "Marche"], Hike: ["Hike", "Randonnée"], Workout: ["Workout", "Séance"], Rowing: ["Rowing", "Aviron"], NordicSki: ["Nordic ski", "Ski nordique"], Yoga: ["Yoga", "Yoga"]};
+const ACT = {Ride: ["Ride", "Vélo"], VirtualRide: ["Virtual ride", "Vélo virtuel"], Run: ["Run", "Course à pied"], VirtualRun: ["Virtual run", "Course virtuelle"], TrailRun: ["Trail run", "Trail"], Swim: ["Swim", "Natation"], WeightTraining: ["Strength", "Renforcement"], Walk: ["Walk", "Marche"], Hike: ["Hike", "Randonnée"], Workout: ["Workout", "Séance"], Rowing: ["Rowing", "Aviron"], NordicSki: ["Nordic ski", "Ski nordique"], Yoga: ["Yoga", "Yoga"], TableTennis: ["Table tennis", "Tennis de table"]};
 const actT = ty => (ACT[ty] || [ty, ty])[lang === "fr" ? 1 : 0] || "";
 const errText = e => e.name === "AbortError" ? t("timeout") : e.name === "TypeError" ? t("cors") : e.message;
 
@@ -2043,11 +2042,36 @@ const KEY = () => store.get("si_ikey"), AID = () => store.get("si_aid") || "0";
 const ICU = {ftpIn: 0, ftpOut: 0, weight: 0, age: null, name: "", city: "", country: "", lthr: 0, maxHr: 0, loaded: false}, LAST = {}, NEXT = {ev: null, loaded: false, tok: 0};
 const icuAuth = () => ({Authorization: "Basic " + btoa("API_KEY:" + KEY())});
 const icuUrl = path => `https://intervals.icu/api/v1/athlete/${encodeURIComponent(AID())}${path}`;
+// File d'attente des appels intervals.icu : au démarrage, une dizaine de requêtes partaient en même temps (bien-être, courbes de puissance, événements, activités, flux…) et l'API répondait HTTP 429 (limitation de débit).
+// Le navigateur affiche alors une « erreur CORS » : la réponse 429 n'a pas d'en-tête CORS, donc fetch() lève une TypeError au lieu de donner le statut.
+// → 3 requêtes à la fois au maximum, espacées de 120 ms (≈ 8 par seconde) ; une lecture (GET) refusée est rejouée après une attente (Retry-After si fourni, sinon 1,5 s, 3 s, 6 s) et toute la file attend.
+const ICUQ = {n: 0, q: [], t: 0, hold: 0, max: 3, base: 120, gap: 120}; // gap s'adapte : ×1,5 à chaque refus (max 400 ms), puis redescend de 4 ms par succès jusqu'à base
+function icuPump(){
+  while(ICUQ.n < ICUQ.max && ICUQ.q.length){
+    ICUQ.n++; const go = ICUQ.q.shift(), now = Date.now(), at = Math.max(now, ICUQ.t + ICUQ.gap, ICUQ.hold);
+    ICUQ.t = at; setTimeout(go, at - now);
+  }
+}
+const icuSlot = () => new Promise(res => { ICUQ.q.push(res); icuPump(); });
+const icuFree = () => { ICUQ.n--; icuPump(); };
 async function icuFetch(url, opt){
   if(!KEY()) throw new Error(t("keyMissing"));
-  const r = await fetch(url, {headers: icuAuth(), ...(opt || {})});
-  if(!r.ok) throw new Error("HTTP " + r.status);
-  return opt && opt.method === "DELETE" ? null : r.json();
+  const method = (opt && opt.method) || "GET";
+  for(let k = 0; ; k++){
+    await icuSlot();
+    let r = null, err = null;
+    try{ r = await fetch(url, {headers: icuAuth(), ...(opt || {})}); }catch(e){ err = e; }finally{ icuFree(); }
+    if(r && r.ok){ if(ICUQ.gap > ICUQ.base) ICUQ.gap = Math.max(ICUQ.base, ICUQ.gap - 4); return opt && opt.method === "DELETE" ? null : r.json(); }
+    const limited = r ? r.status === 429 : err instanceof TypeError; // 429 : statut lisible ou TypeError (réponse sans en-tête CORS)
+    if(limited) ICUQ.gap = Math.min(400, Math.round(ICUQ.gap * 1.5)); // refusé : on ralentit pour la suite
+    if(limited && method === "GET" && k < (r ? 3 : 2)){
+      const ra = r ? parseFloat(r.headers.get("Retry-After")) : NaN;
+      ICUQ.hold = Math.max(ICUQ.hold, Date.now() + (isFinite(ra) ? Math.min(ra, 20) * 1000 : 1500 * Math.pow(2, k)));
+      continue;
+    }
+    if(r) throw new Error("HTTP " + r.status);
+    throw err;
+  }
 }
 const icu = path => icuFetch(icuUrl(path));
 const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
@@ -5520,20 +5544,20 @@ function actStreams(id, act){
   const attempt = async url => { // réessaie en cas d'erreur transitoire (429 / 5xx / réseau)
     for(let n = 0; n < 3; n++){
       try{ return {ok: true, v: pick(await icuFetch(url))}; }
-      catch(e){ if(/HTTP (4(?!29)\d\d)/.test(String(e.message))) return {ok: false, fatal: true}; await new Promise(r => setTimeout(r, 600 * (n + 1))); }
+      catch(e){ if(/HTTP (4(?!29)\d\d)/.test(String(e.message))) return {ok: false, fatal: true, st: +(String(e.message).match(/HTTP (\d+)/) || [])[1] || 0}; await new Promise(r => setTimeout(r, 600 * (n + 1))); }
     }
     return {ok: false};
   };
   // cache persistant (IndexedDB) : les profils du calendrier ne servent qu'à de petites vignettes → 120 points suffisent
   const calKey = "cal:" + id;
   const calUnpack = c => { const g = x => x && x.length ? Array.from(x) : null; return {w: g(c.w), h: g(c.h), s: g(c.s), a: g(c.a)}; };
-  const calSave = (v, neg) => { const f = x => x && x.length ? Float32Array.from(ds(x, 360)) : null; scPut(calKey, {v: 3, ts: Date.now(), neg: !!neg, w: f(v.w), h: f(v.h), s: f(v.s), a: f(v.a)}); };
+  const calSave = (v, neg, ttl) => { const f = x => x && x.length ? Float32Array.from(ds(x, 360)) : null; scPut(calKey, {v: 3, ts: Date.now(), neg: !!neg, ttl: ttl || 0, w: f(v.w), h: f(v.h), s: f(v.s), a: f(v.a)}); };
   const p = (async () => {
     const c = await scGet(calKey);
     // entrée valide ; une absence de données n'est retenue qu'un jour (l'activité peut être en cours de traitement)
     // v2 : entrées écrites avec la requête filtrée, qui pouvait manquer le flux de vitesse (nom « speed ») → vignette FC seule (rose) à tort : on les ignore
     const hrOnly = c && c !== true && !(c.w && c.w.length) && !(c.s && c.s.length) && c.h && c.h.length;
-    if(c && c !== true && (c.v === 3 || (c.v === 2 && !hrOnly)) && (!c.neg || Date.now() - c.ts < 864e5)) return calUnpack(c);
+    if(c && c !== true && (c.v === 3 || (c.v === 2 && !hrOnly)) && (!c.neg || Date.now() - c.ts < (c.ttl || 864e5))) return calUnpack(c);
     // sortie à vélo dont les flux complets sont déjà au cache (comparateur, vue d'une séance, préchauffage) : on en tire la vignette sans réseau
     if(act && /Ride|Bike|Cycl/i.test(act.type || "")){
       // puissance seulement : sans elle la vitesse prime sur la FC, et ce cache ne la contient pas
@@ -5548,6 +5572,7 @@ function actStreams(id, act){
         const r = await attempt(u);
         // requête filtrée : on ne l'accepte que si elle apporte puissance ou vitesse ; sinon (FC seule) on tente le jeu complet, où le flux de vitesse peut porter un autre nom
         if(r.ok && (r.v.w || r.v.s || (ui > 0 && r.v.h))){ calSave(r.v, false); return calUnpack({w: ds(r.v.w, 360), h: ds(r.v.h, 360), s: ds(r.v.s, 360), a: ds(r.v.a, 360)}); }
+        if(!r.ok && r.fatal && r.st === 422){ calSave({}, true, 30 * 864e5); return {w: null, h: null, s: null, a: null, transient: false}; } // 422 : activité importée de Strava, intervals.icu n'en fournit pas les flux par l'API → inutile d'essayer les 2 autres requêtes, ni de réessayer avant un mois
         if(!r.ok && !r.fatal) transient = true;
       }
       if(!transient) calSave({}, true);
@@ -5715,8 +5740,8 @@ async function calPrefetch(m){
 function renderCal(){ renderCalW(); renderCalP(); }
 // ---------- Calendrier de la page « Calendrier » : lignes de semaines avec résumé, cartes de séances teintées (style intervals.icu) ----------
 function calAllEv(){ const c = CAL_CACHE[CAL.m], raw = c && c.ev ? c.ev.filter(e => !e.paired_activity_id) : []; return raw.length ? raw : (CAL.ev || []); } // séances planifiées non réalisées, y compris les passées (manquées)
-const CAL_SVG = {bike: '<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l3 8"/>', run: '<circle cx="14" cy="4.5" r="1.8"/><path d="M12 9l-3 3-3 1M12 9l3 3 2 5M12 9l1 5-3 5"/>', other: '<circle cx="12" cy="12" r="4"/>'};
-const calIcon = ty => `<svg viewBox="0 0 24 24" aria-hidden="true">${/Ride/.test(ty || "") ? CAL_SVG.bike : /Run|Walk|Hike/.test(ty || "") ? CAL_SVG.run : CAL_SVG.other}</svg>`;
+const CAL_SVG = {bike: '<circle cx="6" cy="16" r="3.5"/><circle cx="18" cy="16" r="3.5"/><path d="M6 16l4-8h5l3 8M10 8l3 8"/>', run: '<circle cx="14" cy="4.5" r="1.8"/><path d="M12 9l-3 3-3 1M12 9l3 3 2 5M12 9l1 5-3 5"/>', swim: '<circle cx="17" cy="6.5" r="1.8"/><path d="M4 12.5l6-3.2 4 2 2.6-1.6M3 16.5c1.5 0 1.5 1.2 3 1.2s1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2M3 20.5c1.5 0 1.5 1.2 3 1.2s1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2 1.5 1.2 3 1.2 1.5-1.2 3-1.2"/>', pingpong: '<circle cx="10" cy="10" r="5.5"/><path d="M14 14l6 6"/><circle cx="19" cy="5" r="1.4"/>', other: '<circle cx="12" cy="12" r="4"/>'};
+const calIcon = ty => `<svg viewBox="0 0 24 24" aria-hidden="true">${/Ride/.test(ty || "") ? CAL_SVG.bike : /Run|Walk|Hike/.test(ty || "") ? CAL_SVG.run : /Swim/.test(ty || "") ? CAL_SVG.swim : /Table.?Tennis|Ping/i.test(ty || "") ? CAL_SVG.pingpong : CAL_SVG.other}</svg>`;
 function isoWeek(d){ const x = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), dn = x.getUTCDay() || 7; x.setUTCDate(x.getUTCDate() + 4 - dn); return Math.ceil(((x - Date.UTC(x.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7); }
 function calCardDone(a){
   const npi = calNP(a, true), lv = npi ? npi.lv : 0, hr = Math.round(a.average_heartrate || 0), w = Math.round(a.icu_weighted_avg_watts || a.icu_average_watts || a.average_watts || 0), c = a.compliance;
@@ -7929,11 +7954,12 @@ function perRender(P){
   const box = $("perBox"), f = Math.round;
   if(!P.some(q => q.n || q.planN)){ box.innerHTML = `<div class="hint">${esc(t("perNone"))}</div>`; return; }
   const W = 600, H = 150, pad = 22, mx = Math.max(10, ...P.map(q => q.load + q.plan)), bw = (W - 10) / P.length, gap = Math.min(8, bw * .25);
+  const lk = Math.max(1, Math.ceil((Math.max(...P.map(q => String(q.label).length)) * 5.6 + 8) / bw)); // une étiquette sur lk : assez d'espace pour que « Dec 24 » ne chevauche pas la suivante (la dernière période reste toujours étiquetée)
   const bars = P.map((q, i) => {
     const x = 5 + i * bw + gap / 2, w = bw - gap, hd = (H - pad) * q.load / mx, hp = (H - pad) * q.plan / mx;
     return `<rect x="${x.toFixed(1)}" y="${(H - hd).toFixed(1)}" width="${w.toFixed(1)}" height="${hd.toFixed(1)}" fill="var(--acc)"/>` +
       (q.plan ? `<rect x="${x.toFixed(1)}" y="${(H - hd - hp).toFixed(1)}" width="${w.toFixed(1)}" height="${hp.toFixed(1)}" fill="var(--acc)" opacity=".35"/>` : "") +
-      (P.length <= 26 || i % 2 === 0 ? `<text x="${(x + w / 2).toFixed(1)}" y="${H + 14}" text-anchor="middle" font-size="10" fill="var(--mute)">${esc(q.label)}</text>` : "");
+      ((P.length - 1 - i) % lk === 0 ? `<text x="${(x + w / 2).toFixed(1)}" y="${H + 14}" text-anchor="middle" font-size="10" fill="var(--mute)">${esc(q.label)}</text>` : "");
   }).join("");
   const tot = P.reduce((a, q) => ({n: a.n + q.n, sec: a.sec + q.sec, dist: a.dist + q.dist, load: a.load + q.load, plan: a.plan + q.plan}), {n: 0, sec: 0, dist: 0, load: 0, plan: 0});
   const row = q => `<tr${q.cur ? ' class="cur"' : ""}><td>${esc(q.label)}${q.cur ? " (" + esc(t("perNow")) + ")" : ""}</td><td>${q.n}</td><td>${q.sec ? hm(q.sec) : "\u2014"}</td><td>${q.dist ? (q.dist / 1000).toFixed(0) + " km" : "\u2014"}</td><td>${q.load ? f(q.load) : "\u2014"}</td><td>${q.plan ? f(q.plan) + " (" + q.planN + ")" : ""}</td></tr>`;
