@@ -1147,6 +1147,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <input type="file" id="impin" accept=".zwo,.fit,.xml,.mrc,.erg,.json,.txt,.gpx" hidden>
 <p class="hint" data-i="impHint" style="margin-top:12px"></p>
 </div>
+<div id="impHist" hidden><h3 style="margin:20px 0 4px;font-size:.95rem" data-i="impHistT"></h3><div id="impHistList"></div></div>
 </section>
 
 <!-- Section Depuis une activité -->
@@ -1772,7 +1773,7 @@ impEmpty:["No workout steps found in this file.","Aucune étape de séance trouv
 impOkW:["Workout imported from {0} (watts converted to % using an FTP of {1} W).","Séance importée depuis {0} (watts convertis en % avec une FTP de {1} W)."],
 impNoFtp:["This watts-based file needs your FTP to be converted. Set your FTP first.","Ce fichier en watts nécessite ta FTP pour être converti. Renseigne d'abord ta FTP."],
 impUnk:["Unsupported file type. Use .zwo, .fit, .mrc, .erg, .json, .txt or .gpx.","Type de fichier non pris en charge. Utilise .zwo, .fit, .mrc, .erg, .json, .txt ou .gpx."],
-impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."],
+impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."], impHistT:["10 last imported workouts","10 derniers imports"], impHistLoad:["Load","Charger"],
 impJsonBad:["This JSON file is not a FlameCadence workout export (no steps found).","Ce fichier JSON n'est pas un export de séance FlameCadence (aucune étape trouvée)."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
@@ -4586,6 +4587,29 @@ function parseGpx(xml){
   if(P.filter(p => isFinite(p[2])).length < P.length * .8) throw new Error(t("impNoEle"));
   const r = gpxBuild(P), nm = doc.getElementsByTagName("name")[0]; r.name = nm ? nm.textContent.trim() : ""; return r;
 }
+// pile des 10 derniers imports (dans ce navigateur) : nom, texte de la séance, et pour un GPX le tracé simplifié pour la carte
+const impStack = () => { try{ const a = JSON.parse(store.get("si_imports") || "[]"); return Array.isArray(a) ? a.slice(0, 10) : []; }catch(e){ return []; } };
+function impPush(e){
+  const a = impStack().filter(x => !(x.n === e.n && x.d === e.d)); a.unshift(e);
+  try{ store.set("si_imports", JSON.stringify(a.slice(0, 10))); }catch(_){}
+  impHistRender();
+}
+function impHistRender(){
+  const a = impStack(), box = $("impHist"); if(!box) return;
+  box.hidden = !a.length;
+  $("impHistList").innerHTML = a.map((e, i) => `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)"><div style="flex:1;min-width:0"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.n || e.f || "--")}</div><div class="hint" style="margin:2px 0 0">${esc([e.f, new Date(e.t).toLocaleString(loc(), {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"}), e.k ? e.k + " km" + (e.g ? " · " + e.g + " m" : "") : ""].filter(Boolean).join(" · "))}</div></div><button type="button" class="alt small" data-ih="load" data-i="${i}">${esc(t("impHistLoad"))}</button><button type="button" class="alt small icon danger" data-ih="del" data-i="${i}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">✕</button></div>`).join("");
+}
+$("impHistList").onclick = e => {
+  const b = e.target.closest("button[data-ih]"); if(!b) return;
+  const a = impStack(), i = +b.dataset.i, x = a[i]; if(!x) return;
+  if(b.dataset.ih === "del"){ a.splice(i, 1); try{ store.set("si_imports", JSON.stringify(a)); }catch(_){} impHistRender(); return; }
+  $("name").value = x.n || ""; $("desc").value = x.d || "";
+  const sp = $("sport"); if(x.s && [...sp.options].some(o => o.value === x.s)) sp.value = x.s;
+  $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(null); renderChart();
+  if(x.co){ try{ ROUTES.save(parseWorkout(x.d, sp.value, curFtp()), x.co); }catch(_){} } // le tracé retrouve sa carte satellite dans le lecteur
+  say("impOk", "ok", x.f || x.n);
+};
+impHistRender();
 async function importFile(f){
   try{
     const ext = ((/\.([a-z0-9]+)$/i.exec(f.name) || [])[1] || "").toLowerCase();
@@ -4602,7 +4626,8 @@ async function importFile(f){
     if(nm) $("name").value = nm;
     $("desc").value = desc != null ? desc : stepsToDesc(steps);
     $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(null);
-    renderChart(); if(gpx) say("impOkG", "ok", f.name, gpx.km.toFixed(1), gpx.gain, gpx.n); else if(ftpUsed) say("impOkW", "ok", f.name, Math.round(ftpUsed)); else say("impOk", "ok", f.name);
+    renderChart(); impPush({t: Date.now(), f: f.name, n: $("name").value, d: $("desc").value, s: $("sport").value, co: gpx ? gpx.co : null, k: gpx ? +gpx.km.toFixed(1) : null, g: gpx ? gpx.gain : null});
+    if(gpx) say("impOkG", "ok", f.name, gpx.km.toFixed(1), gpx.gain, gpx.n); else if(ftpUsed) say("impOkW", "ok", f.name, Math.round(ftpUsed)); else say("impOk", "ok", f.name);
   }catch(e){
     say("impErr", "err", e && e.message === "FTP" ? t("impNoFtp") : e && e.message ? e.message : errText(e));
   }
@@ -8191,7 +8216,7 @@ function applyMode(){
   document.querySelector('[data-block="edit"]').hidden = mode !== "edit";
   document.querySelector('[data-block="lib"]').hidden = mode !== "lib";
   if(mode === "lib" && (LIBF !== curFtp() || LIBFK !== ($("libform").checked ? feelEff() : ""))) renderLibrary();
-  document.querySelector('[data-block="imp"]').hidden = mode !== "imp";
+  document.querySelector('[data-block="imp"]').hidden = mode !== "imp"; if(mode === "imp") impHistRender();
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="exp"]').hidden = mode !== "exp";
