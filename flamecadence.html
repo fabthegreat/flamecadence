@@ -123,6 +123,10 @@ header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:cen
 .help{display:block;margin-top:4px}
 dialog{width:min(92vw,560px);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:20px}
 dialog::backdrop{background:rgba(0,0,0,.5)}
+/* réglages : Enregistrer / Fermer restent visibles en bas de la fenêtre, le contenu défile au-dessus */
+#cfg{padding:0}#cfg .cfgbody{padding:20px 20px 8px}#cfg .cfg-more{margin-top:12px}
+#cfg .cfg-bar{position:sticky;bottom:0;z-index:3;margin:0;padding:12px 20px calc(12px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}#cfg .cfg-bar button{flex:1 1 0;margin:0}
+@media (max-width:560px){#cfg{max-height:92dvh}#cfg .cfgbody{padding:16px 14px 8px}#cfg .cfg-bar{padding-left:14px;padding-right:14px}#cfg .cfg-bar button{min-height:46px}}
 dialog h2{margin-bottom:6px}
 .chart{position:relative;margin-bottom:6px}
 .chart svg{display:block;width:100%;height:64px;border-radius:6px;background:var(--bg)}
@@ -811,7 +815,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div id="toast" role="alert" hidden><span id="toastt"></span><button type="button" id="toastAct" hidden data-i="undo"></button><button type="button" id="toastx" data-ia="aria-label:close">×</button></div>
 <p class="sub" data-i="subtitle"></p>
 
-<dialog id="cfg" aria-labelledby="cfgt">
+<dialog id="cfg" aria-labelledby="cfgt"><div class="cfgbody">
 <h2 id="cfgt" data-i="settingsTitle"></h2>
 <div class="mode cfg-tabs" role="tablist" data-ia="aria-label:settingsTitle">
 <button type="button" role="tab" data-cfg="icu" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg><span data-i="secIcu"></span></button>
@@ -946,14 +950,17 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <select id="jamtag"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select>
 </div>
 </div>
-<div class="actions">
-<button id="save" type="button" data-i="save"></button>
+<div class="actions cfg-more">
 <button class="alt" id="impjson" type="button" data-i="jsonImp"></button>
 <button class="alt" id="expjson" type="button" data-i="jsonExp"></button>
-<button class="alt" id="close" type="button" data-i="close"></button>
 <button class="alt danger" id="clear" type="button" data-i="clearKeys"></button>
 <input type="file" id="impjsonin" accept=".json,application/json" hidden>
 <button class="alt small" id="openHelp" type="button" style="width:100%;margin-top:10px">❓ <span data-i="helpBtn"></span></button>
+</div>
+</div>
+<div class="actions cfg-bar">
+<button id="save" type="button" data-i="save"></button>
+<button class="alt" id="close" type="button" data-i="close"></button>
 </div>
 </dialog>
 
