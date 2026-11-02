@@ -438,13 +438,13 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cal-ev-t{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;pointer-events:none}
 .cal-x{margin:0;padding:0 3px;line-height:1.1;background:transparent;color:var(--on);font-size:.85rem;border:0;cursor:pointer;opacity:.55;flex:none}
 #calbox.nav-l{box-shadow:inset 8px 0 0 var(--acc)}#calbox.nav-r{box-shadow:inset -8px 0 0 var(--acc)}#calprev.dragnav,#calnext.dragnav{background:var(--acc);color:var(--on)}
-.cal-x:hover{opacity:1}.cal-max .cal-x{display:none}
+.cal-x:hover{opacity:1}.cal-max .cal-x,.cal-page .cal-x{padding:2px 7px;font-size:1rem;font-weight:700;color:inherit;opacity:.75}.cal-max .cal-x:hover,.cal-page .cal-x:hover{opacity:1}
 .phead .ext{margin:0;padding:5px 7px!important;flex:none}
 .phead .ext svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #dcalbox .cal-d:not(.empty){cursor:pointer}
 #calbox,#dcalbox,#calbox2{position:relative}#calbox.loading,#calbox2.loading{opacity:.55;transition:opacity .15s .12s}
 #calbox2 .cal-d:not(.empty){cursor:pointer}#calbox2 .cal-d:not(.empty):hover{border-color:var(--acc)}#calbox2 .cal-ev{cursor:grab}#calbox2.nav-l{box-shadow:inset 8px 0 0 var(--acc)}#calbox2.nav-r{box-shadow:inset -8px 0 0 var(--acc)}#calprev2.dragnav,#calnext2.dragnav{background:var(--acc);color:var(--on)}
-.cal-page .cal{gap:4px}.cal-page .cal-x{display:none}html.m-calp .mode:not(.cfg-tabs){display:none}
+.cal-page .cal{gap:4px}html.m-calp .mode:not(.cfg-tabs){display:none}
 .calw{display:flex;flex-direction:column;gap:0;font-size:.75rem}
 .calw .cw-head,.calw .cw{display:grid;grid-template-columns:118px repeat(7,minmax(0,1fr));gap:0}.calw .cw{border-top:1px solid var(--line)}
 .calw .cw-head div{text-align:center;color:var(--mute);font-size:.7rem;padding:2px 0}
@@ -458,6 +458,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .cw-hd{display:flex;align-items:center;gap:5px;padding:3px 6px;background:var(--cc);color:#fff;font-weight:600;font-size:.78rem}
 .cw-hd svg{width:13px;height:13px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .cw-hd i{margin-left:auto;font-style:normal;font-weight:500}
+.cw-hd .cal-x{margin-left:auto;padding:0 4px;color:inherit;font-size:.9rem;font-weight:700;opacity:.7}.cw-hd .cal-x:hover{opacity:1}
 .cw-bd{display:flex;flex-direction:column;gap:3px;padding:4px 6px 6px;text-align:center;font-size:.72rem;background:color-mix(in srgb,var(--cc) 13%,var(--card))}
 .cw-card.plan .cw-hd{background:color-mix(in srgb,var(--cc) 32%,var(--card));color:var(--ink)}
 .cw-card.plan .cw-bd{background:var(--card)}
@@ -469,7 +470,7 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .calw .cal-mini{height:34px}.calw .cal-meta{display:none}
 .calw .cal-wd{display:none}
 
-#chatLog{min-height:240px;max-height:58vh;overflow:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+#chatLog{min-height:240px;max-height:58vh;overflow:auto;overscroll-behavior:contain;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
 .cm{max-width:90%;padding:8px 11px;border-radius:10px;font-size:.92rem;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}.cm.u{align-self:flex-end;background:var(--acc);color:var(--on)}.cm.a{align-self:flex-start;background:var(--card);border:1px solid var(--line)}.cm.e{align-self:flex-start;color:var(--err);border:1px solid var(--err);background:var(--card)}
 .calw.fit{overflow:hidden}.calw.fit .cw-head{flex:none}.calw.fit .cw{flex:1 1 0;min-height:0;grid-template-rows:minmax(0,1fr)}
 .calw.fit .cal-d{min-height:0;overflow-y:auto;scrollbar-width:none}.calw .cal-d::-webkit-scrollbar{display:none}.calw.fit .cal-ev.cw-card{flex:0 0 auto}.calw.fit .cw-sum{overflow:hidden;min-height:0}
@@ -632,7 +633,7 @@ section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
 /* comparateur de séances passées */
 html.m-calp [data-block="ses"] .ses-pick,html.m-calp [data-block="ses"] .ses-lbl:not(.ses-lbl2){display:none} /* sous le calendrier, le calendrier fait office de sélecteur */
 html:not(.m-calp) #sesClose{display:none}
-html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+html.no-prev #prev,html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
 .run #runWkChart{margin-top:8px}.run #runWkChart:empty{display:none}.run #runWkChart svg{display:block;width:100%;height:56px;border-radius:6px;background:var(--bg)}
 #lsvg{cursor:pointer}
 #cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
@@ -5703,7 +5704,7 @@ function setupCalBox(box, getEv, refresh, onPick){
     const x = e.target.closest(".cal-x");
     if(x){
       e.stopPropagation();
-      const ev = (getEv() || []).find(v => String(v.id) === x.dataset.xid); if(!ev) return;
+      const ev = (getEv() || []).find(v => String(v.id) === x.dataset.xid) || calAllEv().find(v => String(v.id) === x.dataset.xid); if(!ev) return;
       if(!(await ask("cfmDel"))) return;
       try{
         await icuFetch(icuUrl("/events/" + ev.id), {method: "DELETE"});
@@ -5790,7 +5791,7 @@ function calCardDone(a){
 function calCardPlan(e, missed){
   const sport = e.type || "Ride", ftp = ftpFor(sport); let steps = []; try{ steps = plannedSteps(e, ftp); }catch(_){}
   const svg = steps.length ? stepsSvg(steps) : "", k = steps.length ? stepsStats(steps) : null, dur = k ? k.total : (e.moving_time || (e.workout_doc && e.workout_doc.duration) || 0), npi = calNP(e, false), lv = npi ? npi.lv : 0;
-  return `<div class="cal-ev cw-card plan lv${lv}${missed ? " missed" : ""}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><div class="cw-hd">${calIcon(sport)}<span>${dur ? hm(dur) : ""}</span></div><div class="cw-bd">${e.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(e.icu_training_load)}</div>` : ""}${svg ? `<div class="cal-mini">${svg}</div>` : ""}<div class="cw-nm">${esc(e.name || "--")}</div>${missed ? `<div class="cw-cp bad">\u2715 0%</div>` : ""}</div></div>`;
+  return `<div class="cal-ev cw-card plan lv${lv}${missed ? " missed" : ""}" draggable="true" data-eid="${esc(String(e.id))}" title="${esc(e.name || "")}"><div class="cw-hd">${calIcon(sport)}<span>${dur ? hm(dur) : ""}</span><button class="cal-x" type="button" data-xid="${esc(String(e.id))}" title="${esc(t("del"))}" aria-label="${esc(t("del"))}">✕</button></div><div class="cw-bd">${e.icu_training_load ? `<div class="cw-ld">${esc(t("perLoadC"))} ${Math.round(e.icu_training_load)}</div>` : ""}${svg ? `<div class="cal-mini">${svg}</div>` : ""}<div class="cw-nm">${esc(e.name || "--")}</div>${missed ? `<div class="cw-cp bad">\u2715 0%</div>` : ""}</div></div>`;
 }
 function calWeeksHtml(off, evList, actList){
   const f = calFirst(off), y = f.getFullYear(), m = f.getMonth(), today = iso(new Date()), dim = new Date(y, m + 1, 0).getDate();
@@ -8114,6 +8115,13 @@ $("ctSend").onclick = async () => {
 // ---------- Coach IA : conversation complète conservée dans une base IndexedDB du navigateur (repli : stockage local) ----------
 const CHAT = {msgs: [], db: null, loaded: false, busy: false, ctx: "", ctxAt: 0};
 function chatOpenDb(){ return new Promise(res => { try{ if(!window.indexedDB){ res(null); return; } const r = indexedDB.open("flamecadence", 1); r.onupgradeneeded = () => { r.result.createObjectStore("chat", {keyPath: "id", autoIncrement: true}); }; r.onsuccess = () => res(r.result); r.onerror = () => res(null); }catch(e){ res(null); } }); }
+function chatFit(){ // la conversation occupe tout l'espace jusqu'au bas de l'écran, zone de saisie comprise
+  const log = $("chatLog"), sec = log && log.closest("section"); if(!log || !sec || sec.hidden) return;
+  log.style.maxHeight = "none";
+  const r = log.getBoundingClientRect(), below = sec.getBoundingClientRect().bottom - r.bottom;
+  log.style.height = Math.max(240, Math.round(window.innerHeight - (r.top + window.scrollY) - below - 24)) + "px";
+}
+window.addEventListener("resize", () => { if(mode === "chat") chatFit(); });
 async function chatInit(){
   if(!CHAT.loaded){
     CHAT.loaded = true; CHAT.db = await chatOpenDb();
@@ -8187,7 +8195,7 @@ function applyMode(){
   document.querySelector('[data-block="act"]').hidden = mode !== "act";
   document.querySelector('[data-block="cmp"]').hidden = mode !== "cmp";
   document.querySelector('[data-block="exp"]').hidden = mode !== "exp";
-  document.querySelector('[data-block="chat"]').hidden = mode !== "chat"; if(mode === "chat") chatInit();
+  document.querySelector('[data-block="chat"]').hidden = mode !== "chat"; if(mode === "chat"){ chatInit(); requestAnimationFrame(chatFit); }
   document.querySelector('[data-block="per"]').hidden = mode !== "per"; if(mode === "per") perLoad();
   document.querySelector('[data-block="calp"]').hidden = mode !== "calp"; // le rendu (et l'ajustement à la fenêtre) se fait en fin de fonction, une fois les autres blocs masqués
   if(mode !== "calp") sesUnder = false; { const sv = mode === "calp" && sesUnder; document.querySelector('[data-block="ses"]').hidden = !sv; if(sv) sesInit(); } // l'analyse n'apparaît que sous le calendrier, une fois une séance réalisée cliquée
@@ -8205,6 +8213,7 @@ function applyMode(){
   document.documentElement.classList.toggle("m-plan", mode === "plan");
   document.documentElement.classList.toggle("m-run", mode === "run");
   document.documentElement.classList.toggle("m-calp", mode === "calp");
+  document.documentElement.classList.toggle("no-prev", curGrp() !== "gen"); // l'aperçu de construction n'apparaît que dans le groupe « Générer »
   document.querySelectorAll('.mode:not(.cfg-tabs) button').forEach(b => { const on = b.dataset.m === mode, lb = t(b.querySelector("span").dataset.i); b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; b.title = lb; b.setAttribute("aria-label", lb); });
   if(mode === "calp"){ renderCalP(); loadCal().catch(() => {}); requestAnimationFrame(() => { try{ calFitP(); }catch(_){} }); } // après le masquage des autres blocs (sinon la hauteur est mesurée sous la page précédente) ; 2e passage une fois la mise en page stabilisée
 }
