@@ -577,8 +577,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #runS2.mapfull #runHz .hzt,#runS2.mapfull #runHz .hzr,#runS2.mapfull #runHz .hzbt{position:relative;z-index:1}
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
 #runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
-#runHz .hzx{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(.8rem,2.7vmin,1.1rem);line-height:1.2;font-weight:600}#runHz .hzx div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzx div:empty{display:none}#runHz #hzNx{opacity:.85;font-weight:500}
-.run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx[hidden]{display:none}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
+#runHz .hzx{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(.8rem,2.7vmin,1.1rem);line-height:1.2;font-weight:600}#runHz .hzx div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzx div:empty{display:block;min-height:1.2em}#runHz #hzNx{opacity:.85;font-weight:500}
+.run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx{min-height:1.4em}.run .rnx[hidden]{display:flex;visibility:hidden}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
 #runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
 .run.rfs.rs2 .rhud{display:none!important}
 @keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
@@ -801,6 +801,16 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 .clb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clb-n{font-weight:700;font-size:1.15rem;line-height:1.2}.clb-f{color:var(--mute);font-size:.85rem;margin-top:2px}.clb-nav{display:flex;gap:6px}
 .clb-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.clb-st>div{border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}.clb-st small{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.clb-st b{font-size:1.05rem;font-variant-numeric:tabular-nums}
 #fitDlg .fitm label{display:flex;align-items:center;gap:10px;margin:0;cursor:pointer}#fitDlg .fitm input[type="radio"]{width:auto;min-width:0;margin:0;flex:none}
+
+/* téléphone : coffee / réglages / thème / langue rangés dans le menu ⋯ (aucune place prise dans l'en-tête) */
+.menu .mrow{display:none}
+@media (max-width:560px){
+  header .tools{gap:0}
+  header .tools>#coffeeTop,header .tools>#theme,header .tools>.lang,header .tools>#open{display:none!important}
+  .menu .mrow{display:flex;align-items:center;gap:8px;padding:6px 8px;flex-wrap:wrap}
+  .menu .mrow a.coffee.top .lbl{display:inline}
+  .menu .mrow a.coffee.top{padding:6px 12px}
+}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w)){document.documentElement.style.setProperty("--mainw",_w+"px");document.documentElement.dataset.mainw="";}var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
@@ -9337,6 +9347,26 @@ function glScan(root){
   document.addEventListener("keydown", e => { if(e.key === "Escape" && cur) hide(); });
 }
 loadAll();
+
+(function(){
+  const mq=matchMedia("(max-width:560px)"),tools=document.querySelector("header .tools"),menu=document.querySelector("#more .menu");
+  if(!tools||!menu)return;
+  const row=document.createElement("div");row.className="mrow";menu.insertBefore(row,menu.firstChild);
+  const ids=["coffeeTop","open","theme"],lang=tools.querySelector(".lang"),more=document.getElementById("more");
+  const home=new Map();
+  function place(){
+    const m=mq.matches;
+    const els=ids.map(id=>document.getElementById(id)).concat([lang]).filter(Boolean);
+    els.forEach(el=>{
+      if(!home.has(el))home.set(el,{p:el.parentNode,n:el.nextSibling});
+      if(m){row.appendChild(el);el.style.removeProperty("display");}
+    });
+    if(!m){const order=[document.getElementById("coffeeTop"),document.getElementById("theme"),lang,more,document.getElementById("open")].filter(Boolean);order.forEach(el=>tools.appendChild(el));}
+  }
+  mq.addEventListener("change",place);place();
+  const o=document.getElementById("open");
+  if(o)o.addEventListener("click",()=>{more.open=false;});
+})();
 </script>
 </body>
 </html>
