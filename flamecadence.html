@@ -536,7 +536,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"nm nm ex" "pl fn pg"}
 .run.rfs #runFsTop{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn;justify-self:start;min-width:0;max-width:100%;white-space:normal;line-height:1.15;text-align:center}.run.rfs #runPlay{white-space:nowrap;justify-self:start}
 .run #runFsTop{display:none}.run.rfs #runFsTop{display:flex;align-items:center;gap:10px;min-width:0}.run.rfs #runFsTm{flex:none;font-size:clamp(.78rem,2.8vmin,1rem);color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
-.run .rnud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:8px}.run .rnud button{margin:0;min-width:0;padding:9px 0;font-size:clamp(.66rem,2.9vw,.9rem);white-space:nowrap}
+.run .rnud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:8px}.run .rnud button{margin:0;min-width:0;padding:9px 0;font-size:clamp(.66rem,2.9vw,.9rem);white-space:nowrap}.run .rnud button svg{width:1.15em;height:1.15em;display:block;margin:0 auto;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .run.rfs .rhud:has(.rnud){display:flex;align-items:stretch;gap:6px}.run.rfs .rnud{flex:1 1 auto;min-width:0;margin:0}.run.rfs .rhud:has(.rnud) .rctl{flex:none;margin:0;flex-wrap:nowrap}
 .run .rgrid .rcard.zk{border:3px solid var(--zc);background:color-mix(in srgb,var(--zc) 18%,var(--card))}
 .run.rfs #runPoolC{display:none}.run #poolRows .prow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.run #poolRows .prow>span{flex:1 1 180px;min-width:0}.run #poolRows .prow small{display:block;color:var(--mute)}
@@ -1369,7 +1369,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="rcard rhud"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
 <div class="rcard rhud"><div class="rnud">
 <button type="button" class="alt small" data-rn="-10" title="-10 W">-10</button><button type="button" class="alt small" data-rn="-5" title="-5 W">-5</button>
-<button type="button" class="alt small" data-rn="0" data-i="runReset"></button>
+<button type="button" class="alt small" data-rn="0" data-ia="title:runReset;aria-label:runReset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
 <button type="button" class="alt small" data-rn="5" title="+5 W">+5</button><button type="button" class="alt small" data-rn="10" title="+10 W">+10</button>
 </div><div class="rctl">
 <button type="button" class="alt small" id="runPrev" aria-label="Previous step">⏮</button>
