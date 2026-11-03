@@ -205,7 +205,7 @@ details.fold[open]>summary{margin-bottom:6px}
 .drg{cursor:grab;color:var(--mute);user-select:none;font-size:1.05rem;line-height:1;padding:0 3px}
 .st.dropover,.gh.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
 .blk.dropover,.grp.dropover{outline:2px dashed var(--acc);outline-offset:-2px}
-.fld{position:relative}.fld input{padding-right:58px}.fld span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--mute);pointer-events:none}
+.fld{position:relative}.fld input{padding-right:58px}.fld.s input{padding-right:36px}.fld input[type="number"]{-moz-appearance:textfield;appearance:textfield}.fld input[type="number"]::-webkit-inner-spin-button,.fld input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0} /* pas de flèches de saisie par-dessus l'unité */.fld span{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:.75rem;color:var(--mute);pointer-events:none}
 .grp{border:1px dashed var(--acc);border-radius:8px;padding:8px;margin-bottom:8px}.gh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}.gh .fld{width:90px}.gh .ctl{grid-column:auto;margin-left:auto}.grp>.actions{margin-top:6px}
 /* blocs de l'éditeur manuel : étapes consécutives de même type regroupées */
 .blk{border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:8px;margin-bottom:10px;background:var(--bg)}
@@ -761,7 +761,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 :root[data-look="sport"] header .gbar button:not([aria-selected="true"]):hover,:root[data-look="sport"] header .gbar button:not([aria-selected="true"]):focus-visible{background:rgba(127,127,127,.14)}
 /* colonne des widgets plus étroite que la colonne principale, et cartes un peu plus compactes */
 :root[data-look="sport"] main{max-width:none} /* la page occupe toute la largeur : les widgets viennent se coller au bord droit */
-:root[data-look="sport"] .layout{grid-template-columns:minmax(0,1400px) clamp(300px,34%,480px);justify-content:space-between;gap:20px} /* colonne centrale : occupe la place disponible (jusqu'à 1400 px), widgets collés à droite */ /* colonne centrale : grandit jusqu'à 900 px quand la place existe ; widgets : 480 px au plus, comme avant */
+:root[data-look="sport"] .layout{grid-template-columns:minmax(0,var(--mainw,1400px)) clamp(300px,34%,480px);justify-content:space-between;gap:20px} /* colonne centrale : occupe la place disponible (jusqu'à 1400 px), widgets collés à droite */ /* colonne centrale : grandit jusqu'à 900 px quand la place existe ; widgets : 480 px au plus, comme avant */
 :root[data-look="sport"] aside section{padding:16px}
 /* sous-menu (Bibliothèque, Éditeur, IA…) dans la barre latérale, sous les groupes : une entrée par ligne, icône + nom */
 :root[data-look="sport"] header .mode{flex-direction:column;gap:2px;margin:0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;overflow:visible}
@@ -784,6 +784,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 /* widget « Col au hasard » */
 .clb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clb-n{font-weight:700;font-size:1.15rem;line-height:1.2}.clb-f{color:var(--mute);font-size:.85rem;margin-top:2px}.clb-nav{display:flex;gap:6px}
 .clb-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.clb-st>div{border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}.clb-st small{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.clb-st b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+#fitDlg .fitm label{display:flex;align-items:center;gap:10px;margin:0;cursor:pointer}#fitDlg .fitm input[type="radio"]{width:auto;min-width:0;margin:0;flex:none}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w))document.documentElement.style.setProperty("--mainw",_w+"px");var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
@@ -913,7 +914,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="hint" data-i="fontHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr;margin-top:14px"><label><input type="checkbox" id="sqCorners"><span data-i="sqLbl"></span></label></div>
 <div class="hint" data-i="sqHint"></div>
-<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1040" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
+<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1400" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
 </div>
 <div class="cfg-sec" data-cfgp="beta" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
@@ -1007,7 +1008,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <dialog id="fitDlg" aria-labelledby="fitDlgT">
 <h2 id="fitDlgT" data-i="fitT"></h2>
 <p class="hint" data-i="fitHint"></p>
-<div style="display:flex;flex-direction:column;gap:8px;margin:10px 0"><label><input type="radio" name="fitMode" value="pct" checked> <span data-i="fitP"></span></label><label><input type="radio" name="fitMode" value="w"> <span data-i="fitW"></span></label></div>
+<div class="fitm" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"><label><input type="radio" name="fitMode" value="pct" checked> <span data-i="fitP"></span></label><label><input type="radio" name="fitMode" value="w"> <span data-i="fitW"></span></label></div>
 <div id="fitFtpBox"><label for="fitFtp" data-i="fitFtpL"></label><select id="fitFtp"></select><input type="number" id="fitFtpV" min="50" max="600" step="1" inputmode="numeric" aria-label="FTP"></div>
 <div class="actions" style="margin-top:10px"><button type="button" id="fitOk" data-i="fitGo"></button><button class="alt" type="button" id="fitNo" data-i="no"></button></div>
 </dialog>
@@ -1392,6 +1393,11 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div><label>&nbsp;</label><button class="alt small" id="shrinkbtn" type="button" data-i="shrinkBtn"></button></div>
 </div>
 <div class="row">
+<div><label for="stairsel" data-i="stairLbl"></label>
+<select id="stairsel"><option value="30">30 s</option><option value="60" selected>1 min</option><option value="120">2 min</option></select></div>
+<div><label>&nbsp;</label><button class="alt small" id="stairbtn" type="button" data-i="stairBtn"></button></div>
+</div>
+<div class="row">
 <div><label data-i="intensLbl"></label>
 <div style="display:flex;gap:8px"><button class="alt small" id="minus5" type="button" data-i="easier"></button><button class="alt small" id="plus5" type="button" data-i="harder"></button></div></div>
 <div><label>&nbsp;</label><button class="alt small" id="undoBtn" type="button" data-i="undo" hidden></button></div>
@@ -1697,7 +1703,7 @@ libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","To
 dragHint:["🖱️ Tip: drag a block in the chart above to reorder the workout — the description updates automatically.","🖱️ Astuce : glisse un bloc du graphique ci-dessus pour réordonner la séance — la description se met à jour automatiquement."],
 dragLbl:["Drag to reorder","Glisser pour réordonner"], dragDone:["Workout blocks reordered — description updated.","Blocs de la séance réordonnés — description mise à jour."], libCount:["{0} workouts available","{0} séances disponibles"], libShown:[" · {0} shown"," · {0} affichées"],
 pickDate:["Choose the date","Choisir la date"], today:["Today","Aujourd'hui"], prevEmpty:["The preview is empty — build a workout first.","L'aperçu est vide — construis d'abord une séance."],
-shrinkLbl:["Shrink to duration","Réduire à la durée"], shrinkBtn:["Shrink warm-up / cool-down","Réduire échauffement / retour au calme"],
+shrinkLbl:["Shrink to duration","Réduire à la durée"], stairLbl:["Ramps to stairs: steps of","Rampes en paliers : paliers de"], stairBtn:["Convert ramps","Convertir les rampes"], stairDone:["{0} ramp(s) converted to stairs: the first step equals the start of the ramp, so the effort never starts higher.","{0} rampe(s) convertie(s) en paliers : le premier palier égale le début de la rampe, l'effort ne démarre donc jamais plus haut."], stairNone:["No ramp to convert in this workout.","Aucune rampe à convertir dans cette séance."], stairSkip:["These ramps can't be converted automatically (zones or heart-rate ramps): edit them by hand.","Ces rampes ne peuvent pas être converties automatiquement (zones ou rampes cardio) : modifie-les à la main."], shrinkBtn:["Shrink warm-up / cool-down","Réduire échauffement / retour au calme"],
 shrinkDone:["Workout shrunk from {0} to {1} — warm-up and cool-down shortened, core kept.","Séance réduite de {0} à {1} — échauffement et retour au calme raccourcis, cœur conservé."],
 shrinkPart:["Only {0} could be trimmed from warm-up/cool-down: the workout is now {1}.","Seulement {0} ont pu être retirés de l'échauffement/retour au calme : la séance fait désormais {1}."],
 shrinkNone:["Nothing to trim: the warm-up and cool-down are already minimal.","Rien à raccourcir : l'échauffement et le retour au calme sont déjà minimaux."],
@@ -1705,8 +1711,7 @@ shrinkAlready:["The workout is already {0} or shorter.","La séance fait déjà 
 undo:["Undo","Annuler"], undone:["Reverted.","Rétabli."],
 intensLbl:["Adjust all intensities","Ajuster toutes les intensités"], easier:["− 5% (easier)","− 5% (plus facile)"], harder:["+ 5% (harder)","+ 5% (plus dur)"],
 intensDone:["All intensities shifted by {0}.","Toutes les intensités ont été ajustées de {0}."],
-exportBtn:["Export","Exporter"], expTitle:["Export the workout","Exporter la séance"],
-exZwo:["Zwift — .zwo","Zwift — .zwo"], exFit:["Garmin — .fit","Garmin — .fit"], exErg:["Smart trainer, watts — .erg","Home trainer, watts — .erg"], exMrc:["Smart trainer, % FTP — .mrc","Home trainer, % FTP — .mrc"], exJson:["Backup / share — .json","Sauvegarde / partage — .json"],
+exportBtn:["Export","Exporter"], expTitle:["Export the workout","Exporter la séance"], exFit:["Garmin — .fit","Garmin — .fit"], exErg:["Smart trainer, watts — .erg","Home trainer, watts — .erg"], exMrc:["Smart trainer, % FTP — .mrc","Home trainer, % FTP — .mrc"], exJson:["Backup / share — .json","Sauvegarde / partage — .json"],
 extT:["View this on intervals.icu","Voir sur intervals.icu"],
 zonT:["Time in zones","Temps par zone"], heatT:["Year heatmap","Carte de chaleur annuelle"], zbPow:["Power","Puissance"], zbHr:["Heart rate","Fréquence cardiaque"],
 zp4:["4 weeks","4 semaines"], zp8:["8 weeks","8 semaines"], zp12:["12 weeks","12 semaines"], zonBas:["Zone basis","Base de calcul des zones"], zonPer:["Zone time range","Période des zones"],
@@ -1790,7 +1795,7 @@ impEmpty:["No workout steps found in this file.","Aucune étape de séance trouv
 impOkW:["Workout imported from {0} (watts converted to % using an FTP of {1} W).","Séance importée depuis {0} (watts convertis en % avec une FTP de {1} W)."],
 impNoFtp:["This watts-based file needs your FTP to be converted. Set your FTP first.","Ce fichier en watts nécessite ta FTP pour être converti. Renseigne d'abord ta FTP."],
 impUnk:["Unsupported file type. Use .zwo, .fit, .mrc, .erg, .json, .txt or .gpx.","Type de fichier non pris en charge. Utilise .zwo, .fit, .mrc, .erg, .json, .txt ou .gpx."],
-impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."], impHistT:["10 last imported workouts","10 derniers imports"], impOkA:["Workout rebuilt from the recorded power of {0}.","Séance reconstruite à partir de la puissance enregistrée de {0}."], fitT:["Import this ride as a workout","Importer cette sortie comme séance"], fitHint:["This file is a recorded ride: the workout is rebuilt from its power data.","Ce fichier est une sortie enregistrée : la séance est reconstruite à partir de sa puissance."], fitP:["Convert to percent of an FTP value","Convertir en pourcentage d'une valeur de FTP"], fitW:["Keep absolute power (watts as ridden)","Garder la puissance absolue (watts réellement roulés)"], fitFtpL:["FTP to convert with","FTP utilisée pour la conversion"], fitFtpIn:["Indoor FTP ({0} W)","FTP intérieur ({0} W)"], fitFtpOut:["Outdoor FTP ({0} W)","FTP extérieur ({0} W)"], fitFtpX:["Other value","Autre valeur"], fitGo:["Import","Importer"], clbT:["Random climb","Col au hasard"], clbNew:["Another random climb","Un autre col au hasard"], clbPrev:["Previous climb","Col précédent"], clbNext:["Next climb","Col suivant"], clbLen:["Length","Longueur"], clbGain:["Gain","Dénivelé"], clbAvg:["Avg","Moy."], clbMax:["Steepest","Max"], clbEtaMe:["About {0} at {1} W ({2}% of your FTP), rider and bike {3} kg","Environ {0} à {1} W ({2} % de ta FTP), coureur et vélo {3} kg"], clbEtaRef:["About {0} at {1} W/kg (reference rider)","Environ {0} à {1} W/kg (coureur de référence)"], clbUse:["Use this climb","Utiliser ce col"], clbSrc:["Source:","Source :"], clbWiki:["Wikipedia","Wikipédia"], impFitNoPw:["This FIT file has no power data to rebuild a workout from.","Ce fichier FIT ne contient pas de puissance pour reconstruire une séance."], impHistLoad:["Load","Charger"],
+impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."], impHistT:["10 last imported workouts","10 derniers imports"], impOkA:["Workout rebuilt from the recorded power of {0}.","Séance reconstruite à partir de la puissance enregistrée de {0}."], fitT:["Import this ride as a workout","Importer cette sortie comme séance"], fitHint:["The power in this file is in watts (a recorded ride is rebuilt into steps). Keep the watts, or convert them to % of an FTP.","La puissance de ce fichier est en watts (une sortie enregistrée est reconstruite en étapes). Garde les watts, ou convertis-les en % d'une FTP."], fitP:["Convert to percent of an FTP value","Convertir en pourcentage d'une valeur de FTP"], fitW:["Keep absolute power (watts as ridden)","Garder la puissance absolue (watts réellement roulés)"], fitFtpL:["FTP to convert with","FTP utilisée pour la conversion"], fitFtpIn:["Indoor FTP ({0} W)","FTP intérieur ({0} W)"], fitFtpOut:["Outdoor FTP ({0} W)","FTP extérieur ({0} W)"], fitFtpX:["Other value","Autre valeur"], fitGo:["Import","Importer"], clbT:["Random climb","Col au hasard"], clbNew:["Another random climb","Un autre col au hasard"], clbPrev:["Previous climb","Col précédent"], clbNext:["Next climb","Col suivant"], clbLen:["Length","Longueur"], clbGain:["Gain","Dénivelé"], clbAvg:["Avg","Moy."], clbMax:["Steepest","Max"], clbEtaMe:["About {0} at {1} W ({2}% of your FTP), rider and bike {3} kg","Environ {0} à {1} W ({2} % de ta FTP), coureur et vélo {3} kg"], clbEtaRef:["About {0} at {1} W/kg (reference rider)","Environ {0} à {1} W/kg (coureur de référence)"], clbUse:["Use this climb","Utiliser ce col"], clbSrc:["Source:","Source :"], clbWiki:["Wikipedia","Wikipédia"], impFitNoPw:["This FIT file has no power data to rebuild a workout from.","Ce fichier FIT ne contient pas de puissance pour reconstruire une séance."], impHistLoad:["Load","Charger"],
 impJsonBad:["This JSON file is not a FlameCadence workout export (no steps found).","Ce fichier JSON n'est pas un export de séance FlameCadence (aucune étape trouvée)."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
@@ -1847,7 +1852,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to the other top menus. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté des autres menus. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDlF:["Download .fit (Strava, Garmin)","Télécharger .fit (Strava, Garmin)"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to the other top menus. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté des autres menus. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edRampT:["Ramp: end intensity (leave empty for a steady step)","Rampe : intensité de fin (vide = palier constant)"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDlF:["Download .fit (Strava, Garmin)","Télécharger .fit (Strava, Garmin)"], runDl:["Download .tcx","Télécharger .tcx"], runDis:["Discard","Abandonner"], runNoRec:["No real power or heart-rate data was recorded. Simulated rides are never saved.","Aucune donnée réelle de puissance ou de FC enregistrée. Une sortie simulée n'est jamais sauvegardée."], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runSim:["Simulated","Simulé"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth). Simulation stays active.","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth). La simulation reste active."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], runSimBack:["Back to simulation","Retour à la simulation"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -3051,8 +3056,8 @@ function parseWorkout(txt, sport, ftp){
     const hv = hrTok(str); if(hv) return {a: h2p(hv.ha), b: h2p(hv.hb), idx: hv.idx, ramp: hv.ramp, hr: hv};
     let m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
     if(m){ const a = num(m[1]), b = m[2] ? num(m[2]) : a; return {a, b, idx: m.index, ramp: /ramp/i.test(str)}; }
-    m = str.match(/(\d+(?:[.,]\d+)?)\s*w\b/i);
-    if(m && ftp > 0){ const v = num(m[1]) / ftp * 100; return {a: v, b: v, idx: m.index, ramp: false}; }
+    m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*w\b/i); // watts : « 200w » ou plage « 120 - 220w » (rampe avec le mot ramp)
+    if(m && ftp > 0){ const a = num(m[1]) / ftp * 100, b = m[2] ? num(m[2]) / ftp * 100 : a; return {a, b, idx: m.index, ramp: !!m[2] && /ramp/i.test(str)}; }
     m = str.match(/\bz([1-7])\b/i);
     if(m){ const v = [50, 65, 82, 97, 112, 135, 160][m[1] - 1]; return {a: v, b: v, idx: m.index, ramp: false}; }
     return null;
@@ -3326,6 +3331,33 @@ $("shrinkbtn").onclick = () => {
   if(newTotal > target + 60) say("shrinkPart", "ok", hm(done), hm(newTotal));
   else say("shrinkDone", "ok", hm(total), hm(newTotal));
   toast(t(newTotal > target + 60 ? "shrinkPart" : "shrinkDone", ...(newTotal > target + 60 ? [hm(done), hm(newTotal)] : [hm(total), hm(newTotal)])), "ok", doUndo);
+};
+
+// --- rampes -> paliers (home trainers / applis sans rampes, ex. Tacx) : réécrit les lignes de la description, donc valable pour l'export et l'envoi vers intervals.icu ---
+// N paliers égaux du départ à l'arrivée de la rampe : le 1er palier = départ (on ne démarre jamais plus haut), le dernier = arrivée, moyenne conservée
+function lineStair(line, d0, sec, pct, ftp){
+  let L = lineTime(line, sec, d0).replace(/\bramp\b/gi, ""), ok = false;
+  L = L.replace(/(\d+(?:[.,]\d+)?)\s*%?\s*-\s*(\d+(?:[.,]\d+)?)\s*%/, () => { ok = true; return Math.round(pct) + "%"; });
+  if(!ok && ftp > 0) L = L.replace(/(\d+(?:[.,]\d+)?)\s*w?\s*-\s*(\d+(?:[.,]\d+)?)\s*w\b/i, () => { ok = true; return Math.round(ftp * pct / 100) + "w"; });
+  return ok ? L.replace(/[ \t]{2,}/g, " ").replace(/\s+$/, "") : null;
+}
+$("stairbtn").onclick = () => {
+  const before = $("desc").value, ftp = curFtp(), steps = parseWorkout(before, $("sport").value, ftp);
+  if(!steps.length) return say("prevEmpty", "err");
+  const sec = +$("stairsel").value || 60, lines = before.split("\n"), seen = new Set(), repl = new Map(); let skipped = 0;
+  for(const x of steps){
+    if(x.line == null || seen.has(x.line)) continue; seen.add(x.line); // une ligne dans un bloc répété n'est réécrite qu'une fois
+    if(x.m || x.d < 20 || (x.hr ? Math.abs(x.ha - x.hb) <= 0.5 : Math.abs(x.a - x.b) <= 0.5) || lines[x.line] == null) continue;
+    if(x.hr){ skipped++; continue; }
+    const N = Math.max(2, Math.min(Math.round(x.d / sec), Math.floor(x.d / 10))), base = Math.floor(x.d / N), out = [];
+    for(let k = 0; k < N; k++){ const l = lineStair(lines[x.line], x.d, k === N - 1 ? x.d - base * (N - 1) : base, x.a + (x.b - x.a) * k / (N - 1), ftp); if(l == null){ out.length = 0; break; } out.push(l); }
+    if(out.length) repl.set(x.line, out); else skipped++;
+  }
+  if(!repl.size) return say(skipped ? "stairSkip" : "stairNone", skipped ? "err" : "ok");
+  pushUndo();
+  const res = []; lines.forEach((l, i) => { if(repl.has(i)) res.push(...repl.get(i)); else res.push(l); });
+  $("desc").value = res.join("\n"); selLine = null; renderChart();
+  say("stairDone", "ok", repl.size); toast(t("stairDone", repl.size), "ok", doUndo);
 };
 
 // ---------- Génération ----------
@@ -4400,7 +4432,7 @@ function stepsToDesc(steps, watt){
   const line = s => {
     if(s.hr) return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + (Math.abs(s.ha - s.hb) > 0.5 ? Math.round(Math.min(s.ha, s.hb)) + "-" + Math.round(Math.max(s.ha, s.hb)) + "% LTHR ramp" : Math.round(s.ha) + "% LTHR");
     const p = Math.abs(s.a - s.b) > 0.5
-      ? Math.round(Math.min(s.a, s.b)) + " - " + Math.round(Math.max(s.a, s.b)) + (watt ? "w" : "% ramp")
+      ? Math.round(s.a) + " - " + Math.round(s.b) + (watt ? "w ramp" : "% ramp")
       : Math.round(s.a) + (watt ? "w" : "%");
     return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + p + (s.g != null ? " slope " + s.g.toFixed(1) + " pct" : "");
   };
@@ -4453,35 +4485,41 @@ function fitFromRecords(rec, ftp, watt){ // watt : étapes en watts réellement 
   const t0 = pts[0][253], n = pts[pts.length - 1][253] - t0 + 1, P = new Array(n);
   let k = 0, last = pts[0][7];
   for(let s = 0; s < n; s++){ while(k < pts.length && pts[k][253] - t0 <= s){ last = pts[k][7]; k++; } P[s] = last; } // trous d'enregistrement : dernière valeur
-  const cs = [0]; P.forEach(v => cs.push(cs[cs.length - 1] + v));
-  const sm = s => { const a = Math.max(0, s - 4), b = Math.min(n, s + 5); return (cs[b] - cs[a]) / (b - a); }; // moyenne sur ~9 s
-  const bin = s => Math.round(sm(s) / ref * 100 / 5);                                                          // paliers de 5 % de FTP
-  const mk = (a, b, lv) => { let sum = 0; for(let s = a; s < b; s++) sum += P[s]; return {a, b, lv, sum}; };
-  const mean = r => watt ? r.sum / (r.b - r.a) : r.sum / (r.b - r.a) / ftp * 100;
-  const build = minLen => {
-    let runs = [], a = 0;
-    for(let s = 1; s <= n; s++) if(s === n || bin(s) !== bin(a)){ runs.push(mk(a, s, bin(a))); a = s; }
-    for(;;){ // on absorbe la plus courte des plages trop courtes dans sa voisine de niveau le plus proche
-      let j = -1, m = minLen; runs.forEach((r, i) => { if(r.b - r.a < m){ m = r.b - r.a; j = i; } });
-      if(j < 0 || runs.length === 1) break;
-      const l = runs[j - 1], rr = runs[j + 1], r = runs[j];
-      const to = !l ? j + 1 : !rr ? j - 1 : Math.abs(l.lv - r.lv) <= Math.abs(rr.lv - r.lv) ? j - 1 : j + 1, o = runs[to];
-      const u = mk(Math.min(o.a, r.a), Math.max(o.b, r.b), o.lv); runs.splice(Math.min(j, to), 2, u);
-    }
-    for(let i = 1; i < runs.length;){ // voisines au même palier : on les fusionne
-      if(runs[i].lv === runs[i - 1].lv){ runs.splice(i - 1, 2, mk(runs[i - 1].a, runs[i].b, runs[i].lv)); } else i++;
-    }
-    return runs;
+  // Segmentation par droites : on lisse la puissance (~9 s), on découpe en blocs de 20 s, puis on fusionne les voisins tant qu'une droite les décrit
+  // avec une erreur faible. Résultat : paliers constants là où la puissance est stable, VRAIES RAMPES là où elle monte ou descend progressivement (échauffement, retour au calme).
+  const S = new Array(n); for(let i = 0; i < n; i++){ const w = P.slice(Math.max(0, i - 15), Math.min(n, i + 16)).sort((x, y) => x - y); S[i] = w[w.length >> 1]; } // médiane glissante sur ~31 s : ignore arrêts de pédalage et pics brefs, garde les vrais changements de palier
+  const T = [0], TT = [0], S1 = [0], S2 = [0], ST = [0], R1 = [0];
+  for(let i = 0; i < n; i++){ T.push(T[i] + i); TT.push(TT[i] + i * i); S1.push(S1[i] + S[i]); S2.push(S2[i] + S[i] * S[i]); ST.push(ST[i] + S[i] * i); R1.push(R1[i] + P[i]); }
+  const fit = (a, b) => { // régression linéaire de la puissance lissée sur [a, b[ : pente, ordonnée, erreur quadratique moyenne
+    const m = b - a, sT = T[b] - T[a], sTT = TT[b] - TT[a], sS = S1[b] - S1[a], sSS = S2[b] - S2[a], sST = ST[b] - ST[a], den = m * sTT - sT * sT;
+    const sl = m > 1 && den > 0 ? (m * sST - sT * sS) / den : 0, ic = (sS - sl * sT) / m, sse = Math.max(0, sSS - sS * sS / m - sl * (sST - sT * sS / m));
+    return {sl, ic, rmse: Math.sqrt(sse / m)};
   };
-  let runs = build(40);
-  for(let m = 60; runs.length > 40 && m <= 240; m += 20) runs = build(m);
-  const steps = [];
-  for(let i = 0; i < runs.length;){ // plusieurs courtes plages qui montent (ou descendent) régulièrement = une rampe
-    let j = i;
-    while(j + 1 < runs.length && runs[j + 1].b - runs[j + 1].a <= 200 && runs[j].b - runs[j].a <= 200 && Math.abs(runs[j + 1].lv - runs[j].lv) <= 3 && (j === i || Math.sign(runs[j + 1].lv - runs[j].lv) === Math.sign(runs[j].lv - runs[j - 1].lv))) j++;
-    if(j - i >= 2){ steps.push({d: runs[j].b - runs[i].a, a: Math.round(mean(runs[i])), b: Math.round(mean(runs[j]))}); i = j + 1; }
-    else{ const r = runs[i], p = Math.round(mean(r)); steps.push({d: r.b - r.a, a: p, b: p}); i++; }
+  const mean = (a, b) => (S1[b] - S1[a]) / (b - a);
+  const TOLK = .035; let segs = []; for(let i = 0; i < n; i += 20) segs.push([i, Math.min(n, i + 20)]);
+  if(segs.length > 1 && segs[segs.length - 1][1] - segs[segs.length - 1][0] < 10){ const l = segs.pop(); segs[segs.length - 1][1] = l[1]; }
+  for(let tol = ref * TOLK; ; tol *= 1.25){ // on fusionne la paire la plus « droite » tant que l'erreur reste sous la tolérance ; tolérance relevée si on dépasse 40 étapes
+    for(;;){
+      let bj = -1, bv = Infinity;
+      for(let j = 0; j + 1 < segs.length; j++){ const e = fit(segs[j][0], segs[j + 1][1]).rmse; if(e < bv){ bv = e; bj = j; } }
+      if(bj < 0 || bv > tol) break;
+      segs.splice(bj, 2, [segs[bj][0], segs[bj + 1][1]]);
+    }
+    if(segs.length <= 40) break;
   }
+  for(;;){ // plages trop courtes (< 40 s) : absorbées par la voisine de niveau moyen le plus proche
+    let j = -1, m = 40; segs.forEach((g, i) => { if(g[1] - g[0] < m){ m = g[1] - g[0]; j = i; } });
+    if(j < 0 || segs.length === 1) break;
+    const l = segs[j - 1], r = segs[j + 1], c = segs[j], mc = mean(c[0], c[1]);
+    const to = !l ? j + 1 : !r ? j - 1 : Math.abs(mean(l[0], l[1]) - mc) <= Math.abs(mean(r[0], r[1]) - mc) ? j - 1 : j + 1;
+    segs.splice(Math.min(j, to), 2, [Math.min(segs[to][0], c[0]), Math.max(segs[to][1], c[1])]);
+  }
+  const val = x => Math.round(Math.max(0, watt ? x : x / ftp * 100)), steps = [];
+  segs.forEach(([a, b]) => {
+    const f = fit(a, b), v0 = f.ic + f.sl * a, v1 = f.ic + f.sl * (b - 1);
+    if(b - a >= 90 && Math.abs(v1 - v0) >= ref * .10) steps.push({d: b - a, a: val(v0), b: val(v1)}); // rampe
+    else{ const p = val(mean(a, b)); steps.push({d: b - a, a: p, b: p}); }                              // palier
+  });
   return steps;
 }
 function parseFit(bytes){
@@ -4548,20 +4586,20 @@ function parseFit(bytes){
     let d = 0;
     if((r[0] === 0 || r[0] == null) && r[1]) d = r[1] / 1000; // durée en ms
     if(!d) continue;
-    let a = null, b = null;
+    let a = null, b = null, w = false;
     if(r[2] === 4 && r[3] != null){ // cible puissance relative (pour mille)
       const v = r[3];
-      if(v <= 1000) a = b = v / 10;
-      else if(ftp > 0) a = b = v / ftp * 100;
+      if(v <= 1000) a = b = v / 10; else{ a = b = v - 1000; w = true; } // > 1000 : watts absolus (décalage de 1000 dans le format FIT)
     }
     if(r[5] != null && r[6] != null){ // plage personnalisée
       const lo = r[5], hi = r[6];
-      if(lo <= 1000 && hi <= 1000){ a = lo / 10; b = hi / 10; }
-      else if(ftp > 0){ a = lo / ftp * 100; b = hi / ftp * 100; }
+      if(lo <= 1000 && hi <= 1000){ a = lo / 10; b = hi / 10; w = false; }
+      else{ a = lo > 1000 ? lo - 1000 : lo; b = hi > 1000 ? hi - 1000 : hi; w = true; }
     }
     if(a == null) continue;
-    out.push({d: Math.round(d), a, b});
+    out.push({d: Math.round(d), a, b, w});
   }
+  out.fitWatts = out.some(x => x.w); // cibles en watts : importFile demande de les garder tels quels ou de les convertir en % d'une FTP
   if(!out.length && (msgs[20] || []).length) out.fitRecords = msgs[20]; // fichier d'activité : pas d'étapes ; importFile propose de les reconstruire à partir de la puissance enregistrée
   return out;
 }
@@ -4698,6 +4736,11 @@ async function importFile(f){
         if(ch.watt && !(curFtp() > 0)) throw new Error("FTP");
         desc = stepsToDesc(fitFromRecords(steps.fitRecords, ch.watt ? curFtp() : ch.ftp, ch.watt), ch.watt);
         steps = parseWorkout(desc, $("sport").value, curFtp()); steps.fromActivity = true;
+      }else if(steps.fitWatts){ // séance FIT en watts : on les garde, ou on les convertit en % d'une FTP au choix (intérieur, extérieur, autre)
+        const ch = await fitChoose(); if(!ch) return;
+        if(ch.watt && !(curFtp() > 0)) throw new Error("FTP");
+        const conv = steps.map(s => ch.watt ? {d: s.d, a: s.w ? s.a : s.a * curFtp() / 100, b: s.w ? s.b : s.b * curFtp() / 100} : {d: s.d, a: s.w ? s.a / ch.ftp * 100 : s.a, b: s.w ? s.b / ch.ftp * 100 : s.b});
+        desc = stepsToDesc(conv, ch.watt); steps = parseWorkout(desc, $("sport").value, curFtp());
       }
     }
     else if(ext === "zwo" || ext === "xml") steps = parseZwo(await f.text());
@@ -6176,7 +6219,8 @@ function edStep(x, p){
     `<div class="fld"><input data-f="v" value="${esc(x.v)}" aria-label="${esc(t(x.mode === "d" ? "edDist" : "edTime"))}"><span>${x.mode === "d" ? (edKm() ? "km" : "m") : "mm:ss"}</span></div>` +
     (edKm() ? `<select data-f="m" title="${esc(t("mTitle"))}" aria-label="${esc(t("mTitle"))}">${opts([["p", t("mPow")], ["h", "♥ " + t("mHr")]], edM(x))}</select>` : "") +
     `<div class="fld"><input data-f="i" type="number" min="0" value="${esc(x.i)}"${bpm}${edGuide(x) ? ` title="${esc(t("edGuideT"))}"` : ""} aria-label="${esc(t("edInt"))}"><span>${esc(u)}</span></div>` +
-    (edKm() ? `<div class="fld"><input data-f="g" type="number" step="0.1" value="${esc(x.g == null ? "" : x.g)}" title="${esc(t("edSlopeT"))}" aria-label="${esc(t("edSlopeT"))}"><span>% ⛰</span></div>` : "") +
+    (edKm() && edM(x) !== "h" ? `<div class="fld s"><input data-f="i2" type="number" min="0" value="${esc(x.i2 == null ? "" : x.i2)}" placeholder="→" title="${esc(t("edRampT"))}" aria-label="${esc(t("edRampT"))}"><span>↗</span></div>` : "") +
+    (edKm() ? `<div class="fld s"><input data-f="g" type="number" step="0.1" value="${esc(x.g == null ? "" : x.g)}" title="${esc(t("edSlopeT"))}" aria-label="${esc(t("edSlopeT"))}"><span>% ⛰</span></div>` : "") +
     `<input data-f="n" value="${esc(x.n)}" placeholder="${esc(t("edNote"))}">${edCtl(x.ty !== "rec", x.ty === "warm" || x.ty === "cool" ? t("std_" + x.ty) : null)}</div>`;
 }
 // Préréglages de répétitions standard : [répétitions, [[min, sec, %FTP] effort, [min, sec, %FTP] récup]]
@@ -6203,7 +6247,8 @@ function edDur(x){
   return (h ? h + "h" : "") + (mm ? mm + "m" : "") + (ss ? ss + "s" : "") || "0s";
 }
 function edLine(x){
-  const i = x.i !== "" && x.i != null ? " " + x.i + (edM(x) === "h" ? "% LTHR" : (edW() ? "w" : "%") + (edKm() ? "" : " Pace")) : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
+  const ramp = edKm() && edM(x) !== "h" && x.i !== "" && x.i != null && x.i2 !== "" && x.i2 != null && isFinite(+x.i2) && +x.i2 !== +x.i; // intensité de fin différente = rampe (le sens est conservé)
+  const i = ramp ? " " + x.i + " - " + x.i2 + (edW() ? "w ramp" : "% ramp") : x.i !== "" && x.i != null ? " " + x.i + (edM(x) === "h" ? "% LTHR" : (edW() ? "w" : "%") + (edKm() ? "" : " Pace")) : "", n = x.n || (x.ty === "rec" ? t("tt_rec") : "");
   const sl = edKm() && x.g !== "" && x.g != null && isFinite(+x.g) ? " slope " + (+x.g).toFixed(1) + " pct" : ""; // pente : mode « simulation » du home trainer dans le lecteur
   return `- ${edDur(x)}${i}${sl}${n ? " " + n : ""}`;
 }
@@ -6331,7 +6376,7 @@ $("edmetric").addEventListener("change", () => {
   const to = $("edmetric").value, from = ED_M0; if(to === from) return;
   ED_M0 = to; store.set("si_edmetric", to);
   // les étapes qui suivent la cible par défaut sont converties ; celles dont la cible a été choisie à la main gardent la leur
-  const conv = x => { if(x.k === "s" && !x.m) x.i = edConv(x.i, from, to); };
+  const conv = x => { if(x.k === "s" && !x.m){ x.i = edConv(x.i, from, to); if(x.i2 !== "" && x.i2 != null) x.i2 = edConv(x.i2, from, to); } };
   ED.forEach(x => { if(x.k === "g") x.items.forEach(conv); else conv(x); });
   edRender();
 });
@@ -6434,7 +6479,8 @@ function edRzApply(s, e){
     const pct = Math.max(10, Math.min(300, Math.round(s.pct0 - (e.clientY - s.py0) / s.Hh * 100 / 96 * s.peak)));
     if(pct > s.peak){ s.peak = pct; s.py0 = e.clientY; s.pct0 = pct; CH_FIX.peak = pct; }
     const isH = s.it ? edM(s.it) === "h" : !!hrTok(s.line0 || "");
-    if(s.it) s.it.i = isH ? String(Math.round(p2h(pct))) : String(edW() && f ? Math.round(f * pct / 100) : pct);
+    if(s.it){ const o = parseFloat(s.it.i), nv = isH ? Math.round(p2h(pct)) : edW() && f ? Math.round(f * pct / 100) : pct; s.it.i = String(nv);
+      if(!isH && s.it.i2 !== "" && s.it.i2 != null && isFinite(o)) s.it.i2 = String(Math.max(0, Math.round(+s.it.i2 + nv - o))); } // rampe : les deux extrémités suivent le glissement
     else nt = lineInt(s.line0, s.pctOrig, pct, f);
     s.label = isH ? "♥ " + Math.round(p2h(pct)) + t("pctLthr") + (ICU.lthr > 0 ? " · ≈ " + Math.round(ICU.lthr * p2h(pct) / 100) + " bpm" : "")
       : pct + (/Run|Swim/.test($("sport").value) ? t("pctPace") : t("pctFtp")) + (f > 0 && isBike($("sport").value) ? " · " + Math.round(f * pct / 100) + " W" : "");
@@ -6586,18 +6632,19 @@ function edFromText(txt, sp){
     if(m){
       const a = num(m[1]); let b = m[2] ? num(m[2]) : a, end = m.index + m[0].length;
       const m2 = !m[2] && body.slice(end).match(/^\s*-\s*(\d+(?:[.,]\d+)?)\s*%/); if(m2){ b = num(m2[1]); end += m2[0].length; }
-      return {p: (a + b) / 2, ramp: a !== b, idx: m.index, end};
+      return {p: (a + b) / 2, pa: a, pb: b, ramp: a !== b, idx: m.index, end};
     }
-    m = body.match(/(\d+(?:[.,]\d+)?)\s*w\b/i); if(m) return {w: num(m[1]), idx: m.index, end: m.index + m[0].length};
+    m = body.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*w\b/i); if(m){ const a = num(m[1]), b = m[2] ? num(m[2]) : a; return {w: (a + b) / 2, wa: a, wb: b, ramp: a !== b && /ramp/i.test(body), idx: m.index, end: m.index + m[0].length}; }
     m = body.match(/\bz([1-7])\b/i); if(m) return {p: [50, 65, 82, 97, 112, 135, 160][m[1] - 1], idx: m.index, end: m.index + m[0].length};
     return null;
   };
   const pctOf = it => it.p != null ? it.p : f > 0 ? it.w / f * 100 : 100;
-  const toEd = it => {
+  const toEd = (it, end) => { // end = vrai : valeur de fin d'une rampe ; sinon valeur de départ (ou palier)
     if(!it) return "";
     if(it.hr) return String(Math.round(it.hp));
-    if(wMode) return it.w != null ? String(Math.round(it.w)) : f > 0 ? String(Math.round(it.p * f / 100)) : String(+it.p.toFixed(1));
-    return it.p != null ? String(+it.p.toFixed(1)) : f > 0 ? String(Math.round(it.w / f * 100)) : "";
+    const p = it.pa != null ? (end ? it.pb : it.pa) : it.p, w = it.wa != null ? (end ? it.wb : it.wa) : it.w;
+    if(wMode) return w != null ? String(Math.round(w)) : f > 0 ? String(Math.round(p * f / 100)) : String(+p.toFixed(1));
+    return p != null ? String(+p.toFixed(1)) : f > 0 ? String(Math.round(w / f * 100)) : "";
   };
   const clean = x => x.replace(/\bramp\b/gi, "").replace(/\s+/g, " ").trim();
   const strip = x => x.replace(/\d+(?:[.,]\d+)?\s*(?:h|min|m|s)(?![a-z])(?:\s*\d{1,2}(?=\s|$))?|\d+:\d{2}(?::\d{2})?|\d+(?:[.,]\d+)?\s*(?:mtr|km|yrd)/gi, " ");
@@ -6605,7 +6652,7 @@ function edFromText(txt, sp){
   const mk = (ty, d, dm, it, pre, post) => {
     let g = ""; const sm = String(post || "").match(/\b(?:slope|pente)\s*([+-]?\d+(?:[.,]\d+)?)\s*pct\b/i); if(sm){ g = String(parseFloat(sm[1].replace(",", "."))); post = post.replace(sm[0], " "); }
     let n = [clean(strip(pre)), clean(post)].filter(Boolean).join(" "); if(recNames.includes(n.toLowerCase())) n = "";
-    return {g, k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), n, m: it && it.hr ? "h" : "p", uid: ++edUid};
+    return {g, k: "s", ty, mode: dm ? "d" : "t", v: dm ? String(+(dm / 1000).toFixed(2)) : Math.floor(Math.round(d) / 60) + ":" + String(Math.round(d) % 60).padStart(2, "0"), i: toEd(it), i2: it && it.ramp && !it.hr ? toEd(it, true) : "", n, m: it && it.hr ? "h" : "p", uid: ++edUid};
   };
   const headerTy = l => /cool|retour|warm\s?down/i.test(l) ? "cool" : /warm|échauff|echauff/i.test(l) ? "warm" : /recov|récup|recup|\brest\b|repos/i.test(l) ? "rec" : "work";
   for(const raw of String(txt || "").split("\n")){
@@ -6616,7 +6663,7 @@ function edFromText(txt, sp){
     const it = inten(body), pre = it ? body.slice(0, it.idx) : body, post = it ? body.slice(it.end) : "";
     const d = durS(pre), dm = d ? 0 : distM(pre);
     if((it || dashed) && (d || dm)){
-      if(it && it.ramp) ramps++;
+      if(it && it.ramp && it.hr) ramps++; // rampes en puissance : conservées par l'éditeur ; seules celles en cardio sont encore aplaties
       const pv = it ? pctOf(it) : 0;
       const ty = group ? (pv && pv < 65 ? "rec" : "work") : secTy ? secTy : (pv >= 76 || !pv ? "work" : seenWork ? "rec" : "warm");
       if(ty === "work") seenWork = true;
@@ -8994,7 +9041,7 @@ function applyLang(){
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 function applySquare(){ const on = store.get("si_square") === "1"; document.documentElement.toggleAttribute("data-square", on); const c = $("sqCorners"); if(c) c.checked = on; }
-function applyMainW(){ const v = parseInt(store.get("si_mainw"), 10) || 760; document.documentElement.style.setProperty("--mainw", v + "px"); $("mainW").value = v; $("mainWv").textContent = v + " px"; }
+function applyMainW(){ const v = parseInt(store.get("si_mainw"), 10) || 0, r = document.documentElement.style; if(v) r.setProperty("--mainw", v + "px"); else r.removeProperty("--mainw"); /* sans réglage : largeur par défaut du thème */ $("mainW").value = v || 760; $("mainWv").textContent = v ? v + " px" : "Auto"; }
 $("mainW").oninput = e => { store.set("si_mainw", e.target.value); applyMainW(); try{ calFitP(); }catch(_){} };
 $("mainWr").onclick = () => { store.set("si_mainw", ""); applyMainW(); try{ calFitP(); }catch(_){} };
 $("sqCorners").onchange = e => { store.set("si_square", e.target.checked ? "1" : "0"); applySquare(); };
