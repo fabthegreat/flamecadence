@@ -578,7 +578,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
 #runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
 #runHz .hzx{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(.8rem,2.7vmin,1.1rem);line-height:1.2;font-weight:600}#runHz .hzx div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzx div:empty{display:block;min-height:1.2em}#runHz #hzNx{opacity:.85;font-weight:500}
-.run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx{min-height:1.4em}.run .rnx[hidden]{display:flex;visibility:hidden}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
+.run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx{min-height:1.4em}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
 #runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
 .run.rfs.rs2 .rhud{display:none!important}
 @keyframes rs2in{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
@@ -811,6 +811,18 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
   .menu .mrow a.coffee.top .lbl{display:inline}
   .menu .mrow a.coffee.top{padding:6px 12px}
 }
+
+/* lecteur : la carte « étape en cours » garde une hauteur fixe (nom sur une ligne, badge pause en surimpression) */
+.run .rbar .rrow{flex-wrap:nowrap;align-items:flex-start}
+.run .rbar .rrow>div{flex:none}
+.run .rbar .rrow>div:first-child{flex:1 1 0;min-width:0}
+.run .rbar #runName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+.run .rbar .rnx{margin-top:6px;height:1.3em;overflow:hidden}
+.run .rbar #runAutoP{position:absolute;right:10px;bottom:8px;margin:0;background:var(--card)}
+
+/* lecteur : profil de la séance plus bas pour laisser plus de hauteur aux autres cartes */
+.run #runCv{height:90px}
+.run.rfs #runCv{height:clamp(32px,6.5dvh,70px)}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w)){document.documentElement.style.setProperty("--mainw",_w+"px");document.documentElement.dataset.mainw="";}var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
@@ -1369,7 +1381,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
 <div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
-<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div><div id="runNx" class="rnx" hidden><span class="rlbl" data-i="runNx"></span> <b id="runNxT"></b></div><div id="runAutoP" class="rbadge" hidden></div></div>
+<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div><div id="runNx" class="rnx" style="visibility:hidden"><span class="rlbl" data-i="runNx"></span> <b id="runNxT">&nbsp;</b></div><div id="runAutoP" class="rbadge" hidden></div></div>
 <div class="rgrid rhud">
 <div class="rcard"><div class="rlbl"><span id="runTgtL" data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
@@ -7339,7 +7351,7 @@ function hzUpdate(){
   pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", has && tg ? runZC(zoneOf(tg / ftp * 100)) : "#fff");
   $("hzTg").textContent = has ? (st.g != null ? "≈ " : "▶ ") + tg + " W" + (ap > 0 && tg && !near ? (dv > 0 ? " ▲" : " ▼") : "") : "";
   $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) : "";
-  $("hzNm").textContent = has ? st.name : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
+  $("hzNm").textContent = has ? runTitle(st.name) : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
   $("hzPr").style.width = has ? Math.round(runProg() / R.total * 100) + "%" : "0";
   runTm();
   $("hzSt").textContent = has ? [t("hzStep", R.i + 1, R.steps.length), "Z" + st.z, Math.round(tg / ftp * 100) + "% · " + t("hzFtp", ftp), st.cad && st.cad !== "—" ? st.cad + " rpm" : "", st.g != null ? "⛰ " + st.g.toFixed(1) + "%" : "", sa ? "⌀ " + sa + " W" : ""].filter(Boolean).join("  ·  ") : "";
@@ -7948,7 +7960,7 @@ function runUI(){
   runWake((!RUN.paused || document.querySelector('[data-block="run"]').classList.contains("rfs")) && !!RUN.tm); // écran maintenu allumé aussi pendant l'attente avant le départ
   runKeepAlive(!!RUN.began && $("runEnd").hidden && !!RUN.tm); runMedia(); musSync();
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
-  $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = st.name;
+  $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = runTitle(st.name);
   $("runBar").style.setProperty("--rzc", runZC(st.z));
   $("runTimer").textContent = st.m > 0 ? fmtDistShort(RUN.mleft) : runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = (RUN.hasM ? "~" : "") + runFmt(RUN.total);
   if(st.g != null) runErgGrade(st.g); else runErgTarget(tgt); $("runTP").textContent = tgt; $("runPct").textContent = Math.round(tgt / ftp * 100) + "% FTP" + (RUN.nudge ? " (" + (RUN.nudge > 0 ? "+" : "") + RUN.nudge + " W)" : "") + (st.pw !== st.pw2 ? " ↗" : "") + (st.g != null ? " · ⛰ " + st.g.toFixed(1) + "%" : "");
@@ -7959,7 +7971,7 @@ function runUI(){
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
   $("runPlay").textContent = RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
   $("runPct").title = runFtpTxt(); runTm();
-  const nx = RUN.steps[RUN.i + 1]; $("runNx").hidden = !nx; if(nx) $("runNxT").textContent = runNxTxt(nx);
+  const nx = RUN.steps[RUN.i + 1]; $("runNx").style.visibility = nx ? "visible" : "hidden"; if(nx) $("runNxT").textContent = runNxTxt(nx);
   if(!RUN.paused) RUN.apz = 0; const ab = $("runAutoP"); ab.hidden = !(RUN.paused && RUN.apz); if(!ab.hidden) ab.textContent = "⏸ " + t("runAutoP", RUN.apz);
   runErgBadge(); runMxUI(); runDraw();
 }
@@ -7975,7 +7987,8 @@ function runHrZone(){ // cadre FC coloré par zone ; neutre sans FC mesurée ou 
 // FTP utilisée par le lecteur pour toutes les cibles en % : FTP indoor (home trainer), à défaut FTP extérieur, à défaut 250 W
 function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0; return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
 // étape suivante : durée · puissance cible (avec l'ajustement ± W) · nom
-function runNxTxt(s){ const n = RUN.nudge || 0, a = Math.max(0, s.pw + n), b = Math.max(0, s.pw2 + n); return (s.m > 0 ? fmtDistShort(s.m) : runFmt(s.dur)) + " · " + (s.g != null ? "≈ " : "") + (a === b ? a + " W" : a + "→" + b + " W") + (s.g != null ? " · ⛰ " + s.g.toFixed(1) + "%" : "") + (s.name ? " · " + s.name : ""); }
+function runTitle(n){ n = String(n || ""); const k = n.split(/\s+·\s+/); while(k.length > 1 && /^\d+([.,]\d+)?\s*(h|min|m|s|km|mi|%|w)?$/i.test(k[k.length - 1].trim())) k.pop(); return (k.length > 1 ? k[0] : k[0]).trim(); } // titre seul de l'étape (« Warmup · 10m » → « Warmup »)
+function runNxTxt(s){ const n = RUN.nudge || 0, a = Math.max(0, s.pw + n), b = Math.max(0, s.pw2 + n); return (s.m > 0 ? fmtDistShort(s.m) : runFmt(s.dur)) + " · " + (s.g != null ? "≈ " : "") + (a === b ? a + " W" : a + "→" + b + " W") + (s.g != null ? " · ⛰ " + s.g.toFixed(1) + "%" : "") + (s.name ? " · " + runTitle(s.name) : ""); }
 function runDraw(){
   const c = $("runCv"); if(!c || !RUN || !RUN.steps.length) return; const r = c.getBoundingClientRect(); if(!r.width) return;
   c.width = r.width; c.height = r.height; const g = c.getContext("2d"), cs = getComputedStyle(document.documentElement), dim = cs.getPropertyValue("--line").trim() || "#8884", ink = cs.getPropertyValue("--ink").trim() || "#000", H = c.height;
