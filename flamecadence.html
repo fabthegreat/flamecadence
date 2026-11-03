@@ -1384,7 +1384,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div></div>
 <div class="hzr"><div id="hzList"></div></div>
 <div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div><div class="hzx"><div id="hzSt"></div><div id="hzNx"></div></div></div><div id="hzMap" hidden></div></div></div>
-<div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" style="margin:6px 0"></div>
+<div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" hidden></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 <div class="rcard" id="runPoolC" hidden><div class="rlbl"><span data-i="poolT"></span> <span id="poolN"></span></div><div class="hint" data-i="poolHint"></div><div id="poolRows"></div></div>
 </section>
@@ -7597,8 +7597,6 @@ function runFinish(){
   const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; R.pend = null; $("runDis").hidden = false; runLaunchUI();
   const ok = pts.length >= 30; $("runUp").hidden = true; $("runUp").disabled = false;
   if(!ok){ $("runEndS").textContent = ""; m.textContent = t("runNoRec"); return; }
-  const P = pts.filter(x => x.p != null).map(x => x.p), H = pts.filter(x => x.h != null).map(x => x.h), av = a => a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : "–";
-  $("runEndS").textContent = t("runSum", fmtDur((pts[pts.length - 1].t - pts[0].t) / 1000), av(P), av(H), Math.round(P.reduce((x, y) => x + y, 0) / 1000)) + ((pts[pts.length - 1].d || 0) > 100 ? " \u00b7 " + (pts[pts.length - 1].d / 1000).toFixed(1) + " km" : "");
   const ev = R.cur && /^cal:(\d+)$/.exec(R.cur.id);
   R.pend = {id: "a" + pts[0].t, at: pts[0].t, name: (R.cur && R.cur.name) || "FlameCadence", ev: ev ? +ev[1] : null, rec: pts.slice(), dur: Math.round((pts[pts.length - 1].t - pts[0].t) / 1000), tries: 0};
   runAutoUp();
@@ -7956,7 +7954,7 @@ function runUI(){
   runErgBadge(); runMxUI(); runDraw();
 }
 const runClock = () => new Date().toLocaleTimeString(loc(), {hour: "2-digit", minute: "2-digit"});
-function runTm(){ const e = $("runFsTm"); if(!e) return; const x = "🕐 " + runClock() + batTxt(); if(e.textContent !== x) e.textContent = x; } // heure (et batterie si l'appareil la fournit) dans la barre de titre : aucune ligne en plus
+function runTm(){ const e = $("runFsTm"); if(!e) return; const x = "🕐 " + runClock(); if(e.textContent !== x) e.textContent = x; } // heure dans la barre de titre : aucune ligne en plus
 function runHrZ(b){ const L = +ICU.lthr || 0; if(!(b > 0 && L > 0)) return 0; const x = b / L * 100; return x < 68 ? 1 : x < 83 ? 2 : x < 94 ? 3 : x < 105 ? 4 : x < 115 ? 5 : x < 130 ? 6 : 7; }
 function runHrZone(){ // cadre FC coloré par zone ; neutre sans FC mesurée ou sans FC seuil (LTHR) dans le profil
   const b = parseInt($("hzHr").textContent, 10), L = +ICU.lthr || 0, k = $("hzHk"); if(!k) return;
@@ -7964,9 +7962,6 @@ function runHrZone(){ // cadre FC coloré par zone ; neutre sans FC mesurée ou 
   const x = b / L * 100, z = x < 68 ? 1 : x < 83 ? 2 : x < 94 ? 3 : x < 105 ? 4 : x < 115 ? 5 : x < 130 ? 6 : 7;
   k.style.setProperty("--zc", runZC(z)); k.classList.add("zk");
 }
-// niveau de batterie de l'appareil (Battery Status API : Chrome, Edge, Android ; absent de Safari et Firefox, alors rien ne s'affiche)
-const BAT = {t: ""}, batTxt = () => BAT.t ? "  " + BAT.t : "";
-try{ if(navigator.getBattery) navigator.getBattery().then(b => { const u = () => { const p = Math.round(b.level * 100); BAT.t = (b.charging ? "⚡ " : "🔋 ") + p + "%"; try{ runTm(); }catch(e){} }; b.addEventListener("levelchange", u); b.addEventListener("chargingchange", u); u(); }).catch(() => {}); }catch(e){}
 // FTP utilisée par le lecteur pour toutes les cibles en % : FTP indoor (home trainer), à défaut FTP extérieur, à défaut 250 W
 function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0; return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
 // étape suivante : durée · puissance cible (avec l'ajustement ± W) · nom
