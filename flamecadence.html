@@ -762,6 +762,12 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 /* colonne des widgets plus étroite que la colonne principale, et cartes un peu plus compactes */
 :root[data-look="sport"] main{max-width:none} /* la page occupe toute la largeur : les widgets viennent se coller au bord droit */
 :root[data-look="sport"] .layout{grid-template-columns:minmax(0,var(--mainw,1400px)) clamp(300px,34%,480px);justify-content:space-between;gap:20px} /* colonne centrale : occupe la place disponible (jusqu'à 1400 px), widgets collés à droite */ /* colonne centrale : grandit jusqu'à 900 px quand la place existe ; widgets : 480 px au plus, comme avant */
+/* largeur de la section principale réglée dans les Réglages : les widgets cèdent la place (jusqu'à 260 px) ; tailles déterminées par calcul, donc identiques d'un navigateur à l'autre */
+@media (min-width:901px){
+:root[data-mainw]:not([data-look="sport"]) main{max-width:max(1240px,calc(var(--mainw) + 300px))}
+:root[data-mainw]:not([data-look="sport"]) .layout{grid-template-columns:minmax(0,1fr) clamp(260px,calc(100% - var(--mainw) - 16px),100%)}
+:root[data-mainw][data-look="sport"] .layout{grid-template-columns:minmax(0,var(--mainw)) clamp(260px,calc(100% - var(--mainw) - 20px),480px);justify-content:space-between;gap:20px}
+}
 :root[data-look="sport"] aside section{padding:16px}
 /* sous-menu (Bibliothèque, Éditeur, IA…) dans la barre latérale, sous les groupes : une entrée par ligne, icône + nom */
 :root[data-look="sport"] header .mode{flex-direction:column;gap:2px;margin:0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;overflow:visible}
@@ -786,7 +792,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 .clb-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.clb-st>div{border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}.clb-st small{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.clb-st b{font-size:1.05rem;font-variant-numeric:tabular-nums}
 #fitDlg .fitm label{display:flex;align-items:center;gap:10px;margin:0;cursor:pointer}#fitDlg .fitm input[type="radio"]{width:auto;min-width:0;margin:0;flex:none}
 </style>
-<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w))document.documentElement.style.setProperty("--mainw",_w+"px");var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
+<script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w)){document.documentElement.style.setProperty("--mainw",_w+"px");document.documentElement.dataset.mainw="";}var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
 <script>/* compteur de visites (GoatCounter) : pas chargé quand le fichier est ouvert en local (file://), où « //gc.zgo.at » devenait « file:///count.js » et échouait */try{if(location.protocol==="http:"||location.protocol==="https:"){var _g=document.createElement("script");_g.async=true;_g.dataset.goatcounter="https://flamecadence.goatcounter.com/count";_g.src="https://gc.zgo.at/count.js";document.head.appendChild(_g);}}catch(e){}</script>
 </head>
@@ -914,7 +920,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="hint" data-i="fontHint"></div>
 <div class="wgrid" style="grid-template-columns:1fr;margin-top:14px"><label><input type="checkbox" id="sqCorners"><span data-i="sqLbl"></span></label></div>
 <div class="hint" data-i="sqHint"></div>
-<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1400" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
+<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1600" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
 </div>
 <div class="cfg-sec" data-cfgp="beta" hidden>
 <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
@@ -9045,7 +9051,7 @@ function applyLang(){
 }
 document.querySelectorAll(".lang button").forEach(b => b.onclick = () => { lang = b.dataset.l; store.set("si_lang", lang); applyLang(); });
 function applySquare(){ const on = store.get("si_square") === "1"; document.documentElement.toggleAttribute("data-square", on); const c = $("sqCorners"); if(c) c.checked = on; }
-function applyMainW(){ const v = parseInt(store.get("si_mainw"), 10) || 0, r = document.documentElement.style; if(v) r.setProperty("--mainw", v + "px"); else r.removeProperty("--mainw"); /* sans réglage : largeur par défaut du thème */ $("mainW").value = v || 760; $("mainWv").textContent = v ? v + " px" : "Auto"; }
+function applyMainW(){ const v = parseInt(store.get("si_mainw"), 10) || 0, r = document.documentElement.style; if(v) r.setProperty("--mainw", v + "px"); else r.removeProperty("--mainw"); document.documentElement.toggleAttribute("data-mainw", !!v); /* sans réglage : largeur par défaut du thème */ $("mainW").value = v || 760; $("mainWv").textContent = v ? v + " px" : "Auto"; }
 $("mainW").oninput = e => { store.set("si_mainw", e.target.value); applyMainW(); try{ calFitP(); }catch(_){} };
 $("mainWr").onclick = () => { store.set("si_mainw", ""); applyMainW(); try{ calFitP(); }catch(_){} };
 $("sqCorners").onchange = e => { store.set("si_square", e.target.checked ? "1" : "0"); applySquare(); };
