@@ -3344,16 +3344,20 @@ function lineStair(line, d0, sec, pct, ftp){
 $("stairbtn").onclick = () => {
   const before = $("desc").value, ftp = curFtp(), steps = parseWorkout(before, $("sport").value, ftp);
   if(!steps.length) return say("prevEmpty", "err");
-  const sec = +$("stairsel").value || 60, lines = before.split("\n"), seen = new Set(), repl = new Map(); let skipped = 0;
+  const sec = +$("stairsel").value || 60, lines = before.split("\n"), seen = new Set(), repl = new Map();
   for(const x of steps){
     if(x.line == null || seen.has(x.line)) continue; seen.add(x.line); // une ligne dans un bloc répété n'est réécrite qu'une fois
     if(x.m || x.d < 20 || (x.hr ? Math.abs(x.ha - x.hb) <= 0.5 : Math.abs(x.a - x.b) <= 0.5) || lines[x.line] == null) continue;
-    if(x.hr){ skipped++; continue; }
     const N = Math.max(2, Math.min(Math.round(x.d / sec), Math.floor(x.d / 10))), base = Math.floor(x.d / N), out = [];
-    for(let k = 0; k < N; k++){ const l = lineStair(lines[x.line], x.d, k === N - 1 ? x.d - base * (N - 1) : base, x.a + (x.b - x.a) * k / (N - 1), ftp); if(l == null){ out.length = 0; break; } out.push(l); }
-    if(out.length) repl.set(x.line, out); else skipped++;
+    for(let k = 0; k < N; k++){
+      const f = k / (N - 1), dd = k === N - 1 ? x.d - base * (N - 1) : base;
+      let l = x.hr ? null : lineStair(lines[x.line], x.d, dd, x.a + (x.b - x.a) * f, ftp); // on garde le texte de la ligne (indices, unité W ou %)
+      if(l == null) l = "- " + fmtDurImp(dd) + " " + (x.hr ? Math.round(x.ha + (x.hb - x.ha) * f) + "% LTHR" : Math.round(x.a + (x.b - x.a) * f) + "%"); // repli : ligne propre reconstruite à partir des valeurs lues
+      out.push(l);
+    }
+    repl.set(x.line, out);
   }
-  if(!repl.size) return say(skipped ? "stairSkip" : "stairNone", skipped ? "err" : "ok");
+  if(!repl.size) return say("stairNone", "ok");
   pushUndo();
   const res = []; lines.forEach((l, i) => { if(repl.has(i)) res.push(...repl.get(i)); else res.push(l); });
   $("desc").value = res.join("\n"); selLine = null; renderChart();
