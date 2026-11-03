@@ -823,6 +823,9 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 /* lecteur : profil de la séance plus bas pour laisser plus de hauteur aux autres cartes */
 .run #runCv{height:90px}
 .run.rfs #runCv{height:clamp(32px,6.5dvh,70px)}
+
+/* téléphone : un sous-menu à un seul onglet (Lecteur) fait doublon avec la barre du bas, on le masque */
+@media (max-width:560px){.mode.solo:not(.cfg-tabs){display:none!important}}
 </style>
 <script>/* applique le thème sauvegardé avant le premier rendu pour éviter tout flash */try{var _t=localStorage.getItem("si_theme");if(_t==="light"||_t==="dark")document.documentElement.dataset.theme=_t;var _f=localStorage.getItem("si_font");if(_f&&/^[a-z]+$/.test(_f))document.documentElement.dataset.font=_f;if(localStorage.getItem("si_square")==="1")document.documentElement.dataset.square="";var _w=localStorage.getItem("si_mainw");if(_w&&/^\d{3,4}$/.test(_w)){document.documentElement.style.setProperty("--mainw",_w+"px");document.documentElement.dataset.mainw="";}var _l=localStorage.getItem("si_look");if(_l!=="0"&&_l!=="classic")document.documentElement.dataset.look=/^[a-z]+$/.test(_l||"")?_l:"sport";}catch(e){}
 try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_run")==="1"&&sessionStorage.getItem("si_fullmenu")!=="1")document.documentElement.classList.add("pm-only");}catch(e){}</script>
@@ -8443,7 +8446,8 @@ function applyMode(){
   applyMode._prev = mode;
   { const g = curGrp(); store.set("si_g_" + g, mode); // groupe « Générer » / « Analyser » : seuls ses onglets sont affichés
     document.querySelectorAll("#grp button").forEach(b => { const on = b.dataset.g === g; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
-    document.querySelectorAll(".mode:not(.cfg-tabs) button").forEach(b => { b.hidden = !GRP[g].includes(b.dataset.m); }); }
+    document.querySelectorAll(".mode:not(.cfg-tabs) button").forEach(b => { b.hidden = !GRP[g].includes(b.dataset.m); });
+    document.querySelectorAll(".mode:not(.cfg-tabs)").forEach(m => m.classList.toggle("solo", m.querySelectorAll("button:not([hidden])").length <= 1)); } // un seul onglet : la barre de sous-menu est masquée sur téléphone
   document.documentElement.classList.toggle("m-cmp", mode === "cmp");
   document.documentElement.classList.toggle("m-ses", mode === "ses");
   document.documentElement.classList.toggle("m-exp", mode === "exp");
