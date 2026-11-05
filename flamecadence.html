@@ -541,6 +541,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs>*{flex:none}.run.rfs .rcard,.run.rfs .rbar{margin:0}.run.rfs .phead{display:grid!important;align-items:center;gap:6px;margin:0;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"nm nm ex" "pl fn pg"}
 .run.rfs #runFsTop{grid-area:nm}.run.rfs #runFs{grid-area:ex;justify-self:end}.run.rfs #runPlay{grid-area:pl}.run.rfs #runFin{grid-area:fn;justify-self:start;min-width:0;max-width:100%;white-space:normal;line-height:1.15;text-align:center}.run.rfs #runPlay{white-space:nowrap;justify-self:start}
 .run #runFsTop{display:none}.run.rfs #runFsTop{display:flex;align-items:center;gap:10px;min-width:0}.run.rfs #runFsTm{flex:none;font-size:clamp(.78rem,2.8vmin,1rem);color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+#runFinDlg .actions{margin-top:14px}#runFinDlg .actions button{flex:1 1 140px;min-height:46px;margin:0}#runFinDlg #finSum{font-size:1rem;color:var(--ink);font-weight:600;margin:4px 0 8px}
 .run .rnud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:8px}.run .rnud button{margin:0;min-width:0;padding:9px 0;font-size:clamp(.66rem,2.9vw,.9rem);white-space:nowrap}.run .rnud button svg{width:1.15em;height:1.15em;display:block;margin:0 auto;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .run.rfs .rhud:has(.rnud){display:flex;align-items:stretch;gap:6px;padding:6px}.run.rfs .rnud{flex:1 1 auto;min-width:0;margin:0}.run.rfs .rhud:has(.rnud) .rctl{flex:none;margin:0;flex-wrap:nowrap}
 .run .rgrid .rcard.zk{border:3px solid var(--zc);background:color-mix(in srgb,var(--zc) 18%,var(--card))}
@@ -555,7 +556,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs .rgrid .rbig{font-size:clamp(2rem,15vmin,6.5rem);line-height:1;margin:2px 0}
 @supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,min(52cqw,calc(100cqh - 62px)),11rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
 .run canvas{pointer-events:none}
-.run.rfs canvas{height:var(--cvh,clamp(44px,10dvh,110px))}.run.rfs .rcard:has(canvas){padding:6px}
+.run.rfs canvas{height:var(--cvh,clamp(52px,15dvh,150px))}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
 .run.rfs #runEnd{max-height:45%;overflow:auto}
 /* second écran du lecteur (plein écran) : vide pour l'instant ; on y accède par glissement latéral ou par le bouton ●○ */
@@ -827,7 +828,7 @@ html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:
 
 /* lecteur : profil de la séance plus bas pour laisser plus de hauteur aux autres cartes */
 .run #runCv{height:90px}
-.run.rfs #runCv{height:clamp(32px,6.5dvh,70px)}
+.run.rfs #runCv{height:clamp(60px,12dvh,130px)}@media (orientation:landscape){.run.rfs #runCv{height:clamp(32px,6.5dvh,70px)}}
 
 /* téléphone : un sous-menu à un seul onglet (Lecteur) fait doublon avec la barre du bas, on le masque */
 @media (max-width:560px){.mode.solo:not(.cfg-tabs){display:none!important}}
@@ -1441,6 +1442,8 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" hidden></div>
 <div class="rctl"><button type="button" id="runUp" data-i="runUp"></button><button type="button" class="alt small" id="runDis" data-i="runDis"></button></div><div class="hint" id="runEndM"></div></div>
 <div class="rcard" id="runPoolC" hidden><div class="rlbl"><span data-i="poolT"></span> <span id="poolN"></span></div><div class="hint" data-i="poolHint"></div><div id="poolRows"></div></div>
+<dialog id="runFinDlg" aria-labelledby="finQ"><h2 id="finQ" data-i="finQ"></h2><p class="hint" id="finSum"></p><p class="hint" data-i="finHint"></p>
+<div class="actions"><button type="button" id="finSave" data-i="finSave"></button><button type="button" class="alt danger" id="finDis" data-i="finDis"></button><button type="button" class="alt" id="finBack" data-i="finBack"></button></div></dialog>
 </section>
 
 <section id="prev" data-block="prev" hidden>
@@ -1990,6 +1993,7 @@ pmLeadH:["For casting (Chromecast) or a Bluetooth speaker: the countdown beeps a
 pmAp:["Auto-pause when there is no power","Pause automatique sans puissance"], apOff:["Off","Désactivée"],
 pmApH:["Pauses the player when the trainer reports 0 W for this long (real Bluetooth data only, never in simulation). Press Resume to carry on.","Met le lecteur en pause quand le home trainer indique 0 W pendant cette durée (données Bluetooth réelles uniquement, jamais en simulation). Appuyez sur Reprendre pour continuer."],
 runAutoP:["Auto-paused: no power for {0} s","Pause automatique : aucune puissance depuis {0} s"],
+finQ:["Finish this ride?","Terminer cette sortie ?"], finHint:["Save it to intervals.icu, or discard the recording. If intervals.icu can't be reached, the ride is kept in the pending list and sent later.","L'enregistrer vers intervals.icu ou abandonner l'enregistrement. Si intervals.icu est injoignable, la sortie est conservée dans la liste d'attente et envoyée plus tard."], finSave:["Save","Enregistrer"], finDis:["Discard","Abandonner"], finBack:["Keep riding","Continuer"],
 runNx:["Next","Ensuite"], runClk:["Time of day","Heure"], runUping:["Uploading to intervals.icu…","Envoi vers intervals.icu…"], runUpPend:["Upload failed ({0}). The activity is kept in the pending list and will be retried automatically.","Envoi impossible ({0}). L'activité est conservée dans la liste d'attente et sera renvoyée automatiquement."], runUpNoKey:["Not connected to intervals.icu: the activity is kept in the pending list.","Non connecté à intervals.icu : l'activité est conservée dans la liste d'attente."], runRetry:["Retry upload","Réessayer l'envoi"], poolT:["Pending uploads","Envois en attente"], poolHint:["Activities not yet sent to intervals.icu. They are retried automatically when the app opens or the network is back.","Activités pas encore envoyées à intervals.icu. Nouvel essai automatique à l'ouverture de l'app ou au retour du réseau."], poolUp:["Upload","Envoyer"], poolDel:["Delete","Supprimer"], poolQ:["Delete this pending activity? It will be lost.","Supprimer cette activité en attente ? Elle sera perdue."], poolSent:["{0} activity sent to intervals.icu.","{0} activité envoyée à intervals.icu."], hzStep:["Step {0}/{1}","Étape {0}/{1}"], hzFtp:["FTP {0} W","FTP {0} W"],
 runFtpIn:["FTP used for % targets: {0} W (indoor FTP)","FTP utilisée pour les cibles en % : {0} W (FTP indoor)"],
 runFtpOut:["FTP used for % targets: {0} W (outdoor FTP, no indoor FTP set)","FTP utilisée pour les cibles en % : {0} W (FTP extérieur, pas de FTP indoor)"],
@@ -7553,8 +7557,11 @@ function runInit(){
   const pick = e => { const r = e.target.closest(".wr"); if(r) runPick(RUN.items[+r.dataset.k]); };
   $("runRows").onclick = pick; $("runRows").onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); pick(e); } };
   $("runFs").onclick = () => runFs(); $("runGo").onclick = runGo;
-  $("runFin").onclick = runFinish; $("runUp").onclick = runUpload;
-  $("runDis").onclick = () => { if(RUN.pend){ poolDel(RUN.pend.id).then(poolRender); RUN.pend = null; } RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runFs(false); runLaunchUI(); }; // abandon : on quitte le lecteur plein écran
+  $("runFin").onclick = runFinAsk; $("runUp").onclick = runUpload;
+  $("finSave").onclick = () => { $("runFinDlg").close(); runFinish(); };
+  $("finDis").onclick = () => { $("runFinDlg").close(); runDiscard(); };
+  $("finBack").onclick = () => $("runFinDlg").close();
+  $("runDis").onclick = runDiscard; // abandon : on quitte le lecteur plein écran
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
   document.addEventListener("fullscreenchange", () => {
     if(!RUN || !RUN.fsApi || document.fullscreenElement) return;
@@ -7877,7 +7884,18 @@ function runTcx(rec, nm){
   const tot = Math.round((pts[pts.length - 1].t - pts[0].t) / 1000), kj = Math.round(P.reduce((x, y) => x + y, 0) / 1000);
   return `<?xml version="1.0" encoding="UTF-8"?>\n<TrainingCenterDatabase xmlns="http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2" xmlns:ns3="http://www.garmin.com/xmlschemas/ActivityExtension/v2"><Activities><Activity Sport="Biking"><Id>${iso8(pts[0].t)}</Id><Lap StartTime="${iso8(pts[0].t)}"><TotalTimeSeconds>${tot}</TotalTimeSeconds><DistanceMeters>${Math.round(pts[pts.length - 1].d || 0)}</DistanceMeters><Calories>${kj}</Calories>${H.length ? `<AverageHeartRateBpm><Value>${av(H)}</Value></AverageHeartRateBpm><MaximumHeartRateBpm><Value>${Math.round(Math.max(...H))}</Value></MaximumHeartRateBpm>` : ""}<Intensity>Active</Intensity><TriggerMethod>Manual</TriggerMethod><Track>${tp}</Track></Lap><Notes>${esc(nm || (R.cur && R.cur.name) || "FlameCadence")}</Notes></Activity></Activities></TrainingCenterDatabase>`;
 }
+// « Terminer et enregistrer » : on demande d'abord Enregistrer ou Abandonner (rien, ou presque, d'enregistré : pas de choix à proposer)
+function runFinAsk(){
+  const R = RUN, d = $("runFinDlg"), pts = (R && R.rec) || []; if(d.open || R.closing) return; // déjà enregistrée (ou en file d'attente) : pas de 2e envoi
+  if(pts.length < 30){ runFinish(); return; }
+  const ps = pts.filter(x => x.p != null).map(x => x.p), avg = ps.length ? Math.round(ps.reduce((a, b) => a + b, 0) / ps.length) : 0;
+  $("finSum").textContent = "⏱ " + runFmt(Math.round((pts[pts.length - 1].t - pts[0].t) / 1000)) + (avg ? " · ⌀ " + avg + " W" : "");
+  d.showModal();
+}
+// abandon : l'enregistrement est supprimé (et retiré de la file d'attente s'il y était), le lecteur est masqué et remis au début de la séance
+function runDiscard(){ if(RUN.pend){ poolDel(RUN.pend.id).then(poolRender); RUN.pend = null; } RUN.rec = []; $("runEnd").hidden = true; if(RUN.cur) runLoad(RUN.cur); runFs(false); runLaunchUI(); }
 function runFinish(){
+  { const fd = $("runFinDlg"); if(fd && fd.open) fd.close(); } // fin automatique de la séance pendant que la question était affichée
   musStop(); const R = RUN; R.paused = true; runErgPause(true); runUI();
   const pts = R.rec || [], box = $("runEnd"), m = $("runEndM"); box.hidden = false; m.textContent = ""; R.upDone = false; R.pend = null; $("runDis").hidden = false; runLaunchUI();
   const ok = pts.length >= 30; $("runUp").hidden = true; $("runUp").disabled = false;
@@ -7904,7 +7922,7 @@ async function runAutoUp(){
   const R = RUN, a = R.pend, m = $("runEndM"); if(!a || POOL.busy[a.id]) return;
   await poolPut(a); // d'abord en file d'attente : rien n'est perdu si la page se ferme pendant l'envoi
   $("runDis").hidden = true; $("runUp").hidden = true;
-  if(!KEY()){ m.textContent = t("runUpNoKey"); $("runDis").hidden = false; runSaveClear(); poolRender(); return; }
+  if(!KEY()){ m.textContent = t("runUpNoKey"); $("runDis").hidden = true; runSaveClear(); poolRender(); runCloseMode(); return; } // en file d'attente : « Fermer » apparaît
   POOL.busy[a.id] = 1; m.textContent = "⏳ " + t("runUping");
   try{
     const id = await icuSendAct(a); await poolDel(a.id);
@@ -7913,7 +7931,7 @@ async function runAutoUp(){
     setTimeout(poolRetry, 1500);
   }catch(e){
     a.tries = (a.tries || 0) + 1; a.err = errText(e); await poolPut(a);
-    m.textContent = t("runUpPend", errText(e)); $("runUp").hidden = false; $("runUp").textContent = t("runRetry"); $("runDis").hidden = false; runSaveClear();
+    m.textContent = t("runUpPend", errText(e)); $("runUp").hidden = false; $("runUp").textContent = t("runRetry"); $("runDis").hidden = true; runSaveClear(); runCloseMode(); // en file d'attente : « Fermer » apparaît, « Réessayer » reste possible
   }
   delete POOL.busy[a.id]; poolRender();
 }
@@ -8234,6 +8252,7 @@ function runUI(){
     zk("runTP", zoneOf(tgt / ftp * 100)); zk("runAP", ap > 0 ? zoneOf(ap / ftp * 100) : 1); const hz = RUN.hr ? runHrZ(RUN.hr) : 0; zk("runHRv", hz); }
   const vb = $("runVar"), ok = Math.abs(d) <= 10; const gd = st.g != null; vb.textContent = t((ok ? "runOn" : d > 0 ? "runHi" : "runLo") + (gd ? "G" : "")); $("runTgtL").textContent = t(gd ? "runGuide" : "runTgt"); $("runTP").title = gd ? t("edGuideT") : ""; vb.style.color = ok ? "#22c55e" : d > 0 ? "#eab308" : "#ef4444";
   $("runHRv").textContent = RUN.hr ? Math.round(RUN.hr) : "--"; $("runCV").textContent = RUN.live.c != null || RUN.cad ? Math.round(RUN.cad) : "--"; $("runCT").textContent = "rpm · " + st.cad; $("runCT").title = RUN.cadSrc ? "Source: " + RUN.cadSrc : "";
+  $("runFin").disabled = !!RUN.closing;
   $("runPlay").textContent = RUN.closing ? "✕ " + t("runClose") : RUN.paused ? "▶ " + t(RUN.el ? "runResume" : "runStart") : "⏸ " + t("runPause");
   $("runPct").title = runFtpTxt(); runTm();
   const nx = RUN.steps[RUN.i + 1]; $("runNx").style.visibility = nx ? "visible" : "hidden"; if(nx) $("runNxT").textContent = runNxTxt(nx);
