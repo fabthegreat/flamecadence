@@ -7559,7 +7559,7 @@ function runInit(){
   $("runFin").onclick = runFinAsk; $("runUp").onclick = runUpload;
   $("finSave").onclick = () => { $("runFinDlg").close(); runFinish(); };
   $("finDis").onclick = () => { $("runFinDlg").close(); runDiscard(); };
-  $("finBack").onclick = () => { $("runFinDlg").close(); if(RUN && RUN.paused && !RUN.closing && !((RUN.rec || []).length >= 30)) $("runPlay").click(); }; // fenêtre « aucune donnée » : Reprendre relance la séance
+  $("finBack").onclick = () => $("runFinDlg").close();
   $("runErg").onchange = e => { if(e.target.checked){ runCpSend([0x00]); RUN.sentW = null; if(!RUN.paused){ runCpSend([0x07]); runUI(); } }else runCpSend([0x01]); runErgBadge(); };
   document.addEventListener("fullscreenchange", () => {
     if(!RUN || !RUN.fsApi || document.fullscreenElement) return;
@@ -7895,7 +7895,7 @@ function runDiscard(){ if(RUN.pend){ poolDel(RUN.pend.id).then(poolRender); RUN.
 // sans données enregistrées (aucun appareil connecté) : la fenêtre ne propose que « Abandonner »
 function runFinDlgMode(noData){
   ["finSave", "finHint"].forEach(id => { const e = $(id); if(e) e.hidden = noData; });
-  const fb = $("finBack"); if(fb){ fb.hidden = false; fb.textContent = noData ? "▶ " + t("runResume") : t("finBack"); } // sans données : « Reprendre » (relance le lecteur) ; sinon « Continuer »
+  const fb = $("finBack"); if(fb){ fb.hidden = false; fb.textContent = t(noData ? "runClose" : "finBack"); } // sans données : « Reprendre » (relance le lecteur) ; sinon « Continuer »
   $("finHintNo").hidden = !noData;
 }
 function runFinNoData(){
