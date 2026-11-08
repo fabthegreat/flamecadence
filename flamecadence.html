@@ -7947,7 +7947,7 @@ async function runAutoUp(){
   delete POOL.busy[a.id]; poolRender();
 }
 function runCloseMode(){ RUN.closing = true; runUI(); } // activité enregistrée : le bouton « Reprendre » devient « Fermer »
-function runCloseNow(){ try{ runFs(false); }catch(e){} location.reload(); } // ferme le lecteur et recharge la page : la liste des séances planifiées est remise à jour
+function runCloseNow(){ RUN.closing = true; runSaveClear(); try{ runFs(false); }catch(e){} runSaveClear(); location.reload(); } // ferme le lecteur et recharge la page : la liste des séances planifiées est remise à jour
 function runUpload(){ return runAutoUp(); } // bouton « Réessayer l'envoi »
 async function poolRetry(){
   if(!KEY() || navigator.onLine === false) return; let sent = 0;
@@ -8206,7 +8206,8 @@ document.addEventListener("visibilitychange", () => { if(!document.hidden && typ
 // ---- reprise après rechargement : Android peut décharger la page en arrière-plan ; la séance (étape, temps, enregistrement) est sauvegardée et reprise
 const RUN_SAVE = "si_runsess";
 function runSave(force){
-  if(!RUN || !RUN.began || !RUN.cur) return; const now = Date.now(); if(!force && now - (RUN.sv || 0) < 4000) return; RUN.sv = now;
+  if(!RUN || !RUN.began || !RUN.cur || RUN.closing) return; const now = Date.now(); // RUN.closing : activité terminée et enregistrée → ne plus sauvegarder, sinon pagehide/visibilitychange recrée la session « terminée » et le lecteur se rouvre après le rechargement
+  if(!force && now - (RUN.sv || 0) < 4000) return; RUN.sv = now;
   try{ localStorage.setItem(RUN_SAVE, JSON.stringify({v: 1, at: now, cur: {id: RUN.cur.id, name: RUN.cur.name, st: RUN.cur.st}, i: RUN.i, left: RUN.left, ml: RUN.mleft, el: RUN.el, nudge: RUN.nudge, paused: RUN.paused, last: RUN.last || now, done: !$("runEnd").hidden, rec: (RUN.rec || []).slice(-20000)})); }catch(e){}
 }
 const runSaveClear = () => { try{ localStorage.removeItem(RUN_SAVE); }catch(e){} };
