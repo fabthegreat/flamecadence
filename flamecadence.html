@@ -516,9 +516,9 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rbig{font-size:2.2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
 .run .rgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:10px}
 @media (min-width:900px){.run .rgrid{grid-template-columns:repeat(4,1fr)}}
-.run .rgrid .rcard{margin:0}.run .rgrid .rbig{font-size:clamp(3rem,13vw,4.6rem);margin:6px 0 2px}
+.run .rgrid .rcard{margin:0}.run .rgrid .rbig{font-size:clamp(2.6rem,11vw,3.9rem);margin:6px 0 2px}
 .run .rgrid small,.run .rmx small{color:var(--mute)}
-.run .rmx{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}.run .rmx[hidden]{display:none!important}.run .rmx .rcard{margin:0}.run .rmx .rbig{font-size:1.9rem;margin:6px 0 2px}.run.rfs .rmx{margin:0;gap:6px;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}.run.rfs .rmx .rcard{padding:3px 6px;text-align:center;overflow:hidden}.run.rfs .rmx .rlbl{font-size:.62rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.run.rfs .rmx .rbig{font-size:clamp(1.05rem,4.6vmin,1.7rem);margin:1px 0 0}.run.rfs .rmx small{display:none}
+.run .rmx{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:10px}.run .rmx[hidden]{display:none!important}.run .rmx .rcard{margin:0}.run .rmx .rbig{font-size:2.3rem;margin:6px 0 2px}.run.rfs .rmx{margin:0;gap:6px;grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr)}.run.rfs .rmx .rcard{padding:5px 6px;text-align:center;overflow:hidden}.run.rfs .rmx .rlbl{font-size:.72rem;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.run.rfs .rmx .rbig{font-size:clamp(1.35rem,6.4vmin,2.5rem);margin:1px 0 0}.run.rfs .rmx small{display:none}
 .run canvas{width:100%;height:130px;display:block;border-radius:8px;border:1px solid var(--line);cursor:pointer}
 .run .rctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center}
 .run .rctl button,.run .rtop button,.run .rtop select{margin:0;width:auto}
@@ -553,8 +553,8 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run.rfs .rgrid{flex:1 1 0;min-height:0;margin:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr))}
 @media (orientation:landscape){.run.rfs .rgrid{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr)}}
 .run.rfs .rgrid .rcard{display:flex;flex-direction:column;justify-content:center;padding:6px 10px;overflow:hidden;min-height:0}
-.run.rfs .rgrid .rbig{font-size:clamp(2rem,15vmin,6.5rem);line-height:1;margin:2px 0}
-@supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,min(52cqw,calc(100cqh - 62px)),11rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
+.run.rfs .rgrid .rbig{font-size:clamp(1.8rem,12vmin,5.2rem);line-height:1;margin:2px 0}
+@supports (container-type:size){.run.rfs .rgrid .rcard{container-type:size}.run.rfs .rgrid .rbig{font-size:clamp(1.6rem,min(42cqw,calc(100cqh - 70px)),9rem)}} /* le chiffre s'adapte à la taille réelle de sa carte */
 .run canvas{pointer-events:none}
 .run.rfs canvas{height:var(--cvh,clamp(52px,15dvh,150px))}.run.rfs .rcard:has(canvas){padding:6px}
 .run.rfs .rctl{gap:4px}.run.rfs .rctl button{padding:6px 9px}.run.rfs .rctl span{display:none}
