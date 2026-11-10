@@ -483,6 +483,13 @@ aside.col .phead{flex-wrap:wrap;row-gap:6px;gap:6px;justify-content:flex-end}
 .calw.fit .cal-d{min-height:0;overflow-y:auto;scrollbar-width:none}.calw .cal-d::-webkit-scrollbar{display:none}.calw.fit .cal-ev.cw-card{flex:0 0 auto}.calw.fit .cw-sum{overflow:hidden;min-height:0}
 .calw .cw-st{display:flex;justify-content:center;gap:8px;white-space:nowrap;overflow:hidden}
 .calw .x1 .cw-nm{display:none}.calw .x2 .cw-cp{display:none}.calw .x3 .cw-st{display:none}.calw .x4 .cw-ld{display:none}.calw .x5 .cw-bd{padding:2px 5px 3px;gap:2px}.calw .x5 .cw-hd{padding:2px 5px}.calw .x5 .cal-mini{height:26px}.calw .x6 .cal-mini{height:16px}.calw .x6 .cw-bd{padding:2px 4px;gap:1px}.calw .x7 .cal-mini{display:none}.calw .x7 .cw-bd{padding:1px 4px}.calw .x8 .cw-bd{display:none}.calw .x8 .cw-hd{padding:1px 5px}.calw .x6 .cal-n,.calw .x7 .cal-n,.calw .x8 .cal-n{line-height:1}
+/* trop d'activités dans une même case : au-delà du niveau x8 les cartes deviennent de petites puces rangées côte à côte (2, 3 puis 4 par ligne) */
+.calw .x9,.calw .x10,.calw .x11{flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:2px}
+.calw .x9>.cal-n,.calw .x10>.cal-n,.calw .x11>.cal-n{flex:0 0 100%;line-height:1}
+.calw.fit .x9>.cal-ev.cw-card{flex:1 1 calc(50% - 2px);min-width:0}.calw.fit .x10>.cal-ev.cw-card{flex:1 1 calc(33% - 2px);min-width:0}.calw.fit .x11>.cal-ev.cw-card{flex:1 1 calc(25% - 2px);min-width:0}
+.calw .x9 .cw-hd,.calw .x10 .cw-hd,.calw .x11 .cw-hd{padding:1px 4px;gap:3px;font-size:.72rem;white-space:nowrap;overflow:hidden}
+.calw .x9 .cw-hd i,.calw .x10 .cw-hd i,.calw .x11 .cw-hd i,.calw .x10 .cal-x,.calw .x11 .cal-x{display:none}
+.calw .x11 .cw-hd span{display:none}.calw .x11 .cw-hd{justify-content:center}
 @media (max-width:900px){.calw{gap:6px}.calw .cw{border-top:0}.calw .cal-d{border:1px solid var(--line);border-radius:5px}.calw .cw-head{display:none}.calw .cw{grid-template-columns:1fr}.calw .cal-d.empty,.calw .cal-d:not(:has(.cal-ev)){display:none}.calw .cal-d{min-height:0}.calw .cal-wd{display:inline}.calw .cw-sum{flex-direction:row;flex-wrap:wrap;gap:2px 12px;align-items:baseline}}
 
 .tip .cal-prev{display:block;width:210px;height:46px;margin:6px 0 2px;border-radius:4px;background:var(--bg)}
@@ -584,6 +591,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 #runHz .hzbt{grid-column:1;grid-row:3;background:rgba(8,12,20,.62);padding:8px 12px}
 #runHz .hzrow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}#runHz .hzrow b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzrow span{font-size:clamp(1.3rem,5vmin,2.2rem);font-weight:800}
 #runHz .hzx{margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:clamp(.8rem,2.7vmin,1.1rem);line-height:1.2;font-weight:600}#runHz .hzx div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#runHz .hzx div:empty{display:block;min-height:1.2em}#runHz #hzNx{opacity:.85;font-weight:500}
+.run .rrem{margin-top:3px;font-size:.9rem;white-space:nowrap}.run .rrem b{font-variant-numeric:tabular-nums}
 .run .rnx{margin-top:6px;font-size:.9rem;display:flex;gap:8px;align-items:baseline;min-width:0}.run .rnx{min-height:1.4em}.run .rnx b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.run #runAutoP{margin-top:6px;display:inline-block;color:#eab308;border-color:#eab308}.run #runAutoP[hidden]{display:none}.run #runClock{font-variant-numeric:tabular-nums;opacity:.8}
 #runHz .hzbar{height:6px;margin-top:6px;background:rgba(255,255,255,.2)}#runHz .hzbar i{display:block;height:100%;width:0;background:var(--acc)}
 .run.rfs.rs2 .rhud{display:none!important}
@@ -1181,6 +1189,11 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="auto" data-i="feelAuto" selected></option><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood"></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
 <label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
 <p class="hint" data-i="libDesc"></p>
+<div class="row" style="margin-top:10px;align-items:end">
+<div><label for="libzipfmt" data-i="libZipFmt"></label><select id="libzipfmt"><option value="zwo" data-i="exZwo"></option><option value="fit" data-i="exFit"></option><option value="erg" data-i="exErg"></option><option value="mrc" data-i="exMrc"></option><option value="json" data-i="exJson"></option></select></div>
+<div><button type="button" class="alt" id="libzip" data-i="libZip" style="width:100%;margin:0"></button></div>
+</div>
+<div class="hint" id="libzipmsg" aria-live="polite" style="min-height:1.2em"></div>
 <div id="libContainer" style="margin-top:12px"></div>
 </section>
 
@@ -1413,7 +1426,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
 <div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
 <div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
-<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span></div></div><div id="runNx" class="rnx" style="visibility:hidden"><span class="rlbl" data-i="runNx"></span> <b id="runNxT">&nbsp;</b></div><div id="runAutoP" class="rbadge" hidden></div></div>
+<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span><div class="rrem"><span class="rlbl" data-i="runRem"></span> <b id="runRem">00:00</b></div></div></div><div id="runNx" class="rnx" style="visibility:hidden"><span class="rlbl" data-i="runNx"></span> <b id="runNxT">&nbsp;</b></div><div id="runAutoP" class="rbadge" hidden></div></div>
 <div class="rgrid rhud">
 <div class="rcard"><div class="rlbl"><span id="runTgtL" data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
 <div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
@@ -1800,6 +1813,7 @@ helpContent:[
   `<h3>1. Comment ça fonctionne</h3><p>FlameCadence vous permet de concevoir des séances structurées soit en décrivant votre envie à une IA, soit via l'éditeur manuel, soit en piochant dans la bibliothèque. Une fois prête, vérifiez le graphique et envoyez la séance directement dans votre calendrier <b>intervals.icu</b>. Vous pouvez aussi réordonner la séance en <b>glissant les blocs du graphique d'aperçu</b>, ou les poignées ⠿ de l'éditeur manuel — la description se met à jour automatiquement.</p><h3>2. Obtenir sa clé API intervals.icu</h3><p>Indispensable pour envoyer les séances et récupérer votre FTP et vos charges :<br>• Rendez-vous sur <a href="https://intervals.icu/settings" target="_blank">intervals.icu/settings</a>.<br>• Descendez jusqu'à la section <b>Developer Settings</b> (Paramètres développeur).<br>• Copiez votre clé API et collez-la dans les réglages de FlameCadence.</p><h3>3. Obtenir une clé de Fournisseur d'IA</h3><p>• <b>Gemini (Recommandé) :</b> Gratuit et rapide. Obtenez une clé sur <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a>.<br>• <b>Hugging Face :</b> Offre gratuite disponible. Générez un jeton dans vos <a href="https://huggingface.co/settings/tokens" target="_blank">Paramètres HF</a>.<br>• <b>Compatible OpenAI :</b> Utilisez les clés gratuites de <a href="https://console.groq.com/keys" target="_blank">Groq</a>, <a href="https://openrouter.ai/keys" target="_blank">OpenRouter</a> ou Mistral.</p>`
 ],
 libDesc:["Select a proven session from the library to instantly preview it and send it to intervals.icu.","Sélectionne une séance éprouvée dans la bibliothèque pour l'afficher instantanément et l'envoyer sur intervals.icu."],
+exZwo:["Zwift — .zwo","Zwift — .zwo"], libZip:["Download all workouts (.zip)","Télécharger toutes les séances (.zip)"], libZipFmt:["Zip format","Format du zip"], libZipProg:["Building the zip… {0}/{1}","Création du zip… {0}/{1}"], libZipDone:["{0} workouts saved in one .zip{1}","{0} séances enregistrées dans un seul .zip{1}"], libZipSkip:[" ({0} skipped)"," ({0} ignorées)"], libZipFail:["Could not build the zip: {0}","Impossible de créer le zip : {0}"],
 libSearch:["Search by keyword (name, goal, intensity…)","Rechercher par mot-clé (nom, objectif, intensité…)"], libNo:["No session matches this search.","Aucune séance ne correspond à cette recherche."],
 libStarOnly:["★ Starred only","★ Favoris seulement"], starT:["Star/unstar this session","Ajouter/retirer des favoris"],
 libDurLbl:["Duration filter","Filtre de durée"], libDurAll:["All durations","Toutes les durées"], libAvg:["avg","moy."],
@@ -1955,7 +1969,7 @@ cmpNamePh:["Filter by name…","Filtrer par nom…"],
 cmpMS:["Whole series","Série entière"], cmpMR:["Rep by rep (overlaid)","Répétition par répétition (superposées)"], cmpMA:["Average rep","Répétition moyenne"], cmpMode:["Overlay mode","Mode de superposition"],
 cmpDiag:["{0} activities scanned · {1} with power · {2} without usable data{3}","{0} activités analysées · {1} avec puissance · {2} sans données exploitables{3}"],
 actOk:["Workout rebuilt from “{0}”.","Séance reconstruite depuis « {0} »."],
-grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to the other top menus. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté des autres menus. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edRampT:["Ramp: end intensity (leave empty for a steady step)","Rampe : intensité de fin (vide = palier constant)"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDlF:["Download .fit (Strava, Garmin)","Télécharger .fit (Strava, Garmin)"], runDl:["Download .tcx","Télécharger .tcx"], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runClose:["Close","Fermer"], runBtNarrow:["{0}: not found, or nothing chosen. Tap again to search among all devices.","{0} : introuvable, ou rien de choisi. Appuie à nouveau pour chercher parmi tous les appareils."], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth).","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth)."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
+grpGen:["Generate","Générer"], grpRun:["Run activity","Lancer"], tabRun:["Player","Lecteur"], runTitle:["Activity player","Lecteur d'activité"], runStep:["Current step","Étape en cours"], runLeft:["Step remaining","Reste de l'étape"], runTotal:["Total","Total"], runRem:["Total remaining","Total restant"], runRemS:["left","restant"], runTgt:["Target power","Puissance cible"], runAct:["Actual power","Puissance réelle"], runHr:["Heart rate","Fréquence cardiaque"], runCad:["Cadence","Cadence"], runProf:["Workout profile","Profil de la séance"], runPause:["Pause","Pause"], runAll:["Show all Bluetooth devices","Afficher tous les appareils Bluetooth"], runBtNone:["No device chosen or found. Wake the trainer by pedalling, close other apps connected to it (Tacx, Zwift, Garmin…), check that Bluetooth and location are on, or tick “Show all Bluetooth devices”.","Aucun appareil choisi ou trouvé. Réveille le trainer en pédalant, ferme les autres applis qui y sont connectées (Tacx, Zwift, Garmin…), vérifie que le Bluetooth et la localisation sont activés, ou coche « Afficher tous les appareils Bluetooth »."], runBtFail:["Could not connect to {0}: {1}","Connexion à {0} impossible : {1}"], runPwOnly:["Connected: power only (no cadence or ERG control on this connection).","Connecté : puissance seulement (ni cadence ni contrôle ERG sur cette connexion)."], betaRun:["Beta: “Run activity” menu","Bêta : menu « Lancer une activité »"], betaRunHint:["Experimental activity player with Bluetooth trainer and heart-rate strap. Adds a “Run activity” menu next to the other top menus. Off by default.","Lecteur d'activité expérimental avec home trainer et ceinture FC Bluetooth. Ajoute un menu « Lancer » à côté des autres menus. Désactivé par défaut."], runErg:["ERG: trainer follows the target","ERG : le home trainer suit la cible"], ergOn:["ERG on","ERG actif"], simOn:["Slope","Pente"], edRampT:["Ramp: end intensity (leave empty for a steady step)","Rampe : intensité de fin (vide = palier constant)"], edSlopeT:["Slope in % (leave empty = ERG)","Pente en % (vide = ERG)"], slopeCap:["Slope mode: {0} sections, up to {1} % (the line is the estimated elevation profile)","Mode pente : {0} tronçons, jusqu'à {1} % (la courbe est le profil d'altitude estimé)"], ergRdy:["ERG ready","ERG prêt"], ergOff:["ERG off (free ride)","ERG désactivé (libre)"], ergNone:["No ERG control","Pas de contrôle ERG"], runDisc:["Disconnect","Déconnecter"], runNoFtms:["No Fitness Machine (FTMS) service on this connection, so ERG is unavailable ({0}). Power and cadence still work. Close other apps connected to the trainer, then pair again.","Pas de service Fitness Machine (FTMS) sur cette connexion, donc pas d'ERG ({0}). Puissance et cadence fonctionnent. Ferme les autres applis connectées au trainer, puis réassocie."], runFec:["Connected via Tacx FE-C: power, cadence and ERG control (experimental).","Connecté via Tacx FE-C : puissance, cadence et contrôle ERG (expérimental)."], runErgFail:["ERG control could not be set up: {0}","Le contrôle ERG n'a pas pu être initialisé : {0}"], runDiscT:["Disconnect {0}","Déconnecter {0}"], runNoCad:["Connected, but the trainer sends no cadence over Bluetooth. Pedal to wake it; if it stays empty, a separate cadence sensor is needed.","Connecté, mais le trainer n'envoie pas la cadence en Bluetooth. Pédale pour le réveiller ; si rien n'apparaît, il faut un capteur de cadence séparé."], runFin:["Finish and save","Terminer et enregistrer"], runEndT:["Ride summary","Résumé de la sortie"], runUp:["Upload to intervals.icu","Envoyer à intervals.icu"], runDlF:["Download .fit (Strava, Garmin)","Télécharger .fit (Strava, Garmin)"], runDl:["Download .tcx","Télécharger .tcx"], runUpOk:["Uploaded to intervals.icu","Envoyée à intervals.icu"], runSum:["{0} · avg {1} W · avg {2} bpm · {3} kJ","{0} · moy. {1} W · moy. {2} bpm · {3} kJ"], runErgNo:["The trainer refused control: ERG unavailable.","Le home trainer a refusé le contrôle : ERG indisponible."], runFs:["Full screen","Plein écran"], runFsX:["Exit full screen","Quitter le plein écran"], runWk:["Workout","Séance"], runListT:["Planned workouts","Séances planifiées"], runSearch:["Search a workout…","Chercher une séance…"], runRefresh:["Refresh","Actualiser"], runSrcAll:["All","Toutes"], runSrcCal:["Calendar","Calendrier"], runSrcPlan:["Plan","Plan"], runSrcLib:["Library","Bibliothèque"], runSrcPre:["Presets","Préréglages"], runToday:["Today","Aujourd'hui"], runMissed:["Missed","Manquée"], runNoMatch:["No workout matches.","Aucune séance ne correspond."], runNoPlanned:["No planned workout in the next 60 days. Plan one in the Plan tab or in intervals.icu.","Aucune séance planifiée dans les 60 prochains jours. Planifie-en une dans l'onglet Plan ou dans intervals.icu."], runLoadL:["Loading calendar…","Chargement du calendrier…"], runConfirm:["Replace the workout in progress?","Remplacer la séance en cours ?"], runPlanNote:["Not yet sent to intervals.icu","Pas encore envoyée à intervals.icu"], runItT:["Run it!","Lance-la !"], runScrN:["Next screen","Écran suivant"], runScrP:["Previous screen","Écran précédent"], libToPlT:["Send to the activity player","Envoyer au lecteur d'activité"], prevToPlT:["Start this workout in the activity player (no calendar needed)","Lancer cette séance dans le lecteur d'activité (sans passer par le calendrier)"],  runStart:["Start","Démarrer"], runResume:["Resume","Reprendre"], runClose:["Close","Fermer"], runBtNarrow:["{0}: not found, or nothing chosen. Tap again to search among all devices.","{0} : introuvable, ou rien de choisi. Appuie à nouveau pour chercher parmi tous les appareils."], runReset:["Reset","Réinit."], runBt:["Bluetooth","Bluetooth"], runPairT:["Pair trainer","Associer le home trainer"], runPairH:["Pair HR strap","Associer la ceinture FC"], runNoBT:["Web Bluetooth unavailable in this browser (Brave: enable brave://flags/#enable-web-bluetooth).","Web Bluetooth indisponible dans ce navigateur (Brave : activer brave://flags/#enable-web-bluetooth)."], runOn:["On target","Dans la cible"], runHi:["Above target","Au-dessus"], runLo:["Below target","En dessous"], runDone:["Workout complete!","Séance terminée !"], grpAna:["Analyze","Analyser"], tabSes:["Single session","Séance seule"], sesT:["Session analysis","Analyse d'une séance"],
 sesNone:["No activity with data found in the last 60 days.","Aucune activité avec données sur les 60 derniers jours."], sesOpen:["Open in intervals.icu","Ouvrir dans intervals.icu"], sesRebuild:["Rebuild this workout","Reconstruire cette séance"], sesLoad:["Loading the activity…","Chargement de l'activité…"],
 sesIv:["Intervals","Intervalles"], sesLaps:["Laps","Tours"], sesLap:["Lap {0}","Tour {0}"], sesPick:["Pick an activity","Choisir une activité"], sesAna:["Analysis","Analyse"], sesHdr:["#|Type|Time|Avg W|NP|% FTP|Avg HR|Max HR|Cad|Max W","#|Type|Durée|P moy|PN|% FTP|FC moy|FC max|Cad|P max"], sesHdrS:["#|Type|Time|Pace|Speed|Best pace|Avg HR|Max HR|Cad","#|Type|Durée|Allure|Vitesse|Meilleure allure|FC moy|FC max|Cad"], lSpdMax:["Max speed","Vitesse max"], sesWork:["Work","Effort"], sesRec:["Recovery","Récup"],
 sesDev:["Recorded with","Enregistré avec"], sesDevL:["Trainer|Power|HR|Speed|Pace","Home-trainer|Puissance|Cardio|Vitesse|Allure"], sesDevT:["Head unit|Power|Heart rate|Speed + cadence|Cadence|Speed|Trainer|Light|Radar|Shifting|Sensor","Compteur|Puissance|Cardio|Vitesse + cadence|Cadence|Vitesse|Home-trainer|Éclairage|Radar|Transmission|Capteur"],
@@ -4221,6 +4235,36 @@ function autoFeel(){
 // quand les données de forme d'intervals.icu arrivent (ou changent), le mode Auto met à jour l'affichage et la liste
 function libAutoRefresh(){ try{ if($("libform").checked && $("libfeel").value === "auto"){ feelUI(); if(!document.querySelector('[data-block="lib"]').hidden) renderLibrary(); } }catch(e){} }
 const feelEff = () => { const v = $("libfeel").value; if(v !== "auto") return v; const a = autoFeel(); return a ? a.level : "good"; };
+const LIB_THEMES = [
+  {id:"beginner",icon:"🌱",en:"Beginner & Short Sessions",fr:"Débutant & séances courtes"},
+  {id:"recovery",icon:"🌿",en:"Recovery & Taper",fr:"Récupération & affûtage"},
+  {id:"endurance",icon:"🚴",en:"Endurance",fr:"Endurance"},
+  {id:"tempo",icon:"📈",en:"Tempo & Sweet Spot",fr:"Tempo & sweet spot"},
+  {id:"threshold",icon:"🔥",en:"Threshold",fr:"Seuil"},
+  {id:"vo2max",icon:"⚡",en:"VO₂ Max & Anaerobic",fr:"VO₂ Max & anaérobie"},
+  {id:"sprint",icon:"💥",en:"Sprint & Race",fr:"Sprint & course"},
+  {id:"force",icon:"🦵",en:"Force & Low Cadence",fr:"Force & basse cadence"},
+  {id:"cols",icon:"⛰️",en:"Famous Cols (slope mode)",fr:"Cols mythiques (mode pente)"},
+  {id:"testing",icon:"🎯",en:"Testing",fr:"Tests"}
+];
+// Regroupement des anciennes catégories (toutes les séances sont conservées)
+const LIB_CATMAP = {cols:"cols",force:"force",beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint",uae:"sprint",adq:"sprint",testing:"testing",bz_test:"testing"};
+function libCat(item){
+  if(item.category) return LIB_CATMAP[item.category] || "endurance";
+  const n=(item.name_en+" "+item.name_fr).toLowerCase();
+  let base="endurance";
+  if(/recovery|récupération/.test(n)) base="recovery";
+  else if(/vo2|max|punchy|explosif|anaerobic|anaérobie/.test(n)) base="vo2max";
+  else if(/sprint/.test(n)) base="sprint";
+  else if(/threshold|seuil|over-under|redline/.test(n)) base="threshold";
+  else if(/sweet spot/.test(n)) base="tempo";
+  else if(/tempo|cadence|fast finish/.test(n)) base="tempo";
+  else if(/endurance|aerobic|aérobie/.test(n)) base="endurance";
+  else if(/uae team em|uae team adq/.test(n)) base="sprint";
+  else if(/beginner|débutant/.test(n)) base="beginner";
+  return LIB_CATMAP[base] || "endurance";
+}
+
 function renderLibrary(){
   const c = $("libContainer");
   $("libsport").value = $("sport").value; LIBF = curFtp(); // le type de sortie choisi (indoor / extérieur) fixe la FTP utilisée pour les watts
@@ -4243,36 +4287,8 @@ function renderLibrary(){
     }
     return true;
   };
-  const themes = [
-    {id:"beginner",icon:"🌱",en:"Beginner & Short Sessions",fr:"Débutant & séances courtes"},
-    {id:"recovery",icon:"🌿",en:"Recovery & Taper",fr:"Récupération & affûtage"},
-    {id:"endurance",icon:"🚴",en:"Endurance",fr:"Endurance"},
-    {id:"tempo",icon:"📈",en:"Tempo & Sweet Spot",fr:"Tempo & sweet spot"},
-    {id:"threshold",icon:"🔥",en:"Threshold",fr:"Seuil"},
-    {id:"vo2max",icon:"⚡",en:"VO₂ Max & Anaerobic",fr:"VO₂ Max & anaérobie"},
-    {id:"sprint",icon:"💥",en:"Sprint & Race",fr:"Sprint & course"},
-    {id:"force",icon:"🦵",en:"Force & Low Cadence",fr:"Force & basse cadence"},
-    {id:"cols",icon:"⛰️",en:"Famous Cols (slope mode)",fr:"Cols mythiques (mode pente)"},
-    {id:"testing",icon:"🎯",en:"Testing",fr:"Tests"}
-  ];
-  // Regroupement des anciennes catégories (toutes les séances sont conservées)
-  const CATMAP = {cols:"cols",force:"force",beginner:"beginner",short:"beginner",recovery:"recovery",bz_recovery:"recovery",taper:"recovery",endurance:"endurance",bz_endurance:"endurance",tempo:"tempo",sweetspot:"tempo",bz_tempo:"tempo",threshold:"threshold",bz_threshold:"threshold",vo2max:"vo2max",bz_vo2max:"vo2max",anaerobic:"vo2max",fast:"vo2max",sprint:"sprint",bz_sprint:"sprint",uae:"sprint",adq:"sprint",testing:"testing",bz_test:"testing"};
+  const themes = LIB_THEMES, categorize = libCat;
   const groups=themes.map(theme=>({...theme,items:[]}));
-  const categorize=item=>{
-    if(item.category) return CATMAP[item.category] || "endurance";
-    const n=(item.name_en+" "+item.name_fr).toLowerCase();
-    let base="endurance";
-    if(/recovery|récupération/.test(n)) base="recovery";
-    else if(/vo2|max|punchy|explosif|anaerobic|anaérobie/.test(n)) base="vo2max";
-    else if(/sprint/.test(n)) base="sprint";
-    else if(/threshold|seuil|over-under|redline/.test(n)) base="threshold";
-    else if(/sweet spot/.test(n)) base="tempo";
-    else if(/tempo|cadence|fast finish/.test(n)) base="tempo";
-    else if(/endurance|aerobic|aérobie/.test(n)) base="endurance";
-    else if(/uae team em|uae team adq/.test(n)) base="sprint";
-    else if(/beginner|débutant/.test(n)) base="beginner";
-    return CATMAP[base] || "endurance";
-  };
   // Forme du jour : thèmes autorisés selon le ressenti, et durée plafonnée quand on est fatigué
   const FEEL = {great: null, good: ["beginner", "recovery", "endurance", "tempo", "threshold", "vo2max", "force", "cols"], soso: ["beginner", "recovery", "endurance", "tempo", "force"], tired: ["beginner", "recovery", "endurance"], exhausted: ["beginner", "recovery"]};
   const feelOn = $("libform").checked, feel = feelEff(), feelCap = {tired: 3600, exhausted: 2700}[feel];
@@ -4325,6 +4341,36 @@ const feelUI = () => {
 $("libform").addEventListener("change", () => { feelUI(); renderLibrary(); }); feelUI();
 document.querySelectorAll("#libfeelb button").forEach(b => b.onclick = () => { $("libfeel").value = b.dataset.v; feelUI(); renderLibrary(); });
 function renderLibraryKeepOpen(){ const c = $("libContainer"); const open = [...c.querySelectorAll("details.lib-theme")].map(d => d.open); renderLibrary(); c.querySelectorAll("details.lib-theme").forEach((d, i) => { d.open = !!open[i]; }); }
+// ---------- Toute la bibliothèque dans un seul .zip (un dossier par catégorie) ----------
+async function libZipRun(){
+  const btn = $("libzip"), msg = $("libzipmsg"), spec = EXPORTS[$("libzipfmt").value];
+  if(!spec || btn.dataset.busy) return;
+  btn.dataset.busy = "1"; btn.disabled = true;
+  const nameEl = $("name"), descEl = $("desc"), keepN = nameEl.value, keepD = descEl.value; // les générateurs d'export lisent le formulaire : on le restaure ensuite
+  const ftp = curFtp(), enc = new TextEncoder(), files = [], used = {}, clean = x => String(x).replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 70);
+  let skip = 0;
+  try{
+    for(let i = 0; i < LIBRARY.length; i++){
+      if(i % 20 === 0){ msg.textContent = t("libZipProg", i, LIBRARY.length); await new Promise(r => setTimeout(r)); }
+      const item = LIBRARY[i];
+      try{
+        const steps = parseWorkout(item.desc_en, item.sport, ftp);
+        if(!steps || !steps.length){ skip++; continue; }
+        const title = (lang === "fr" ? item.name_fr : item.name_en) || item.name_en || item.id;
+        nameEl.value = title; descEl.value = item.desc_en;
+        let data = spec[1](steps); if(typeof data === "string") data = enc.encode(data);
+        const th = LIB_THEMES.find(g => g.id === libCat(item)) || LIB_THEMES[2], dir = clean(lang === "fr" ? th.fr : th.en);
+        let base = dir + "/" + (clean(title) || "workout"); used[base] = (used[base] || 0) + 1; if(used[base] > 1) base += " (" + used[base] + ")";
+        files.push({name: base + spec[0], data});
+      }catch(e){ console.warn("lib zip", item && item.id, e); skip++; }
+    }
+    if(!files.length) throw new Error("empty");
+    saveBlob(zipStore(files), "flamecadence-library-" + $("libzipfmt").value + ".zip");
+    msg.textContent = t("libZipDone", files.length, skip ? t("libZipSkip", skip) : "");
+  }catch(e){ msg.textContent = t("libZipFail", e && e.message ? e.message : e); }
+  finally{ nameEl.value = keepN; descEl.value = keepD; delete btn.dataset.busy; btn.disabled = false; }
+}
+$("libzip").addEventListener("click", libZipRun);
 // à l'ouverture d'une catégorie, on la ramène à l'écran pour que sa zone défilante soit entièrement visible
 $("libContainer").addEventListener("click", e => {
   const sm = e.target.closest ? e.target.closest(".lib-theme>summary") : null; if(!sm) return;
@@ -6283,16 +6329,16 @@ function calWeeksHtml(off, evList, actList){
 }
 function calFitP(){ // ajuste la hauteur du calendrier de la page à la fenêtre : tout le mois est visible, les cartes se compactent si les lignes sont courtes
   const box = $("calbox2"), w = box && box.querySelector(".calw"); if(!w || document.querySelector('[data-block="calp"]').hidden) return;
-  if(innerWidth <= 900){ w.style.height = ""; w.classList.remove("fit"); w.querySelectorAll(".cal-d").forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8")); return; }
+  if(innerWidth <= 900){ w.style.height = ""; w.classList.remove("fit"); w.querySelectorAll(".cal-d").forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11")); return; }
   const top = box.getBoundingClientRect().top + scrollY, sum = ($("calsum2").offsetHeight || 0) + 22, h = Math.max(360, Math.round(innerHeight - top - sum - 10));
   w.classList.add("fit"); w.style.height = h + "px";
   // une carte ne déborde jamais de sa case : on retire d'abord le nom, puis la conformité, FC / puissance, la charge ; le graphique est conservé
   if(!box.offsetParent || w.clientHeight < 100) return; // calendrier pas (encore) affiché : toute mesure serait nulle et compacterait les cartes au maximum
   // par passes (une lecture de toutes les cases, puis une écriture) : une mise en page par niveau au lieu d'une par case et par niveau
-  const cells = Array.from(w.querySelectorAll(".cal-d:not(.empty)")); cells.forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8"));
+  const cells = Array.from(w.querySelectorAll(".cal-d:not(.empty)")); cells.forEach(c => c.classList.remove("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9", "x10", "x11"));
   const over = c => { if(c.scrollHeight > c.clientHeight + 1) return true; const cb = c.getBoundingClientRect().bottom; let b = 0; c.querySelectorAll(":scope>.cal-ev").forEach(e => { b = Math.max(b, e.getBoundingClientRect().bottom); }); return b > 0 && b > cb - 2; };
   let todo = cells.filter(c => c.clientHeight);
-  for(let l = 1; l <= 8 && todo.length; l++){
+  for(let l = 1; l <= 11 && todo.length; l++){
     const hit = todo.filter(over); if(!hit.length) break;
     hit.forEach(c => c.classList.add("x" + l)); todo = hit;
   }
@@ -7617,7 +7663,7 @@ function hzUpdate(){
   const pw = $("hzPw"), dv = ap - tg, near = Math.abs(dv) <= Math.max(5, tg * .05);
   pw.style.setProperty("--zc", runZC(ap > 0 ? zoneOf(ap / ftp * 100) : 1)); pw.style.setProperty("--tc", has && tg ? runZC(zoneOf(tg / ftp * 100)) : "#fff");
   $("hzTg").textContent = has ? (st.g != null ? "≈ " : "▶ ") + tg + " W" + (ap > 0 && tg && !near ? (dv > 0 ? " ▲" : " ▼") : "") : "";
-  $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) : "";
+  $("hzEl").textContent = has ? runFmt(R.el) : "00:00"; $("hzTot").textContent = has ? "/ " + (R.hasM ? "~" : "") + runFmt(R.total) + " · " + (R.hasM ? "~" : "") + runFmt(Math.max(0, Math.round(R.total - R.el))) + " " + t("runRemS") : "";
   $("hzNm").textContent = has ? runTitle(st.name) : ""; $("hzLf").textContent = has ? (st.m > 0 ? fmtDistShort(R.mleft) : runFmt(R.left)) : "";
   $("hzPr").style.width = has ? Math.round(runProg() / R.total * 100) + "%" : "0";
   runTm();
@@ -8257,7 +8303,7 @@ function runUI(){
   const st = RUN.steps[RUN.i], tgt = runTgt(st, RUN.left), ftp = runFtp(), ap = Math.round(RUN.ap || 0), d = ap - tgt;
   $("runNum").textContent = (RUN.i + 1) + "/" + RUN.steps.length; $("runName").textContent = runTitle(st.name);
   $("runBar").style.setProperty("--rzc", runZC(st.z));
-  $("runTimer").textContent = st.m > 0 ? fmtDistShort(RUN.mleft) : runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = (RUN.hasM ? "~" : "") + runFmt(RUN.total);
+  $("runTimer").textContent = st.m > 0 ? fmtDistShort(RUN.mleft) : runFmt(RUN.left); $("runElapsed").textContent = runFmt(RUN.el); $("runDur").textContent = (RUN.hasM ? "~" : "") + runFmt(RUN.total); $("runRem").textContent = (RUN.hasM ? "~" : "") + runFmt(Math.max(0, Math.round(RUN.total - RUN.el)));
   if(st.g != null) runErgGrade(st.g); else runErgTarget(tgt); $("runTP").textContent = tgt; $("runPct").textContent = Math.round(tgt / ftp * 100) + "% FTP" + (RUN.nudge ? " (" + (RUN.nudge > 0 ? "+" : "") + RUN.nudge + " W)" : "") + (st.pw !== st.pw2 ? " ↗" : "") + (st.g != null ? " · ⛰ " + st.g.toFixed(1) + "%" : "");
   $("runAP").textContent = ap; $("runZone").textContent = "Z" + st.z;
   { const zk = (id, z) => { const c = $(id).closest(".rcard"); if(!c) return; if(z){ c.style.setProperty("--zc", runZC(z)); c.classList.add("zk"); }else c.classList.remove("zk"); }; // cadres colorés selon la zone de travail
