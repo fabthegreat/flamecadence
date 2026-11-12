@@ -5081,11 +5081,11 @@ function fitChoose(kind, defFtp){
     const pre = opts.find(o => o[2] && o[2] === (defFtp || ftpFor($("sport").value))) || opts[0]; sel.value = pre[0]; v.value = pre[2] ? Math.round(pre[2]) : "";
     if(kind === "act"){ const r = document.querySelector('input[name="fitMode"][value="' + ($("actout").value === "pct" ? "pct" : "w") + '"]'); if(r) r.checked = true; } // proposition de départ = dernier choix du panneau, la décision se prend à chaque reconstruction
     const mode = () => document.querySelector('input[name="fitMode"]:checked').value;
-    const upd = () => { $("fitFtpBox").hidden = mode() === "w"; };
-    sel.onchange = () => { const o = opts.find(x => x[0] === sel.value); if(o && o[2]) v.value = Math.round(o[2]); else v.focus(); };
+    const cus = () => sel.value === "x", upd = () => { $("fitFtpBox").hidden = mode() === "w"; v.hidden = !cus(); }; // la case de saisie n'apparaît que pour « personnalisée »
+    sel.onchange = () => { const o = opts.find(x => x[0] === sel.value); if(o && o[2]) v.value = Math.round(o[2]); upd(); if(cus()){ v.focus(); v.select(); } }; // « personnalisée » repart de la dernière valeur affichée
     document.querySelectorAll('input[name="fitMode"]').forEach(r => r.onchange = upd); upd();
     let done = false; const end = x => { if(done) return; done = true; if(d.open) d.close(); res(x); };
-    $("fitOk").onclick = () => { const watt = mode() === "w", ftp = Math.round(+v.value); if(!watt && !(ftp > 0)){ v.focus(); return; } end({watt, ftp}); };
+    $("fitOk").onclick = () => { const watt = mode() === "w", o = opts.find(x => x[0] === sel.value), ftp = Math.round(cus() || !o ? +v.value : o[2]); if(!watt && !(ftp > 0)){ v.focus(); return; } end({watt, ftp}); };
     $("fitNo").onclick = () => end(null); d.onclose = () => end(null);
     d.showModal();
   });
