@@ -555,7 +555,7 @@ svg line.cur{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;o
 .run .rgrid .rcard.cok{border:3px solid #22c55e;background:color-mix(in srgb,#22c55e 18%,var(--card))}.run .rgrid .rcard.cbad{border:3px solid #ef4444;background:color-mix(in srgb,#ef4444 18%,var(--card))} /* cadence dans la cible / hors cible */
 html:has([data-block="run"]:not([hidden])),html:has([data-block="run"]:not([hidden])) body{overscroll-behavior-y:none} /* lecteur : un balayage vers le bas ne recharge plus la page (perte du Bluetooth) */
 .run.rfs #runPoolC{display:none}.run #poolRows .prow{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 0;border-top:1px solid var(--line)}.run #poolRows .prow>span{flex:1 1 180px;min-width:0}.run #poolRows .prow small{display:block;color:var(--mute)}
-.run #runFsDev,.run.rfs #runFsDev,.run.rfs #runErgL,.run.rfs #runDevs{display:none!important}
+.run.rfs #runFtpBox{display:none!important}.run #runFsDev,.run.rfs #runFsDev,.run.rfs #runErgL,.run.rfs #runDevs{display:none!important}
 .run.rfs .phead #runPlay,.run.rfs .phead #runFin{margin:0;width:auto;padding:7px 12px}
 @media (orientation:landscape){.run.rfs .phead{grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:"nm pl fn pg ex"}}
 .run.rfs .rbar{padding:8px 12px}.run.rfs #runName{font-size:clamp(1rem,3.6vmin,1.7rem);margin:0}.run.rfs .rbar .rbig{font-size:clamp(1.8rem,8vmin,3.4rem)}
@@ -1412,6 +1412,7 @@ try{if(matchMedia("(max-width:560px)").matches&&localStorage.getItem("si_beta_ru
 <label id="runAllL"><input type="checkbox" id="runAll"><span data-i="runAll"></span></label>
 <label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div>
 <div class="hint" id="runBtMsg" hidden></div></div>
+<div class="rcard rrow" id="runFtpBox" style="align-items:center;gap:8px"><label for="runFtpSel" data-i="runFtpSel" style="margin:0"></label><select id="runFtpSel" style="width:auto;margin:0"></select><input type="number" id="runFtpC" min="50" max="600" step="1" inputmode="numeric" style="width:90px;margin:0" hidden></div>
 <details class="rcard" id="runLs" open><summary><b data-i="runListT"></b> <span id="runLsCnt" class="hint"></span></summary>
 <div class="rrow" style="margin:8px 0"><input id="runQ" type="search" data-ia="placeholder:runSearch" style="flex:1;min-width:140px;margin:0"><button type="button" class="alt small" id="runRef" data-ia="title:runRefresh;aria-label:runRefresh">↻</button></div>
 <div id="runChips"></div><div id="runRows"></div><div class="hint" id="runLsMsg"></div></details>
@@ -1915,7 +1916,8 @@ impEmpty:["No workout steps found in this file.","Aucune étape de séance trouv
 impOkW:["Workout imported from {0} (watts converted to % using an FTP of {1} W).","Séance importée depuis {0} (watts convertis en % avec une FTP de {1} W)."],
 impNoFtp:["This watts-based file needs your FTP to be converted. Set your FTP first.","Ce fichier en watts nécessite ta FTP pour être converti. Renseigne d'abord ta FTP."],
 impUnk:["Unsupported file type. Use .zwo, .fit, .mrc, .erg, .json, .txt or .gpx.","Type de fichier non pris en charge. Utilise .zwo, .fit, .mrc, .erg, .json, .txt ou .gpx."],
-impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."], impHistT:["10 last imported workouts","10 derniers imports"], impOkA:["Workout rebuilt from the recorded power of {0}.","Séance reconstruite à partir de la puissance enregistrée de {0}."], fitT:["Import this ride as a workout","Importer cette sortie comme séance"], fitHint:["The power in this file is in watts (a recorded ride is rebuilt into steps). Keep the watts, or convert them to % of an FTP.","La puissance de ce fichier est en watts (une sortie enregistrée est reconstruite en étapes). Garde les watts, ou convertis-les en % d'une FTP."], fitP:["Convert to percent of an FTP value","Convertir en pourcentage d'une valeur de FTP"], fitW:["Keep absolute power (watts as ridden)","Garder la puissance absolue (watts réellement roulés)"], fitFtpL:["FTP to convert with","FTP utilisée pour la conversion"], fitFtpIn:["Indoor FTP ({0} W)","FTP intérieur ({0} W)"], fitFtpOut:["Outdoor FTP ({0} W)","FTP extérieur ({0} W)"], fitFtpX:["Other value","Autre valeur"], fitGo:["Import","Importer"], clbT:["Random climb","Col au hasard"], clbNew:["Another random climb","Un autre col au hasard"], clbPrev:["Previous climb","Col précédent"], clbNext:["Next climb","Col suivant"], clbLen:["Length","Longueur"], clbGain:["Gain","Dénivelé"], clbAvg:["Avg","Moy."], clbMax:["Steepest","Max"], clbEtaMe:["About {0} at {1} W ({2}% of your FTP), rider and bike {3} kg","Environ {0} à {1} W ({2} % de ta FTP), coureur et vélo {3} kg"], clbEtaRef:["About {0} at {1} W/kg (reference rider)","Environ {0} à {1} W/kg (coureur de référence)"], clbUse:["Use this climb","Utiliser ce col"], clbSrc:["Source:","Source :"], clbWiki:["Wikipedia","Wikipédia"], impFitNoPw:["This FIT file has no power data to rebuild a workout from.","Ce fichier FIT ne contient pas de puissance pour reconstruire une séance."], impHistLoad:["Load","Charger"],
+impErgBad:["No course data section found in this file.","Aucune section de données (COURSE DATA) trouvée dans ce fichier."], impOkG:["Route imported from {0}: {1} km, {2} m of climbing, {3} sections (slope mode).","Parcours importé depuis {0} : {1} km, {2} m de dénivelé, {3} tronçons (mode pente)."], impNoEle:["This GPX file has no elevation data.","Ce fichier GPX ne contient pas d'altitude."], impGpxBad:["No usable track or route found in this GPX file.","Aucune trace ni aucun parcours exploitable dans ce fichier GPX."], impHistT:["10 last imported workouts","10 derniers imports"], impOkA:["Workout rebuilt from the recorded power of {0}.","Séance reconstruite à partir de la puissance enregistrée de {0}."], fitT:["Import this ride as a workout","Importer cette sortie comme séance"], fitHint:["The power in this file is in watts (a recorded ride is rebuilt into steps). Keep the watts, or convert them to % of an FTP.","La puissance de ce fichier est en watts (une sortie enregistrée est reconstruite en étapes). Garde les watts, ou convertis-les en % d'une FTP."], fitP:["Convert to percent of an FTP value","Convertir en pourcentage d'une valeur de FTP"], fitW:["Keep absolute power (watts as ridden)","Garder la puissance absolue (watts réellement roulés)"], fitFtpL:["FTP to convert with","FTP utilisée pour la conversion"], fitFtpIn:["Indoor FTP ({0} W)","FTP intérieur ({0} W)"], fitFtpOut:["Outdoor FTP ({0} W)","FTP extérieur ({0} W)"], fitFtpX:["Other value","Autre valeur"],
+fitTAct:["Rebuild a workout from this session","Reconstruire une séance depuis cette sortie"], fitHintAct:["Rebuild it in absolute watts (as ridden), or as % of an FTP of your choice. In that case pick the FTP used as the reference.","Reconstruire en watts absolus (comme roulés), ou en % d'une FTP de ton choix. Dans ce cas, choisis la FTP de référence."], fitGo:["Import","Importer"], clbT:["Random climb","Col au hasard"], clbNew:["Another random climb","Un autre col au hasard"], clbPrev:["Previous climb","Col précédent"], clbNext:["Next climb","Col suivant"], clbLen:["Length","Longueur"], clbGain:["Gain","Dénivelé"], clbAvg:["Avg","Moy."], clbMax:["Steepest","Max"], clbEtaMe:["About {0} at {1} W ({2}% of your FTP), rider and bike {3} kg","Environ {0} à {1} W ({2} % de ta FTP), coureur et vélo {3} kg"], clbEtaRef:["About {0} at {1} W/kg (reference rider)","Environ {0} à {1} W/kg (coureur de référence)"], clbUse:["Use this climb","Utiliser ce col"], clbSrc:["Source:","Source :"], clbWiki:["Wikipedia","Wikipédia"], impFitNoPw:["This FIT file has no power data to rebuild a workout from.","Ce fichier FIT ne contient pas de puissance pour reconstruire une séance."], impHistLoad:["Load","Charger"],
 impJsonBad:["This JSON file is not a FlameCadence workout export (no steps found).","Ce fichier JSON n'est pas un export de séance FlameCadence (aucune étape trouvée)."],
 impErr:["Could not read this file: {0}","Impossible de lire ce fichier : {0}"],
 tabAct:["From activity","Depuis une activité"],
@@ -2013,7 +2015,8 @@ finQ:["Finish this ride?","Terminer cette sortie ?"], finHint:["Save it to inter
 runNx:["Next","Ensuite"], runClk:["Time of day","Heure"], runUping:["Uploading to intervals.icu…","Envoi vers intervals.icu…"], runUpPend:["Upload failed ({0}). The activity is kept in the pending list and will be retried automatically.","Envoi impossible ({0}). L'activité est conservée dans la liste d'attente et sera renvoyée automatiquement."], runUpNoKey:["Not connected to intervals.icu: the activity is kept in the pending list.","Non connecté à intervals.icu : l'activité est conservée dans la liste d'attente."], runRetry:["Retry upload","Réessayer l'envoi"], poolT:["Pending uploads","Envois en attente"], poolHint:["Activities not yet sent to intervals.icu. They are retried automatically when the app opens or the network is back.","Activités pas encore envoyées à intervals.icu. Nouvel essai automatique à l'ouverture de l'app ou au retour du réseau."], poolUp:["Upload","Envoyer"], poolDel:["Delete","Supprimer"], poolQ:["Delete this pending activity? It will be lost.","Supprimer cette activité en attente ? Elle sera perdue."], poolSent:["{0} activity sent to intervals.icu.","{0} activité envoyée à intervals.icu."], hzStep:["Step {0}/{1}","Étape {0}/{1}"], hzFtp:["FTP {0} W","FTP {0} W"],
 runFtpIn:["FTP used for % targets: {0} W (indoor FTP)","FTP utilisée pour les cibles en % : {0} W (FTP indoor)"],
 runFtpOut:["FTP used for % targets: {0} W (outdoor FTP, no indoor FTP set)","FTP utilisée pour les cibles en % : {0} W (FTP extérieur, pas de FTP indoor)"],
-runFtpDef:["FTP used for % targets: {0} W (default, no FTP loaded from intervals.icu)","FTP utilisée pour les cibles en % : {0} W (valeur par défaut, aucune FTP chargée depuis intervals.icu)"]
+runFtpDef:["FTP used for % targets: {0} W (default, no FTP loaded from intervals.icu)","FTP utilisée pour les cibles en % : {0} W (valeur par défaut, aucune FTP chargée depuis intervals.icu)"],
+runFtpSel:["FTP for this workout","FTP de la séance"], runFtpCusL:["Custom…","Personnalisée…"], runFtpCus:["FTP used for % targets: {0} W (custom)","FTP utilisée pour les cibles en % : {0} W (personnalisée)"], runFtpOutS:["FTP used for % targets: {0} W (outdoor FTP)","FTP utilisée pour les cibles en % : {0} W (FTP extérieur)"]
 });
 const t = (k, ...a) => ((T[k] || [k, k])[lang === "fr" ? 1 : 0]).replace(/\{(\d)\}/g, (m, i) => a[i] === undefined ? "" : a[i]);
 const esc = x => String(x).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
@@ -2483,6 +2486,7 @@ function fillFtp(){
     const el = $(id); if(!el) return;
     [...el.options].forEach(o => { o.textContent = o.value === "VirtualRide" ? lab("sVirt", ftpFor("VirtualRide")) : lab("sRide", ftpFor("Ride")); });
   });
+  try{ runFtpUI(); if(RUN && RUN.ftpAt && RUN.ftpAt !== runFtp() && !RUN.began){ RUN.at = 0; runList(true); } }catch(e){} // FTP chargée après la liste des séances : cibles recalculées
 }
 // Panneau « Utilisateur » des réglages (lecture seule, données intervals.icu)
 function profText(){
@@ -3378,7 +3382,7 @@ function parseWorkout(txt, sport, ftp){
     let m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*%/);
     if(m){ const a = num(m[1]), b = m[2] ? num(m[2]) : a; return {a, b, idx: m.index, ramp: /ramp/i.test(str)}; }
     m = str.match(/(\d+(?:[.,]\d+)?)(?:\s*-\s*(\d+(?:[.,]\d+)?))?\s*w\b/i); // watts : « 200w » ou plage « 120 - 220w » (rampe avec le mot ramp)
-    if(m && ftp > 0){ const a = num(m[1]) / ftp * 100, b = m[2] ? num(m[2]) / ftp * 100 : a; return {a, b, idx: m.index, ramp: !!m[2] && /ramp/i.test(str)}; }
+    if(m && ftp > 0){ const a = num(m[1]) / ftp * 100, b = m[2] ? num(m[2]) / ftp * 100 : a; return {a, b, idx: m.index, ramp: !!m[2] && /ramp/i.test(str), w: [num(m[1]), m[2] ? num(m[2]) : num(m[1])]}; }
     m = str.match(/\bz([1-7])\b/i);
     if(m){ const v = [50, 65, 82, 97, 112, 135, 160][m[1] - 1]; return {a: v, b: v, idx: m.index, ramp: false}; }
     return null;
@@ -3401,6 +3405,7 @@ function parseWorkout(txt, sport, ftp){
       } }
       if(!d) continue;
       const step = {d, a: it.ramp ? it.a : mid, b: it.ramp ? it.b : mid, line: li};
+      if(it.w){ step.aw = it.ramp ? it.w[0] : (it.w[0] + it.w[1]) / 2; step.bw = it.ramp ? it.w[1] : step.aw; } // cible écrite en watts : conservée telle quelle (sinon aller-retour W → % → W avec deux FTP différentes = écart)
       if(gv != null) step.g = gv; if(md) step.m = md;
       if(it.hr){ step.hr = true; step.ha = it.ramp ? it.hr.ha : (it.hr.ha + it.hr.hb) / 2; step.hb = it.ramp ? it.hr.hb : step.ha; } // cible en % LTHR conservée à côté de l'équivalent puissance
       if(group) group.items.push(step); else steps.push(step);
@@ -3612,7 +3617,7 @@ function shiftIntensity(delta){
       const sh = v => Math.max(0, Math.round((+v + delta) * 10) / 10);
       return q != null ? sh(p) + "-" + sh(q) + "%" : sh(p) + "%";
     });
-    const nw = np.replace(/(\d+(?:\.\d+)?)\s*w\b/gi, (m, w) => { moved = true; return (Math.max(0, Math.round((+w * (1 + delta / 100)) * 10) / 10)) + "w"; });
+    const ftpS = curFtp(), nw = np.replace(/(\d+(?:\.\d+)?)\s*w\b/gi, (m, w) => { moved = true; return (ftpS > 0 ? Math.max(0, Math.round(+w + delta * ftpS / 100)) : Math.max(0, Math.round((+w * (1 + delta / 100)) * 10) / 10)) + "w"; }); // ±5 points de FTP, comme pour les lignes en %
     if(moved){ lines[i] = nw; touched++; }
   });
   if(!touched){ UNDO = null; $("undoBtn").hidden = true; return say("shrinkNone", "err"); }
@@ -4735,7 +4740,7 @@ function saveBlob(blob, name){ const l = document.createElement("a"); l.href = U
 // --- ERG / MRC : points « minutes valeur » (rampes = deux points, paliers = saut vertical) ---
 function buildErgPoints(steps, val){
   const rows = []; let t = 0;
-  steps.forEach(s => { rows.push(t.toFixed(2) + "\t" + val(s.a)); t += s.d / 60; rows.push(t.toFixed(2) + "\t" + val(s.b)); });
+  steps.forEach(s => { rows.push(t.toFixed(2) + "\t" + val(s.a, s.aw)); t += s.d / 60; rows.push(t.toFixed(2) + "\t" + val(s.b, s.bw)); });
   return rows;
 }
 function ergHeader(kind, fname, desc){
@@ -4743,7 +4748,7 @@ function ergHeader(kind, fname, desc){
 }
 function buildErg(steps){
   const ftp = curFtp(), name = ($("name").value || "workout").trim();
-  return ergHeader("erg", expFname(".erg"), name) + buildErgPoints(steps, p => Math.round(p * ftp / 100)).join("\n") + "\n[END]";
+  return ergHeader("erg", expFname(".erg"), name) + buildErgPoints(steps, (p, w) => w != null ? Math.round(w) : Math.round(p * ftp / 100)).join("\n") + "\n[END]";
 }
 function buildMrc(steps){
   const name = ($("name").value || "workout").trim();
@@ -4785,12 +4790,13 @@ function fmtDurImp(sec){
   return Math.floor(sec / 60) + "m" + (sec % 60);
 }
 function stepsToDesc(steps, watt){
-  const key = s => (s.m ? "m" + Math.round(s.m) : Math.round(s.d)) + "|" + (s.g != null ? "g" + s.g + "|" : "") + (s.hr ? "h" + s.ha.toFixed(1) + "|" + s.hb.toFixed(1) : s.a.toFixed(1) + "|" + s.b.toFixed(1));
+  const key = s => (s.m ? "m" + Math.round(s.m) : Math.round(s.d)) + "|" + (s.g != null ? "g" + s.g + "|" : "") + (s.hr ? "h" + s.ha.toFixed(1) + "|" + s.hb.toFixed(1) : s.a.toFixed(1) + "|" + s.b.toFixed(1)) + (s.aw != null ? "|w" + s.aw + "|" + s.bw : "");
   const line = s => {
     if(s.hr) return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + (Math.abs(s.ha - s.hb) > 0.5 ? Math.round(Math.min(s.ha, s.hb)) + "-" + Math.round(Math.max(s.ha, s.hb)) + "% LTHR ramp" : Math.round(s.ha) + "% LTHR");
-    const p = Math.abs(s.a - s.b) > 0.5
-      ? Math.round(s.a) + " - " + Math.round(s.b) + (watt ? "w ramp" : "% ramp")
-      : Math.round(s.a) + (watt ? "w" : "%");
+    const wa = s.aw != null, A = wa ? s.aw : s.a, B = wa ? s.bw : s.b, wt = wa || watt; // étape en watts absolus : écrite telle quelle, sans repasser par un %
+    const p = Math.abs(A - B) > 0.5
+      ? Math.round(A) + " - " + Math.round(B) + (wt ? "w ramp" : "% ramp")
+      : Math.round(A) + (wt ? "w" : "%");
     return "- " + (s.m ? distTxt(s.m) : fmtDurImp(s.d)) + " " + p + (s.g != null ? " slope " + s.g.toFixed(1) + " pct" : "");
   };
   const out = []; let i = 0;
@@ -5064,14 +5070,16 @@ $("impHistList").onclick = e => {
 };
 impHistRender();
 // choix à l'import d'une sortie enregistrée : watts absolus, ou % d'une FTP (intérieur, extérieur ou valeur libre)
-function fitChoose(){
+function fitChoose(kind, defFtp){
   return new Promise(res => {
     const d = $("fitDlg"), sel = $("fitFtp"), v = $("fitFtpV"), opts = [];
+    $("fitDlgT").textContent = t(kind === "act" ? "fitTAct" : "fitT"); const hn = d.querySelector('[data-i="fitHint"]'); if(hn) hn.textContent = t(kind === "act" ? "fitHintAct" : "fitHint");
     if(ICU.ftpIn) opts.push(["in", t("fitFtpIn", Math.round(ICU.ftpIn)), ICU.ftpIn]);
     if(ICU.ftpOut) opts.push(["out", t("fitFtpOut", Math.round(ICU.ftpOut)), ICU.ftpOut]);
     opts.push(["x", t("fitFtpX"), 0]);
     sel.innerHTML = opts.map(o => `<option value="${o[0]}">${esc(o[1])}</option>`).join("");
-    const pre = opts.find(o => o[2] && o[2] === ftpFor($("sport").value)) || opts[0]; sel.value = pre[0]; v.value = pre[2] ? Math.round(pre[2]) : "";
+    const pre = opts.find(o => o[2] && o[2] === (defFtp || ftpFor($("sport").value))) || opts[0]; sel.value = pre[0]; v.value = pre[2] ? Math.round(pre[2]) : "";
+    if(kind === "act"){ const r = document.querySelector('input[name="fitMode"][value="' + ($("actout").value === "pct" ? "pct" : "w") + '"]'); if(r) r.checked = true; } // proposition de départ = dernier choix du panneau, la décision se prend à chaque reconstruction
     const mode = () => document.querySelector('input[name="fitMode"]:checked').value;
     const upd = () => { $("fitFtpBox").hidden = mode() === "w"; };
     sel.onchange = () => { const o = opts.find(x => x[0] === sel.value); if(o && o[2]) v.value = Math.round(o[2]); else v.focus(); };
@@ -5281,7 +5289,11 @@ async function buildFromAct(a, btn){
     const virt = a.type === "VirtualRide";
     const ftp = (virt ? ICU.ftpIn : ICU.ftpOut) || (virt ? ICU.ftpOut : ICU.ftpIn);
     if(!ftp) throw new Error(t("actNeedFtp"));
-    const pe = await pairedEvent(a); // séance prévue : on la restaure telle quelle (plus fidèle que la détection d'étapes)
+    const ch = await fitChoose("act", ftp); if(!ch){ btn.disabled = false; return false; } // watts absolus ou % d'une FTP : demandé à chaque reconstruction
+    const setU = u => { if($("unit").value !== u){ $("unit").value = u; $("unit").dispatchEvent(new Event("change")); } };
+    const pe0 = await pairedEvent(a), pdsc = pe0 && pe0.description ? pe0.description : "", pw = /\d\s*w\b/i.test(pdsc), pp = /\d\s*%/.test(pdsc);
+    const pe = pe0 && (ch.watt ? pw && !pp : pp && !pw) ? pe0 : null; // la séance prévue n'est restaurée telle quelle que si elle est écrite dans l'unité demandée
+     // séance prévue : on la restaure telle quelle (plus fidèle que la détection d'étapes)
     if(pe){
       const ps = plannedSteps(pe, ftp);
       if(ps.length && !ps.some(x => x.est)){
@@ -5289,7 +5301,7 @@ async function buildFromAct(a, btn){
         $("name").value = (pe.name || a.name || a.type || "Workout").trim().slice(0, 60);
         $("desc").value = pe.description && parseWorkout(pe.description, pe.type || a.type || "Ride", ftp).length ? pe.description : stepsToDesc(ps);
         $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(a);
-        renderChart(); say("actPlan", "ok", pe.name || a.name || "");
+        setU(ch.watt ? "w" : "pct"); renderChart(); say("actPlan", "ok", pe.name || a.name || "");
         $("prev").scrollIntoView({behavior: "smooth", block: "start"});
         btn.disabled = false; return true;
       }
@@ -5306,21 +5318,21 @@ async function buildFromAct(a, btn){
     if(isBike(a.type)) slopeFor(steps, get("distance"), get("fixed_altitude", "altitude")); // pente moyenne de chaque étape (sorties extérieures avec altitude)
     if(isBike(a.type)){ $("sport").value = a.type === "VirtualRide" ? "VirtualRide" : "Ride"; syncUnit(); }
     $("name").value = (a.name || a.type || "Workout").trim().slice(0, 60);
-    if($("actout").value === "pct"){
+    if(!ch.watt){
       // Pourcentages calés sur la FTP sélectionnée pour conserver exactement les watts
       // absolus de l'activité : pct = watts / FTP × 100. On aligne ensuite le sélecteur
       // « intervals.icu FTP » de l'aperçu sur cette même FTP, car l'aperçu, les exports
       // et l'envoi vers intervals.icu réappliquent les pourcentages sur cette FTP :
       // la valeur absolue est ainsi identique de bout en bout.
       // La FTP vient du type de l'activité (déjà appliqué au sélecteur de type ci-dessus) : aperçu, exports et envoi utilisent la même.
-      const pf = ftp;
+      const pf = ch.ftp; // FTP de référence choisie dans la fenêtre
       steps = steps.map(s => ({d: s.d, a: s.a / pf * 100, b: s.b / pf * 100, g: s.g}));
       $("desc").value = stepsToDesc(steps);
     }else{
       $("desc").value = stepsToDesc(steps, true); // valeurs absolues en watts : la séance reproduit la puissance réelle
     }
     $("prev").hidden = false; selLine = null; EXPL = null; setSrcAct(a);
-    renderChart(); say("actOk", "ok", a.name || a.type || "");
+    setU(ch.watt ? "w" : "pct"); renderChart(); say("actOk", "ok", a.name || a.type || "");
     $("prev").scrollIntoView({behavior: "smooth", block: "start"});
     btn.disabled = false; return true;
   }catch(e){
@@ -5969,6 +5981,12 @@ function plannedSteps(e, ftp){
       if(typeof o.start === "number" && /%/.test(o.units || "")) return k === "b" ? (typeof o.end === "number" ? o.end : o.start) : o.start;
       return null;
     };
+    const wat = (o, k) => { // cible en watts absolus (valeur fixe ou plage) : conservée telle quelle
+      if(!o || !/w/i.test(o.units || "") || /%/.test(o.units || "")) return null;
+      if(typeof o.value === "number") return o.value;
+      if(typeof o.start === "number") return k === "b" ? (typeof o.end === "number" ? o.end : o.start) : o.start;
+      return null;
+    };
     const walk = (list, out) => {
       for(const st of list){
         if(Array.isArray(st.steps) && st.steps.length){
@@ -5982,7 +6000,8 @@ function plannedSteps(e, ftp){
         let a = pct(pw, "a"), b = pct(pw, "b");
         if(a == null){ a = b = 60; }
         if(b == null) b = a;
-        if(d > 0) out.push({d, a, b, text: st.text || ""});
+        const aw = st.power ? wat(st.power, "a") : null, bw = st.power ? wat(st.power, "b") : null;
+        if(d > 0) out.push(aw != null ? {d, a, b, aw, bw: bw != null ? bw : aw, text: st.text || ""} : {d, a, b, text: st.text || ""});
       }
     };
     steps = []; walk(doc.steps, steps);
@@ -7499,7 +7518,17 @@ document.addEventListener("keydown", e => { if(e.key === "Escape") $("more").ope
 // ---------- Lancer une activité : lecteur de séance (étape 1 : maquette HUD + détection Bluetooth) ----------
 // TODO : audio (Jamendo), export .fit natif, tableau de bord de fin de séance.
 var RUN = null;
-function runFtp(){ let f = 0; try{ f = +ftpFor("VirtualRide"); }catch(e){} return f > 0 ? f : 250; }
+// FTP des cibles en % (choix sur la page de lancement) : « in » = FTP indoor, « out » = FTP extérieur, « cus » = valeur saisie ; repli sur la FTP indoor puis 250 W
+function runFtpMode(){ const m = store.get("si_run_ftpm"); return m === "out" || m === "cus" ? m : "in"; }
+function runFtp(){ const m = runFtpMode(); let f = 0; try{ f = m === "cus" ? +store.get("si_run_ftpc") : m === "out" ? +ftpFor("Ride") : +ftpFor("VirtualRide"); }catch(e){} if(!(f > 0)){ try{ f = +ftpFor("VirtualRide"); }catch(e){} } return f > 0 ? f : 250; }
+function runFtpUI(){
+  const s = $("runFtpSel"), c = $("runFtpC"); if(!s || !c) return;
+  const m = runFtpMode(), lab = (k, f) => t(k) + (f ? ` (${f} W)` : "");
+  s.innerHTML = `<option value="in">${esc(lab("sVirt", ftpFor("VirtualRide")))}</option><option value="out">${esc(lab("sRide", ftpFor("Ride")))}</option><option value="cus">${esc(t("runFtpCusL"))}</option>`;
+  s.value = m; c.hidden = m !== "cus"; if(m === "cus") c.value = store.get("si_run_ftpc") || runFtp();
+  const lock = !!(typeof RUN !== "undefined" && RUN && RUN.began); s.disabled = c.disabled = lock;
+}
+function runFtpApply(){ runFtpUI(); if(!RUN.began){ RUN.at = 0; runList(true); } try{ runUI(); }catch(e){} }
 const runFmt = s => String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0");
 const runZC = z => ["#3b82f6", "#22c55e", "#eab308", "#f97316", "#ef4444", "#a855f7", "#ec4899"][Math.min(7, Math.max(1, z)) - 1];
 // description intervals.icu → étapes du lecteur (même analyseur que le reste de l'app : %, watts, zones, rampes, répétitions « 3x », durées et distances)
@@ -7513,7 +7542,7 @@ function runSteps(desc, ftp){
   return raw.map(x => {
     const k = x.line, n = (seen[k] = (seen[k] || 0) + 1), txt = (lines[k] || "").replace(/^\s*-\s*/, "").trim(), cm = txt.match(/(\d+)(?:\s*-\s*(\d+))?\s*rpm/i);
     const h = (hdr[k] || "").replace(/\s*\d+\s*x\s*$/i, "").trim();
-    return {name: [h, runNoPw(txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, ""))].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
+    return {name: [h, runNoPw(txt.replace(/\s*\d+(?:\s*-\s*\d+)?\s*rpm/i, ""))].filter(Boolean).join(" · ") + (tot[k] > 1 ? " (" + n + "/" + tot[k] + ")" : ""), d: Math.max(1, Math.round(x.d)), a: x.a, b: x.b, aw: x.aw, bw: x.bw, g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0, cad: cm ? (cm[2] ? cm[1] + "-" + cm[2] : cm[1]) : ""};
   });
 }
 // séance de la bibliothèque → étapes du lecteur ; pour les cols, chaque étape porte sa pente (g, en %) et son libellé (km, pente)
@@ -7536,7 +7565,7 @@ function runAssemble(){
 }
 async function runList(force){
   const R = RUN; if(R.busy) return; if(!force && R.at && Date.now() - R.at < 300000){ runAssemble(); return; }
-  R.busy = true; R.err = ""; const ftp = runFtp(), today = iso(new Date());
+  R.busy = true; R.err = ""; const ftp = runFtp(), today = iso(new Date()); R.ftpAt = ftp;
   if(KEY()){
     $("runLsMsg").textContent = t("runLoadL");
     try{
@@ -7547,6 +7576,7 @@ async function runList(force){
     }catch(err){ R.err = t("errI", errText(err)); R.cal = []; }
   }else R.cal = [];
   R.at = Date.now(); R.busy = false; runAssemble();
+  if(R.cur && !R.began && !R.el){ const nw = R.items.find(x => x.id === R.cur.id); if(nw){ R.cur = nw; runLoad(nw); runRender(); } } // séance déjà choisie : cibles recalculées avec la FTP du moment
   const td = R.cal.find(e => e.date === today) || R.cal.find(e => e.date > today); if(td && !R.touched && !R.el && !(R.cur && R.cur.id === td.id)) runPick(td, true); // séance du jour (sinon la prochaine) chargée d'office tant que rien n'a été lancé
 }
 // aperçu de la séance : une barre par étape (largeur = durée, hauteur = % FTP, rampes en trapèze), couleur = zone
@@ -7583,7 +7613,7 @@ function runPick(e, auto){
 }
 function runLoad(e){
   const ftp = runFtp();
-  RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: Math.round(ftp * x.a / 100), pw2: Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2), g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0}));
+  RUN.steps = e.st.map(x => ({name: x.name, dur: x.d, pw: x.aw != null ? Math.round(x.aw) : Math.round(ftp * x.a / 100), pw2: x.bw != null ? Math.round(x.bw) : Math.round(ftp * x.b / 100), cad: x.cad || "—", z: zoneOf((x.a + x.b) / 2), g: x.g != null ? x.g : null, m: x.g != null && x.m > 0 ? Math.round(x.m) : 0}));
   RUN.i = 0; RUN.left = RUN.steps[0].dur; RUN.mleft = RUN.steps[0].m; RUN.vs = 0; RUN.hasM = RUN.steps.some(x => x.m > 0); RUN.el = 0; RUN.nudge = 0; RUN.paused = true; RUN.rec = []; RUN.dist = 0; RUN.began = false; RUN.closing = false; runSaveClear(); $("runEnd").hidden = true; RUN.total = RUN.steps.reduce((a, x) => a + x.dur, 0); $("runPlay").disabled = false; $("runWkChart").innerHTML = runMini(e.st, e.dur); runUI(); try{ mapSync(true); }catch(err){}
 }
 function runProg(){ // avancement de la séance en « secondes équivalentes » : une étape à distance avance selon les mètres parcourus
@@ -7597,6 +7627,9 @@ function runInit(){
   RUN = {steps: [], i: 0, left: 0, mleft: 0, vs: 0, hasM: false, el: 0, nudge: 0, total: 0, paused: true, tm: 0, ap: 0, hr: 120, cad: 0, live: {p: null, h: null, c: null}, dev: {}, items: [], cal: [], f: "all", q: "", cur: null, at: 0, touched: false, rec: [], dist: 0, cp: null, crk: null, cadSrc: "", cadAt: 0};
   document.querySelectorAll("[data-rn]").forEach(b => b.onclick = () => { RUN.nudge = +b.dataset.rn ? RUN.nudge + +b.dataset.rn : 0; runUI(); });
   $("runPlay").onclick = () => { if(RUN.closing){ runCloseNow(); return; } runBeepCtx(); if(runVoiceOn()){ try{ speechSynthesis.speak(new SpeechSynthesisUtterance("")); }catch(e){} } /* le premier son vocal doit être déclenché par un geste (iOS) */ RUN.began = true; RUN.paused = !RUN.paused; RUN.last = Date.now(); RUN.acc = 0; RUN.touched = true; runErgPause(RUN.paused); if(!RUN.paused && !$("runEnd").hidden){ $("runEnd").hidden = true; runLaunchUI(); } /* reprise après « Terminer » par erreur : la carte de fin (dont Abandonner) disparaît */ if(!RUN.paused){ runBeep(660, .1); runBeep(990, .1, .13); runBeep(1320, .22, .26); } /* départ / reprise : petit motif montant */ runUI(); };
+  $("runFtpSel").onchange = () => { store.set("si_run_ftpm", $("runFtpSel").value); if($("runFtpSel").value === "cus" && !(+store.get("si_run_ftpc") > 0)) store.set("si_run_ftpc", String(runFtp())); runFtpApply(); };
+  $("runFtpC").onchange = () => { const v = Math.round(+$("runFtpC").value); if(v >= 50 && v <= 600) store.set("si_run_ftpc", String(v)); runFtpApply(); };
+  runFtpUI();
   $("runNext").onclick = () => runJump(RUN.i + 1); $("runPrev").onclick = () => runJump(RUN.i - 1);
   // le graphique du profil n'est plus cliquable : un toucher accidentel changeait d'étape ; on utilise les boutons Précédent / Suivant
   $("runQ").oninput = e => { RUN.q = e.target.value; runRender(); };
@@ -8355,7 +8388,7 @@ function runHrZone(){ // cadre FC coloré par zone ; neutre sans FC mesurée ou 
   k.style.setProperty("--zc", runZC(z)); k.classList.add("zk");
 }
 // FTP utilisée par le lecteur pour toutes les cibles en % : FTP indoor (home trainer), à défaut FTP extérieur, à défaut 250 W
-function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0; return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
+function runFtpTxt(){ const i = +ICU.ftpIn || 0, o = +ICU.ftpOut || 0, m = runFtpMode(); if(m === "cus") return t("runFtpCus", runFtp()); if(m === "out" && o > 0) return t("runFtpOutS", o); return i > 0 ? t("runFtpIn", i) : o > 0 ? t("runFtpOut", o) : t("runFtpDef", runFtp()); }
 // étape suivante : durée · puissance cible (avec l'ajustement ± W) · nom
 function runTitle(n){ n = String(n || ""); const k = n.split(/\s+·\s+/); while(k.length > 1 && /^\d+([.,]\d+)?\s*(h|min|m|s|km|mi|%|w)?$/i.test(k[k.length - 1].trim())) k.pop(); return (k.length > 1 ? k[0] : k[0]).trim(); } // titre seul de l'étape (« Warmup · 10m » → « Warmup »)
 function runNxTxt(s){ const n = RUN.nudge || 0, a = Math.max(0, s.pw + n), b = Math.max(0, s.pw2 + n); return (s.m > 0 ? fmtDistShort(s.m) : runFmt(s.dur)) + " · " + (s.g != null ? "≈ " : "") + (a === b ? a + " W" : a + "→" + b + " W") + (s.g != null ? " · ⛰ " + s.g.toFixed(1) + "%" : "") + (s.name ? " · " + runTitle(s.name) : ""); }
