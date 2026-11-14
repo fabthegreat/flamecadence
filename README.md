@@ -1,73 +1,70 @@
 # FlameCadence
 
-FlameCadence is a free, browser-based indoor cycling app: create your own workouts, run them with a smart trainer, and keep track of your training. Everything runs client-side, with optional integration to [intervals.icu](https://intervals.icu).
+Fire up your next workout. FlameCadence is a free, open-source, browser-based indoor cycling app: build your own structured workouts, ride them with a smart trainer, and track your training over time. Everything runs client-side in the browser, with optional integration to [intervals.icu](https://intervals.icu) and an optional self-hosted backend.
 
-## Features
+## What the app does
 
-### Workout library and editor
-- Browse a built-in library of classic workouts (intervals, sweet spot, ramps, etc.).
-- Import workouts from blocks.zone, from files (ERG/ZWO/MRC...), or from a zip archive.
-- Favourites and a v2 data format for your own saved workouts.
-- Manual editor with a live preview chart and draggable chart handles, plus shrink/undo helpers.
-- Generate a workout from a simple text description, or rebuild a workout from a past activity.
+### Build and manage workouts
+- **Workout library**: a built-in catalogue of classic sessions (intervals, sweet spot, ramps, ...), plus your own saved workouts (v2 JSON format) with favourites and search.
+- **Import**: pull workouts from blocks.zone, from files (ZWO, ERG, MRC, FIT, GPX, JSON), or a whole zip archive at once.
+- **Manual editor**: add warmup / work / recovery / cooldown blocks, see a live preview chart, drag the chart handles to reshape intervals, then shrink, re-stair, adjust intensity (+/- 5%) or undo.
+- **AI generation**: describe a session in plain text (sport, duration, units) and get a structured workout. You can also rebuild a workout from a past activity.
+- **Export / send**: save as ZWO, FIT, ERG, MRC or JSON, push to intervals.icu or your own backend, or bulk-export a zip of your library.
 
-### AI assistance
-- AI workout generation and AI training plans (weekly planning).
-- AI analysis of your sessions and an AI coach chat.
-- Requires your own API key; the library and editor work without any key.
+### Plan your training
+- **Planning calendar**: place workouts on a calendar month view, with a fitness chart over time.
+- **Training plans**: generate a multi-week plan (algorithmic or AI) from a goal, weekly schedule and session constraints, then edit any planned workout.
+- **Planning shift and periods**: move planned sessions in bulk, review training periods.
+- **Session analysis**: completed activities open under the calendar with detailed analysis.
 
-### intervals.icu integration
-- Fetch your profile, FTP (indoor/outdoor), weight, LTHR and max HR.
-- Dashboard widgets: weather, training load, last ride, next workout, AI analysis.
-- Send workouts back to intervals.icu, and export activities as FIT/GPX.
+### Ride indoors
+- **Player**: run a session with a live power / heart-rate / cadence HUD, workout profile, timer, map and climb physics.
+- **Smart trainer control** over Bluetooth: ERG mode (FTMS) and Tacx FE-C, plus slope/simulation mode and manual resistance nudges.
+- **Devices**: pair heart-rate monitors, power meters and trainers over Bluetooth (Web Bluetooth).
+- **Extras**: voice announcements, beeps, music (Jamendo), auto-pause, fullscreen mode, FTP selection per session.
 
-### Planning calendar
-- Plan workouts on a calendar, view your fitness chart over time.
-- Planning shift, training periods, bulk export.
-- Session analysis opens under the calendar for completed activities.
+### Track and analyse
+- **intervals.icu integration**: fetch your profile, FTP (indoor/outdoor), weight, LTHR and max HR.
+- **Dashboard widgets**: weather, training load, last ride, next workout, fitness, power zones, heat adaptation, VO2max tracking, best efforts.
+- **Comparator**: compare sessions over time (effectiveness, power, HR) with charts.
+- **AI coach**: session analysis and a coach chat, using your own API key (Gemini, Hugging Face or any OpenAI-compatible endpoint such as Groq, OpenRouter, Mistral, Cerebras). The library and editor work without any key.
 
-### Player (indoor session)
-- Run a workout with a live power/HR/cadence HUD and map.
-- Smart trainer control over Bluetooth: ERG mode (FTMS) and Tacx FE-C, plus slope/simulation mode.
-- Climb physics, timer with voice announcements, beeps, music, auto-pause.
-- Bluetooth devices: heart rate, power meters, trainers.
-
-### General
+### Everywhere
 - English and French interface, multiple themes and fonts.
-- Installable as a PWA; works from a static host or even a local file.
-- Optional self-hosted backend (the `api_flamecadence` project) that mirrors the intervals.icu API, so your data can stay on your own server.
+- Installable as a PWA. Works from any static host, or even opened as a local file.
+- Optional self-hosted backend (the separate `api_flamecadence` project) that mirrors the intervals.icu API, so your data can stay on your own server.
 
 ## How the program is structured
 
-The app was originally a single `flamecadence.html` file; this repository is the same app split into files. Open `index.html` directly (double-click) or serve the folder with any static web server. There is no build step and no dependency: everything is plain HTML/CSS/JavaScript.
+The app was originally one big `flamecadence.html` file; this repository is that same app split into files, with **no build step and no dependencies**: plain HTML, CSS and JavaScript. Open `index.html` directly (double-click) or serve the folder with any static web server.
 
-### Layout
+### Runtime model
 
-- `index.html` — page markup plus the list of `<link>` / `<script>` tags (**the script order is the former execution order — keep it**).
-- `css/` — styles in the original cascade order (`base` → `settings` → `components` → `player` → `calendar-compare` → `look-and-responsive`). Later files override earlier ones.
-- `js/boot/` — small scripts run in `<head>` (PWA manifest, saved theme/font applied before first paint, visit counter).
-- `js/core/` — version (`APP_VERSION` is in `core.js`), `$`/`store`, theme, translations (`i18n.js`: EN/FR strings), UI helpers, settings dialog.
-- `js/api/` — intervals.icu access, backend mirror, FTP/profile helpers.
+- All scripts are classic `<script>` tags sharing **one global scope**. There are no modules and no `"use strict"`; never add `import`/`export`.
+- `index.html` lists the `<link>` and `<script>` tags. **The script order is the former execution order of the single file: keep it.** A file may only *call at load time* functions defined in an earlier (or the same) file; wiring like `$("x").onclick = fn` is fine as long as `fn` is defined in the same or an earlier file.
+- Two groups are kept together on purpose because of that rule: `js/tools/modes-and-tools.js` and `js/ui/app-shell.js`. Do not split them without moving their load-time calls (`applyBeta();` and the start-up line `loadWidgets(); loadOrder(); ...`).
+- Adding a file means adding its `<script>` tag in `index.html` at the right position.
+
+### Repository layout
+
+- `index.html` — page markup plus the ordered `<link>` / `<script>` lists.
+- `css/` — styles in the original cascade order: `base` → `settings` → `components` → `player` → `calendar-compare` → `look-and-responsive`. Later files override earlier ones.
+- `js/boot/` — scripts run in `<head>` before first paint: PWA manifest, saved theme/font, visit counter.
+- `js/core/` — foundation: version (`APP_VERSION` in `core.js`), `$`/`store`, theme, translations (`i18n.js`, EN/FR strings), UI helpers, settings dialog.
+- `js/api/` — intervals.icu access, self-hosted backend mirror, FTP/profile helpers.
 - `js/dashboard/` — weather, training load, last ride, AI analysis, widgets, next workout.
 - `js/workout/` — workout text parser, preview chart, shrink/undo, generation.
-- `js/library/` — workout library (built-in, blocks.zone, extended UI, zip, v2 data, favourites).
-- `js/workout-io/` — send/export, import files, GPX, rebuild from an activity, comparator.
-- `js/calendar/` — planning calendar, calendar page, fitness chart.
-- `js/editor/` — manual editor, chart handles, edit a planned workout, training plan, AI plan.
-- `js/player/` — climbs/physics, player session, HUD/map, trainer + finish, timer/voice, music, runtime UI, Bluetooth devices.
-- `js/tools/` — modes + planning shift/periods/contact/coach chat/session analysis, bulk export.
-- `js/ui/` — app shell (widgets, language, **start-up sequence**, guided tour), glossary.
-
-### Rules to keep it working
-
-1. All scripts are classic `<script>`s sharing ONE global scope (no modules, no `"use strict"`): do not add `import`/`export`.
-2. The original code relied on functions being callable before the line where they are written. Across files that is no longer true for code that **runs at load time**. A file may therefore only *call at load time* functions defined in an earlier file. Wiring like `$("x").onclick = fn` is fine as long as `fn` is defined in the same or an earlier file.
-3. Two groups are kept together on purpose because of rule 2: `js/tools/modes-and-tools.js` and `js/ui/app-shell.js`. Do not split them without moving the load-time calls (`applyBeta();` and the start-up line `loadWidgets(); loadOrder(); ...`).
-4. New file = add its `<script>` tag in `index.html` at the right position.
+- `js/library/` — workout library: built-in catalogue, blocks.zone, library UI, zip export, v2 data format, favourites.
+- `js/workout-io/` — send/export, file import, GPX, rebuild from an activity, session comparator.
+- `js/calendar/` — planning calendar, full calendar page, fitness chart.
+- `js/editor/` — manual editor, draggable chart handles, editing a planned workout, training plan, AI plan.
+- `js/player/` — climbs/physics, player session, HUD/map, trainer control and finish flow, timer/voice, music, runtime UI, Bluetooth devices.
+- `js/tools/` — mode switching plus planning shift, periods, contact, coach chat, session analysis, bulk export.
+- `js/ui/` — app shell (widgets, language, **start-up sequence**, guided tour) and glossary.
 
 ### Single-file build (optional)
 
-`node build-single-file.js` produces `flamecadence-single.html`, a self-contained copy identical in behaviour to this folder (handy for uploading the whole app as one file).
+`node build-single-file.js` merges `index.html`, all CSS and all JS back into one self-contained `flamecadence-single.html`, identical in behaviour to the folder version. Handy for sharing or uploading the whole app as a single file.
 
 ## License
 
