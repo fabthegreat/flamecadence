@@ -1,0 +1,91 @@
+/* FlameCadence - Enlarged calendar, comparator, scan progress, activity analysis */
+/* calendrier agrandi : plein écran, avec un aperçu graphique par séance / activité */
+html.calmax,html.calmax body{overflow:hidden}
+section[data-block="cal"] .phead{flex-wrap:wrap}
+section.cal-max{position:fixed;inset:0;z-index:40;margin:0;border:0;border-radius:0;overflow:auto;max-height:none;padding:14px 16px 28px}
+section.cal-max>*{max-width:1500px;margin-left:auto;margin-right:auto}
+.cal-max .cal{gap:4px}
+.cal.big .cal-d{min-height:132px;padding:4px}
+.cal.big .cal-ev{flex-wrap:wrap;gap:3px 2px;padding:3px 5px}
+.cal.big .cal-ev-t{flex:1 1 0;min-width:0;font-size:.78rem;font-weight:600}
+.cal-mini{flex:0 0 100%;height:44px;border-radius:3px;background:var(--bg);overflow:hidden;pointer-events:none}
+.cal-mini svg{display:block;width:100%;height:100%}
+.cal-meta{flex:0 0 100%;font-size:.68rem;pointer-events:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cal-wd{display:none}
+@media (max-width:700px){
+  .cal-max .cal.big{display:block}
+  .cal-max .cal.big .cal-h,.cal-max .cal.big .cal-d.empty{display:none}
+  .cal-max .cal.big .cal-d{min-height:0;margin-bottom:6px}
+  .cal-max .cal.big .cal-d:not(:has(.cal-ev)){display:none}
+  .cal-max .cal.big .cal-wd{display:inline}
+  .cal.big .cal-mini{height:56px}
+  .cal.big .cal-n{font-size:.8rem}
+  .cal-page .cal.big{display:block}
+  .cal-page .cal.big .cal-h,.cal-page .cal.big .cal-d.empty{display:none}
+  .cal-page .cal.big .cal-d{min-height:0;margin-bottom:6px}
+  .cal-page .cal.big .cal-d:not(:has(.cal-ev)){display:none}
+  .cal-page .cal.big .cal-wd{display:inline}
+}
+#aiBody{line-height:1.6}
+#aiBody p{margin:8px 0}
+#aiBody ul,#aiBody ol{margin:8px 0;padding-left:22px}
+#aiBody li{margin:4px 0}
+#aiBody h3{margin:14px 0 4px;font-size:1rem}
+.lib-theme{border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden;background:var(--card)}
+.lib-theme>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:13px 14px;font-weight:600;background:var(--bg);user-select:none}
+.lib-theme>summary::-webkit-details-marker{display:none}
+.lib-theme>summary:before{content:"＋";display:grid;place-items:center;width:24px;height:24px;border-radius:6px;background:var(--acc);color:var(--on);font-size:16px;line-height:1}
+.lib-theme[open]>summary:before{content:"−"}
+.lib-theme .theme-count{margin-left:auto;color:var(--mute);font-size:.8rem;font-weight:400}
+.lib-theme-body{padding:12px;max-height:min(70vh,640px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch} /* seule la catégorie défile, pas toute la page */
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.lib-grid .lib-card{margin:0;min-width:0}
+.lib-theme .theme-icon{font-size:1.15rem}
+/* comparateur de séances passées */
+html.m-calp [data-block="ses"] .ses-pick,html.m-calp [data-block="ses"] .ses-lbl:not(.ses-lbl2){display:none} /* sous le calendrier, le calendrier fait office de sélecteur */
+html:not(.m-calp) #sesClose{display:none}
+html.no-prev #prev,html.m-calp #prev,html.m-cmp #prev,html.m-ses #prev,html.m-exp #prev,html.m-run #prev,html.m-plan:not(.pl-edit) #prev{display:none!important}
+.run #runWkChart{margin-top:8px}.run #runWkChart:empty{display:none}.run #runWkChart svg{display:block;width:100%;height:56px;border-radius:6px;background:var(--bg)}
+#lsvg{cursor:pointer}
+#cmpbox{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:340px;overflow:auto}
+.cmp-row{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:.85rem;cursor:pointer}
+.cmp-row input{width:auto;padding:0;margin:0;flex:none}
+.cmp-row .sw{width:14px;height:14px;border-radius:3px;flex:none}
+.cmp-row b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-row .hint{flex:1;margin:0;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-row.unsel{opacity:.45}
+#cmpbox:empty{display:none}
+#cmptip{position:fixed;z-index:60;pointer-events:none;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:.78rem;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,.18);white-space:nowrap}
+#cmptable{margin-top:12px;overflow-x:auto}
+#cmptable input{width:auto;margin:0;padding:0}
+#cmptable a{text-decoration:none;color:var(--mute);margin-left:4px}
+#cmptable table{border-collapse:collapse;width:100%;font-size:.8rem;white-space:nowrap}
+#cmptable th,#cmptable td{padding:4px 8px;text-align:right;border-bottom:1px solid var(--line)}
+#cmptable th:nth-child(-n+5),#cmptable td:nth-child(-n+5){text-align:left}
+.cmp-mini{width:110px;height:26px;border-radius:3px;background:var(--card);overflow:hidden}
+.cmp-mini svg{display:block;width:100%;height:100%}
+#cmptable th{color:var(--mute);font-weight:500}
+#cmptable tr.unsel{opacity:.45}
+#cmptable tfoot td{font-weight:600}
+.cmp-row a{flex:none;text-decoration:none;color:var(--mute)}
+#cmpchart{margin-top:12px}
+/* barre de progression du scan (À partir d'une activité + Comparer) */
+.scanlbl{font-size:.8rem;color:var(--mute);margin-top:4px}
+.pb.ind i{width:30%;transition:none;animation:scanind 1.1s ease-in-out infinite alternate}
+@keyframes scanind{from{margin-left:0}to{margin-left:70%}}
+/* progression puissance / FC d'une activité */
+#cmpnav{flex-wrap:wrap;align-items:center}
+#cmpnav select{width:auto;padding:6px 8px;font-size:.85rem}
+.cmp-pr{position:relative;padding:0 12px 0 40px}
+.cmp-pr svg{display:block;width:100%;height:220px;border-radius:6px;background:var(--bg)}
+.cmp-pr path{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round}
+.cmp-pr .yt{position:absolute;width:36px;font-size:.7rem;line-height:1;transform:translateY(-50%);pointer-events:none}
+.cmp-pr .yl{left:0;text-align:right;color:#3b82c9}
+.cmp-xa{position:relative;height:1.1rem;margin:3px 12px 0 40px;font-size:.7rem;color:var(--mute)}
+.cmp-xa span{position:absolute;white-space:nowrap}
+.cmp-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.8rem;color:var(--mute);margin-top:6px}
+.cmp-leg span{display:inline-flex;align-items:center;gap:5px}
+.cmp-leg i{display:inline-block;width:10px;height:10px;border-radius:2px}
+#cmpinfo{min-height:1.2em}
+#cmpinfo b{font-weight:600}
+

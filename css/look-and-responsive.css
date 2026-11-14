@@ -1,0 +1,142 @@
+/* FlameCadence - Sport look, sidebar layout, phone ergonomics, widgets and player tweaks */
+/* ===== Look « Sport » : tableau de bord moderne, accent flamme (réglage Aspect ; décoché = look classique) ===== */
+:root[data-look="sport"]:not([data-theme="dark"]){--bg:#f1f4f8;--card:#fff;--ink:#0f1720;--mute:#566474;--line:#d5dbe3;--acc:#c93b06;--on:#fff;--top:#c93b06;--top-on:#fff}
+:root[data-look="sport"][data-theme="dark"]{--bg:#0b0f14;--card:#141a22;--ink:#f2f5f8;--mute:#8fa0b3;--line:#232b36;--acc:#ff5a1f;--on:#0b0f14;--top:#ff5a1f;--top-on:#0b0f14;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root[data-look="sport"]:not([data-theme="light"]){--bg:#0b0f14;--card:#141a22;--ink:#f2f5f8;--mute:#8fa0b3;--line:#232b36;--acc:#ff5a1f;--on:#0b0f14;--top:#ff5a1f;--top-on:#0b0f14;color-scheme:dark}}
+:root[data-look="sport"] body{background:var(--bg)}
+:root[data-look="sport"][data-theme="dark"] body{background:radial-gradient(900px 360px at 50% -8%,rgba(255,90,31,.13),transparent 65%),#0b0f14}
+@media (prefers-color-scheme:dark){:root[data-look="sport"]:not([data-theme="light"]) body{background:radial-gradient(900px 360px at 50% -8%,rgba(255,90,31,.13),transparent 65%),#0b0f14}}
+:root[data-look="sport"] h1{font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+:root[data-look="sport"] section{border-radius:16px;padding:20px}
+:root[data-look="sport"] section>h2,:root[data-look="sport"] .phead h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--mute)}
+:root[data-look="sport"] input,:root[data-look="sport"] select,:root[data-look="sport"] textarea{border-radius:12px;padding:11px 12px}
+:root[data-look="sport"] input:focus-visible,:root[data-look="sport"] select:focus-visible,:root[data-look="sport"] textarea:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+:root[data-look="sport"] button,:root[data-look="sport"] a.alt{border-radius:12px;font-weight:700}
+:root[data-look="sport"] .gbar,:root[data-look="sport"] .mode{border-radius:999px;border-color:var(--line)}
+:root[data-look="sport"] .gbar button,:root[data-look="sport"] .mode button{border-radius:999px;font-weight:600}
+:root[data-look="sport"] .hk{border-radius:16px}
+:root[data-look="sport"] .hv{font-weight:700;font-variant-numeric:tabular-nums}
+:root[data-look="sport"]{--fn:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif}
+:root[data-look="sport"] header{gap:16px 24px;padding-bottom:14px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+:root[data-look="sport"] header h1{font-family:var(--fn);font-size:1.75rem;font-weight:700}
+:root[data-look="sport"] header .gbar{margin:0}
+:root[data-look="sport"] .gbar button{padding:10px 22px;font-size:.9rem}
+:root[data-look="sport"] .hv,:root[data-look="sport"] .rbig,:root[data-look="sport"] #hzLf{font-family:var(--fn);letter-spacing:.01em}
+:root[data-look="sport"] .hl{text-transform:uppercase;letter-spacing:.1em;font-weight:600}
+/* téléphone / petit écran : la barre du haut du look Sport (boutons larges, titre en capitales) débordait à droite ; on la resserre */
+@media (max-width:900px){
+:root[data-look="sport"] main{padding-left:12px;padding-right:12px}
+:root[data-look="sport"] header{gap:8px 10px;padding-bottom:10px;min-width:0}
+:root[data-look="sport"] header .brand{gap:8px;min-width:0}
+:root[data-look="sport"] header .logo{width:34px;height:34px}
+:root[data-look="sport"] header h1{font-size:1.25rem;letter-spacing:.04em}
+:root[data-look="sport"] header .tools{gap:6px;flex-wrap:wrap;min-width:0}
+:root[data-look="sport"] .lang button{padding:4px 8px;font-size:.8rem}
+:root[data-look="sport"] .gbar{width:100%;min-width:0;gap:2px;padding:3px}
+:root[data-look="sport"] header .brand{order:1}:root[data-look="sport"] header .tools{order:2;margin-left:auto}:root[data-look="sport"] header .gbar{order:3;flex:1 0 100%} /* ligne 1 : logo + outils ; ligne 2 : menus principaux sur toute la largeur */
+:root[data-look="sport"] .gbar button,:root[data-look="sport"] header .gbar button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 4px;font-size:.88rem;line-height:1.15;text-align:center;white-space:normal} /* au moins aussi haut que le sous-menu ; les libellés longs passent sur 2 lignes au lieu d'être coupés */
+:root[data-look="sport"] .mode{min-width:0;gap:2px;padding:3px}
+:root[data-look="sport"] .mode button{padding:8px 4px}
+:root[data-look="sport"] .phead{flex-wrap:wrap;row-gap:6px;gap:6px} /* en-têtes de widgets (calendrier : mois, ‹ ›, Aujourd'hui, actualiser, agrandir, lien) : passent à la ligne au lieu de se chevaucher */
+:root[data-look="sport"] .phead>*{flex:0 0 auto}
+:root[data-look="sport"] .phead h2{letter-spacing:.08em}
+:root[data-look="sport"] .phead .badge{min-width:0!important;margin:0 2px!important}
+:root[data-look="sport"] .phead #caltoday,:root[data-look="sport"] .phead #caltoday2{font-size:.7rem!important;font-weight:600;letter-spacing:0;padding:0 7px!important;max-width:84px;overflow:hidden;text-overflow:ellipsis} /* « Aujourd'hui » / « Today » : bouton plus compact */
+}
+/* téléphone : ergonomie (menus principaux en bas à portée du pouce, cibles tactiles plus grandes, pas de zoom à la saisie, marges réduites) ; l'affichage ordinateur n'est pas modifié */
+@media (max-width:560px){
+html body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+html.pm-only body{padding-bottom:0}
+html #grp{position:fixed!important;left:0;right:0;bottom:0;top:auto;width:auto!important;z-index:30;margin:0!important;gap:4px;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))!important;border-width:1px 0 0!important;border-radius:0!important;background:var(--card)!important;box-shadow:0 -2px 12px rgba(0,0,0,.14)}
+html #grp button{flex:1 1 0;min-width:0;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:5px 2px!important;font-size:.68rem;font-weight:600;line-height:1.1;white-space:normal;text-align:center;border-radius:12px}
+html #grp button svg{display:block;width:22px;height:22px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html #grp button span{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body:has(input:focus,select:focus,textarea:focus) #grp{display:none!important} /* clavier ouvert : la barre du bas ne masque pas le champ */
+html .mode:not(.cfg-tabs){overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+html .mode:not(.cfg-tabs)::-webkit-scrollbar{display:none}
+html .mode:not(.cfg-tabs) button{min-height:46px;flex:0 0 auto;min-width:58px;flex-direction:column;gap:2px;padding:5px 6px}
+html .mode:not(.cfg-tabs) button span{display:block;max-width:72px;font-size:.62rem;font-weight:600;line-height:1.1;white-space:nowrap}
+html .phead .icon,html .phead .small{height:36px;min-width:36px}
+html .actions>button:not(.small){min-height:44px}
+html input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),html select,html textarea{font-size:16px!important} /* iOS zoome sur les champs en dessous de 16 px */
+html button,html a,html select,html summary,html label{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+html:root section:not(.cal-max){padding:14px}
+html:root[data-look="sport"] section:not(.cal-max){padding:14px}
+html:root main{padding-left:12px;padding-right:12px}
+/* look classique : respiration sous l'en-tête (le sous-menu touchait la barre café/outils) et barre du bas dans la couleur d'accent du look, comme le sous-menu */
+html:root:not([data-look="sport"]) header{margin-bottom:14px;row-gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)} /* même trait de séparation que le look Sport */
+html:root:not([data-look="sport"]) #grp{border-color:var(--acc)!important}
+html:root:not([data-look="sport"]) #grp button[aria-selected="true"]{background:var(--acc)!important;color:var(--on)!important}
+}
+/* barre latérale (écrans larges) : logo, menus principaux en colonne, outils en bas ; en dessous de 901 px on garde la barre du haut */
+@media (min-width:901px){
+:root[data-look="sport"] main{max-width:1500px;margin:0 0 0 240px;padding:24px 28px}
+:root[data-look="sport"] header{position:fixed;left:0;top:0;bottom:0;width:240px;z-index:15;flex-direction:column;flex-wrap:nowrap;align-items:stretch;justify-content:flex-start;gap:22px;margin:0;padding:24px 16px;border-bottom:0;border-right:1px solid var(--line);background:var(--card)}
+:root[data-look="sport"] header h1{font-size:1.4rem}
+:root[data-look="sport"] header .gbar{flex-direction:column;border-radius:16px;padding:6px;gap:4px}
+:root[data-look="sport"] header .gbar button{width:100%;text-align:left;padding:12px 16px;border-radius:12px}
+:root[data-look="sport"] header .tools{margin-top:auto;flex-wrap:wrap}
+:root[data-look="sport"] header .tools{position:relative}
+:root[data-look="sport"] header .more{position:static}
+/* menu « … » : ancré à la barre latérale (et non au petit bouton), il s'ouvre vers le haut sur toute sa largeur, sans déborder ni être coupé */
+:root[data-look="sport"] header .menu{left:0;right:0;top:auto;bottom:calc(100% + 8px);min-width:0;border-radius:14px}
+/* menu latéral sans cadre : seul l'élément actif est mis en évidence, les autres sont du simple texte */
+:root[data-look="sport"] header .gbar{border:0;background:transparent;padding:0;border-radius:0}
+:root[data-look="sport"] header .gbar button:not([aria-selected="true"]):hover,:root[data-look="sport"] header .gbar button:not([aria-selected="true"]):focus-visible{background:rgba(127,127,127,.14)}
+/* colonne des widgets plus étroite que la colonne principale, et cartes un peu plus compactes */
+:root[data-look="sport"] main{max-width:none} /* la page occupe toute la largeur : les widgets viennent se coller au bord droit */
+:root[data-look="sport"] .layout{grid-template-columns:minmax(0,var(--mainw,1400px)) clamp(300px,34%,480px);justify-content:space-between;gap:20px} /* colonne centrale : occupe la place disponible (jusqu'à 1400 px), widgets collés à droite */ /* colonne centrale : grandit jusqu'à 900 px quand la place existe ; widgets : 480 px au plus, comme avant */
+/* largeur de la section principale réglée dans les Réglages : les widgets cèdent la place (jusqu'à 260 px) ; tailles déterminées par calcul, donc identiques d'un navigateur à l'autre */
+@media (min-width:901px){
+:root[data-mainw]:not([data-look="sport"]) main{max-width:max(1240px,calc(var(--mainw) + 300px))}
+:root[data-mainw]:not([data-look="sport"]) .layout{grid-template-columns:minmax(0,1fr) clamp(260px,calc(100% - var(--mainw) - 16px),100%)}
+:root[data-mainw][data-look="sport"] .layout{grid-template-columns:minmax(0,var(--mainw)) clamp(260px,calc(100% - var(--mainw) - 20px),480px);justify-content:space-between;gap:20px}
+}
+:root[data-look="sport"] aside section{padding:16px}
+/* sous-menu (Bibliothèque, Éditeur, IA…) dans la barre latérale, sous les groupes : une entrée par ligne, icône + nom */
+:root[data-look="sport"] header .mode{flex-direction:column;gap:2px;margin:0;padding:12px 0 0;border:0;border-top:1px solid var(--line);border-radius:0;background:transparent;overflow:visible}
+:root[data-look="sport"] header .mode button,:root[data-look="sport"] header .mode button:not([aria-selected="true"]){flex:none;width:100%;justify-content:flex-start;gap:12px;padding:9px 14px;border-radius:12px;font-size:.88rem;font-weight:600;text-align:left}
+:root[data-look="sport"] header .mode button span,:root[data-look="sport"] header .mode button:not([aria-selected="true"]) span{display:inline}
+:root[data-look="sport"] header .mode button:not([aria-selected="true"]){color:var(--ink)}
+:root[data-look="sport"] header .mode button:not([aria-selected="true"]):hover,:root[data-look="sport"] header .mode button:not([aria-selected="true"]):focus-visible{background:rgba(127,127,127,.14);color:var(--acc)}
+:root[data-look="sport"] header .mode button[aria-selected="true"]{background:rgba(201,59,6,.12);background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc)}
+:root[data-look="sport"] header{overflow-y:auto}
+:root[data-look="sport"] header .sub{margin:-10px 0 0;padding:0 4px;font-size:.78rem;line-height:1.4}
+:root[data-look="sport"] main{padding-top:20px}
+}
+/* sélecteur de langue : cadre et pastilles partagent la même forme (capsule), les pastilles épousent le cadre */
+:root[data-look="sport"] .lang{border-radius:999px;padding:2px;gap:2px;overflow:visible;align-items:center}
+:root[data-look="sport"] .lang button{border-radius:999px;padding:5px 11px;line-height:1.2}
+:root[data-look="sport"] .more>summary{border-radius:12px}
+/* petits sélecteurs des en-têtes de widgets (« 2 mois », « 7 jours ») : le padding vertical du look Sport décalait le texte vers le bas */
+:root[data-look="sport"] .phead select{height:30px;padding:0 26px 0 12px;line-height:normal;font-size:.8rem}
+
+/* widget « Col au hasard » */
+.clb-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.clb-n{font-weight:700;font-size:1.15rem;line-height:1.2}.clb-f{color:var(--mute);font-size:.85rem;margin-top:2px}.clb-nav{display:flex;gap:6px}
+.clb-st{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.clb-st>div{border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}.clb-st small{display:block;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}.clb-st b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+#fitDlg .fitm label{display:flex;align-items:center;gap:10px;margin:0;cursor:pointer}#fitDlg .fitm input[type="radio"]{width:auto;min-width:0;margin:0;flex:none}
+
+/* téléphone : coffee / réglages / thème / langue rangés dans le menu ⋯ (aucune place prise dans l'en-tête) */
+.menu .mrow{display:none}
+@media (max-width:560px){
+  header .tools{gap:0}
+  header .tools>#coffeeTop,header .tools>#theme,header .tools>.lang,header .tools>#open{display:none!important}
+  .menu .mrow{display:flex;align-items:center;gap:8px;padding:6px 8px;flex-wrap:wrap}
+  .menu .mrow a.coffee.top .lbl{display:inline}
+  .menu .mrow a.coffee.top{padding:6px 12px}
+}
+
+/* lecteur : la carte « étape en cours » garde une hauteur fixe (nom sur une ligne, badge pause en surimpression) */
+.run .rbar .rrow{flex-wrap:nowrap;align-items:flex-start}
+.run .rbar .rrow>div{flex:none}
+.run .rbar .rrow>div:first-child{flex:1 1 0;min-width:0}
+.run .rbar #runName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+.run .rbar .rnx{margin-top:6px;height:1.3em;overflow:hidden}
+.run .rbar #runAutoP{position:absolute;right:10px;bottom:8px;margin:0;background:var(--card)}
+
+/* lecteur : profil de la séance plus bas pour laisser plus de hauteur aux autres cartes */
+.run #runCv{height:90px}
+.run.rfs #runCv{height:clamp(60px,12dvh,130px)}@media (orientation:landscape){.run.rfs #runCv{height:clamp(32px,6.5dvh,70px)}}
+
+/* téléphone : un sous-menu à un seul onglet (Lecteur) fait doublon avec la barre du bas, on le masque */
+@media (max-width:560px){.mode.solo:not(.cfg-tabs){display:none!important}}

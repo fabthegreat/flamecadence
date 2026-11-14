@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- Application scripts at the end of <body> are classic scripts sharing ONE global scope: their LOAD ORDER MATTERS and mirrors the former single script. See README.md -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlameCadence — Fire up your next workout</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%23ffb000'/%3E%3Cstop offset='1' stop-color='%23ff3d00'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='15' fill='%23141b24'/%3E%3Cpath d='M34 5C38 18 23 21 29 34c-5-3-8-8-8-13C9 34 13 49 25 56c-1-9 7-12 9-19 8 8 8 14 4 20 13-4 19-17 12-29-1 8-5 10-7 11C45 25 45 16 34 5Z' fill='url(%23g)'/%3E%3Cpath d='M35 24 24 40h9l-3 12 13-19h-9z' fill='%23fff4d6'/%3E%3C/svg%3E">
+<link rel="manifest" id="mf" href="manifest.webmanifest">
+<script src="js/boot/pwa-manifest.js"></script>
+<meta name="theme-color" content="#141b24">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/settings.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/player.css">
+<link rel="stylesheet" href="css/calendar-compare.css">
+<link rel="stylesheet" href="css/look-and-responsive.css">
+<script src="js/boot/preload-prefs.js"></script>
+<script src="js/boot/analytics.js"></script>
+</head>
+<body>
+<main>
+<header>
+<div class="brand">
+  <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+    <defs><linearGradient id="forgeFire" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff06a"/><stop offset=".42" stop-color="#ff9d00"/><stop offset="1" stop-color="#ff2d00"/></linearGradient><linearGradient id="forgeEdge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#354351"/><stop offset="1" stop-color="#10151c"/></linearGradient><filter id="forgeGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.4"/></filter></defs>
+    <rect x="1" y="1" width="46" height="46" rx="13" fill="url(#forgeEdge)" stroke="#526170" stroke-width="1.2"/>
+    <path d="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" fill="#ff4b00" opacity=".5" filter="url(#forgeGlow)"/>
+    <path d="M25 5C29 13 19 17 24 24c-4-1-6-5-6-8C8 26 13 38 23 43c-1-7 4-10 7-15 4 5 4 9 1 13 10-5 12-15 6-24-1 5-4 7-5 8C33 16 31 10 25 5Z" fill="url(#forgeFire)"/>
+    <path d="M27 14 18 27h7l-3 10 12-17h-8z" fill="#fffbe9" stroke="#fff" stroke-width=".45" stroke-linejoin="round"/>
+    <path d="M7 14h5M36 8l3-2M39 34l3 2" stroke="#ffd166" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+  <h1 data-i="title"></h1>
+</div>
+<button type="button" class="alt small" id="fullMenu"><span aria-hidden="true">☰</span> <span data-i="fullMenu"></span></button>
+<div class="tools">
+<a class="coffee top" id="coffeeTop" data-ia="title:coffee"><span aria-hidden="true">☕</span><span class="lbl" data-i="coffee"></span></a>
+<button class="alt small icon" id="theme" type="button" data-ia="title:thAuto;aria-label:thAuto">🌓</button>
+<div class="lang" role="group" data-ia="aria-label:langLbl"><button type="button" data-l="en">EN</button><button type="button" data-l="fr">FR</button></div>
+<details class="more" id="more"><summary class="alt small icon" data-ia="title:more;aria-label:more"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></summary><div class="menu">
+<a class="mi" id="pmBack" role="button" tabindex="0" hidden><span aria-hidden="true">▶</span><span data-i="pmBack"></span></a>
+<a class="mi" id="tourbtn" role="button" tabindex="0" data-ia="title:tourTip"><span aria-hidden="true">🧭</span><span data-i="tourBtn"></span></a>
+<a class="mi" id="installbtn" role="button" tabindex="0" hidden><span aria-hidden="true">📲</span><span data-i="installApp"></span></a>
+<a class="mi" id="mail" role="button" tabindex="0" data-ia="title:contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6"/></svg><span data-i="contact"></span></a>
+<a class="mi" id="gh" data-ia="title:github"><svg class="fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span data-i="github"></span></a>
+</div></details>
+<button class="alt small" id="open" type="button" data-i="settings"></button>
+</div>
+</header>
+<div id="toast" role="alert" hidden><span id="toastt"></span><button type="button" id="toastAct" hidden data-i="undo"></button><button type="button" id="toastx" data-ia="aria-label:close">×</button></div>
+<div id="beBar" role="status" hidden><span id="beBarT"></span><button type="button" id="beRetry" class="alt small" data-i="beRetry"></button></div>
+<p class="sub" data-i="subtitle"></p>
+
+<dialog id="cfg" aria-labelledby="cfgt"><div class="cfgbody">
+<h2 id="cfgt" data-i="settingsTitle"></h2>
+<div class="mode cfg-tabs" role="tablist" data-ia="aria-label:settingsTitle">
+<button type="button" role="tab" data-cfg="icu" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg><span data-i="secIcu"></span></button>
+<button type="button" role="tab" data-cfg="be" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg><span data-i="secBe"></span></button>
+<button type="button" role="tab" data-cfg="ai" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></button>
+<button type="button" role="tab" data-cfg="user" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></button>
+<button type="button" role="tab" data-cfg="wid" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></button>
+<button type="button" role="tab" data-cfg="look" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></button>
+<button type="button" role="tab" data-cfg="beta" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></button>
+<button type="button" role="tab" data-cfg="player" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></button>
+</div>
+<div class="cfg-sec" data-cfgp="ai" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/></svg><span data-i="secAI"></span></h3>
+<label for="prov" data-i="provider"></label>
+<select id="prov"><option value="gemini">Gemini</option><option value="hf">Hugging Face</option><option value="oa" data-i="provOA"></option></select>
+<div id="pg">
+<div class="lbl"><label for="gkey" data-i="gKey"></label><span id="bg" class="badge"></span></div>
+<div class="pw"><input id="gkey" type="password" autocomplete="off"><button class="alt tog" data-for="gkey" type="button" data-i="show"></button></div>
+<a class="help" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" data-i="gHelp"></a>
+<label for="model" data-i="gModel"></label>
+<div class="pw"><select id="model"></select><button class="alt" id="refm" type="button" data-i="loadList"></button></div>
+<div id="mnote" class="badge" role="status"></div>
+<label for="think" data-i="think"></label>
+<select id="think"><option value="low" data-i="thLow"></option><option value="minimal" data-i="thMin"></option><option value="medium" data-i="thMed"></option><option value="high" data-i="thHigh"></option><option value="default" data-i="thDef"></option></select>
+</div>
+<div id="ph" hidden><div class="lbl"><label for="hfkey" data-i="hfKey"></label><span id="bh" class="badge"></span></div>
+<div class="pw"><input id="hfkey" type="password" autocomplete="off"><button class="alt tog" data-for="hfkey" type="button" data-i="show"></button></div>
+<a class="help" href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener" data-i="hfHelp"></a>
+<label for="hfmodel" data-i="hfModel"></label>
+<div class="pw"><input id="hfmodel" list="hfl" autocomplete="off"><datalist id="hfl"></datalist><button class="alt" id="refh" type="button" data-i="loadList"></button></div>
+<div id="hnote" class="badge" role="status"></div>
+<div class="hint" data-i="hfHint"></div>
+</div>
+<div id="po" hidden>
+<label for="oaurl" data-i="oaUrl"></label>
+<input id="oaurl" list="oau" autocomplete="off" placeholder="https://api.groq.com/openai/v1"><datalist id="oau"><option value="https://api.groq.com/openai/v1"><option value="https://openrouter.ai/api/v1"><option value="https://api.mistral.ai/v1"><option value="https://api.cerebras.ai/v1"></datalist>
+<div class="lbl"><label for="oakey" data-i="oaKey"></label><span id="bo" class="badge"></span></div>
+<div class="pw"><input id="oakey" type="password" autocomplete="off"><button class="alt tog" data-for="oakey" type="button" data-i="show"></button></div>
+<div class="hint"><span data-i="oaHelp"></span> <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Groq</a> · <a href="https://openrouter.ai/keys" target="_blank" rel="noopener">OpenRouter</a> · <a href="https://console.mistral.ai/api-keys" target="_blank" rel="noopener">Mistral</a></div>
+<label for="oamodel" data-i="oaModel"></label>
+<div class="pw"><input id="oamodel" list="oal" autocomplete="off"><datalist id="oal"></datalist><button class="alt" id="refo" type="button" data-i="loadList"></button></div>
+<div id="onote" class="badge" role="status"></div>
+<div class="hint" data-i="oaHint"></div>
+</div>
+</div>
+<div class="cfg-sec" data-cfgp="icu">
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.7-1.7"/></svg><span data-i="secIcu"></span><span id="bicu" class="badge"></span></h3>
+<div class="lbl"><label for="ikey" data-i="iKey"></label><span id="bi" class="badge"></span></div>
+<div class="pw"><input id="ikey" type="password" autocomplete="off"><button class="alt tog" data-for="ikey" type="button" data-i="show"></button></div>
+<a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="iHelp"></a>
+<label for="aid" data-i="aid"></label>
+<input id="aid">
+</div>
+<div class="cfg-sec" data-cfgp="be" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg><span data-i="beTitle"></span><span id="bbe" class="badge"></span></h3>
+<label for="bmode" data-i="beMode"></label>
+<select id="bmode"><option value="icu" data-i="beM0"></option><option value="first" data-i="beM1"></option><option value="only" data-i="beM2"></option></select>
+<div class="hint" id="bmodeH"></div>
+<div id="beF">
+<label for="burl" data-i="beUrl" style="margin-top:14px"></label>
+<input id="burl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" data-ia="placeholder:bePh">
+<div class="hint" data-i="beUrlH"></div>
+<div class="hint err" id="burlW" hidden data-i="beMixed"></div>
+<div class="lbl" style="margin-top:14px"><label for="bkey" data-i="beKey"></label></div>
+<div class="pw"><input id="bkey" type="password" autocomplete="off"><button class="alt tog" data-for="bkey" type="button" data-i="show"></button></div>
+<div class="hint" data-i="beKeyH"></div>
+<label for="bwrite" data-i="beWr" style="margin-top:14px"></label>
+<select id="bwrite"><option value="icu" data-i="beW0"></option><option value="be" data-i="beW1"></option></select>
+<div class="hint" data-i="beWrH"></div>
+<div class="actions" style="margin-top:14px"><button class="alt" id="betestb" type="button" data-i="beTest"></button></div>
+<div class="hint" data-i="beTestH"></div>
+<div id="betest" class="betest" role="status"></div>
+<div class="hint" style="margin-top:12px" data-i="beServesH"></div>
+</div>
+</div>
+<div class="cfg-sec" data-cfgp="user" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i="secUser"></span></h3>
+<div id="userbox" role="status"></div>
+<div class="actions" style="margin-top:8px"><button class="alt small" id="userref" type="button" data-i="refresh"></button><a class="help" href="https://intervals.icu/settings" target="_blank" rel="noopener" data-i="userEdit" style="align-self:center"></a></div>
+<div class="hint" data-i="userHint"></div>
+<label for="wxq" data-i="wxLoc" style="margin-top:16px"></label>
+<div class="pw"><input id="wxq" type="search" autocomplete="off" data-ia="placeholder:wxPh"><button class="alt" id="wxfind" type="button" data-i="wxFind"></button></div>
+<div id="wxres" class="wxres" role="status"></div>
+<div class="actions" style="margin-top:6px"><button class="alt small" id="wxgeo" type="button" data-i="wxGeo"></button><button class="alt small danger" id="wxclr" type="button" data-i="wxClr"></button></div>
+<div class="hint" id="wxcur"></div>
+<div class="hint" data-i="wxPriv"></div>
+</div>
+<div class="cfg-sec" data-cfgp="wid" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="secWidgets"></span></h3>
+<div class="wgrid">
+<label><input type="checkbox" id="w_cal"><span data-i="calT"></span></label>
+<label><input type="checkbox" id="w_next"><span data-i="nextT"></span></label>
+<label><input type="checkbox" id="w_fit"><span data-i="fitT"></span></label>
+<label><input type="checkbox" id="w_last"><span data-i="lastW"></span></label>
+<label><input type="checkbox" id="w_load"><span data-i="load2"></span></label>
+<label><input type="checkbox" id="w_best"><span data-i="best"></span></label>
+<label><input type="checkbox" id="w_wx"><span data-i="wxT"></span></label>
+<label><input type="checkbox" id="w_climb"><span data-i="clbT"></span></label>
+<label><input type="checkbox" id="w_zon"><span data-i="zonT"></span></label>
+<label><input type="checkbox" id="w_heat"><span data-i="heatT"></span></label>
+<label><input type="checkbox" id="w_vo2"><span data-i="vo2T"></span></label>
+</div>
+<div class="hint" id="jnote" role="status" hidden></div>
+</div>
+<div class="cfg-sec" data-cfgp="look" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg><span data-i="secLook"></span></h3>
+<div style="padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)"><h4 style="margin:6px 0 0;font-size:.95rem" data-i="thmT"></h4>
+<label for="themesel" data-i="thmLbl"></label><select id="themesel"><option value="classic" data-i="lkClassic"></option><option value="sport" data-i="lkSport"></option></select>
+<div class="hint" data-i="thmHint"></div></div>
+<label for="fontsel" data-i="fontLbl"></label><select id="fontsel"></select>
+<div id="fontprev" style="margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)"><div style="font-size:1.1rem;font-weight:600" data-i="fontSample"></div><div class="hint" style="margin-top:4px">0 1 2 3 4 5 6 7 8 9 · 245 W · 1:30:00 · FTP 250 · TSS 85</div></div>
+<div class="hint" data-i="fontHint"></div>
+<div class="wgrid" style="grid-template-columns:1fr;margin-top:14px"><label><input type="checkbox" id="sqCorners"><span data-i="sqLbl"></span></label></div>
+<div class="hint" data-i="sqHint"></div>
+<div style="margin-top:14px"><label for="mainW" data-i="mwLbl"></label><div class="actions" style="align-items:center;gap:10px;margin:4px 0"><input type="range" id="mainW" min="520" max="1600" step="20" style="flex:1;padding:0"><span id="mainWv" class="badge" style="min-width:64px;text-align:center"></span><button type="button" class="alt small" id="mainWr" data-i="mwReset"></button></div><div class="hint" data-i="mwHint"></div></div>
+</div>
+<div class="cfg-sec" data-cfgp="beta" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 15h9"/></svg><span data-i="secBeta"></span></h3>
+<div class="wgrid" style="grid-template-columns:1fr"><label><input type="checkbox" id="betaRun"><span data-i="betaRun"></span></label></div>
+<div class="hint" data-i="betaRunHint"></div>
+<div id="kaCfg">
+<label for="runKa" style="margin-top:16px" data-i="runKaL"></label>
+<select id="runKa"><option value="mix" data-i="runKaM"></option><option value="strong" data-i="runKaS"></option><option value="off" data-i="runKaO"></option></select>
+<div class="hint" data-i="runKaH"></div>
+</div>
+
+</div>
+<div class="cfg-sec" data-cfgp="player" hidden>
+<h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="secPlayer"></span></h3>
+<div class="wgrid" style="grid-template-columns:1fr;margin-bottom:12px"><label><input type="checkbox" id="pm_beep"><span data-i="pmBeep"></span></label>
+<label><input type="checkbox" id="pm_voice"><span data-i="pmVoice"></span></label>
+<label><input type="checkbox" id="pm_map"><span data-i="pmMap"></span></label></div>
+<div class="actions" style="margin:0 0 10px"><button type="button" class="alt small" id="pm_forget" data-i="pmForget"></button></div>
+<div class="hint" data-i="pmHint"></div>
+<div class="wgrid" style="grid-template-columns:1fr">
+<label><input type="checkbox" id="pm_avg"><span data-i="runMxAvg"></span></label>
+<label><input type="checkbox" id="pm_avgS"><span data-i="runMxAvgS"></span></label>
+<label><input type="checkbox" id="pm_kj"><span data-i="runMxKj"></span></label>
+<label><input type="checkbox" id="pm_dec"><span data-i="runMxDec"></span></label>
+<label><input type="checkbox" id="pm_dist"><span data-i="runMxDist"></span></label>
+</div>
+<div class="hint" data-i="pmDecHint"></div>
+<label for="pm_lead" style="margin-top:16px" data-i="pmLead"></label>
+<input id="pm_lead" type="number" min="0" max="10" step="0.5" inputmode="decimal" placeholder="0" style="max-width:140px">
+<div class="hint" data-i="pmLeadH"></div>
+<label for="pm_ap" style="margin-top:16px" data-i="pmAp"></label>
+<select id="pm_ap" style="max-width:200px"><option value="0" data-i="apOff"></option><option value="10">10 s</option><option value="20">20 s</option><option value="30">30 s</option><option value="60">60 s</option><option value="120">120 s</option></select>
+<div class="hint" data-i="pmApH"></div>
+<label for="riderKg" style="margin-top:16px" data-i="riderKgL"></label>
+<input id="riderKg" type="number" min="30" max="200" step="0.5" inputmode="decimal" style="max-width:140px">
+<div class="hint" data-i="riderKgH"></div>
+<div id="musCfg" style="margin-top:8px">
+<div class="wgrid" style="grid-template-columns:1fr;margin:16px 0 4px"><label><input type="checkbox" id="pm_mus"><span data-i="pmMus"></span></label></div>
+<label for="jamkey" style="margin-top:16px" data-i="jamKeyL"></label>
+<input id="jamkey" autocomplete="off" autocapitalize="off" spellcheck="false">
+<a class="help" href="https://devportal.jamendo.com/" target="_blank" rel="noopener" data-i="jamHelp"></a>
+<div class="hint" data-i="jamKeyH"></div>
+<label for="jamtag" data-i="jamTagL"></label>
+<select id="jamtag"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select>
+</div>
+</div>
+<div class="actions cfg-more">
+<button class="alt" id="impjson" type="button" data-i="jsonImp"></button>
+<button class="alt" id="expjson" type="button" data-i="jsonExp"></button>
+<button class="alt danger" id="clear" type="button" data-i="clearKeys"></button>
+<input type="file" id="impjsonin" accept=".json,application/json" hidden>
+<button class="alt small" id="openHelp" type="button" style="width:100%;margin-top:10px">❓ <span data-i="helpBtn"></span></button>
+</div>
+</div>
+<div class="actions cfg-bar">
+<button id="save" type="button" data-i="save"></button>
+<button class="alt" id="close" type="button" data-i="close"></button>
+</div>
+</dialog>
+
+<!-- Modal d'Aide -->
+<dialog id="contactDlg" aria-labelledby="ctTt"><h2 id="ctTt" data-i="ctT"></h2>
+<label for="ctName" data-i="ctName"></label><input id="ctName" autocomplete="name">
+<label for="ctEmail" data-i="ctEmail"></label><input id="ctEmail" type="email" autocomplete="email">
+<label for="ctMsg" data-i="ctMsg"></label><textarea id="ctMsg" rows="5"></textarea>
+<input type="checkbox" id="ctBot" tabindex="-1" autocomplete="off" style="display:none">
+<div class="hint" id="ctOut" style="min-height:1.2em"></div>
+<div class="actions" style="margin-top:12px"><button type="button" id="ctSend" data-i="ctSend"></button><button type="button" class="alt" id="ctClose" data-i="close"></button></div>
+</dialog>
+<dialog id="helpDlg" aria-labelledby="helpt">
+<h2 id="helpt" data-i="helpTitle"></h2>
+<div id="helpBody" style="font-size:.9rem; line-height:1.5; margin-top:10px"></div>
+<div class="actions" style="margin-top:20px"><button class="alt" id="closeHelp" type="button" data-i="close">Fermer</button></div>
+</dialog>
+
+<dialog id="cfm"><p id="cfmt"></p><div class="actions"><button id="cfmy" type="button" data-i="yes"></button><button class="alt" id="cfmn" type="button" data-i="no"></button></div></dialog>
+
+<dialog id="aiDlg" aria-labelledby="aiDlgT">
+<h2 id="aiDlgT" data-i="aiTitle"></h2>
+<div id="aiBody" style="font-size:.95rem;margin-top:10px"></div>
+<div class="actions" style="margin-top:20px"><button class="alt" id="closeAi" type="button" data-i="close"></button></div>
+</dialog>
+
+<dialog id="dateDlg" aria-labelledby="dateDlgT">
+<h2 id="dateDlgT" data-i="pickDate"></h2>
+<div class="phead" style="margin:6px 0 12px"><button class="alt small icon" id="dcalprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><span id="dcalmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span><button class="alt small icon" id="dcalnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button><button class="alt small" id="dcalnow" type="button" data-i="today"></button></div>
+<div id="dcalbox"></div>
+<div class="actions"><button class="alt" id="closeDateCal" type="button" data-i="close"></button></div>
+</dialog>
+
+<dialog id="fitDlg" aria-labelledby="fitDlgT">
+<h2 id="fitDlgT" data-i="fitT"></h2>
+<p class="hint" data-i="fitHint"></p>
+<div class="fitm" style="display:flex;flex-direction:column;gap:8px;margin:10px 0"><label><input type="radio" name="fitMode" value="pct" checked> <span data-i="fitP"></span></label><label><input type="radio" name="fitMode" value="w"> <span data-i="fitW"></span></label></div>
+<div id="fitFtpBox"><label for="fitFtp" data-i="fitFtpL"></label><select id="fitFtp"></select><input type="number" id="fitFtpV" min="50" max="600" step="1" inputmode="numeric" aria-label="FTP"></div>
+<div class="actions" style="margin-top:10px"><button type="button" id="fitOk" data-i="fitGo"></button><button class="alt" type="button" id="fitNo" data-i="no"></button></div>
+</dialog>
+<dialog id="expDlg" aria-labelledby="expDlgT">
+<h2 id="expDlgT" data-i="expTitle"></h2>
+<div id="expBody" class="actions" style="margin-top:10px;flex-direction:column;align-items:stretch">
+<button class="alt" data-exp="zwo" type="button" data-i="exZwo"></button>
+<button class="alt" data-exp="fit" type="button" data-i="exFit"></button>
+<button class="alt" data-exp="erg" type="button" data-i="exErg"></button>
+<button class="alt" data-exp="mrc" type="button" data-i="exMrc"></button>
+<button class="alt" data-exp="json" type="button" data-i="exJson"></button>
+</div>
+<div class="actions" style="margin-top:10px"><button class="alt" id="closeExp" type="button" data-i="close"></button></div>
+</dialog>
+
+<div class="layout">
+<div class="col">
+
+<section id="welcome" hidden>
+<h2 data-i="wlcT"></h2>
+<p data-i="wlcP"></p>
+<ol><li data-i="wlc1"></li><li data-i="wlc2"></li><li data-i="wlc3"></li></ol>
+<div class="actions"><button type="button" id="wlcConn" data-i="wlcConn"></button><button type="button" class="alt" id="wlcTour" data-i="wlcTour"></button><button type="button" class="alt" id="wlcX" data-i="wlcLater"></button></div>
+</section>
+<div class="gbar" id="grp" role="tablist"><button type="button" role="tab" data-g="gen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8L21.5 17.5l-1.8.7L19 20l-.7-1.8L16.5 17.5l1.8-.7z"/></svg><span data-i="grpGen"></span></button><button type="button" role="tab" data-g="ana"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="grpAna"></span></button><button type="button" role="tab" data-g="cal"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i="grpCal"></span></button><button type="button" role="tab" data-g="run" hidden style="display:none"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="grpRun"></span></button></div>
+<div class="mode" role="tablist" data-ia="aria-label:modeLbl">
+<button type="button" role="tab" data-m="lib"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></button>
+<button type="button" role="tab" data-m="edit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="tabEd"></span></button>
+<button type="button" role="tab" data-m="ai"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="tabAi"></span></button>
+<button type="button" role="tab" data-m="imp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="tabImp"></span></button>
+<button type="button" role="tab" data-m="act"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="tabAct"></span></button>
+<button type="button" role="tab" data-m="plan"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="tabPlan"></span></button>
+<button type="button" role="tab" data-m="shift"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5"/><path d="M12 7l5 5-5 5"/></svg><span data-i="tabShift"></span></button>
+<button type="button" role="tab" data-m="calp"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i="grpCal"></span></button>
+<button type="button" role="tab" data-m="run"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="tabRun"></span></button>
+<button type="button" role="tab" data-m="per"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-7"/></svg><span data-i="tabPer"></span></button>
+<button type="button" role="tab" data-m="cmp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="tabCmp"></span></button>
+<button type="button" role="tab" data-m="exp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg><span data-i="tabExp"></span></button>
+<button type="button" role="tab" data-m="chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><span data-i="tabChat"></span></button>
+</div>
+
+<section data-block="req">
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.94 15.5A2 2 0 0 0 8.5 14.06l-6.14-1.58a.5.5 0 0 1 0-.96L8.5 9.94A2 2 0 0 0 9.94 8.5l1.58-6.14a.5.5 0 0 1 .96 0L14.06 8.5a2 2 0 0 0 1.44 1.44l6.14 1.58a.5.5 0 0 1 0 .96L15.5 14.06a2 2 0 0 0-1.44 1.44l-1.58 6.14a.5.5 0 0 1-.96 0z"/><path d="M20 3v4M22 5h-4M4 17v2M5 18H3"/></svg><span data-i="req"></span></h2></div>
+<div class="row">
+<div><label for="sport" data-i="sportLbl"></label><select id="sport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
+<div><label for="dur" data-i="durLbl"></label><select id="dur"><option value="" data-i="durAuto"></option><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option><option value="150">2h30</option><option value="180">3h</option></select></div>
+</div>
+<div class="row one">
+<div><label for="unit" data-i="unitLbl"></label><select id="unit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<label for="prompt" data-i="wanted"></label>
+<textarea id="prompt" data-ia="placeholder:ph"></textarea>
+<div class="actions">
+<button id="gen" type="button" data-i="gen"></button>
+<button class="alt" id="rand" type="button" data-i="rand"></button>
+</div>
+</section>
+
+<section data-block="edit" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg><span data-i="edT"></span></h2></div>
+<div id="caledbar" class="hint" hidden><span id="caledtxt"></span><button class="alt small" id="caledx" type="button" data-i="calEdCancel"></button></div>
+<div class="row">
+<div><label for="edname" data-i="name"></label><input id="edname"></div>
+<div><label for="edsport" data-i="sportLbl"></label><select id="edsport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
+</div>
+<div class="row">
+<div><label for="edunit" data-i="unitLbl"></label><select id="edunit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+<div><label for="edmetric" data-i="edMetric"></label><select id="edmetric"><option value="p" data-i="mPow"></option><option value="h" data-i="mHr"></option></select></div>
+</div>
+<div class="hint" id="edhint"></div>
+<div id="edbox" style="margin-top:10px"></div>
+<div class="actions">
+<button class="alt small" type="button" data-add="warm" data-i="addWarm"></button>
+<button class="alt small" type="button" data-add="work" data-i="addWork"></button>
+<button class="alt small" type="button" data-add="rec" data-i="addRec"></button>
+<button class="alt small" type="button" data-add="cool" data-i="addCool"></button>
+<button class="alt small" type="button" data-add="grp" data-i="addGrp"></button>
+<button class="alt small danger" id="edreset" type="button" data-i="edReset"></button>
+</div>
+<div class="hint" id="edsum"></div>
+<div class="actions" id="edfill" style="align-items:center;margin:6px 0"><label for="edfilt" data-i="efTot" style="margin:0"></label><input id="edfilt" type="number" min="10" max="720" step="5" value="90" style="width:84px;margin:0"><button class="alt small" id="edfillb" type="button" data-i="efBtn"></button></div>
+<button id="edgo" type="button" data-i="edGo"></button>
+</section>
+
+<!-- Section Bibliothèque de séances -->
+<section data-block="lib" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M6 6h12M6 10h12"/></svg><span data-i="tabLib"></span></h2></div>
+<div class="row">
+<div><label for="libsport" data-i="sportLbl"></label><select id="libsport"><option value="Ride"></option><option value="VirtualRide"></option></select></div>
+<div><label for="libunit" data-i="unitLbl"></label><select id="libunit" data-ia="aria-label:unitLbl"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<div class="row">
+<div><input id="libsearch" type="search" autocomplete="off" data-ia="placeholder:libSearch" aria-label="" style="margin-top:12px"></div>
+<div><select id="libdur" style="margin-top:12px" data-ia="aria-label:libDurLbl"><option value="all" data-i="libDurAll"></option><option value="0-30">≤ 30 min</option><option value="30-45">30 – 45 min</option><option value="45-60">45 – 60 min</option><option value="60-75">60 – 75 min</option><option value="75-90">75 – 90 min</option><option value="90-105">90 – 105 min</option><option value="105-120">105 – 120 min</option><option value="120-inf">&gt; 120 min</option></select></div>
+</div>
+<div class="row" id="libfeelrow" style="margin-top:10px"><label style="display:flex;align-items:center;gap:8px;margin:0;font-size:.9rem;cursor:pointer" data-ia="title:libFormTip"><input type="checkbox" id="libform" style="width:auto;margin:0"><span data-i="libForm"></span></label>
+<div id="libfeelb" role="radiogroup" hidden data-ia="aria-label:libForm"><button type="button" role="radio" data-v="auto" data-ia="title:feelAuto;aria-label:feelAuto" data-i="autoLbl"></button><button type="button" role="radio" data-v="great" data-ia="title:feelGreat;aria-label:feelGreat">😄</button><button type="button" role="radio" data-v="good" data-ia="title:feelGood;aria-label:feelGood">🙂</button><button type="button" role="radio" data-v="soso" data-ia="title:feelSoso;aria-label:feelSoso">😐</button><button type="button" role="radio" data-v="tired" data-ia="title:feelTired;aria-label:feelTired">😩</button><button type="button" role="radio" data-v="exhausted" data-ia="title:feelExh;aria-label:feelExh">😴</button></div>
+<span id="libautoi" class="hint" hidden style="flex:1 1 100%;margin:4px 0 0"></span>
+<select id="libfeel" hidden aria-hidden="true" tabindex="-1"><option value="auto" data-i="feelAuto" selected></option><option value="great" data-i="feelGreat"></option><option value="good" data-i="feelGood"></option><option value="soso" data-i="feelSoso"></option><option value="tired" data-i="feelTired"></option><option value="exhausted" data-i="feelExh"></option></select></div>
+<label style="display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.9rem;cursor:pointer"><input type="checkbox" id="libstar" style="width:auto;margin:0"><span data-i="libStarOnly"></span></label>
+<p class="hint" data-i="libDesc"></p>
+<div class="row" style="margin-top:10px;align-items:end">
+<div><label for="libzipfmt" data-i="libZipFmt"></label><select id="libzipfmt"><option value="zwo" data-i="exZwo"></option><option value="fit" data-i="exFit"></option><option value="erg" data-i="exErg"></option><option value="mrc" data-i="exMrc"></option><option value="json" data-i="exJson"></option></select></div>
+<div><button type="button" class="alt" id="libzip" data-i="libZip" style="width:100%;margin:0"></button></div>
+</div>
+<div class="hint" id="libzipmsg" aria-live="polite" style="min-height:1.2em"></div>
+<div id="libContainer" style="margin-top:12px"></div>
+</section>
+
+<!-- Section Constructeur de plan -->
+<section data-block="plan" hidden>
+<div class="phead"><h2 data-i="planT"></h2></div>
+<div class="row">
+<div><label for="pgoal" data-i="pGoal"></label><select id="pgoal"><option value="base" data-i="pgBase"></option><option value="ftp" data-i="pgFtp"></option><option value="vo2" data-i="pgVo2"></option><option value="sprint" data-i="pgSprint"></option><option value="start" data-i="pgStart"></option><option value="sweet" data-i="pgSweet"></option><option value="thr" data-i="pgThr"></option><option value="pol" data-i="pgPol"></option><option value="gran" data-i="pgGran"></option><option value="climb" data-i="pgClimb"></option><option value="crit" data-i="pgCrit"></option><option value="force" data-i="pgForce"></option><option value="maint" data-i="pgMaint"></option><option value="ret" data-i="pgReturn"></option></select></div>
+<div><label for="pweeks" data-i="pWeeks"></label><input id="pweeks" type="number" min="1" max="24" value="8"></div>
+</div>
+<div class="row">
+<div><label for="psess" data-i="pSess"></label><input id="psess" type="number" min="1" max="7" value="3"></div>
+<div><label for="pmax" data-i="pMax"></label><select id="pmax"><option value="45">45 min</option><option value="60">60 min</option><option value="90" selected>90 min</option><option value="120">2 h</option><option value="180">3 h</option><option value="300">5 h</option></select></div>
+</div>
+<div class="row">
+<div><label data-i="pStart"></label><input type="hidden" id="pstart"><button type="button" class="alt" id="pstartbtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
+<div><label for="psport" data-i="sportLbl"></label><select id="psport"><option value="VirtualRide"></option><option value="Ride"></option></select></div>
+</div>
+<div class="row one">
+<div><label for="punit" data-i="unitLbl"></label><select id="punit"><option value="pct" data-i="uPct"></option><option value="w" data-i="uW"></option></select></div>
+</div>
+<label data-i="pDays" style="margin-top:12px;display:block"></label>
+<div id="pdays" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
+<label data-i="pHard" style="margin-top:12px;display:block"></label>
+<div id="phard" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin:6px 0 4px"></div>
+<div class="hint" id="phardwarn" style="color:var(--err)" hidden></div>
+<div class="row one">
+<div><label for="pengine" data-i="pEngine"></label><select id="pengine"><option value="algo" data-i="pEngAlgo"></option><option value="ai" data-i="pEngAi"></option></select></div>
+</div>
+<div id="paibox" hidden>
+<label for="pnotes" data-i="pAiNotes" style="margin-top:8px;display:block"></label>
+<textarea id="pnotes" rows="3" maxlength="800" data-ia="placeholder:pAiPh"></textarea>
+<div class="hint" data-i="pAiHint"></div>
+</div>
+<div class="hint" id="phint" data-i="pHint"></div>
+<div class="actions"><button id="pgen" type="button" data-i="pGen"></button></div>
+<div class="hint" id="paisum" hidden></div>
+<div id="pbox" style="margin-top:10px"></div>
+<div class="hint" id="psum"></div>
+<button id="psend" type="button" hidden data-i="pSend"></button>
+</section>
+
+<!-- Section Import .zwo / .fit -->
+<section data-block="imp" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 9l5-5 5 5"/><path d="M12 4v12"/></svg><span data-i="impLbl"></span></h2></div>
+<div id="impzone" style="border:2px dashed var(--line);border-radius:10px;padding:24px 16px;text-align:center">
+<button id="imppick" type="button" data-i="impPick"></button>
+<input type="file" id="impin" accept=".zwo,.fit,.xml,.mrc,.erg,.json,.txt,.gpx" hidden>
+<p class="hint" data-i="impHint" style="margin-top:12px"></p>
+</div>
+<div id="impHist" hidden><h3 style="margin:20px 0 4px;font-size:.95rem" data-i="impHistT"></h3><div id="impHistList"></div></div>
+</section>
+
+<!-- Section Depuis une activité -->
+<section data-block="shift" hidden>
+<div class="phead"><h2 data-i="shiftT"></h2></div>
+<div class="wtabs" id="shTabs" role="tablist" style="margin-bottom:14px">
+<button type="button" role="tab" data-sh="bulk" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5-5 5"/><path d="M12 7l5 5-5 5"/></svg><span data-i="shTabBulk"></span></button>
+<button type="button" role="tab" data-sh="cal" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i="shTabCal"></span></button>
+</div>
+<div id="shBulk">
+<p class="hint" data-i="shiftHint"></p>
+<div class="row">
+<div><label for="shDate" data-i="shiftFrom"></label><input type="date" id="shDate"></div>
+<div><label for="shDir" data-i="shiftDir"></label><select id="shDir"><option value="1" data-i="shiftLater"></option><option value="-1" data-i="shiftEarlier"></option></select></div>
+</div>
+<div class="row">
+<div><label for="shAmt" data-i="shiftAmt"></label><input type="number" id="shAmt" min="1" max="365" value="1"></div>
+<div><label for="shUnit" data-i="shiftUnit"></label><select id="shUnit"><option value="1" data-i="shiftDays"></option><option value="7" data-i="shiftWeeks"></option></select></div>
+</div>
+<div id="shList" style="margin-top:14px"></div>
+<div class="hint" id="shWarn" style="color:var(--err)" hidden></div>
+<button type="button" id="shGo" style="margin-top:12px;width:100%" disabled></button>
+</div>
+<div id="shCalPane" hidden>
+<p class="hint" data-i="shCalHint"></p>
+<button type="button" id="shCalOpen" style="width:100%;margin-top:6px" data-i="shCalOpen"></button>
+</div>
+</section>
+<section data-block="act" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="actLbl"></span></h2>
+</div>
+<p class="hint" data-i="actDesc"></p>
+<div class="row one">
+<div><label for="actout" data-i="actOutLbl"></label><select id="actout"><option value="w" data-i="actOutW"></option><option value="pct" data-i="actOutP"></option></select></div>
+</div>
+<p class="hint" id="actftpbox" data-i="actFtpHint" hidden></p>
+<div class="row" style="margin-top:12px">
+<div><label for="actplace" data-i="cmpPlace"></label>
+<select id="actplace"><option value="any" data-i="cmpPAny"></option><option value="in" data-i="indoor"></option><option value="out" data-i="outdoor"></option></select></div>
+<div><label for="acttype" data-i="cmpType"></label>
+<select id="acttype">
+<option value="any" data-i="cmpTAny"></option>
+<option value="rec" data-i="cmpTRec"></option>
+<option value="end" data-i="cmpTEnd"></option>
+<option value="tem" data-i="cmpTTempo"></option>
+<option value="ss" data-i="cmpTSs"></option>
+<option value="th" data-i="cmpTTh"></option>
+<option value="vo2" data-i="cmpTVo2"></option>
+<option value="an" data-i="cmpTAn"></option>
+</select></div>
+</div>
+<div style="margin-top:12px"><label for="actper" data-i="actW"></label><select id="actper" data-ia="aria-label:actW"><option value="14" data-i="w2"></option><option value="28" data-i="w4"></option><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
+<div style="margin-top:12px"><label for="actq" data-i="cmpQ"></label><input id="actq" data-ia="placeholder:cmpPh"></div>
+<p class="hint" data-i="cmpFmt"></p>
+<div class="actions" style="margin-top:8px"><button id="sact" type="button" data-i="cmpSearch"></button></div>
+<div class="hint" id="actstat" role="status"></div>
+<div id="actbox" style="margin-top:12px"></div>
+</section>
+
+<!-- Section Comparateur de séances -->
+<section data-block="chat" hidden>
+<div class="phead"><h2 data-i="chatT"></h2><button class="alt small" id="chatExp" type="button" data-i="chatExport"></button><button class="alt small" id="chatClr" type="button" data-i="chatClear"></button></div>
+<p class="hint" data-i="chatHint"></p>
+<div id="chatLog" aria-live="polite"></div>
+<div class="actions" style="align-items:flex-end;margin-top:10px;flex-wrap:nowrap"><textarea id="chatIn" rows="2" style="flex:1;margin:0" data-ia="placeholder:chatPh"></textarea><button type="button" id="chatSend" data-i="chatSend"></button></div>
+</section>
+<section data-block="exp" hidden>
+<div class="phead"><h2 data-i="expT"></h2></div>
+<p class="hint" data-i="expDesc"></p>
+<div class="actions" style="align-items:center;gap:6px;margin:6px 0">
+<button type="button" class="alt small" data-expp="30" data-i="expP30"></button><button type="button" class="alt small" data-expp="90" data-i="expP90"></button><button type="button" class="alt small" data-expp="ytd" data-i="expPY"></button>
+</div>
+<div class="row">
+<div><label for="expFrom" data-i="expFrom"></label><input type="date" id="expFrom"></div>
+<div><label for="expTo" data-i="expTo"></label><input type="date" id="expTo"></div>
+</div>
+<div class="row">
+<div><label for="expMax" data-i="expMax"></label><input type="number" id="expMax" min="0" max="500" step="1" value="15" inputmode="numeric"></div>
+<div></div>
+</div>
+<div class="row one">
+<div><label for="expType" data-i="expType"></label><select id="expType"><option value="all" data-i="expAll"></option><option value="bike" data-i="expBike"></option><option value="ride" data-i="expOut"></option><option value="rideIn" data-i="expIn"></option><option value="run" data-i="expRun"></option><option value="swim" data-i="expSwim"></option><option value="other" data-i="expOth"></option></select></div>
+</div>
+<div class="actions" style="align-items:center;gap:8px;margin:10px 0"><button type="button" id="expGo" data-i="expGo"></button><button type="button" class="alt" id="expStop" data-i="stopGen" hidden></button></div>
+<div class="hint" id="expMsg" role="status"></div>
+</section>
+<section data-block="calp" class="cal-page" hidden>
+<div class="phead"><h2 data-i="calT"></h2>
+<button class="alt small icon" id="calprev2" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+<span id="calmonth2" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
+<button class="alt small icon" id="calnext2" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+<button class="alt small" id="caltoday2" type="button" data-i="today"></button>
+<button class="alt small icon" id="rcal2" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+</div>
+<div id="calbox2"></div>
+<div id="calsum2" class="calsum"></div>
+</section>
+<section data-block="ses" hidden>
+<div class="phead"><h2 data-i="sesT"></h2><button class="alt small" id="sesRef" type="button" data-i="refresh"></button><button class="alt small" id="sesClose" type="button" data-ia="title:close;aria-label:close">✕</button></div>
+<div class="ses-pick">
+<div class="ses-lbl" data-i="sesPick"></div>
+<div class="actions" style="justify-content:space-between;align-items:center;margin:6px 0"><button class="alt small" id="sesPrev" type="button">‹</button><b id="sesMT"></b><button class="alt small" id="sesNext" type="button">›</button><button class="alt small" id="sesToday" type="button" data-i="today"></button></div>
+<div id="sesCal"></div>
+</div>
+<select id="sesSel" hidden aria-hidden="true" tabindex="-1"></select>
+<div class="ses-lbl ses-lbl2" data-i="sesAna"></div>
+<div id="sesBox"></div>
+</section>
+<section data-block="per" hidden>
+<div class="phead"><h2 data-i="perT"></h2><button class="alt small" id="perRef" type="button" data-i="refresh"></button></div>
+<div class="actions" style="align-items:center;gap:8px;margin:6px 0 12px">
+<span class="seg"><button type="button" class="alt small" data-pu="w" aria-pressed="true" data-i="perWeeks"></button><button type="button" class="alt small" data-pu="m" aria-pressed="false" data-i="perMonths"></button></span>
+<select id="perN" aria-label="N"></select>
+</div>
+<div id="perBox"></div>
+</section>
+<section data-block="cmp" hidden>
+<div class="phead"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13.5l9 5 9-5"/><path d="M3 18.5l9 5 9-5"/></svg><span data-i="cmpLbl"></span></h2>
+</div>
+<p class="hint" data-i="cmpDesc"></p>
+<div class="row">
+<div><label for="cmpplace" data-i="cmpPlace"></label>
+<select id="cmpplace"><option value="any" data-i="cmpPAny"></option><option value="in" data-i="indoor"></option><option value="out" data-i="outdoor"></option></select></div>
+<div><label for="cmptype" data-i="cmpType"></label>
+<select id="cmptype">
+<option value="any" data-i="cmpTAny"></option>
+<option value="rec" data-i="cmpTRec"></option>
+<option value="end" data-i="cmpTEnd"></option>
+<option value="tem" data-i="cmpTTempo"></option>
+<option value="ss" data-i="cmpTSs"></option>
+<option value="th" data-i="cmpTTh"></option>
+<option value="vo2" data-i="cmpTVo2"></option>
+<option value="an" data-i="cmpTAn"></option>
+</select></div>
+</div>
+<div style="margin-top:12px"><label for="cmpper" data-i="actW"></label><select id="cmpper" data-ia="aria-label:actW"><option value="56" data-i="w8"></option><option value="180" data-i="cmpP6"></option><option value="365" data-i="cmpP12"></option><option value="730" data-i="cmpP24"></option><option value="1095" data-i="cmpP36"></option><option value="1825" data-i="cmpP60"></option></select></div>
+<div style="margin-top:12px"><label for="cmpq" data-i="cmpQ"></label><input id="cmpq" data-ia="placeholder:cmpPh"></div>
+<p class="hint" data-i="cmpFmt"></p>
+<div class="actions" style="margin-top:8px"><button id="rcmp" type="button" data-i="cmpSearch"></button><button id="cmpprog" class="alt small aibtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span data-i="cmpProg"></span></button><button id="cmpclr" class="alt small" type="button" data-i="cacheClr"></button><span class="cacheinfo" hidden></span></div>
+<div class="hint" id="cmpstat" role="status"></div>
+<div id="cmpbox"></div>
+
+<input id="cmpname" type="search" style="display:none;margin-top:12px" data-ia="placeholder:cmpNamePh;aria-label:cmpNamePh">
+<div id="cmptable"></div>
+<div id="cmpnav" style="display:none;gap:8px;margin-top:12px;align-items:center"><label for="cmpplot" class="hint" style="margin:0" data-i="cmpPlot"></label><select id="cmpplot"><option value="ef" data-i="cmpPlEf"></option><option value="pw" data-i="cmpPlPw"></option><option value="hr" data-i="cmpPlHr"></option></select><label for="cmpma" class="hint" style="margin:0" data-i="cmpMa"></label><select id="cmpma"><option value="auto" data-i="cmpFtAuto" selected></option><option value="1" data-i="cmpFt1"></option><option value="2" data-i="cmpFt2"></option><option value="3" data-i="cmpFt3"></option></select></div>
+<div id="cmptip" style="display:none"></div>
+<div id="cmpchart"></div>
+<div class="hint" id="cmpinfo" role="status"></div>
+</section>
+
+<div id="prog" hidden>
+  <div class="pt"><span id="progk"></span><div style="display:flex;gap:8px;align-items:center"><span id="progs"></span><button class="alt small danger" id="stopGen" type="button" data-i="stopGen" style="padding:2px 8px!important;font-size:.8rem!important">Stop</button></div></div>
+  <div class="pb" role="progressbar" aria-valuemin="0" aria-valuemax="100"><i id="progf"></i></div>
+</div>
+<div id="msg" role="status"></div>
+
+<section data-block="run" class="run" hidden>
+<div class="phead" style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h2 class="ic"><svg class="hic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z"/></svg><span data-i="runTitle"></span></h2><span id="runFsTop"><span id="runFsName"></span><span id="runFsTm" data-ia="title:runClk"></span></span><span id="runFsDev" aria-live="polite"></span><button type="button" class="alt small" id="runPg">●○</button></div>
+<div class="rcard rtop rdev"><div class="rbt"><span class="rdot" id="runDot"></span><span id="runBtTxt"></span><span id="runDevs" class="rbt"></span>
+<button type="button" class="alt small" id="runPairT" data-i="runPairT"></button>
+<button type="button" class="alt small" id="runPairH" data-i="runPairH"></button>
+<label id="runAllL"><input type="checkbox" id="runAll"><span data-i="runAll"></span></label>
+<label id="runErgL" hidden><input type="checkbox" id="runErg" checked><span data-i="runErg"></span></label></div>
+<div class="hint" id="runBtMsg" hidden></div></div>
+<div class="rcard rrow" id="runFtpBox" style="align-items:center;gap:8px"><label for="runFtpSel" data-i="runFtpSel" style="margin:0"></label><select id="runFtpSel" style="width:auto;margin:0"></select><input type="number" id="runFtpC" min="50" max="600" step="1" inputmode="numeric" style="width:90px;margin:0" hidden></div>
+<details class="rcard" id="runLs" open><summary><b data-i="runListT"></b> <span id="runLsCnt" class="hint"></span></summary>
+<div class="rrow" style="margin:8px 0"><input id="runQ" type="search" data-ia="placeholder:runSearch" style="flex:1;min-width:140px;margin:0"><button type="button" class="alt small" id="runRef" data-ia="title:runRefresh;aria-label:runRefresh">↻</button></div>
+<div id="runChips"></div><div id="runRows"></div><div class="hint" id="runLsMsg"></div></details>
+<div class="rcard rtop"><div class="rrow">
+<div><div class="rlbl" data-i="runWk"></div><div class="rwk"><b id="runWkName"></b><button type="button" class="alt small icon" id="runFs" data-ia="title:runFs;aria-label:runFs"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="runFsP" d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></button></div><div id="runWkChart" aria-hidden="true"></div></div>
+</div></div>
+<div class="rcard rmus" id="runMus" hidden><div class="rctl">
+<a id="musIc" href="https://www.jamendo.com" target="_blank" rel="noopener" title="Jamendo" aria-label="Jamendo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></a>
+<button type="button" id="musGo" class="alt small"></button>
+<button type="button" id="musNext" class="alt small" hidden>⏭</button>
+<input type="range" id="musVol" min="0" max="100" step="5" data-ia="aria-label:musVol">
+<button type="button" id="musMin" class="alt small icon"></button>
+</div><select id="musTag" data-ia="aria-label:jamTagL"><option value="" data-i="jamTagAny"></option><option value="pop">Pop</option><option value="rock">Rock</option><option value="electronic">Electronic</option><option value="dance">Dance</option><option value="house">House</option><option value="hiphop">Hip-hop</option><option value="indie">Indie</option><option value="metal">Metal</option><option value="jazz">Jazz</option></select><div class="hint" id="musInfo"></div></div>
+<div id="runFsHint" hidden data-i="runFsHint"></div>
+<div class="launch rcard" id="runLaunch"><button type="button" id="runGo" disabled></button></div>
+<div class="rbar rhud" id="runBar"><div class="rrow"><div><div class="rlbl"><span data-i="runStep"></span> <span id="runNum"></span></div><h3 id="runName" style="margin:2px 0"></h3></div>
+<div><div class="rlbl" data-i="runLeft"></div><div class="rbig" id="runTimer">00:00</div></div>
+<div><div class="rlbl" data-i="runTotal"></div><b id="runElapsed">00:00</b> / <span id="runDur">00:00</span><div class="rrem"><span class="rlbl" data-i="runRem"></span> <b id="runRem">00:00</b></div></div></div><div id="runNx" class="rnx" style="visibility:hidden"><span class="rlbl" data-i="runNx"></span> <b id="runNxT">&nbsp;</b></div><div id="runAutoP" class="rbadge" hidden></div></div>
+<div class="rgrid rhud">
+<div class="rcard"><div class="rlbl"><span id="runTgtL" data-i="runTgt"></span><span class="rbadge" id="runErgB" hidden></span></div><div class="rbig" id="runTP">0</div><small id="runPct"></small></div>
+<div class="rcard"><div class="rlbl"><span data-i="runAct"></span> <span class="rbadge" id="runVar"></span></div><div class="rbig" id="runAP">0</div><small id="runZone"></small></div>
+<div class="rcard"><div class="rlbl" data-i="runHr"></div><div class="rbig" id="runHRv">--</div><small>bpm</small></div>
+<div class="rcard"><div class="rlbl" data-i="runCad"></div><div class="rbig" id="runCV">--</div><small id="runCT"></small></div></div>
+<div class="rmx rhud" id="runMx" hidden><div class="rcard" id="runMx_avg" hidden><div class="rlbl" data-i="runMxAvg"></div><div class="rbig" id="runMxV_avg">--</div><small id="runMxS_avg"></small></div><div class="rcard" id="runMx_avgS" hidden><div class="rlbl" data-i="runMxAvgS"></div><div class="rbig" id="runMxV_avgS">--</div><small id="runMxS_avgS"></small></div><div class="rcard" id="runMx_kj" hidden><div class="rlbl" data-i="runMxKj"></div><div class="rbig" id="runMxV_kj">--</div><small id="runMxS_kj"></small></div><div class="rcard" id="runMx_dec" hidden><div class="rlbl" data-i="runMxDec"></div><div class="rbig" id="runMxV_dec">--</div><small id="runMxS_dec"></small></div><div class="rcard" id="runMx_dist" hidden><div class="rlbl" data-i="runMxDist"></div><div class="rbig" id="runMxV_dist">--</div><small id="runMxS_dist"></small></div></div>
+<div class="rcard rhud rctlc"><div class="rnud">
+<button type="button" class="alt small" data-rn="-10" title="-10 W">-10</button><button type="button" class="alt small" data-rn="-5" title="-5 W">-5</button>
+<button type="button" class="alt small" data-rn="0" data-ia="title:runReset;aria-label:runReset"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+<button type="button" class="alt small" data-rn="5" title="+5 W">+5</button><button type="button" class="alt small" data-rn="10" title="+10 W">+10</button>
+</div><div class="rctl">
+<button type="button" class="alt small" id="runPrev" aria-label="Previous step">⏮</button>
+<button type="button" id="runPlay"></button>
+<button type="button" class="alt small" id="runNext" aria-label="Next step">⏭</button>
+<button type="button" class="alt small" id="runFin" data-i="runFin"></button></div></div>
+<div class="rcard rhud"><div class="rlbl" data-i="runProf"></div><canvas id="runCv"></canvas></div>
+<div id="runS2"><canvas id="runRd" aria-hidden="true"></canvas><div id="runHz"><div class="hzt">
+<div class="hk"><div class="hl" data-i="runTotal"></div><div class="hv" id="hzEl">00:00</div><div class="hl" id="hzTot"></div></div>
+<div class="hk hzp zk" id="hzPw"><div class="hl" data-i="runAct"></div><div class="hv"><span id="hzAp">--</span><small>W</small></div><div class="hl" id="hzTg"></div></div>
+<div class="hk" id="hzHk"><div class="hl">♥ bpm</div><div class="hv" id="hzHr">--</div></div>
+<div class="hk" id="hzCk"><div class="hl">rpm</div><div class="hv" id="hzCd">--</div></div>
+<div class="hk"><div class="hl">km/h</div><div class="hv" id="hzSp">0</div></div></div>
+<div class="hzr"><div id="hzList"></div></div>
+<div class="hzbt"><div class="hzrow"><b id="hzNm"></b><span id="hzLf">00:00</span></div><div class="hzbar"><i id="hzPr"></i></div><div class="hzx"><div id="hzSt"></div><div id="hzNx"></div></div></div><div id="hzMap" hidden></div></div></div>
+<div class="rcard" id="runEnd" hidden><div class="rlbl" data-i="runEndT"></div><div id="runEndS" hidden></div>
+<div class="rctl"><button type="button" id="runUp" data-i="runUp"></button></div><div class="hint" id="runEndM"></div></div>
+<div class="rcard" id="runPoolC" hidden><div class="rlbl"><span data-i="poolT"></span> <span id="poolN"></span></div><div class="hint" data-i="poolHint"></div><div id="poolRows"></div></div>
+<dialog id="runFinDlg" aria-labelledby="finQ"><h2 id="finQ" data-i="finQ"></h2><p class="hint" id="finSum"></p><p class="hint" data-i="finHint" id="finHint"></p><p class="hint" data-i="finHintNo" id="finHintNo" hidden></p>
+<div class="actions"><button type="button" id="finSave" data-i="finSave"></button><button type="button" class="alt danger" id="finDis" data-i="finDis"></button><button type="button" class="alt" id="finBack" data-i="finBack"></button></div></dialog>
+</section>
+
+<section id="prev" data-block="prev" hidden>
+<div class="phead">
+<h2 data-i="preview"></h2>
+<button class="alt small icon danger" id="trash" type="button" data-ia="title:delPrev;aria-label:delPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6"/></svg></button>
+</div>
+<div id="planedbar" class="hint" hidden><span id="planedtxt"></span><button class="alt small" id="planedx" type="button" data-i="pEdCancel"></button></div>
+<div id="chart" class="chart"></div>
+<p class="hint" id="srcact" hidden><a id="srcactl" href="#" target="_blank" rel="noopener" data-i="srcAct"></a></p>
+<p class="hint" data-i="dragHint"></p>
+<div id="explain" class="explain" hidden></div>
+<div class="row">
+<div><label for="name" data-i="name"></label><input id="name"></div>
+<div><label data-i="date"></label><input type="hidden" id="date"><button type="button" class="alt" id="datebtn" style="display:block;width:100%;margin:0;text-align:left"></button></div>
+</div>
+<div class="row">
+<div><label for="shrinksel" data-i="shrinkLbl"></label>
+<select id="shrinksel"><option value="30">30'</option><option value="45">45'</option><option value="60">1h</option><option value="75">1h15</option><option value="90">1h30</option><option value="105">1h45</option><option value="120">2h</option></select></div>
+<div><label>&nbsp;</label><button class="alt small" id="shrinkbtn" type="button" data-i="shrinkBtn"></button></div>
+</div>
+<div class="row">
+<div><label for="stairsel" data-i="stairLbl"></label>
+<select id="stairsel"><option value="30">30 s</option><option value="60" selected>1 min</option><option value="120">2 min</option></select></div>
+<div><label>&nbsp;</label><button class="alt small" id="stairbtn" type="button" data-i="stairBtn"></button></div>
+</div>
+<div class="row">
+<div><label data-i="intensLbl"></label>
+<div style="display:flex;gap:8px"><button class="alt small" id="minus5" type="button" data-i="easier"></button><button class="alt small" id="plus5" type="button" data-i="harder"></button></div></div>
+<div><label>&nbsp;</label><button class="alt small" id="undoBtn" type="button" data-i="undo" hidden></button></div>
+</div>
+<details class="fold" id="descDet"><summary data-i="descLbl"></summary>
+<textarea id="desc"></textarea></details>
+<div class="actions" style="margin-top:14px"><button id="send" type="button" data-i="send"></button><button id="plsave" type="button" data-i="pEdSave" hidden></button>
+<button class="alt small" id="expdl" type="button" data-i="exportBtn"></button>
+<button class="alt small" id="toplayer" type="button" hidden></button></div>
+</section>
+
+
+</div>
+<aside class="col">
+
+<div class="wtabs" id="wtabs" role="tablist" data-ia="aria-label:widgetsLbl" hidden>
+<button type="button" role="tab" data-wt="agenda" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span data-i="wtAgenda"></span></button>
+<button type="button" role="tab" data-wt="form" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg><span data-i="wtForm"></span></button>
+<button type="button" role="tab" data-wt="ana" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span data-i="wtAna"></span></button>
+</div>
+
+<section data-block="cal">
+<div class="phead"><h2 data-i="calT"></h2>
+<button class="alt small icon" id="calprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+<span id="calmonth" class="badge" style="margin:0 4px;min-width:110px;text-align:center"></span>
+<button class="alt small icon" id="calnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+<button class="alt small" id="caltoday" type="button" data-i="today"></button>
+<button class="alt small icon" id="rcal" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<button class="alt small icon" id="calmax" type="button" aria-pressed="false" data-ia="title:calMax;aria-label:calMax"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+<a class="alt small icon ext" id="lkCal" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="calbox"></div>
+<div id="calsum" class="calsum"></div>
+</section>
+
+<section data-block="next">
+<div class="phead"><h2 data-i="nextT"></h2>
+<button class="alt small" id="nextedit" type="button" data-i="nextEdit" hidden></button>
+<button class="alt small icon" id="rnext" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkNext" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="nextbox"></div>
+</section>
+
+<section data-block="fit">
+<div class="phead"><h2 data-i="fitT"></h2>
+<button class="alt small icon" id="rfit" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkFit" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a>
+<select id="fper" data-ia="aria-label:fitPer"><option value="30" data-i="p1m"></option><option value="60" data-i="p2m" selected></option><option value="90" data-i="p3m"></option><option value="180" data-i="p6m"></option><option value="365" data-i="p1y"></option></select></div>
+<div id="fitbox"></div>
+</section>
+
+<section data-block="last">
+<div class="phead"><h2 data-i="lastW"></h2>
+<span class="seg"><button class="alt small icon" id="lprev" type="button" data-ia="title:lPrev;aria-label:lPrev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><button class="alt small icon" id="lnext" type="button" data-ia="title:lNext;aria-label:lNext"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></span>
+<button class="alt small aibtn" id="lastai" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.7 1.8 1.8.7-1.8.7L19 20l-.7-1.8-1.8-.7 1.8-.7z"/></svg><span data-i="lastAi"></span></button>
+<button class="alt small icon" id="rlast" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkLast" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="lastbox"></div>
+</section>
+
+<section data-block="load">
+<div class="phead"><h2 data-i="load2"></h2><button class="alt small icon" id="rload" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkLoad" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="loadbox"></div>
+<div id="loadcap" class="hint"></div>
+</section>
+
+<section data-block="best">
+<div class="phead"><h2 data-i="best"></h2>
+<select id="bkind"><option value="VirtualRide" data-i="indoor"></option><option value="Ride" data-i="outdoor"></option></select>
+<select id="bper"><option value="42d" data-i="per6"></option><option value="84d" data-i="per12"></option><option value="1y" data-i="per1y"></option></select>
+<button class="alt small icon" id="rbest" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button>
+<a class="alt small icon ext" id="lkBest" target="_blank" rel="noopener" data-ia="title:extT;aria-label:extT"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg></a></div>
+<div id="bestbox" class="tbl"></div>
+</section>
+
+<section data-block="wx">
+<div class="phead"><h2 data-i="wxT"></h2><button class="alt small icon" id="rwx" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="wxbox"></div>
+<div id="wxcap" class="hint"></div>
+</section>
+
+<section data-block="climb" hidden>
+<div class="phead"><h2 data-i="clbT"></h2><button class="alt small icon" id="rclb" type="button" data-ia="title:clbNew;aria-label:clbNew"><svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+<div id="clbbox"></div>
+</section>
+
+<section data-block="zon">
+<div class="phead"><h2 data-i="zonT"></h2>
+<select id="zbas" data-ia="aria-label:zonBas"><option value="power" data-i="zbPow"></option><option value="hr" data-i="zbHr"></option></select>
+<select id="zper" data-ia="aria-label:zonPer"><option value="4" data-i="zp4"></option><option value="8" data-i="zp8" selected></option><option value="12" data-i="zp12"></option></select>
+<button class="alt small icon" id="rzon" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="zonbox"></div>
+<div id="zoncap" class="hint"></div>
+</section>
+
+<section data-block="heat">
+<div class="phead"><h2 data-i="heatT"></h2>
+<button class="alt small icon" id="rheat" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="heatbox"></div>
+<div id="heatcap" class="hint"></div>
+</section>
+
+<section data-block="vo2">
+<div class="phead"><h2 data-i="vo2T"></h2>
+<select id="vo2per" data-ia="aria-label:vo2Per"><option value="7" data-i="vo2P7"></option><option value="14" data-i="vo2P14"></option><option value="42" data-i="per6"></option></select>
+<button class="alt small icon" id="rvo2" type="button" data-ia="title:refresh;aria-label:refresh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></button></div>
+<div id="vo2box"></div>
+<div id="vo2cap" class="hint"></div>
+</section>
+
+</aside>
+</div>
+<footer>
+  <a class="coffee" id="coffee" data-ia="title:coffee"><span aria-hidden="true">☕</span><span data-i="coffee"></span></a>
+  <div>Many thanks to <a href="https://intervals.icu" target="_blank" rel="noopener">intervals.icu</a> — Open training analytics & calendar</div>
+  <div class="privnote" data-i="privNote"></div>
+  <div class="cacheinfo" hidden></div>
+  <div class="appver" id="appVer"></div>
+</footer>
+</main>
+<script src="js/core/core.js"></script>
+<script src="js/core/i18n.js"></script>
+<script src="js/core/ui-helpers.js"></script>
+<script src="js/core/settings.js"></script>
+<script src="js/api/intervals-api.js"></script>
+<script src="js/dashboard/weather.js"></script>
+<script src="js/dashboard/training-load-last-ride.js"></script>
+<script src="js/dashboard/ai-analysis.js"></script>
+<script src="js/dashboard/widgets.js"></script>
+<script src="js/dashboard/next-workout.js"></script>
+<script src="js/workout/parser.js"></script>
+<script src="js/workout/chart.js"></script>
+<script src="js/workout/shrink.js"></script>
+<script src="js/workout/generate.js"></script>
+<script src="js/library/workouts-builtin.js"></script>
+<script src="js/library/blocks-zone.js"></script>
+<script src="js/library/library-ui.js"></script>
+<script src="js/library/library-zip.js"></script>
+<script src="js/library/library-v2-data.js"></script>
+<script src="js/library/favorites-and-rest.js"></script>
+<script src="js/player/climbs.js"></script>
+<script src="js/workout-io/send-and-export.js"></script>
+<script src="js/workout-io/import-files.js"></script>
+<script src="js/workout-io/import-gpx.js"></script>
+<script src="js/workout-io/from-activity.js"></script>
+<script src="js/workout-io/comparator.js"></script>
+<script src="js/calendar/planning-calendar.js"></script>
+<script src="js/calendar/calendar-page.js"></script>
+<script src="js/calendar/fitness-chart.js"></script>
+<script src="js/editor/manual-editor.js"></script>
+<script src="js/editor/chart-handles.js"></script>
+<script src="js/editor/edit-planned.js"></script>
+<script src="js/editor/training-plan.js"></script>
+<script src="js/editor/ai-plan.js"></script>
+<script src="js/player/player-session.js"></script>
+<script src="js/player/player-hud-map.js"></script>
+<script src="js/player/player-trainer-finish.js"></script>
+<script src="js/player/player-timer-voice.js"></script>
+<script src="js/player/player-music.js"></script>
+<script src="js/player/player-runtime-ui.js"></script>
+<script src="js/player/player-devices.js"></script>
+<script src="js/tools/modes-and-tools.js"></script>
+<script src="js/tools/bulk-export.js"></script>
+<script src="js/ui/app-shell.js"></script>
+<script src="js/ui/glossary.js"></script>
+</body>
+</html>
