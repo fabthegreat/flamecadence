@@ -52,6 +52,7 @@ function runCrank(v, extra){
 // Renvoie l'appareil, null s'il n'a pas encore été vu (éteint, hors de portée), ou false si le navigateur ne le connaît plus (autorisation retirée).
 async function runKnownDevice(kind){
   const id = store.get("si_dev_" + kind); if(!id || !navigator.bluetooth || !navigator.bluetooth.getDevices) return false;
+  const prev = AUTO.last[kind]; if(prev && prev.id === id){ AUTO.last[kind] = null; return prev; } // décrochage en cours de séance : on retente tout de suite une connexion directe (sans attendre une publicité), la recherche complète ne sert qu'en cas d'échec
   let dev = null; try{ dev = (await navigator.bluetooth.getDevices()).find(d => d.id === id) || null; }catch(e){ return false; }
   if(!dev) return false;
   if(dev.watchAdvertisements){ // Chrome exige d'avoir vu l'appareil annoncer sa présence avant de s'y connecter
@@ -64,18 +65,19 @@ async function runKnownDevice(kind){
 }
 // Reconnexion automatique : trainer et ceinture cherchés en parallèle, en boucle jusqu'à 3 minutes (on peut allumer le trainer ou mettre la ceinture après l'ouverture du lecteur) ;
 // elle reprend aussi toute seule si un appareil décroche pendant la séance, sauf après un « Déconnecter » volontaire.
-const AUTO = {busy: {}, stop: {}, manual: {}, wide: {}};
+const AUTO = {busy: {}, stop: {}, manual: {}, wide: {}, last: {}, stale: {}};
 const devNm = k => store.get("si_devn_" + k) || t(k === "hr" ? "runPairH" : "runPairT");
 async function runAutoKind(k){
   if(AUTO.busy[k] || !RUN) return; AUTO.busy[k] = true; AUTO.stop[k] = false; runBtUI();
-  const end = Date.now() + 180000; let gone = false;
+  const end = Date.now() + 180000; let gone = false; const live = () => RUN && RUN.began; // séance commencée : on réessaie tant qu'on est dans le lecteur (plus de renoncement après 3 min)
   try{
-    while(RUN && !RUN.dev[k] && !AUTO.stop[k] && Date.now() < end && mode === "run" && store.get("si_dev_" + k)){
+    while(RUN && !RUN.dev[k] && !AUTO.stop[k] && (live() || Date.now() < end) && mode === "run" && store.get("si_dev_" + k)){
       let r = null; try{ r = await runPair(k, true); }catch(e){}
       if(r === true) break;
       if(r === "gone"){ gone = true; break; }
-      await new Promise(res => setTimeout(res, 3000));
+      await new Promise(res => setTimeout(res, 2000 + Math.min(8000, (AUTO.tries = (AUTO.tries || 0) + 1) * 500))); // pause croissante (2,5 s → 10 s)
     }
+    AUTO.tries = 0;
   }finally{
     AUTO.busy[k] = false;
     if(RUN && !RUN.dev[k] && !AUTO.stop[k] && mode === "run" && store.get("si_dev_" + k)){
@@ -112,14 +114,14 @@ async function runPair(kind, auto){
     const srv = await dev.gatt.connect();
     if(kind === "hr"){
       const ch = await (await srv.getPrimaryService("heart_rate")).getCharacteristic("heart_rate_measurement");
-      ch.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; RUN.live.h = (v.getUint8(0) & 1) ? v.getUint16(1, true) : v.getUint8(1); runPump(); });
+      ch.addEventListener("characteristicvaluechanged", e => { const v = e.target.value; RUN.live.h = (v.getUint8(0) & 1) ? v.getUint16(1, true) : v.getUint8(1); RUN.seen = RUN.seen || {}; RUN.seen.hr = Date.now(); runPump(); });
       await ch.startNotifications();
     }else{
       let svc = null, sErr = ""; try{ svc = await srv.getPrimaryService("fitness_machine"); }catch(e){ sErr = e.name + ": " + e.message; }
       if(svc){
         const ch = await svc.getCharacteristic(0x2AD2);
         ch.addEventListener("characteristicvaluechanged", e => { // flags (16 bits) puis champs dans l'ordre de la spec FTMS
-          const v = e.target.value, f = v.getUint16(0, true); let o = 2;
+          const v = e.target.value, f = v.getUint16(0, true); let o = 2; RUN.seen = RUN.seen || {}; RUN.seen.trainer = Date.now();
           if(!(f & 1)) o += 2; if(f & 2) o += 2;
           if(f & 4){ RUN.live.c = v.getUint16(o, true) / 2; RUN.cadAt = Date.now(); RUN.cadSrc = "FTMS"; o += 2; } if(f & 8) o += 2;
           if(f & 16) o += 3; if(f & 32) o += 2;
@@ -142,7 +144,7 @@ async function runPair(kind, auto){
         }catch(e){ console.warn("Cycling Power (cadence) indisponible", e); }
       }else{ // repli : puissance seule via le service Cycling Power (pas de cadence ni d'ERG)
         const pw = await (await srv.getPrimaryService("cycling_power")).getCharacteristic("cycling_power_measurement");
-        pw.addEventListener("characteristicvaluechanged", e => { RUN.live.p = e.target.value.getInt16(2, true); runCrank(e.target.value, false); runPump(); });
+        pw.addEventListener("characteristicvaluechanged", e => { RUN.seen = RUN.seen || {}; RUN.seen.trainer = Date.now(); RUN.live.p = e.target.value.getInt16(2, true); runCrank(e.target.value, false); runPump(); });
         await pw.startNotifications(); note = t("runNoFtms", sErr || "—");
         try{ // pas de FTMS : contrôle ERG via Tacx FE-C over BLE
           const fs = await srv.getPrimaryService(FEC), tx = await fs.getCharacteristic("6e40fec3-b5a3-f393-e0a9-e50e24dcca9e");
@@ -151,10 +153,20 @@ async function runPair(kind, auto){
         }catch(e){ console.warn("FE-C indisponible", e); note = t("runNoFtms", (sErr || "—") + " / FE-C: " + e.name + ": " + e.message); }
       }
     }
-    RUN.dev[kind] = dev; AUTO.manual[kind] = false; try{ store.set("si_dev_" + kind, dev.id); store.set("si_devn_" + kind, dev.name || ""); }catch(e){}
+    RUN.dev[kind] = dev; AUTO.manual[kind] = false; AUTO.last[kind] = dev; RUN.seen = RUN.seen || {}; RUN.seen[kind] = Date.now(); AUTO.stale[kind] = 0; try{ store.set("si_dev_" + kind, dev.id); store.set("si_devn_" + kind, dev.name || ""); }catch(e){}
     dev.addEventListener("gattserverdisconnected", () => { if(RUN.dev[kind] === dev){ runDevGone(kind); if(!AUTO.manual[kind] && mode === "run") runAutoKind(kind); } }); // décrochage involontaire : on relance la recherche
     if(kind !== "hr") setTimeout(() => { if(RUN.dev.trainer === dev && !RUN.cadSrc) say(t("runNoCad")); }, 10000); // ni FTMS ni Cycling Power n'annoncent de cadence
     runBtUI(); if(note) say(note);
     return true;
   }catch(err){ console.warn("BLE:", err); try{ dev.gatt.disconnect(); }catch(e){} if(!auto) say(t("runBtFail", dev.name || "BLE", err.name + ": " + err.message)); return false; }
+}
+// Surveillance : détecte une liaison « fantôme » (le navigateur croit l'appareil connecté mais plus aucune donnée n'arrive, ou gatt.connected est faux sans événement) et relance la reconnexion
+function runBtWatch(){
+  const R = RUN; if(!R || mode !== "run" || !R.began || !navigator.bluetooth) return; const now = Date.now();
+  ["trainer", "hr"].forEach(k => {
+    const d = R.dev[k]; if(!d || AUTO.manual[k]) return;
+    const lost = !(d.gatt && d.gatt.connected), silent = now - ((R.seen && R.seen[k]) || now) > 15000 && now - (AUTO.stale[k] || 0) > 20000;
+    if(lost){ runDevGone(k); if(!AUTO.busy[k]) runAutoKind(k); return; }
+    if(silent){ AUTO.stale[k] = now; console.warn("BLE: plus de données depuis 15 s, reconnexion", k); AUTO.last[k] = d; try{ d.gatt.disconnect(); }catch(e){} } // déclenche gattserverdisconnected → reconnexion
+  });
 }

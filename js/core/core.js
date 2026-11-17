@@ -1,5 +1,5 @@
 /* FlameCadence - Core: app version, $ helper, localStorage wrapper, theme (light/dark/auto) and site font */
-const APP_VERSION = "1.7.1"; // à incrémenter à chaque mise à jour
+const APP_VERSION = "1.7.2"; // à incrémenter à chaque mise à jour
 document.getElementById("appVer").textContent = "FlameCadence v" + APP_VERSION;
 "use strict";
 const $ = id => document.getElementById(id);

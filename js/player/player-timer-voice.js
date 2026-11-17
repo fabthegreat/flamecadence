@@ -25,6 +25,8 @@ function runTmStop(){ const h = RUN.tm; RUN.tm = 0; if(h && h.terminate){ h.term
 function runPump(){ if(typeof RUN !== "undefined" && RUN && RUN.tm && Date.now() - (RUN.lt || 0) > (document.hidden ? 1100 : 2500)) runTick(); }
 function runTick(){
   RUN.lt = Date.now();
+  if(!RUN.paused){ RUN.ergN = (RUN.ergN || 0) + 1; if(RUN.ergN % 5 === 0) runErgRefresh(); } // consigne renvoyée toutes les 5 s
+  RUN.wdN = (RUN.wdN || 0) + 1; if(RUN.wdN % 3 === 0) runBtWatch(); // surveillance des liaisons Bluetooth
   // horloge basée sur l'heure réelle : un navigateur en arrière-plan ralentit ou gèle les minuteurs, on rattrape donc les secondes manquées
   const now = Date.now(); let n = 0;
   if(RUN.paused){ RUN.last = now; RUN.acc = 0; }
